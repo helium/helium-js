@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message wifi_services_v1 {
+    repeated string services = 1;
+}

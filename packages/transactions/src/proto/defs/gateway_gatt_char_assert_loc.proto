@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message assert_loc_v1 {
+    float lat = 1;
+    float lon = 2;
+    string owner = 3;
+    uint64 nonce = 4;
+    uint64 fee = 5;
+    uint64 amount = 6;
+    string payer = 7;
+}

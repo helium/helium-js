@@ -1,0 +1,31 @@
+{
+  "name": "@helium/http",
+  "version": "0.0.0",
+  "description": "HTTP library for interacting with the Helium blockchain API",
+  "keywords": [
+    "helium",
+    "blockchain",
+    "api"
+  ],
+  "contributors": [
+    "Andrew Allen <allenan@helium.com>"
+  ],
+  "homepage": "https://github.com/helium/helium-js",
+  "license": "Apache-2.0",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "files": [
+    "build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "clean": "rimraf build",
+    "build": "yarn run clean && rollup -c"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "build": "lerna run build",
+    "test": "jest --coverage",
+    "lint": "eslint --ext .ts ./",
+    "format": "prettier-standard --format"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/build/",
+      "/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "packages/**/src/**/*.ts"
+    ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-json": "^4.0.2",
+    "@types/jest": "^25.2.1",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "eslint-config-airbnb-typescript": "^7.2.1",
+    "eslint-plugin-import": "^2.20.2",
+    "jest": "^25.3.0",
+    "lerna": "^3.20.2",
+    "prettier-standard": "^16.2.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.4.0",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "standard": "^14.3.3",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
+  }
+}

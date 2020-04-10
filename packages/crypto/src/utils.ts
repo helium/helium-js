@@ -1,0 +1,57 @@
+import createHash from 'create-hash'
+import bs58 from 'bs58'
+import sodium from 'libsodium-wrappers'
+
+export const randomBytes = async (n: number): Promise<Buffer> => {
+  await sodium.ready
+  return Buffer.from(sodium.randombytes_buf(n))
+}
+
+export const sha256 = (buffer: Buffer | string): string => (
+  createHash('sha256').update(buffer).digest().toString('hex')
+)
+
+export const lpad = (
+  str: string | any[],
+  padString: string,
+  length: number,
+) => {
+  let strOut = str
+  while (strOut.length < length) strOut = padString + strOut
+  return strOut
+}
+
+export const bytesToBinary = (bytes: any[]) => bytes
+  .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
+  .join('')
+
+export const binaryToByte = (bin: string) => parseInt(bin, 2)
+
+export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
+  const ENT = entropyBuffer.length * 8
+  const CS = ENT / 32
+  const hash = sha256(entropyBuffer)
+
+  return bytesToBinary([].slice.call(hash)).slice(0, CS)
+}
+
+export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array) => {
+  // VPayload = <<Version:8/unsigned-integer, Payload/binary>>,
+  const vPayload = Buffer.concat([
+    Buffer.from([version]),
+    binary,
+  ])
+
+  // <<Checksum:4/binary, _/binary>> = crypto:hash(sha256, crypto:hash(sha256, VPayload)),
+  const checksum = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksumBytes = Buffer.alloc(4, checksum, 'hex')
+
+  // Result = <<VPayload/binary, Checksum/binary>>,
+  const result = Buffer.concat([
+    vPayload,
+    checksumBytes,
+  ])
+
+  // base58:binary_to_base58(Result).
+  return bs58.encode(result)
+}
