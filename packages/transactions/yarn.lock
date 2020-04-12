@@ -2,8 +2,10 @@
 # yarn lockfile v1
 
 
-"@helium/proto@file:../../../proto":
+"@helium/proto@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-1.0.0.tgz#d2ee1871200c9e7790042c302a83c0a37ec28be4"
+  integrity sha512-+9wPC9HIaAhn5oPkDJoy1TWTA8ghV/ZbHLMKvPqasGf4Br4ZdYAFkHZMWuo77zP+u7hRFjqvF9Y7DJYz2f4mYw==
   dependencies:
     protobufjs "^6.8.9"
 
