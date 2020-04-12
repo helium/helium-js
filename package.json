@@ -11,9 +11,11 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/build/",
-      "/node_modules/"
+    "roots": [
+      "packages/crypto/src",
+      "packages/http/src",
+      "packages/transactions/src",
+      "integration_tests/tests"
     ],
     "collectCoverageFrom": [
       "packages/**/src/**/*.ts"
