@@ -1,5 +1,4 @@
-import Keypair from '../Keypair'
-import Mnemonic from '../Mnemonic'
+import { Keypair, Mnemonic } from '../'
 import { bobWords, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 describe('makeRandom', () => {

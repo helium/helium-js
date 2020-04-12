@@ -1,4 +1,4 @@
-import PaymentV1 from '../PaymentV1'
+import { PaymentV1 } from '../'
 import { usersFixture } from '../../../../integration_tests/fixtures/users'
 
 const paymentFixture = async () => {
