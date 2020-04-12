@@ -1,7 +1,7 @@
 import axios from '@helium/http/node_modules/axios'
 import { Keypair, Address } from '@helium/crypto'
 import { Client } from '@helium/http'
-import { Payment } from '@helium/transactions'
+import { PaymentV1 } from '@helium/transactions'
 import { bobWords, aliceB58 } from '../fixtures/users'
 
 jest.mock('@helium/http/node_modules/axios')
@@ -11,7 +11,7 @@ test('create and submit a payment txn', async () => {
   const bob = await Keypair.fromWords(bobWords)
   const aliceAddress = Address.fromB58(aliceB58)
 
-  const paymentTxn = new Payment({
+  const paymentTxn = new PaymentV1({
     payer: bob.address,
     payee: aliceAddress,
     amount: 10,

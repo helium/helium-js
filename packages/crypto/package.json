@@ -23,7 +23,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && rollup -c"
+    "build": "yarn run clean && tsc"
   },
   "dependencies": {
     "bs58": "^4.0.1",
