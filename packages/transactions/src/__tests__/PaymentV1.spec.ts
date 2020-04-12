@@ -1,5 +1,5 @@
 import { PaymentV1 } from '../'
-import { usersFixture } from '../../../../integration_tests/fixtures/users'
+import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 const paymentFixture = async () => {
   const { bob, alice } = await usersFixture()
@@ -17,9 +17,8 @@ const paymentFixture = async () => {
 
 test('create a payment txn', async () => {
   const payment = await paymentFixture()
-  const { bob, alice } = await usersFixture()
-  expect(payment.payer?.b58).toBe(bob.address.b58)
-  expect(payment.payee?.b58).toBe(alice.address.b58)
+  expect(payment.payer?.b58).toBe(bobB58)
+  expect(payment.payee?.b58).toBe(aliceB58)
   expect(payment.amount).toBe(10)
   expect(payment.fee).toBe(3)
   expect(payment.nonce).toBe(1)

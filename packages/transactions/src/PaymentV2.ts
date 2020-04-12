@@ -4,11 +4,15 @@ import { toUint8Array } from './utils'
 
 interface PaymentOptions {
   payer?: Addressable
-  payee?: Addressable
-  amount?: number
+  payments?: Array<Payment>
   fee?: number
   nonce?: number
   signature?: Uint8Array | string
+}
+
+interface Payment {
+  payee: Addressable
+  amount: number
 }
 
 interface SignableKeypair {
@@ -25,10 +29,9 @@ interface SignOptions {
   payer: SignableKeypair
 }
 
-export default class PaymentV1 extends Transaction {
+export default class PaymentV2 extends Transaction {
   public payer?: Addressable
-  public payee?: Addressable
-  public amount?: number
+  public payments: Array<Payment>
   public fee?: number
   public nonce?: number
   public signature?: Uint8Array | string
@@ -36,38 +39,47 @@ export default class PaymentV1 extends Transaction {
   constructor(opts: PaymentOptions) {
     super()
     this.payer = opts.payer
-    this.payee = opts.payee
-    this.amount = opts.amount
+    this.payments = opts.payments || []
     this.fee = opts.fee
     this.nonce = opts.nonce
     this.signature = opts.signature
   }
 
   serialize(): Uint8Array {
-    const Txn = proto.helium.blockchain_txn
+    const BlockchainTxn = proto.helium.blockchain_txn
+
     const payment = this.toPaymentProto()
-    const txn = Txn.create({ payment })
-    return Txn.encode(txn).finish()
+    const txn = BlockchainTxn.create({ payment })
+    return BlockchainTxn.encode(txn).finish()
   }
 
-  async sign({ payer: payerKeypair }: SignOptions): Promise<PaymentV1> {
-    const Payment = proto.helium.blockchain_txn_payment_v1
+  async sign({ payer: payerKeypair }: SignOptions): Promise<PaymentV2> {
+    const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const payment = this.toPaymentProto()
-    const serialized = Payment.encode(payment).finish()
+    const serialized = PaymentTxn.encode(payment).finish()
     const signature = await payerKeypair.sign(serialized)
     this.signature = signature
     return this
   }
 
-  private toPaymentProto(): proto.helium.blockchain_txn_payment_v1 {
-    const Payment = proto.helium.blockchain_txn_payment_v1
-    return Payment.create({
+  private toPaymentProto(): proto.helium.blockchain_txn_payment_v2 {
+    const PaymentTxn = proto.helium.blockchain_txn_payment_v2
+    const Payment = proto.helium.payment
+
+    const payments = this.payments.map(({ payee, amount }) =>
+      Payment.create({
+        payee: toUint8Array(payee.bin),
+        amount,
+      }),
+    )
+
+    return PaymentTxn.create({
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
-      payee: this.payee ? toUint8Array(this.payee.bin) : null,
-      amount: this.amount,
+      payments,
       fee: this.fee,
       nonce: this.nonce,
       signature: this.signature ? toUint8Array(this.signature) : null,
     })
+
   }
 }
