@@ -1,16 +1,6 @@
 import Keypair from '../Keypair'
 import Mnemonic from '../Mnemonic'
-
-const bobWords = [
-  'indicate', 'flee',
-  'grace', 'spirit',
-  'trim', 'safe',
-  'access', 'oppose',
-  'void', 'police',
-  'calm', 'energy',
-]
-
-const bobAddress = '13M8dUbxymE3xtiAXszRkGMmezMhBS8Li7wEsMojLdb4Sdxc4wc'
+import { bobWords, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 describe('makeRandom', () => {
   it('makes a new random keypair', async () => {
@@ -41,9 +31,9 @@ describe('keyType', () => {
 })
 
 describe('address', () => {
-  it('returns a b58-encoded form of the public key', async () => {
+  it('returns an Address derived from the public key', async () => {
     const account = await Keypair.fromWords(bobWords)
-    expect(account.address).toBe(bobAddress)
+    expect(account.address.b58).toBe(bobB58)
   })
 })
 
@@ -53,7 +43,7 @@ describe('sign', () => {
     const keypair = await Keypair.fromMnemonic(mnemonic)
     const message = 'the shark feeds at midnight'
     const signature = await keypair.sign(message)
-    const expectedSignature = 'NKGpxhYtcXdyFDDRbbY5KjY7r38R8q1ViBft85t4QcH/WrB2Mg9bg2RocfYy16YGcxjLLNSwTLOmfxsjwPWdBXRoZSBzaGFyayBmZWVkcyBhdCBtaWRuaWdodA=='
-    expect(signature).toBe(expectedSignature)
+    const expectedSignature = 'NKGpxhYtcXdyFDDRbbY5KjY7r38R8q1ViBft85t4QcH/WrB2Mg9bg2RocfYy16YGcxjLLNSwTLOmfxsjwPWdBQ=='
+    expect(Buffer.from(signature).toString('base64')).toBe(expectedSignature)
   })
 })

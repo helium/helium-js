@@ -1,7 +1,8 @@
 import sodium from 'libsodium-wrappers'
 import type { KeyPair as SodiumKeyPair } from 'libsodium-wrappers'
-import { bs58CheckEncode } from './utils'
 import Mnemonic from './Mnemonic'
+import Address from './Address'
+
 
 // extend SodiumKeyPair?
 export default class Keypair {
@@ -17,13 +18,8 @@ export default class Keypair {
     this.keyType = keypair.keyType
   }
 
-  get address(): string {
-    const bin = Buffer.concat([
-      Buffer.from([1]),
-      Buffer.from(this.keypair.publicKey),
-    ])
-
-    return bs58CheckEncode(0, bin)
+  get address(): Address {
+    return new Address(this.publicKey)
   }
 
   static async makeRandom(): Promise<Keypair> {
@@ -47,9 +43,9 @@ export default class Keypair {
     return new Keypair(keypair)
   }
 
-  async sign(message: string | Uint8Array): Promise<string> {
+  async sign(message: string | Uint8Array): Promise<Uint8Array> {
     await sodium.ready
-    const signature = sodium.crypto_sign(message, this.privateKey)
-    return Buffer.from(signature).toString('base64')
+    const signature = sodium.crypto_sign_detached(message, this.privateKey)
+    return signature
   }
 }

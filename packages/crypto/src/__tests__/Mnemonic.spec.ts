@@ -1,14 +1,7 @@
 import Mnemonic from '../Mnemonic'
 import { randomBytes } from '../utils'
+import { bobWords } from '../../../../integration_tests/fixtures/users'
 
-const bobWords = [
-  'indicate', 'flee',
-  'grace', 'spirit',
-  'trim', 'safe',
-  'access', 'oppose',
-  'void', 'police',
-  'calm', 'energy',
-]
 
 describe('Mnemonic', () => {
   it('is initialized with a list of words', () => {

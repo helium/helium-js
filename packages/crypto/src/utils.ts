@@ -35,7 +35,7 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array) => {
+export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
   // VPayload = <<Version:8/unsigned-integer, Payload/binary>>,
   const vPayload = Buffer.concat([
     Buffer.from([version]),
@@ -54,4 +54,20 @@ export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array) =>
 
   // base58:binary_to_base58(Result).
   return bs58.encode(result)
+}
+
+export const bs58ToBin = (bs58Address: string): Buffer => {
+  const bin = bs58.decode(bs58Address)
+  const vPayload = bin.slice(0, -4)
+  const payload = bin.slice(1, -4)
+  const checksum = bin.slice(-4)
+
+  const checksumVerify = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
+
+  if (!checksumVerifyBytes.equals(checksum)) {
+    throw new Error('invalid checksum')
+  }
+
+  return payload
 }

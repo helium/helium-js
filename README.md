@@ -1,56 +1,57 @@
-# helium-js
+# Helium JS SDK
 
-This is a monorepo containing the following TypeScript packages for interacting with the Helium blockchain:
+> :warning: These libraries are currently in active development and are provided as-is. Helium makes no claims or guarantees about the correctness, reliability or security of this code. PRs welcome, see [CONTRIBUTING](https://github.com/heilum/helium-js/blob/master/CONTRIBUTING.md).
 
-##### [@helium/crypto](https://github.com/helium/helium-js/tree/master/packages/crypto)
-Cryptography utilities including keypairs, mnemonics and base58-check encoding
 
-##### [@helium/transactions](https://github.com/helium/helium-js/tree/master/packages/transactions)
-Construct and serialize transaction primatives from their [protobuf](https://developers.google.com/protocol-buffers) definitions
+This SDK is a collection of libraries for interacting with the Helium blockchain.
 
-##### [@helium/http](https://github.com/helium/helium-js/tree/master/packages/http)
-An HTTP client for the blockchain REST API
 
-##### @helium/cli _(coming soon)_
-A CLI for managing accounts locally and querying the blockchain API
+| NPM Package | What it's for |
+|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| [`@helium/crypto`](https://github.com/helium/helium-js/tree/master/packages/crypto) | Cryptography utilities including keypairs, mnemonics and base58-check encoding |
+| [`@helium/transactions`](https://github.com/helium/helium-js/tree/master/packages/transactions) | Construct and serialize transaction primatives from their [protobuf](https://developers.google.com/protocol-buffers) definitions |
+| [`@helium/proto`](https://github.com/helium/proto) | Protobuf definitions for Helium transactions |
+| [`@helium/http`](https://github.com/helium/helium-js/tree/master/packages/http) | An HTTP client for the blockchain REST API |
+| `@helium/cli` | A CLI for managing accounts locally and querying the blockchain API |
 
-#### Disclaimer!
-These libraries are currently in development and are provided as-is. Helium makes no claims or guarantees about the reliability or security of this code. PRs welcome, see [CONTRIBUTING](https://github.com/heilum/helium-js/blob/master/CONTRIBUTING.md).
 
 ## Installation
 Each package can be installed independently depending on what utility you need. For example:
 
-```bash
+```shell
 $ yarn add @helium/crypto @helium/transactions @helium/http
+# or
+$ npm install @helium/crypto @helium/transactions @helium/http
 ```
 
 ## Usage
-Here are some high-level examples detailing how these packages can be used in combination to accomplish some common tasks.
+The following examples demonstrate some of the more common use cases and show how these packages can be used in combination to accomplish common tasks.
 
 ### Creating and submitting a payment transaction
 
 ```js
-import { Keypair } from '@helium/crypto'
-import { Payment } from '@helium/transactions'
+import { Keypair, Address } from '@helium/crypto'
+import { PaymentV1 } from '@helium/transactions'
 import { Client } from '@helium/http'
 
-// initialize two keypairs, one from a 12 word mnemonic, and the other random
+// initialize an owned keypair from a 12 word mnemonic
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
-const alice = await Keypair.makeRandom()
+
+// initialize an address from a b58 string
+const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 
 // construct a payment txn
-const paymentTxn = new Payment({
+const paymentTxn = new PaymentV1({
   payer: bob.address,
-  payee: alice.address,
+  payee: aliceAddress,
   amount: 10,
-  fee: 0,
   nonce: 1,
 })
 
 // sign the payment txn with bob's keypair
-await paymentTxn.sign({ payer: bob })
+const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
 
 // submit the serialized txn to the Blockchain HTTP API
 const client = new Client()
-client.transactions.submit(paymentTxn.serialize())
+client.transactions.submit(signedPaymentTxn.toString())
 ```

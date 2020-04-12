@@ -1,2 +1,2 @@
 /* eslint-disable import/prefer-default-export */
-export { default as Payment } from './Payment'
+export { default as PaymentV1 } from './PaymentV1'

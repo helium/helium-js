@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - 13
+before_script:
+  - yarn install
+  - yarn bootstrap
+  - yarn build
+script:
+  - yarn test

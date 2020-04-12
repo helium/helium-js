@@ -1,7 +1,7 @@
 export default abstract class Transaction {
-  abstract serialize (): Buffer
+  abstract serialize (): Uint8Array
 
-  toString(): String {
-    return this.serialize().toString('base64')
+  toString(): string {
+    return Buffer.from(this.serialize()).toString('base64')
   }
 }

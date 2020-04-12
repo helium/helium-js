@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "test": "jest --coverage",
     "lint": "eslint --ext .ts ./",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-json": "^4.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
     "@types/jest": "^25.2.1",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "eslint-config-airbnb-typescript": "^7.2.1",
@@ -30,8 +32,6 @@
     "prettier-standard": "^16.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.4.0",
-    "rollup-plugin-copy": "^3.3.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "rollup-plugin-typescript2": "^0.27.0",
     "standard": "^14.3.3",
