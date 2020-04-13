@@ -47,7 +47,7 @@ const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYn
 // construct a payment txn
 const paymentTxn = new PaymentV1({
   payer: bob.address,
-  payee: aliceAddress,
+  payee: alice,
   amount: 10,
   nonce: 1,
 })
@@ -80,11 +80,11 @@ const paymentTxn = new PaymentV2({
   payer: bob.address,
   payments: [
     {
-      payee: alice.address,
+      payee: alice,
       amount: 20,
     },
     {
-      payee: charlie.address,
+      payee: charlie,
       amount: 10,
     },
   ],
