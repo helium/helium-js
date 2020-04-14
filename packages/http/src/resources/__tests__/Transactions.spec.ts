@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Client from '../Client'
+import Client from '../../Client'
 
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
