@@ -1,4 +1,4 @@
-import { PaymentV2 } from '../'
+import { PaymentV2 } from '..'
 import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 const paymentFixture = async () => {
@@ -14,9 +14,8 @@ const paymentFixture = async () => {
     ],
     fee: 3,
     nonce: 1,
-    signature: "bob's signature"
+    signature: "bob's signature",
   })
-
 }
 
 test('create a PaymentV2', async () => {

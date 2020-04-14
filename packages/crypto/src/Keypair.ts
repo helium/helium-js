@@ -39,7 +39,13 @@ export default class Keypair {
     const entropy = mnenomic.toEntropy()
     const seed = Buffer.concat([entropy, entropy])
 
-    const keypair = sodium.crypto_sign_seed_keypair(seed)
+    return Keypair.fromEntropy(seed)
+  }
+
+  static async fromEntropy(entropy: Uint8Array | Buffer): Promise<Keypair> {
+    const entropyBuffer = Buffer.from(entropy)
+    if (Buffer.byteLength(entropyBuffer) !== 32) throw new Error('Invalid entropy, must be 32 bytes')
+    const keypair = sodium.crypto_sign_seed_keypair(entropy)
     return new Keypair(keypair)
   }
 

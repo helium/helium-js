@@ -1,4 +1,4 @@
-import { Address } from '../'
+import { Address } from '..'
 import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 describe('b58', () => {
