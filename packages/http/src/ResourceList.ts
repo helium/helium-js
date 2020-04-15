@@ -1,8 +1,4 @@
-interface PageData {
-  data: Array<object>
-  cursor?: string
-}
-
+// import type Client from './Client'
 // class MyIterator implements Iterator<object> {
 //   next(value?: any) {
 //     return {
@@ -12,24 +8,65 @@ interface PageData {
 //   }
 // }
 
-interface IterateResources {
-  [Symbol.iterator](): IterableIterator<object>
-}
+// interface IterateResources {
+//   [Symbol.asyncIterator](): Promise<IterableIterator<object>>
+// }
 
-export default class ResourceList implements IterateResources {
-  // private position: number = 0
-  public pageData: PageData
+export default class ResourceList { // implements IterateResources {
+  public data: Array<any>
+  public fetchMore?: any
+  private cursor?: string
 
-  constructor(pageData: PageData) {
-    this.pageData = pageData
-    // this[Symbol.iterator] = this.generator()
+  // constructor(client: Client, route: string, data: Array<any>, model: any, cursor?: string, params: object = {}) {
+  constructor(data: Array<any>, fetchMore?: any, cursor?: string) {
+    this.data = data
+    this.fetchMore = fetchMore
+    this.cursor = cursor
   }
 
-  *[Symbol.iterator]() {
-    for (const obj of this.pageData.data) {
+  async nextPage(): Promise<ResourceList> {
+    return this.fetchMore({ cursor: this.cursor })
+    // const { data: { data, cursor } } = await this.client.get(this.route, { ...this.params, cursor: this.cursor })
+    // const resources = data.map((d: any) => new this.model(this.client, d))
+    // return new ResourceList(this.client, this.route, resources, this.model, cursor, this.params)
+  }
+
+  // async nextPage(): Promise<ResourceList> {
+  //   await this.delay(500)
+  //   console.log(this.cursor)
+  //   // TODO fetch next page with cursor
+  //   const data = [{ id: 1}]
+  //   const pageData = { data }
+  //   return new ResourceList(pageData)
+  // }
+
+  async *[Symbol.asyncIterator]() {
+    await this.delay(500)
+    for (const obj of this.data) {
       yield obj
     }
   }
+
+  async delay(duration: number) {
+    return new Promise(function(resolve) {
+      setTimeout(function() {
+        resolve()
+      }, duration)
+    })
+  }
+
+  // take(count: number) {
+  //   const array = []
+
+  //   for (const obj of this) {
+  //     array.push(obj)
+  //     if (array.length === count) {
+  //       break
+  //     }
+  //   }
+
+  //   return array
+  // }
 
   // *[Symbol.iterator]() {
   //   return new MyIterator()

@@ -1,18 +1,19 @@
-import axios from 'axios'
+import nock from 'nock'
 import Client from '../../Client'
-
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {
+    nock('https://api.helium.io')
+      .post('/v1/pending_transactions', { txn: 'my txn' })
+      .reply(200, {
+        data: {
+          hash: 'txn hash',
+        },
+      })
+
     const client = new Client()
 
-    await client.transactions.submit('my txn')
-
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      'https://api.helium.io/v1/pending_transactions',
-      { txn: 'my txn' },
-    )
+    const pendingTxn = await client.transactions.submit('my txn')
+    expect(pendingTxn.hash).toBe('txn hash')
   })
 })

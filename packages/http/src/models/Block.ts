@@ -27,6 +27,6 @@ export default class Block {
     this.height = block.height
     this.hash = block.hash
 
-    this.transactions = new Transactions(client, this)
+    this.transactions = new Transactions(client, { block: this })
   }
 }

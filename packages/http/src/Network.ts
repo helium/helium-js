@@ -1,24 +1,28 @@
 interface NetworkOptions {
-  endpoint: string
+  baseURL: string
   version: number
 }
 
 export default class Network {
   static production = new Network({
-    endpoint: 'https://api.helium.io',
+    baseURL: 'https://api.helium.io',
     version: 1,
   })
 
   static staging = new Network({
-    endpoint: 'https://api.helium.wtf',
+    baseURL: 'https://api.helium.wtf',
     version: 1,
   })
 
-  public endpoint: string
+  public baseURL: string
   public version: number
 
-  constructor({ endpoint, version }: NetworkOptions) {
-    this.endpoint = endpoint
+  constructor({ baseURL, version }: NetworkOptions) {
+    this.baseURL = baseURL
     this.version = version
+  }
+
+  get endpoint(): string {
+    return [this.baseURL, `v${this.version}`].join('/')
   }
 }

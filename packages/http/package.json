@@ -27,6 +27,10 @@
     "prepublishOnly": "yarn run build"
   },
   "dependencies": {
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "qs": "^6.9.3"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.1"
   }
 }
