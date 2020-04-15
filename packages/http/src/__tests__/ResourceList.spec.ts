@@ -16,18 +16,27 @@ describe('auto pagination', () => {
   it('fetches additional pages asynchronously', async () => {
     const firstPageData = [{ name: 'cat' }, { name: 'dog'}]
     const secondPageData = [{ name: 'snake'} ,{ name: 'bird'}]
+    const thirdPageData = [{ name: 'bat'} ,{ name: 'squirrel'}]
 
     nock('https://api.helium.io')
       .get('/v1/animals')
       .query({ cursor: 'cursor-1' })
       .reply(200, {
         data: secondPageData,
+        cursor: 'cursor-2'
+      })
+
+    nock('https://api.helium.io')
+      .get('/v1/animals')
+      .query({ cursor: 'cursor-2' })
+      .reply(200, {
+        data: thirdPageData,
       })
 
     const fetchMore = async ({ cursor }: FetchMoreOptions = {}) => {
       const client = new Client()
-      const { data: { data } } = await client.get('/animals', { cursor })
-      return new ResourceList(data, fetchMore)
+      const { data: { data, cursor: nextCursor } } = await client.get('/animals', { cursor })
+      return new ResourceList(data, fetchMore, nextCursor)
     }
 
     const list = new ResourceList(firstPageData, fetchMore, 'cursor-1')
@@ -36,7 +45,8 @@ describe('auto pagination', () => {
     for await (const item of list) {
       fetchedData.push(item)
     }
-    expect(fetchedData).toEqual([...firstPageData, ...secondPageData])
+
+    expect(fetchedData).toEqual([...firstPageData, ...secondPageData, ...thirdPageData])
   })
 })
 
