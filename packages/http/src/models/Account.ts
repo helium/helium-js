@@ -16,7 +16,6 @@ export interface HTTPAccountObject {
 
 
 export default class Account {
-  // private client: Client
   public speculativeNonce?: number
   public secNonce: number
   public secBalance: Balance
@@ -29,8 +28,6 @@ export default class Account {
   public activity: Transactions
 
   constructor(client: Client, account: HTTPAccountObject) {
-    // this.client = client
-
     this.speculativeNonce = account.speculative_nonce
     this.secNonce = account.sec_nonce
     this.secBalance = new Balance(account.sec_balance, CurrencyType.security)

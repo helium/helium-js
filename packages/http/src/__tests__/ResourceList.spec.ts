@@ -14,16 +14,16 @@ describe('auto pagination', () => {
   })
 
   it('fetches additional pages asynchronously', async () => {
-    const firstPageData = [{ name: 'cat' }, { name: 'dog'}]
-    const secondPageData = [{ name: 'snake'} ,{ name: 'bird'}]
-    const thirdPageData = [{ name: 'bat'} ,{ name: 'squirrel'}]
+    const firstPageData = [{ name: 'cat' }, { name: 'dog' }]
+    const secondPageData = [{ name: 'snake' }, { name: 'bird' }]
+    const thirdPageData = [{ name: 'bat' }, { name: 'squirrel' }]
 
     nock('https://api.helium.io')
       .get('/v1/animals')
       .query({ cursor: 'cursor-1' })
       .reply(200, {
         data: secondPageData,
-        cursor: 'cursor-2'
+        cursor: 'cursor-2',
       })
 
     nock('https://api.helium.io')
@@ -35,7 +35,9 @@ describe('auto pagination', () => {
 
     const fetchMore = async ({ cursor }: FetchMoreOptions = {}) => {
       const client = new Client()
-      const { data: { data, cursor: nextCursor } } = await client.get('/animals', { cursor })
+      const {
+        data: { data, cursor: nextCursor },
+      } = await client.get('/animals', { cursor })
       return new ResourceList(data, fetchMore, nextCursor)
     }
 
@@ -46,10 +48,46 @@ describe('auto pagination', () => {
       fetchedData.push(item)
     }
 
-    expect(fetchedData).toEqual([...firstPageData, ...secondPageData, ...thirdPageData])
+    expect(fetchedData).toEqual([
+      ...firstPageData,
+      ...secondPageData,
+      ...thirdPageData,
+    ])
   })
 })
 
+describe('take', () => {
+  it('allows auto pagination in chunks', async () => {
+    const data = [
+      { name: 'dog' },
+      { name: 'cat' },
+      { name: 'bird' },
+      { name: 'snake' },
+    ]
+    const list = new ResourceList(data)
+
+    const firstSet = await list.take(2)
+    const secondSet = await list.take(3)
+
+    expect([...firstSet, ...secondSet]).toEqual(data)
+  })
+
+  it('can be reset', async () => {
+    const data = [
+      { name: 'dog' },
+      { name: 'cat' },
+      { name: 'bird' },
+      { name: 'snake' },
+    ]
+    const list = new ResourceList(data)
+
+    const firstSet = await list.take(2)
+    list.takeReset()
+    const secondSet = await list.take(2)
+
+    expect(firstSet).toEqual(secondSet)
+  });
+})
 
 interface FetchMoreOptions {
   cursor?: string
@@ -63,8 +101,8 @@ describe('manual pagination', () => {
   })
 
   it('fetches the next page of data', async () => {
-    const firstPageData = [{ name: 'cat' }, { name: 'dog'}]
-    const secondPageData = [{ name: 'snake'} ,{ name: 'bird'}]
+    const firstPageData = [{ name: 'cat' }, { name: 'dog' }]
+    const secondPageData = [{ name: 'snake' }, { name: 'bird' }]
 
     nock('https://api.helium.io')
       .get('/v1/animals')
@@ -75,7 +113,9 @@ describe('manual pagination', () => {
 
     const fetchMore = async ({ cursor }: FetchMoreOptions = {}) => {
       const client = new Client()
-      const { data: { data } } = await client.get('/animals', { cursor })
+      const {
+        data: { data },
+      } = await client.get('/animals', { cursor })
       return new ResourceList(data, fetchMore)
     }
 

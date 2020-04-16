@@ -20,7 +20,7 @@ describe('list', () => {
     const client = new Client()
 
     const blocks = await client.blocks.list()
-    expect(blocks.length).toBe(1)
-    expect(blocks[0].hash).toBe('WSvuFjPCvmyzlkW24OSbNAvk0i44q-OBqlMgjsfF3Is')
+    expect(blocks.data.length).toBe(1)
+    expect(blocks.data[0].hash).toBe('WSvuFjPCvmyzlkW24OSbNAvk0i44q-OBqlMgjsfF3Is')
   })
 })

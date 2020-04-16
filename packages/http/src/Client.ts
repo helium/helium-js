@@ -8,17 +8,14 @@ import { getUserAgent } from './util/instrument'
 
 export default class Client {
   public network!: Network
+  private axios!: AxiosInstance
+
   public transactions!: Transactions
   public blocks!: Blocks
   public accounts!: Accounts
-  private axios!: AxiosInstance
 
   constructor(network: Network = Network.production) {
     this.network = network
-
-    this.transactions = new Transactions(this)
-    this.blocks = new Blocks(this)
-    this.accounts = new Accounts(this)
 
     this.axios = axios.create({
       baseURL: this.network.endpoint,
@@ -26,6 +23,10 @@ export default class Client {
         'User-Agent': getUserAgent(),
       },
     })
+
+    this.transactions = new Transactions(this)
+    this.blocks = new Blocks(this)
+    this.accounts = new Accounts(this)
   }
 
   async get(path: string, params: Object = {}) {

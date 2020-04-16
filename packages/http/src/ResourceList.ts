@@ -2,6 +2,7 @@ export default class ResourceList {
   public data: Array<any>
   private fetchMore?: any
   private cursor?: string
+  private takeIterator?: AsyncGenerator<any, void, any>
 
   constructor(data: Array<any>, fetchMore?: any, cursor?: string) {
     this.data = data
@@ -10,8 +11,6 @@ export default class ResourceList {
   }
 
   async nextPage(): Promise<ResourceList> {
-    console.log('fetching next page')
-    console.log('cursor', this.cursor)
     return this.fetchMore({ cursor: this.cursor })
   }
 
@@ -20,16 +19,27 @@ export default class ResourceList {
   }
 
   async *[Symbol.asyncIterator]() {
-    for (const obj of this.data) {
-      yield obj
+    for (const item of this.data) {
+      yield item
     }
-    while (this.hasMore) {
-      const nextList = await this.fetchMore({ cursor: this.cursor })
-      this.cursor = nextList.cursor
-      this.data = nextList.data
-      for (const obj of this.data) {
-        yield obj
-      }
+    if (!this.hasMore) return
+    yield* await this.fetchMore({ cursor: this.cursor })
+  }
+
+  async take(count: number): Promise<Array<any>> {
+    if (!this.takeIterator) {
+      this.takeIterator = this[Symbol.asyncIterator]()
     }
+    const values = []
+    while (values.length < count) {
+      const { value, done } = await this.takeIterator.next()
+      if (value !== undefined) values.push(value)
+      if (done) return values
+    }
+    return values
+  }
+
+  takeReset() {
+    this.takeIterator = undefined
   }
 }
