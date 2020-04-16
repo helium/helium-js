@@ -23,8 +23,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && tsc",
-    "prepublishOnly": "yarn run build"
+    "build": "yarn run clean && tsc"
   },
   "dependencies": {
     "bs58": "^4.0.1",
@@ -35,5 +34,6 @@
     "@types/bs58": "4.0.1",
     "@types/create-hash": "1.2.2",
     "@types/libsodium-wrappers": "0.7.7"
-  }
+  },
+  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }

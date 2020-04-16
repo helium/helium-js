@@ -23,8 +23,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && tsc",
-    "prepublishOnly": "yarn run build"
+    "build": "yarn run clean && tsc"
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
@@ -33,5 +32,6 @@
   "devDependencies": {
     "@types/isomorphic-fetch": "^0.0.35",
     "@types/qs": "6.9.1"
-  }
+  },
+  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
