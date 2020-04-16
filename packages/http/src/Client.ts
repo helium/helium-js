@@ -4,7 +4,6 @@ import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
 import Accounts from './resources/Accounts'
-import { getUserAgent } from './util/instrument'
 
 export default class Client {
   public network!: Network
@@ -24,11 +23,7 @@ export default class Client {
   async get(path: string, params: Object = {}) {
     const query = qs.stringify(params)
     const url = this.toURL(query.length > 0 ? [path, query].join('?') : path)
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': getUserAgent(),
-      }
-    })
+    const response = await fetch(url)
     const data = await response.json()
     return { data }
   }
@@ -38,9 +33,6 @@ export default class Client {
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(params),
-      headers: {
-        'User-Agent': getUserAgent(),
-      }
     })
     const data = await response.json()
     return { data }
