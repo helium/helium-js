@@ -48,8 +48,8 @@ export default class PaymentV2 extends Transaction {
   serialize(): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
 
-    const payment = this.toPaymentProto()
-    const txn = BlockchainTxn.create({ payment })
+    const paymentV2 = this.toPaymentProto()
+    const txn = BlockchainTxn.create({ paymentV2 })
     return BlockchainTxn.encode(txn).finish()
   }
 

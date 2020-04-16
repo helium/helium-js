@@ -33,7 +33,7 @@ test('create a PaymentV2', async () => {
 describe('serialize', () => {
   it('serializes a PaymentV2 txn', async () => {
     const payment = await paymentFixture()
-    expect(payment.serialize().length).toBe(58)
+    expect(payment.serialize().length).toBe(98)
   })
 })
 

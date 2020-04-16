@@ -35,9 +35,10 @@ test('create and submit a payment txn', async () => {
 })
 
 test('create and submit a PaymentV2 txn', async () => {
-  const entropy =
-    '1f5b981baca0420259ab53996df7a8ce0e3549c6616854e7dff796304bafb6bf'
-  const bob = await Keypair.fromEntropy(Buffer.from(entropy, 'hex'))
+  // const entropy =
+  //   '1f5b981baca0420259ab53996df7a8ce0e3549c6616854e7dff796304bafb6bf'
+  // const bob = await Keypair.fromEntropy(Buffer.from(entropy, 'hex'))
+  const bob = await Keypair.fromWords(bobWords)
   const aliceAddress = Address.fromB58(aliceB58)
 
   const paymentTxn = new PaymentV2({
@@ -54,7 +55,7 @@ test('create and submit a PaymentV2 txn', async () => {
   const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
   const serializedTxn = signedPaymentTxn.toString()
   expect(serializedTxn).toBe(
-    'QmcKIQHZaiNDxWGBKpINPNipCSY7stqmxRzsr/YUl3+K8OQ5NigBMkDbyKhTERhqfVcF6P5TOhoLMeC/r3VsugJlWv6vViw+NujHdMzIGGRZNcpOJToocZhCrN7xoc4I+xqH78ce25sH',
+    'wgGOAQohATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVEiUKIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBAKIAEqQK88GjmG9CrESHVdcL//ZfWD+KsBnbKmZqKlx8oD89FUms7OjZNcL5NiQ4o0jREg+ahkjc2jX4SgKBBniM+QoAA='
   )
 
   const client = new Client()
