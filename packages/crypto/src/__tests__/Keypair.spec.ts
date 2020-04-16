@@ -1,4 +1,4 @@
-import { Keypair, Mnemonic } from '../'
+import { Keypair, Mnemonic } from '..'
 import { bobWords, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 describe('makeRandom', () => {
@@ -33,6 +33,22 @@ describe('address', () => {
   it('returns an Address derived from the public key', async () => {
     const account = await Keypair.fromWords(bobWords)
     expect(account.address.b58).toBe(bobB58)
+  })
+})
+
+describe('fromEntropy', () => {
+  it('returns a keypair seeded by provided entropy', async () => {
+    const entropy = '1f5b981baca0420259ab53996df7a8ce0e3549c6616854e7dff796304bafb6bf'
+    const keypair = await Keypair.fromEntropy(Buffer.from(entropy, 'hex'))
+    expect(keypair.keyType).toBe('ed25519')
+  })
+
+  it('throws an error if the provided entropy is not 32 bytes', async () => {
+    const entropy = 'e8e0b9e9badae50f230e9ec12f213fd9'
+    const makeKeypair = async () => {
+      await Keypair.fromEntropy(Buffer.from(entropy, 'hex'))
+    }
+    await expect(makeKeypair()).rejects.toThrow()
   })
 })
 

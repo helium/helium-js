@@ -48,8 +48,8 @@ export default class PaymentV2 extends Transaction {
   serialize(): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
 
-    const payment = this.toPaymentProto()
-    const txn = BlockchainTxn.create({ payment })
+    const paymentV2 = this.toPaymentProto()
+    const txn = BlockchainTxn.create({ paymentV2 })
     return BlockchainTxn.encode(txn).finish()
   }
 
@@ -66,12 +66,10 @@ export default class PaymentV2 extends Transaction {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
 
-    const payments = this.payments.map(({ payee, amount }) =>
-      Payment.create({
-        payee: toUint8Array(payee.bin),
-        amount,
-      }),
-    )
+    const payments = this.payments.map(({ payee, amount }) => Payment.create({
+      payee: toUint8Array(payee.bin),
+      amount,
+    }))
 
     return PaymentTxn.create({
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
@@ -80,6 +78,5 @@ export default class PaymentV2 extends Transaction {
       nonce: this.nonce,
       signature: this.signature ? toUint8Array(this.signature) : null,
     })
-
   }
 }

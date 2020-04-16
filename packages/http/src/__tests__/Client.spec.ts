@@ -1,36 +1,46 @@
-import axios from 'axios'
-import Client from '../'
-
-jest.mock('axios')
-const mockedAxios = axios as jest.Mocked<typeof axios>
+import nock from 'nock'
+import Client from '..'
+import { Network } from '../'
 
 test('exposes a client instance with default options', () => {
   const prodUrl = 'https://api.helium.io'
   const client = new Client()
-  expect(client.endpoint).toBe(prodUrl)
+  expect(client.network.baseURL).toBe(prodUrl)
 })
 
 test('configure client with different endpoint', () => {
   const stagingUrl = 'https://api.helium.wtf'
-  const client = new Client({ endpoint: stagingUrl })
-  expect(client.endpoint).toBe(stagingUrl)
+  const client = new Client(Network.staging)
+  expect(client.network.baseURL).toBe(stagingUrl)
 })
 
-test('configure client with different version', () => {
-  const client = new Client({ version: 2 })
-  expect(client.version).toBe(2)
+describe('get', () => {
+  it('creates a GET request to the full url', async () => {
+    nock('https://api.helium.io')
+      .get('/v1/greeting')
+      .reply(200, {
+        greeting: 'hello',
+      })
+
+    const client = new Client()
+
+    const { data } = await client.get('/greeting')
+
+    expect(data.greeting).toBe('hello')
+  })
 })
 
-describe('http methods', () => {
-  it('posts requests to the full url', async () => {
+describe('post', () => {
+  it('creates a POST request to the full url', async () => {
+    nock('https://api.helium.io')
+      .post('/v1/greeting', { greeting: 'hello' })
+      .reply(200, {
+        response: 'hey there!',
+      })
     const client = new Client()
     const params = { greeting: 'hello' }
 
-    await client.post('/greeting', params)
-
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      'https://api.helium.io/v1/greeting',
-      params,
-    )
+    const { data } = await client.post('/greeting', params)
+    expect(data.response).toBe('hey there!')
   })
 })

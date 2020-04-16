@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding",
   "keywords": [
     "helium",
@@ -23,7 +23,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && tsc"
+    "build": "yarn run clean && tsc",
+    "prepublishOnly": "yarn run build"
   },
   "dependencies": {
     "bs58": "^4.0.1",

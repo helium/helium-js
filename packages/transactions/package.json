@@ -1,6 +1,6 @@
 {
   "name": "@helium/transactions",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "Construct and serialize Helium blockchain transaction primatives",
   "keywords": [
     "helium",
@@ -24,13 +24,14 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && tsc"
+    "build": "yarn run clean && tsc",
+    "prepublishOnly": "yarn run build"
   },
   "dependencies": {
     "@helium/proto": "^1.0.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "@helium/crypto": "^0.0.3"
+    "@helium/crypto": "^0.0.7"
   }
 }

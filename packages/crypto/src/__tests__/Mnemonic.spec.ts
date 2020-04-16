@@ -1,4 +1,4 @@
-import { Mnemonic } from '../'
+import { Mnemonic } from '..'
 import { randomBytes } from '../utils'
 import { bobWords } from '../../../../integration_tests/fixtures/users'
 
