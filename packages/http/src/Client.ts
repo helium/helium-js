@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from 'axios'
 import qs from 'qs'
+import fetch from 'isomorphic-fetch'
 import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
@@ -8,7 +8,6 @@ import { getUserAgent } from './util/instrument'
 
 export default class Client {
   public network!: Network
-  private axios!: AxiosInstance
 
   public transactions!: Transactions
   public blocks!: Blocks
@@ -17,13 +16,6 @@ export default class Client {
   constructor(network: Network = Network.production) {
     this.network = network
 
-    this.axios = axios.create({
-      baseURL: this.network.endpoint,
-      headers: {
-        'User-Agent': getUserAgent(),
-      },
-    })
-
     this.transactions = new Transactions(this)
     this.blocks = new Blocks(this)
     this.accounts = new Accounts(this)
@@ -31,11 +23,30 @@ export default class Client {
 
   async get(path: string, params: Object = {}) {
     const query = qs.stringify(params)
-    const url = query.length > 0 ? [path, query].join('?') : path
-    return this.axios.get(url)
+    const url = this.toURL(query.length > 0 ? [path, query].join('?') : path)
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': getUserAgent(),
+      }
+    })
+    const data = await response.json()
+    return { data }
   }
 
   async post(path: string, params: Object = {}) {
-    return this.axios.post(path, params)
+    const url = this.toURL(path)
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'User-Agent': getUserAgent(),
+      }
+    })
+    const data = await response.json()
+    return { data }
+  }
+
+  private toURL(path: string):string {
+    return [this.network.endpoint, path].join('')
   }
 }
