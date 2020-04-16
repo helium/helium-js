@@ -24,7 +24,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rimraf build",
-    "build": "yarn run clean && tsc"
+    "build": "yarn run clean && tsc",
+    "prepublishOnly": "yarn run build"
   },
   "dependencies": {
     "@helium/proto": "^1.0.0",
