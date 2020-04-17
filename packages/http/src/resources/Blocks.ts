@@ -20,7 +20,7 @@ export default class Blocks {
 
   // TODO handle errors
   // TODO handle retry logic
-  async list(params: ListParams = {}): Promise<ResourceList> {
+  async list(params: ListParams = {}): Promise<ResourceList<Block>> {
     const {
       data: { data: blocks, cursor },
     } = await this.client.get('/blocks', { cursor: params.cursor })

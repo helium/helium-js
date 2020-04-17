@@ -31,7 +31,7 @@ export default class Transactions {
     return new Transaction(this.client, data)
   }
 
-  async list(params: ListParams = {}): Promise<ResourceList> {
+  async list(params: ListParams = {}): Promise<ResourceList<any>> {
     if (this.context instanceof Block) {
       return this.listFromBlock(params)
     }
@@ -41,7 +41,7 @@ export default class Transactions {
     throw new Error('Must provide a block or account to list transactions from')
   }
 
-  private async listFromBlock(params: ListParams): Promise<ResourceList> {
+  private async listFromBlock(params: ListParams): Promise<ResourceList<any>> {
     const block = this.context as Block
     const url = `/blocks/${block.height}/transactions`
     const response = await this.client.get(url, { cursor: params.cursor })
@@ -50,7 +50,7 @@ export default class Transactions {
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
-  private async listFromAccount(params: ListParams): Promise<ResourceList> {
+  private async listFromAccount(params: ListParams): Promise<ResourceList<any>> {
     const account = this.context as Account
     const url = `/accounts/${account.address}/activity`
     const filter_types = params.filterTypes ? params.filterTypes.join() : undefined

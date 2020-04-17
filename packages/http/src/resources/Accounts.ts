@@ -18,7 +18,7 @@ export default class Accounts {
     return new Account(this.client, { address })
   }
 
-  async list(params: ListParams = {}): Promise<ResourceList> {
+  async list(params: ListParams = {}): Promise<ResourceList<Account>> {
     const url = '/accounts'
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: accounts, cursor } } = response
