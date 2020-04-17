@@ -1,4 +1,4 @@
-import { CurrencyType } from '../util/currency'
+import CurrencyType from './CurrencyType'
 
 export default class Balance {
   public integerBalance: number
