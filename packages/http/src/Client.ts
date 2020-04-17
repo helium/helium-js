@@ -1,5 +1,5 @@
 import qs from 'qs'
-import fetch from 'isomorphic-fetch'
+import fetch from 'isomorphic-unfetch'
 import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
