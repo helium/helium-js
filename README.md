@@ -38,25 +38,29 @@ import { Keypair, Address } from '@helium/crypto'
 import { PaymentV1 } from '@helium/transactions'
 import { Client } from '@helium/http'
 
+const client = new Client()
+
 // initialize an owned keypair from a 12 word mnemonic
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
 
 // initialize an address from a b58 string
 const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 
+// get the speculative nonce for the keypair
+const account = await client.accounts.get(bob.address.b58)
+
 // construct a payment txn
 const paymentTxn = new PaymentV1({
   payer: bob.address,
   payee: alice,
   amount: 10,
-  nonce: 1,
+  nonce: account.speculativeNonce + 1,
 })
 
 // sign the payment txn with bob's keypair
 const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
 
 // submit the serialized txn to the Blockchain HTTP API
-const client = new Client()
 client.transactions.submit(signedPaymentTxn.toString())
 ```
 

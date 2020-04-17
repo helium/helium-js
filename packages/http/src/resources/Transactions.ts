@@ -12,6 +12,7 @@ interface TransactionContext {
 
 interface ListParams {
   cursor?: string
+  filterTypes?: Array<string>
 }
 
 export default class Transactions {
@@ -57,7 +58,8 @@ export default class Transactions {
 
   private async listFromAccount(params: ListParams): Promise<ResourceList> {
     const url = `/accounts/${this.account?.address}/activity`
-    const response = await this.client.get(url, { cursor: params.cursor })
+    const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
+    const response = await this.client.get(url, { cursor: params.cursor, filter_types })
     const { data: { data: txns, cursor } } = response
     const data = txns.map((d: object) => new Transaction(this.client, d))
     return new ResourceList(data, this.list.bind(this), cursor)

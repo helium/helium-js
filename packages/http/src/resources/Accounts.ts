@@ -14,6 +14,10 @@ export default class Accounts {
     this.client = client
   }
 
+  fromAddress(address: string): Account {
+    return new Account(this.client, { address })
+  }
+
   async list(params: ListParams = {}): Promise<ResourceList> {
     const url = '/accounts'
     const response = await this.client.get(url, { cursor: params.cursor })

@@ -1,5 +1,7 @@
-# `@helium/crypto`
-![npm](https://img.shields.io/npm/v/@helium/crypto)
+# `@helium/http`
+![npm](https://img.shields.io/npm/v/@helium/http)
+
+An HTTP client for interfacing with the Helium blockchain. For more documentation on the underlying REST API, see the section on the [Helium Developer Site](https://developer.helium.com/blockchain/api).
 
 ## Installation
 
@@ -27,7 +29,7 @@ const client = new Client(Network.staging)
 client.endpoint //= https://api.helium.wtf/v1
 ```
 
-##### Networks
+##### Available Networks
 
 | Network | Base URL | Version |
 |----------------------|--------------------------|---------|
@@ -37,9 +39,13 @@ client.endpoint //= https://api.helium.wtf/v1
 ### Paginating Results
 
 #### Automatic Pagination
+Resource lists implement an asynchronous iterator, which allows for paginating over the whole collection while abstracting the underlying pages and cursors. This is great for an infinite scrolling UI, for example.
+
+The asynchronous iterator can be used directly via the `for-await-of` syntax:
 
 ```js
 for await (const account of client.accounts.list()) {
+  account //= Account
   // do something with account
 
   // after some condition is met, stop iterating
@@ -48,7 +54,18 @@ for await (const account of client.accounts.list()) {
 }
 ```
 
+There is also a helper, `take`, which returns the items in chunks:
+```js
+const list = await client.accounts.list()
+
+await list.take(20) //= first 20 accounts
+await list.take(20) //= next 20 accounts
+```
+
+
 #### Manual Pagination
+
+If you're on an older version of Node.js or simply want to use the built-in pagination directly, the following methods are provided:
 
 ```js
   const firstPage = await client.accounts.list()
@@ -64,6 +81,55 @@ for await (const account of client.accounts.list()) {
 
 #### Accounts
 
+##### Get an Account
+
+```js
+await client.accounts.get('an-account-address')
+```
+
+##### List Accounts
+```js
+await client.accounts.list()
+```
+
 #### Blocks
+##### Get a Block
+
+```js
+// get by block height
+await client.blocks.get(12345)
+
+// alternatively get by block hash
+await client.blocks.getHash('a-block-hash')
+```
+
+##### List Blocks
+```js
+await client.blocks.list()
+```
 
 #### Transactions
+##### Get Transaction Activity for an Account
+```js
+await client.account('an-account-address').activity.list()
+
+// optionally filter by transaction types
+await client.account('an-account-address').activity.list({
+  transactionTypes: ['payment_v1' ]
+})
+```
+
+##### Get Transactions from a Block
+```js
+const block = await client.blocks.get(12345)
+await block.transactions.list()
+```
+
+##### Submit a New Transaction
+```js
+const serializedTxn = 'a-base64-serialized-txn'
+const pendingTxn = await client.transactions.submit(serializedTxn)
+pendingTxn //= PendingTransaction
+```
+
+See [`@helium/transactions`](https://github.com/helium/helium-js) for instructions on constructing a serialized transaction.

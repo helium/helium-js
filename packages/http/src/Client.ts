@@ -4,20 +4,42 @@ import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
 import Accounts from './resources/Accounts'
+import type Account from './models/Account'
+import type Block from './models/Block'
+
+interface AccountFromAddressFn {
+  (address: string): Account
+}
+
+interface BlockFromHeightFn {
+  (height: number): Block
+}
 
 export default class Client {
   public network!: Network
 
-  public transactions!: Transactions
-  public blocks!: Blocks
-  public accounts!: Accounts
-
   constructor(network: Network = Network.production) {
     this.network = network
+  }
 
-    this.transactions = new Transactions(this)
-    this.blocks = new Blocks(this)
-    this.accounts = new Accounts(this)
+  public get accounts(): Accounts {
+    return new Accounts(this)
+  }
+
+  public get account(): AccountFromAddressFn {
+    return this.accounts.fromAddress.bind(this.accounts)
+  }
+
+  public get blocks(): Blocks {
+    return new Blocks(this)
+  }
+
+  public get block(): BlockFromHeightFn {
+    return this.blocks.fromHeight.bind(this.blocks)
+  }
+
+  public get transactions(): Transactions {
+    return new Transactions(this)
   }
 
   async get(path: string, params: Object = {}) {

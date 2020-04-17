@@ -2,7 +2,7 @@ const TICKER = 'HNT'
 const DC_TICKER = 'DC'
 const SEC_TICKER = 'ST'
 
-export class CurrencyType {
+export default class CurrencyType {
   public ticker: string
   public coefficient: number
 
@@ -21,22 +21,5 @@ export class CurrencyType {
 
   static get security(): CurrencyType {
     return new CurrencyType(SEC_TICKER, 0.00000001)
-  }
-}
-
-export class Balance {
-  public integerBalance: number
-  public type: CurrencyType
-
-  constructor(integerBalance: number, type: CurrencyType) {
-    this.integerBalance = integerBalance
-    this.type = type
-  }
-
-  toString(): string {
-    return [
-      this.integerBalance * this.type.coefficient,
-      this.type.ticker,
-    ].join( ' ')
   }
 }

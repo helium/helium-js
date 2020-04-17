@@ -14,6 +14,10 @@ export default class Blocks {
     this.client = client
   }
 
+  fromHeight(height: number): Block {
+    return new Block(this.client, { height })
+  }
+
   // TODO handle errors
   // TODO handle retry logic
   async list(params: ListParams = {}): Promise<ResourceList> {
