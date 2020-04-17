@@ -23,8 +23,8 @@ describe('get', () => {
     const client = new Client()
     const account = await client.accounts.get('my-address')
     expect(account.speculativeNonce).toBe(4)
-    expect(account.balance.integerBalance).toBe(10000)
-    expect(account.balance.toString()).toBe('0.0001 HNT')
+    expect(account.balance?.integerBalance).toBe(10000)
+    expect(account.balance?.toString()).toBe('0.0001 HNT')
   })
 })
 
