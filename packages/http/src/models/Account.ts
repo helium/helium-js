@@ -25,7 +25,7 @@ export default class Account {
   public dcBalance?: Balance
   public block?: number
   public balance?: Balance
-  public address?: string
+  public address: string
 
   constructor(client: Client, account: HTTPAccountObject) {
     this.client = client
@@ -38,10 +38,9 @@ export default class Account {
     this.block = account.block
     this.balance = account.balance ? new Balance(account.balance, CurrencyType.default) : undefined
     this.address = account.address
-
   }
 
   public get activity(): Transactions {
-    return new Transactions(this.client, { account: this })
+    return new Transactions(this.client, this)
   }
 }

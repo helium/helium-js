@@ -27,6 +27,6 @@ export default class Block {
   }
 
   public get transactions(): Transactions {
-    return new Transactions(this.client, { block: this })
+    return new Transactions(this.client, this)
   }
 }

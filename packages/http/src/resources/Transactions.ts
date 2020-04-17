@@ -1,14 +1,9 @@
 import type Client from '../Client'
-import type Block from '../models/Block'
-import type Account from '../models/Account'
+import Block from '../models/Block'
+import Account from '../models/Account'
 import Transaction from '../models/Transaction'
 import PendingTransaction from '../models/PendingTransaction'
 import ResourceList from '../ResourceList'
-
-interface TransactionContext {
-  block?: Block
-  account?: Account
-}
 
 interface ListParams {
   cursor?: string
@@ -17,13 +12,11 @@ interface ListParams {
 
 export default class Transactions {
   private client!: Client
-  private block?: Block
-  private account?: Account
+  private context?: Block | Account
 
-  constructor(client: Client, { block, account }: TransactionContext = {}) {
+  constructor(client: Client, context?: Block | Account) {
     this.client = client
-    this.block = block
-    this.account = account
+    this.context = context
   }
 
   async submit(txn: string): Promise<PendingTransaction> {
@@ -39,17 +32,18 @@ export default class Transactions {
   }
 
   async list(params: ListParams = {}): Promise<ResourceList> {
-    if (this.block) {
+    if (this.context instanceof Block) {
       return this.listFromBlock(params)
     }
-    if (this.account) {
+    if (this.context instanceof Account) {
       return this.listFromAccount(params)
     }
     throw new Error('Must provide a block or account to list transactions from')
   }
 
   private async listFromBlock(params: ListParams): Promise<ResourceList> {
-    const url = `/blocks/${this.block?.height}/transactions`
+    const block = this.context as Block
+    const url = `/blocks/${block.height}/transactions`
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: txns, cursor } } = response
     const data = txns.map((d: object) => new Transaction(this.client, d))
@@ -57,7 +51,8 @@ export default class Transactions {
   }
 
   private async listFromAccount(params: ListParams): Promise<ResourceList> {
-    const url = `/accounts/${this.account?.address}/activity`
+    const account = this.context as Account
+    const url = `/accounts/${account.address}/activity`
     const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
     const response = await this.client.get(url, { cursor: params.cursor, filter_types })
     const { data: { data: txns, cursor } } = response
