@@ -1,5 +1,5 @@
+import axios, { AxiosInstance } from 'axios'
 import qs from 'qs'
-import fetch from 'isomorphic-unfetch'
 import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
@@ -17,9 +17,13 @@ interface BlockFromHeightFn {
 
 export default class Client {
   public network!: Network
+  private axios!: AxiosInstance
 
   constructor(network: Network = Network.production) {
     this.network = network
+    this.axios = axios.create({	
+      baseURL: this.network.endpoint,	
+    })
   }
 
   public get accounts(): Accounts {
@@ -44,23 +48,11 @@ export default class Client {
 
   async get(path: string, params: Object = {}) {
     const query = qs.stringify(params)
-    const url = this.toURL(query.length > 0 ? [path, query].join('?') : path)
-    const response = await fetch(url)
-    const data = await response.json()
-    return { data }
+    const url = query.length > 0 ? [path, query].join('?') : path
+    return this.axios.get(url)
   }
 
   async post(path: string, params: Object = {}) {
-    const url = this.toURL(path)
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(params),
-    })
-    const data = await response.json()
-    return { data }
-  }
-
-  private toURL(path: string):string {
-    return [this.network.endpoint, path].join('')
+    return this.axios.post(path, params)
   }
 }
