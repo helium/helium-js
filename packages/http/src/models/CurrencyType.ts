@@ -1,6 +1,6 @@
 const TICKER = 'HNT'
 const DC_TICKER = 'DC'
-const SEC_TICKER = 'ST'
+const SEC_TICKER = 'STO'
 
 export default class CurrencyType {
   public ticker: string

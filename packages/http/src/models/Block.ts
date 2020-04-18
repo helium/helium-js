@@ -5,13 +5,13 @@ export interface HTTPBlockObject {
   transaction_count?: number
   time?: number
   prev_hash?: string
-  height: number
+  height?: number
   hash?: string
 }
 
 export default class Block {
   private client: Client
-  public height: number
+  public height?: number
   public transactionCount?: number
   public time?: number
   public prevHash?: string

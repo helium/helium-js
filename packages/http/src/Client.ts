@@ -11,8 +11,8 @@ interface AccountFromAddressFn {
   (address: string): Account
 }
 
-interface BlockFromHeightFn {
-  (height: number): Block
+interface BlockFromHeightOrHashFn {
+  (heightOrHash: number | string): Block
 }
 
 export default class Client {
@@ -38,8 +38,8 @@ export default class Client {
     return new Blocks(this)
   }
 
-  public get block(): BlockFromHeightFn {
-    return this.blocks.fromHeight.bind(this.blocks)
+  public get block(): BlockFromHeightOrHashFn {
+    return this.blocks.fromHeightOrHash.bind(this.blocks)
   }
 
   public get transactions(): Transactions {

@@ -14,8 +14,14 @@ export default class Blocks {
     this.client = client
   }
 
-  fromHeight(height: number): Block {
-    return new Block(this.client, { height })
+  fromHeightOrHash(heightOrHash: number | string): Block {
+    if (typeof heightOrHash === 'number') {
+      return new Block(this.client, { height: heightOrHash })
+    }
+    if (typeof heightOrHash === 'string') {
+      return new Block(this.client, { hash: heightOrHash })
+    }
+    throw new Error('heightOrHash must be a number or string')
   }
 
   // TODO handle errors
@@ -30,13 +36,16 @@ export default class Blocks {
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
-  async get(height: number): Promise<Block> {
-    const { data: { data: block } } = await this.client.get(`/blocks/${height}`)
-    return new Block(this.client, block)
-  }
-
-  async getHash(hash: string): Promise<Block> {
-    const { data: { data: block } } = await this.client.get(`/blocks/hash/${hash}`)
+  async get(heightOrHash: number | string): Promise<Block> {
+    let url
+    if (typeof heightOrHash === 'number') {
+      url = `/blocks/${heightOrHash}`
+    }
+    if (typeof heightOrHash === 'string') {
+      url = `/blocks/hash/${heightOrHash}`
+    }
+    if (!url) throw new Error('heightOrHash must be a number or string')
+    const { data: { data: block } } = await this.client.get(url)
     return new Block(this.client, block)
   }
 }

@@ -100,7 +100,7 @@ await client.accounts.list()
 await client.blocks.get(12345)
 
 // alternatively get by block hash
-await client.blocks.getHash('a-block-hash')
+await client.blocks.get('a-block-hash')
 ```
 
 ##### List Blocks
@@ -121,7 +121,12 @@ await client.account('an-account-address').activity.list({
 
 ##### Get Transactions from a Block
 ```js
+// inititalize block by height
 const block = await client.blocks.get(12345)
+
+// alternatively initialize block by hash
+const block = await client.blocks.get('fake-hash')
+
 await block.transactions.list()
 ```
 

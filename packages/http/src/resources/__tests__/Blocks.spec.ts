@@ -27,7 +27,7 @@ describe('list', () => {
   })
 })
 
-describe('get', () => {
+describe('get by height', () => {
   nock('https://api.helium.io')
     .get('/v1/blocks/289081')
     .reply(200, {
@@ -48,7 +48,7 @@ describe('get', () => {
   })
 })
 
-describe('getHash', () => {
+describe('get by hash', () => {
   nock('https://api.helium.io')
     .get('/v1/blocks/hash/WSvuFjPCvmyzlkW24OSbNAvk0i44q-OBqlMgjsfF3Is')
     .reply(200, {
@@ -61,10 +61,24 @@ describe('getHash', () => {
       },
     })
 
-  it('gets a block by height', async () => {
+  it('gets a block by hash', async () => {
     const client = new Client()
 
-    const block = await client.blocks.getHash('WSvuFjPCvmyzlkW24OSbNAvk0i44q-OBqlMgjsfF3Is')
+    const block = await client.blocks.get('WSvuFjPCvmyzlkW24OSbNAvk0i44q-OBqlMgjsfF3Is')
     expect(block.height).toBe(289081)
   })
 })
+
+describe('getByHashOrHeight', () => {
+  it('initializes a Block by height', () => {
+    const client = new Client()
+    const block = client.block(123)
+    expect(block.height).toBe(123)
+  });
+
+  it('initializes a Block by hash', () => {
+    const client = new Client()
+    const block = client.block('some-hash')
+    expect(block.hash).toBe('some-hash')
+  });
+});

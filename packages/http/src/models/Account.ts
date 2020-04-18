@@ -15,6 +15,11 @@ export interface HTTPAccountObject {
   address: string
 }
 
+function toBalance(value: number | undefined, type: CurrencyType): Balance | undefined {
+  if (value === undefined) return undefined
+  return new Balance(value, type)
+}
+
 export default class Account {
   private client: Client
   public speculativeNonce?: number
@@ -31,12 +36,12 @@ export default class Account {
     this.client = client
     this.speculativeNonce = account.speculative_nonce
     this.secNonce = account.sec_nonce
-    this.secBalance = account.sec_balance ? new Balance(account.sec_balance, CurrencyType.security) : undefined
+    this.secBalance = toBalance(account.sec_balance, CurrencyType.security)
     this.nonce = account.nonce
     this.dcNonce = account.dc_nonce
-    this.dcBalance = account.dc_balance ? new Balance(account.dc_balance, CurrencyType.data_credit) : undefined
+    this.dcBalance = toBalance(account.dc_balance, CurrencyType.data_credit)
     this.block = account.block
-    this.balance = account.balance ? new Balance(account.balance, CurrencyType.default) : undefined
+    this.balance = toBalance(account.balance, CurrencyType.default)
     this.address = account.address
   }
 

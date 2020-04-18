@@ -1,4 +1,5 @@
 import type Client from '../Client'
+import type { AnyTransaction, TxnJsonObject } from '../models/Transaction'
 import Block from '../models/Block'
 import Account from '../models/Account'
 import Transaction from '../models/Transaction'
@@ -8,6 +9,16 @@ import ResourceList from '../ResourceList'
 interface ListParams {
   cursor?: string
   filterTypes?: Array<string>
+}
+
+function transactionsUrlFromBlock(block: Block): string {
+  if (block.height) {
+    return `/blocks/${block.height}/transactions`
+  }
+  if (block.hash) {
+    return `/blocks/hash/${block.hash}/transactions`
+  }
+  throw new Error('Block must have either height or hash')
 }
 
 export default class Transactions {
@@ -25,13 +36,13 @@ export default class Transactions {
     return new PendingTransaction(data)
   }
 
-  async get(hash: string): Promise<Transaction> {
+  async get(hash: string): Promise<AnyTransaction> {
     const url = `/transactions/${hash}`
     const { data: { data } } = await this.client.get(url)
-    return new Transaction(this.client, data)
+    return Transaction.fromJsonObject(data)
   }
 
-  async list(params: ListParams = {}): Promise<ResourceList<any>> {
+  async list(params: ListParams = {}): Promise<ResourceList<AnyTransaction>> {
     if (this.context instanceof Block) {
       return this.listFromBlock(params)
     }
@@ -41,22 +52,22 @@ export default class Transactions {
     throw new Error('Must provide a block or account to list transactions from')
   }
 
-  private async listFromBlock(params: ListParams): Promise<ResourceList<any>> {
+  private async listFromBlock(params: ListParams): Promise<ResourceList<AnyTransaction>> {
     const block = this.context as Block
-    const url = `/blocks/${block.height}/transactions`
+    const url = transactionsUrlFromBlock(block)
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: txns, cursor } } = response
-    const data = txns.map((d: object) => new Transaction(this.client, d))
+    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
-  private async listFromAccount(params: ListParams): Promise<ResourceList<any>> {
+  private async listFromAccount(params: ListParams): Promise<ResourceList<AnyTransaction>> {
     const account = this.context as Account
     const url = `/accounts/${account.address}/activity`
     const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
     const response = await this.client.get(url, { cursor: params.cursor, filter_types })
     const { data: { data: txns, cursor } } = response
-    const data = txns.map((d: object) => new Transaction(this.client, d))
+    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 }

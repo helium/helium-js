@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3"
   },
   "devDependencies": {
