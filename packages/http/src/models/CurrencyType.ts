@@ -1,14 +1,15 @@
+import BigNumber from 'bignumber.js'
 const TICKER = 'HNT'
 const DC_TICKER = 'DC'
 const SEC_TICKER = 'STO'
 
 export default class CurrencyType {
   public ticker: string
-  public coefficient: number
+  public coefficient: BigNumber
 
   constructor(ticker: string, coefficient: number) {
     this.ticker = ticker
-    this.coefficient = coefficient
+    this.coefficient = new BigNumber(coefficient)
   }
 
   static get default(): CurrencyType {

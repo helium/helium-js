@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "bignumber.js": "^9.0.0",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3"
   },

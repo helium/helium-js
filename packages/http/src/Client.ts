@@ -4,11 +4,17 @@ import Network from './Network'
 import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
 import Accounts from './resources/Accounts'
+import Hotspots from './resources/Hotspots'
 import type Account from './models/Account'
 import type Block from './models/Block'
+import type Hotspot from './models/Hotspot'
 
 interface AccountFromAddressFn {
   (address: string): Account
+}
+
+interface HotspotFromAddressFn {
+  (address: string): Hotspot
 }
 
 interface BlockFromHeightOrHashFn {
@@ -44,6 +50,14 @@ export default class Client {
 
   public get transactions(): Transactions {
     return new Transactions(this)
+  }
+
+  public get hotspots(): Hotspots {
+    return new Hotspots(this)
+  }
+
+  public get hotspot(): HotspotFromAddressFn {
+    return this.hotspots.fromAddress.bind(this.hotspots)
   }
 
   async get(path: string, params: Object = {}) {

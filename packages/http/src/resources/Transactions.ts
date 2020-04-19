@@ -5,6 +5,7 @@ import Account from '../models/Account'
 import Transaction from '../models/Transaction'
 import PendingTransaction from '../models/PendingTransaction'
 import ResourceList from '../ResourceList'
+import Hotspot from '../models/Hotspot'
 
 interface ListParams {
   cursor?: string
@@ -21,11 +22,13 @@ function transactionsUrlFromBlock(block: Block): string {
   throw new Error('Block must have either height or hash')
 }
 
+type Context = Block | Account | Hotspot
+
 export default class Transactions {
   private client!: Client
-  private context?: Block | Account
+  private context?: Context
 
-  constructor(client: Client, context?: Block | Account) {
+  constructor(client: Client, context?: Context) {
     this.client = client
     this.context = context
   }
@@ -49,6 +52,9 @@ export default class Transactions {
     if (this.context instanceof Account) {
       return this.listFromAccount(params)
     }
+    if (this.context instanceof Hotspot) {
+      return this.listFromHotspot(params)
+    }
     throw new Error('Must provide a block or account to list transactions from')
   }
 
@@ -64,6 +70,16 @@ export default class Transactions {
   private async listFromAccount(params: ListParams): Promise<ResourceList<AnyTransaction>> {
     const account = this.context as Account
     const url = `/accounts/${account.address}/activity`
+    const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
+    const response = await this.client.get(url, { cursor: params.cursor, filter_types })
+    const { data: { data: txns, cursor } } = response
+    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
+    return new ResourceList(data, this.list.bind(this), cursor)
+  }
+
+  private async listFromHotspot(params: ListParams): Promise<ResourceList<AnyTransaction>> {
+    const hotspot = this.context as Hotspot
+    const url = `/hotspots/${hotspot.address}/activity`
     const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
     const response = await this.client.get(url, { cursor: params.cursor, filter_types })
     const { data: { data: txns, cursor } } = response

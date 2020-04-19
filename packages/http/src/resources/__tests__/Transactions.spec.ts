@@ -39,8 +39,8 @@ describe('get', () => {
 
   it('gets a transaction by hash', async () => {
     const client = new Client()
-    const txn = await client.transactions.get('fake-hash-1') as PaymentV1
-    expect(txn.amount).toBe(10000)
+    const txn = (await client.transactions.get('fake-hash-1')) as PaymentV1
+    expect(txn.amount.integerBalance).toBe(10000)
   })
 })
 
@@ -82,9 +82,9 @@ describe('list from account', () => {
     const list = await client
       .account('my-address')
       .activity.list({ filterTypes: ['payment_v1'] })
-    const payments = await list.take(2) as PaymentV1[]
-    expect(payments[0].amount).toBe(10000)
-    expect(payments[1].amount).toBe(20000)
+    const payments = (await list.take(2)) as PaymentV1[]
+    expect(payments[0].amount.integerBalance).toBe(10000)
+    expect(payments[1].amount.integerBalance).toBe(20000)
   })
 })
 
@@ -123,9 +123,9 @@ describe('list from block by height', () => {
   it('lists transactions', async () => {
     const client = new Client()
     const list = await client.block(12345).transactions.list()
-    const payments = await list.take(2) as PaymentV1[]
-    expect(payments[0].amount).toBe(10000)
-    expect(payments[1].amount).toBe(20000)
+    const payments = (await list.take(2)) as PaymentV1[]
+    expect(payments[0].amount.integerBalance).toBe(10000)
+    expect(payments[1].amount.integerBalance).toBe(20000)
   })
 })
 
@@ -164,9 +164,52 @@ describe('list from block by hash', () => {
   it('lists transactions', async () => {
     const client = new Client()
     const list = await client.block('fake-hash').transactions.list()
-    const payments = await list.take(2) as PaymentV1[]
-    expect(payments[0].amount).toBe(10000)
-    expect(payments[1].amount).toBe(20000)
+    const payments = (await list.take(2)) as PaymentV1[]
+    expect(payments[0].amount.integerBalance).toBe(10000)
+    expect(payments[1].amount.integerBalance).toBe(20000)
+  })
+})
+
+describe('list from hotspot', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-hotspot-address/activity')
+    .reply(200, {
+      data: [
+        {
+          type: 'assert_location_v1',
+          time: 1587251449,
+          staking_fee: 1,
+          payer: 'fake-payer-address',
+          owner: 'fake-owner-addres',
+          nonce: 1,
+          location: 'fake-h3-location',
+          lng: -123.03528172874591,
+          lat: 40.82000831418664,
+          height: 100000,
+          hash: 'fake-hash-1',
+          gateway: 'fake-gateway',
+          fee: 0,
+        },
+        {
+          type: 'add_gateway_v1',
+          time: 1587249256,
+          staking_fee: 1,
+          payer: 'fake-payer-address',
+          owner: 'fake-owner-address',
+          height: 100000,
+          hash: 'fake-hash-2',
+          gateway: 'fake-gateway',
+          fee: 0,
+        },
+      ],
+    })
+
+  it('lists transaction activity for an account', async () => {
+    const client = new Client()
+    const list = await client.hotspot('fake-hotspot-address').activity.list()
+    const txns = (await list.take(2)) as any[]
+    expect(txns[0].hash).toBe('fake-hash-1')
+    expect(txns[1].hash).toBe('fake-hash-2')
   })
 })
 

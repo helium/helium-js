@@ -1,5 +1,6 @@
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
+import Hotspots from '../resources/Hotspots'
 import CurrencyType from './CurrencyType'
 import Balance from './Balance'
 
@@ -47,5 +48,9 @@ export default class Account {
 
   public get activity(): Transactions {
     return new Transactions(this.client, this)
+  }
+
+  public get hotspots(): Hotspots {
+    return new Hotspots(this.client, this)
   }
 }

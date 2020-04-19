@@ -7,6 +7,10 @@ interface ListParams {
   cursor?: string
 }
 
+function stringIsInt(str: string): boolean {
+  return !!str.match(/^\d+$/)
+}
+
 export default class Blocks {
   private client!: Client
 
@@ -19,7 +23,11 @@ export default class Blocks {
       return new Block(this.client, { height: heightOrHash })
     }
     if (typeof heightOrHash === 'string') {
-      return new Block(this.client, { hash: heightOrHash })
+      if (stringIsInt(heightOrHash)) {
+        return new Block(this.client, { height: parseInt(heightOrHash) })
+      } else {
+        return new Block(this.client, { hash: heightOrHash })
+      }
     }
     throw new Error('heightOrHash must be a number or string')
   }
@@ -30,9 +38,7 @@ export default class Blocks {
     const {
       data: { data: blocks, cursor },
     } = await this.client.get('/blocks', { cursor: params.cursor })
-    const data = blocks.map(
-      (d: HTTPBlockObject) => new Block(this.client, d)
-    )
+    const data = blocks.map((d: HTTPBlockObject) => new Block(this.client, d))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
@@ -40,12 +46,17 @@ export default class Blocks {
     let url
     if (typeof heightOrHash === 'number') {
       url = `/blocks/${heightOrHash}`
-    }
-    if (typeof heightOrHash === 'string') {
-      url = `/blocks/hash/${heightOrHash}`
+    } else if (typeof heightOrHash === 'string') {
+      if (stringIsInt(heightOrHash)) {
+        url = `/blocks/${parseInt(heightOrHash)}`
+      } else {
+        url = `/blocks/hash/${heightOrHash}`
+      }
     }
     if (!url) throw new Error('heightOrHash must be a number or string')
-    const { data: { data: block } } = await this.client.get(url)
+    const {
+      data: { data: block },
+    } = await this.client.get(url)
     return new Block(this.client, block)
   }
 }
