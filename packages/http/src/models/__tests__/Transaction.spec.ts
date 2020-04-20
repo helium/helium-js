@@ -1,4 +1,4 @@
-import Transaction, { PaymentV2 } from '../Transaction'
+import Transaction, { PaymentV2, RewardsV1 } from '../Transaction'
 
 describe('PaymentV2', () => {
   it('exposes a totalAmount balance', () => {
@@ -20,5 +20,34 @@ describe('PaymentV2', () => {
     }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
     expect(txn.totalAmount.integerBalance).toBe(75)
+  })
+})
+
+describe('RewardsV1', () => {
+  it('exposes a totalAmount balance', () => {
+    const json = {
+      type: 'rewards_v1',
+      time: 1587424041,
+      start_epoch: 300165,
+      rewards: [
+        {
+          type: 'poc_witnesses',
+          gateway: 'fake-gateway-address',
+          amount: 2000,
+          account: 'fake-owner-address',
+        },
+        {
+          type: 'poc_witnesses',
+          gateway: 'fake-gateway-address',
+          amount: 1000,
+          account: 'fake-owner-address',
+        },
+      ],
+      height: 123456,
+      hash: 'fake-txn-hash',
+      end_epoch: 300195,
+    }
+    const txn = Transaction.fromJsonObject(json) as RewardsV1
+    expect(txn.totalAmount.integerBalance).toBe(3000)
   })
 })

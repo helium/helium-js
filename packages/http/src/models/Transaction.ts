@@ -6,6 +6,7 @@ export interface TxnJsonObject {
   type: string
   amount?: number
   payments?: any[]
+  rewards?: any[]
   fee?: number
 }
 
@@ -63,12 +64,13 @@ export interface RewardsV1 {
   height: number
   hash: string
   endEpoch: number
+  totalAmount: Balance
 }
 
 export interface Reward {
   type: string
   gateway: string
-  amount: number
+  amount: Balance
   account: string
 }
 
@@ -84,7 +86,7 @@ export default class Transaction {
       case 'add_gateway_v1':
         return this.toAddGatewayV1(json)
       case 'rewards_v1':
-        return this.toAddGatewayV1(json)
+        return this.toRewardsV1(json)
       default:
         return camelcaseKeys(json)
     }
@@ -124,6 +126,19 @@ export default class Transaction {
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {
-    return camelcaseKeys(json as RewardsV1)
+    const rewards = (json.rewards || []).map(r => ({
+      ...r,
+      amount: new Balance(r.amount, CurrencyType.default),
+    })) as Reward[]
+    const sumAmount = (json.rewards || []).reduce(
+      (sum, { amount }) => sum + amount,
+      0,
+    )
+    const totalAmount = new Balance(sumAmount, CurrencyType.default)
+    return camelcaseKeys({
+      ...json,
+      rewards,
+      totalAmount,
+    }) as RewardsV1
   }
 }
