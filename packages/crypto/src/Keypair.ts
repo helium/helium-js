@@ -43,6 +43,7 @@ export default class Keypair {
   }
 
   static async fromEntropy(entropy: Uint8Array | Buffer): Promise<Keypair> {
+    await sodium.ready
     const entropyBuffer = Buffer.from(entropy)
     if (Buffer.byteLength(entropyBuffer) !== 32) throw new Error('Invalid entropy, must be 32 bytes')
     const keypair = sodium.crypto_sign_seed_keypair(entropy)
