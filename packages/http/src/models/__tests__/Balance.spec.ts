@@ -26,4 +26,9 @@ describe('toString', () => {
     const balance = new Balance(1000000001, CurrencyType.default)
     expect(balance.toString(2)).toBe('10 HNT')
   });
+
+  it('does not round if the result would be 0 HNT', () => {
+    const balance = new Balance(10000, CurrencyType.default)
+    expect(balance.toString(2)).toBe('0.0001 HNT')
+  })
 })

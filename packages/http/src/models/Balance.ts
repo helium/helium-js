@@ -29,8 +29,13 @@ export default class Balance {
   toString(maxDecimalPlaces?: number): string {
     const number = this.bigBalance.times(this.type.coefficient)
     let numberString = number.toFormat(maxDecimalPlaces)
+    // if it's an integer, just show the integer
     if (parseInt(numberString.split('.')[1]) === 0) {
       numberString = numberString.split('.')[0]
+    }
+    // if the rounded amount is 0, then show the full amount
+    if (numberString === "0") {
+      numberString = number.toFormat()
     }
     return [
       numberString,
