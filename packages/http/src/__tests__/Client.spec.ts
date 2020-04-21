@@ -16,11 +16,9 @@ test('configure client with different endpoint', () => {
 
 describe('get', () => {
   it('creates a GET request to the full url', async () => {
-    nock('https://api.helium.io')
-      .get('/v1/greeting')
-      .reply(200, {
-        greeting: 'hello',
-      })
+    nock('https://api.helium.io').get('/v1/greeting').reply(200, {
+      greeting: 'hello',
+    })
 
     const client = new Client()
 
@@ -42,5 +40,20 @@ describe('post', () => {
 
     const { data } = await client.post('/greeting', params)
     expect(data.response).toBe('hey there!')
+  })
+})
+
+describe('retry logic', () => {
+  nock('https://api.helium.io').get('/v1/greeting').reply(503, 'bad gateway')
+
+  nock('https://api.helium.io').get('/v1/greeting').reply(200, {
+    greeting: 'hello',
+  })
+
+  it('retries requests with exponential backoff', async () => {
+    const client = new Client()
+    const { data } = await client.get('/greeting')
+
+    expect(data.greeting).toBe('hello')
   })
 })

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
+import * as rax from 'retry-axios'
 import qs from 'qs'
 import Network from './Network'
 import Transactions from './resources/Transactions'
@@ -30,6 +31,12 @@ export default class Client {
     this.axios = axios.create({	
       baseURL: this.network.endpoint,	
     })
+    this.axios.defaults.raxConfig = {
+      instance: this.axios,
+      retry: 5,
+      noResponseRetries: 5,
+    }
+    rax.attach(this.axios)
   }
 
   public get accounts(): Accounts {

@@ -32,8 +32,6 @@ export default class Blocks {
     throw new Error('heightOrHash must be a number or string')
   }
 
-  // TODO handle errors
-  // TODO handle retry logic
   async list(params: ListParams = {}): Promise<ResourceList<Block>> {
     const {
       data: { data: blocks, cursor },
