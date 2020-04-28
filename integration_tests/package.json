@@ -5,9 +5,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@helium/crypto": "^0.0.17",
-    "@helium/http": "^0.0.17",
-    "@helium/transactions": "^0.0.17"
+    "@helium/crypto": "^0.0.18",
+    "@helium/http": "^0.0.18",
+    "@helium/transactions": "^0.0.18"
   },
-  "version": "0.0.17"
+  "version": "0.0.18"
 }
