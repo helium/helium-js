@@ -51,7 +51,7 @@ export interface PaymentV2 {
   totalAmount: Balance
 }
 
-interface Payment {
+export interface Payment {
   payee: string
   amount: Balance
 }

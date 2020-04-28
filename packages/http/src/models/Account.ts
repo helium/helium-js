@@ -1,5 +1,6 @@
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
+import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
 import CurrencyType from './CurrencyType'
 import Balance from './Balance'
@@ -52,5 +53,9 @@ export default class Account {
 
   public get hotspots(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  public get pendingTransactions(): PendingTransactions {
+    return new PendingTransactions(this.client, this)
   }
 }
