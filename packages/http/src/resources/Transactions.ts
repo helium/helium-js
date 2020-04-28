@@ -55,7 +55,7 @@ export default class Transactions {
     if (this.context instanceof Hotspot) {
       return this.listFromHotspot(params)
     }
-    throw new Error('Must provide a block or account to list transactions from')
+    throw new Error('Must provide a block, account or hotspot to list transactions from')
   }
 
   private async listFromBlock(params: ListParams): Promise<ResourceList<AnyTransaction>> {
