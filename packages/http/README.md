@@ -137,4 +137,17 @@ const pendingTxn = await client.transactions.submit(serializedTxn)
 pendingTxn //= PendingTransaction
 ```
 
+#### Pending Transactions
+##### Check Status of Pending Transaction
+```js
+const pendingTxn = await client.pendingTransactions.get('fake-pending-txn-hash')
+```
+
+##### List Pending Transactions for an Account
+```js
+const list = await client.account('fake-address').pendingTransactions.list()
+const pendingTxns = await list.take(10)
+pendingTxns //= [PendingTransacion]
+```
+
 See [`@helium/transactions`](https://github.com/helium/helium-js) for instructions on constructing a serialized transaction.
