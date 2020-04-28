@@ -25,6 +25,25 @@ export interface AddGatewayV1 {
   fee: number
 }
 
+export interface AssertLocationV1 {
+  type: string
+  time: number
+  stakingFee: number
+  payerSignature: string
+  payer: string
+  ownerSignature: string
+  owner: string
+  nonce: number
+  location: string
+  lng: number
+  lat: number
+  height: number
+  hash: string
+  gatewaySignature: string
+  gateway: string
+  fee: number
+}
+
 export interface PaymentV1 {
   type: string
   time: number
@@ -74,7 +93,19 @@ export interface Reward {
   account: string
 }
 
-export type AnyTransaction = PaymentV1 | RewardsV1 | AddGatewayV1 | object
+export type AnyTransaction = PaymentV1 | RewardsV1 | AddGatewayV1 | AssertLocationV1 | object
+
+function prepareTxn(txn: any) {
+  if (txn.fee) {
+    txn.fee = new Balance(txn.fee, CurrencyType.data_credit)
+  }
+
+  if (txn.stakingFee) {
+    txn.stakingFee = new Balance(txn.stakingFee, CurrencyType.data_credit)
+  }
+
+  return camelcaseKeys(txn)
+}
 
 export default class Transaction {
   public static fromJsonObject(json: TxnJsonObject) {
@@ -88,17 +119,15 @@ export default class Transaction {
       case 'rewards_v1':
         return this.toRewardsV1(json)
       default:
-        return camelcaseKeys(json)
+        return prepareTxn(json)
     }
   }
 
   static toPaymentV1(json: TxnJsonObject): PaymentV1 {
     const amount = new Balance(json.amount, CurrencyType.default)
-    const fee = new Balance(json.fee, CurrencyType.data_credit)
-    return camelcaseKeys({
+    return prepareTxn({
       ...json,
       amount,
-      fee,
     }) as PaymentV1
   }
 
@@ -112,17 +141,19 @@ export default class Transaction {
       0,
     )
     const totalAmount = new Balance(sumAmount, CurrencyType.default)
-    const fee = new Balance(json.fee, CurrencyType.data_credit)
-    return camelcaseKeys({
+    return prepareTxn({
       ...json,
       payments,
-      fee,
       totalAmount,
     }) as PaymentV2
   }
 
   static toAddGatewayV1(json: TxnJsonObject): AddGatewayV1 {
-    return camelcaseKeys(json as AddGatewayV1)
+    return prepareTxn(json) as AddGatewayV1
+  }
+
+  static toAssertLocationV1(json: TxnJsonObject): AssertLocationV1 {
+    return prepareTxn(json) as AssertLocationV1
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {
@@ -135,7 +166,7 @@ export default class Transaction {
       0,
     )
     const totalAmount = new Balance(sumAmount, CurrencyType.default)
-    return camelcaseKeys({
+    return prepareTxn({
       ...json,
       rewards,
       totalAmount,

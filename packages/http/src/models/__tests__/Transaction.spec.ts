@@ -1,7 +1,7 @@
 import Transaction, { PaymentV2, RewardsV1 } from '../Transaction'
 
 describe('PaymentV2', () => {
-  it('exposes a totalAmount balance', () => {
+  it('exposes balances for currency fields', () => {
     const json = {
       type: 'payment_v2',
       time: 1587132741,
@@ -16,10 +16,11 @@ describe('PaymentV2', () => {
       nonce: 1,
       height: 295781,
       hash: 'EZN6c6pZZZxii8vnGN10KxC-O3YvaEXTSEifl0ckUyQ',
-      fee: 0,
+      fee: 3,
     }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
     expect(txn.totalAmount.integerBalance).toBe(75)
+    expect(txn.fee.integerBalance).toBe(3)
   })
 })
 
