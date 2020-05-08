@@ -4,18 +4,21 @@ import CurrencyType from './CurrencyType'
 
 export interface HTTPPendingTransactionObject {
   type: string
-  txn: object
+  txn: object | null
   status: string
   hash: string
-  failed_reason: string
+  failed_reason: string | null
   created_at: string
   updated_at: string
 }
 
-function processTxn(type: string, rawTxn: any): any {
+function processTxn(transaction: HTTPPendingTransactionObject): any {
+  if (transaction.status === 'received') return null
+
+  const rawTxn = transaction.txn as any
   const txn = camelcaseKeys(rawTxn)
 
-  switch (type) {
+  switch (transaction.type) {
     case 'payment_v1':
       return {
         ...txn,
@@ -41,13 +44,13 @@ export default class PendingTransaction {
   public txn: any
   public status: string
   public hash: string
-  public failedReason: string
+  public failedReason: string | null
   public createdAt: string
   public updatedAt: string
 
   constructor(transaction: HTTPPendingTransactionObject) {
     this.type = transaction.type
-    this.txn = processTxn(transaction.type, transaction.txn)
+    this.txn = processTxn(transaction)
     this.status = transaction.status
     this.failedReason = transaction.failed_reason
     this.hash = transaction.hash
