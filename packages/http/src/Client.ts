@@ -7,6 +7,7 @@ import Blocks from './resources/Blocks'
 import Accounts from './resources/Accounts'
 import Hotspots from './resources/Hotspots'
 import Challenges from './resources/Challenges'
+import Stats from './resources/Stats'
 import PendingTransactions from './resources/PendingTransactions'
 import type Account from './models/Account'
 import type Block from './models/Block'
@@ -75,6 +76,10 @@ export default class Client {
 
   public get pendingTransactions(): PendingTransactions {
     return new PendingTransactions(this)
+  }
+
+  public get stats(): Stats {
+    return new Stats(this)
   }
 
   async get(path: string, params: Object = {}) {
