@@ -9,7 +9,7 @@ interface ListParams {
 
 type Context = Account
 
-export default class Accounts {
+export default class Hotspots {
   private client!: Client
   private context?: Context
 

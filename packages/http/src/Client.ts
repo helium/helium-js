@@ -6,6 +6,7 @@ import Transactions from './resources/Transactions'
 import Blocks from './resources/Blocks'
 import Accounts from './resources/Accounts'
 import Hotspots from './resources/Hotspots'
+import Challenges from './resources/Challenges'
 import PendingTransactions from './resources/PendingTransactions'
 import type Account from './models/Account'
 import type Block from './models/Block'
@@ -66,6 +67,10 @@ export default class Client {
 
   public get hotspot(): HotspotFromAddressFn {
     return this.hotspots.fromAddress.bind(this.hotspots)
+  }
+
+  public get challenges(): Challenges {
+    return new Challenges(this)
   }
 
   public get pendingTransactions(): PendingTransactions {
