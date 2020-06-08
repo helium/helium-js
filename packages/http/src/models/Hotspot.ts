@@ -13,6 +13,8 @@ export interface HTTPHotspotObject {
   block?: number
   geocode?: HTTPGeocodeObject
   address: string
+  status?: Status
+  nonce?: number
 }
 
 interface HTTPGeocodeObject {
@@ -37,6 +39,12 @@ interface Geocode {
   longCity: string
 }
 
+interface Status {
+  gps: string
+  height: number
+  online: string
+}
+
 export default class Hotspot {
   private client: Client
   public scoreUpdateHeight?: number
@@ -49,6 +57,8 @@ export default class Hotspot {
   public block?: number
   public geocode?: Geocode
   public address: string
+  public status?: Status
+  public nonce?: number
 
   constructor(client: Client, hotspot: HTTPHotspotObject) {
     this.client = client
@@ -60,6 +70,8 @@ export default class Hotspot {
     this.lng = hotspot.lng
     this.lat = hotspot.lat
     this.block = hotspot.block
+    this.status = hotspot.status
+    this.nonce = hotspot.nonce
     if (hotspot.geocode) {
       this.geocode = camelcaseKeys(hotspot.geocode) as any
     }
