@@ -33,7 +33,7 @@
     "retry-axios": "^2.1.2"
   },
   "devDependencies": {
-    "@types/qs": "6.9.2"
+    "@types/qs": "6.9.3"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
