@@ -57,4 +57,9 @@ export default class Blocks {
     } = await this.client.get(url)
     return new Block(this.client, block)
   }
+
+  async getHeight(): Promise<number> {
+    const { data: { data: { height } } } = await this.client.get('/blocks/height')
+    return height
+  }
 }
