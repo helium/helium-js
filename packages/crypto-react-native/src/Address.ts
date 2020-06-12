@@ -1,9 +1,9 @@
 import { bs58CheckEncode, bs58ToBin } from './utils'
 
 export default class Address {
-  public publicKey!: string
+  public publicKey!: Uint8Array
 
-  constructor(publicKey: string) {
+  constructor(publicKey: Uint8Array) {
     this.publicKey = publicKey
   }
 
@@ -24,6 +24,6 @@ export default class Address {
   }
 
   static fromBin(bin: Uint8Array): Address {
-    return new Address(Buffer.from(bin).slice(1).toString())
+    return new Address(Buffer.from(bin).slice(1))
   }
 }

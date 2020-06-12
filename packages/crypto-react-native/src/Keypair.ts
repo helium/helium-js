@@ -10,13 +10,13 @@ interface SodiumKeyPair {
 // extend SodiumKeyPair?
 export default class Keypair {
   public keypair!: SodiumKeyPair
-  public publicKey!: string
-  public privateKey!: string
+  public publicKey!: Buffer
+  public privateKey!: Buffer
 
   constructor(keypair: SodiumKeyPair) {
     this.keypair = keypair
-    this.publicKey = keypair.pk
-    this.privateKey = keypair.sk
+    this.publicKey = Buffer.from(keypair.pk, 'base64')
+    this.privateKey = Buffer.from(keypair.sk, 'base64')
   }
 
   get address(): Address {
@@ -43,13 +43,20 @@ export default class Keypair {
 
   static async fromEntropy(entropy: Uint8Array | Buffer): Promise<Keypair> {
     const entropyBuffer = Buffer.from(entropy)
-    if (Buffer.byteLength(entropyBuffer) !== 32) throw new Error('Invalid entropy, must be 32 bytes')
-    const keypair = await Sodium.crypto_sign_seed_keypair(entropy.toString())
+    if (Buffer.byteLength(entropyBuffer) !== 32)
+      throw new Error('Invalid entropy, must be 32 bytes')
+    const keypair = await Sodium.crypto_sign_seed_keypair(
+      entropyBuffer.toString('base64'),
+    )
     return new Keypair(keypair)
   }
 
-  async sign(message: string | Uint8Array): Promise<string> {
-    const signature = await Sodium.crypto_sign_detached(message.toString(), this.privateKey)
-    return signature
+  async sign(message: string | Uint8Array): Promise<Buffer> {
+    const messageBuffer = Buffer.from(message)
+    const signature = await Sodium.crypto_sign_detached(
+      messageBuffer.toString('base64'),
+      this.privateKey.toString('base64'),
+    )
+    return Buffer.from(signature, 'base64')
   }
 }
