@@ -105,3 +105,20 @@ describe('getByHashOrHeight', () => {
     expect(block.hash).toBe('123some-hash')
   })
 })
+
+describe('get height', () => {
+  nock('https://api.helium.io')
+    .get('/v1/blocks/height')
+    .reply(200, {
+      data: {
+        height: 369627,
+      },
+    })
+
+  it('gets current block height', async () => {
+    const client = new Client()
+
+    const height = await client.blocks.getHeight()
+    expect(height).toBe(369627)
+  })
+})

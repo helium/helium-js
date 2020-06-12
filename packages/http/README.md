@@ -108,6 +108,11 @@ await client.blocks.get('a-block-hash')
 await client.blocks.list()
 ```
 
+##### Current Block Height
+```js
+await client.blocks.getHeight()
+```
+
 #### Transactions
 ##### Get Transaction Activity for an Account
 ```js
