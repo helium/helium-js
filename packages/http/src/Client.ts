@@ -8,6 +8,7 @@ import Accounts from './resources/Accounts'
 import Hotspots from './resources/Hotspots'
 import Challenges from './resources/Challenges'
 import Stats from './resources/Stats'
+import Vars from './resources/Vars'
 import PendingTransactions from './resources/PendingTransactions'
 import type Account from './models/Account'
 import type Block from './models/Block'
@@ -80,6 +81,10 @@ export default class Client {
 
   public get stats(): Stats {
     return new Stats(this)
+  }
+
+  public get vars(): Vars {
+    return new Vars(this)
   }
 
   async get(path: string, params: Object = {}) {
