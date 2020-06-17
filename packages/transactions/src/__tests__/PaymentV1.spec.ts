@@ -1,5 +1,9 @@
-import { PaymentV1 } from '..'
-import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
+import { PaymentV1, Transaction } from '..'
+import {
+  usersFixture,
+  bobB58,
+  aliceB58,
+} from '../../../../integration_tests/fixtures/users'
 
 const paymentFixture = async () => {
   const { bob, alice } = await usersFixture()
@@ -13,7 +17,6 @@ const paymentFixture = async () => {
     signature: "bob's signature",
   })
 }
-
 
 test('create a payment txn', async () => {
   const payment = await paymentFixture()
@@ -33,10 +36,11 @@ describe('serialize', () => {
 
   it('serializes to base64 string', async () => {
     const payment = await paymentFixture()
-    expect(payment.toString()).toBe('Ql0KIQE1GnHCL+/sIjGTatKCayF+zjnZ93/GxJY5kmKZw4aSlRIhAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkGAogAygBMg9ib2IncyBzaWduYXR1cmU=')
+    expect(payment.toString()).toBe(
+      'Ql0KIQE1GnHCL+/sIjGTatKCayF+zjnZ93/GxJY5kmKZw4aSlRIhAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkGAogAygBMg9ib2IncyBzaWduYXR1cmU=',
+    )
   })
 })
-
 
 describe('sign', () => {
   it('adds the payer signature', async () => {
@@ -52,6 +56,20 @@ describe('sign', () => {
 
     if (!signedPayment.signature) throw new Error('null')
 
-    expect(Buffer.from(signedPayment.signature).toString('base64')).toBe('yxLonpII3WdNiNg99WaRlS623HzkxIqPM7Vvjr62JtFnZrSP4zudIvz6vP/U9arXIlDbiyvO5nfiNM6tPmuzBw==')
+    expect(Buffer.from(signedPayment.signature).toString('base64')).toBe(
+      'yxLonpII3WdNiNg99WaRlS623HzkxIqPM7Vvjr62JtFnZrSP4zudIvz6vP/U9arXIlDbiyvO5nfiNM6tPmuzBw==',
+    )
+  })
+})
+
+describe('configure txn fields', () => {
+  it('sets txn multiplier', () => {
+    Transaction.txnFeeMultiplier = 100
+    expect(PaymentV1.txnFeeMultiplier).toBe(100)
+  })
+
+  it('sets dc payload size', () => {
+    Transaction.dcPayloadSize = 24
+    expect(PaymentV1.dcPayloadSize).toBe(24)
   })
 })

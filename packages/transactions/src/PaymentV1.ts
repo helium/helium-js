@@ -1,6 +1,7 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import { toUint8Array } from './utils'
+import { Addressable, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
@@ -9,16 +10,6 @@ interface PaymentOptions {
   fee?: number
   nonce?: number
   signature?: Uint8Array | string
-}
-
-interface SignableKeypair {
-  sign(message: string | Uint8Array): Promise<Uint8Array>
-}
-
-interface Addressable {
-  bin: Uint8Array
-  b58: string
-  publicKey: Uint8Array
 }
 
 interface SignOptions {
