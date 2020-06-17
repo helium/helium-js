@@ -1,6 +1,7 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import { toUint8Array } from './utils'
+import { Addressable, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
@@ -13,16 +14,6 @@ interface PaymentOptions {
 interface Payment {
   payee: Addressable
   amount: number
-}
-
-interface SignableKeypair {
-  sign(message: string | Uint8Array): Promise<Uint8Array>
-}
-
-interface Addressable {
-  bin: Uint8Array
-  b58: string
-  publicKey: Uint8Array
 }
 
 interface SignOptions {
@@ -48,21 +39,21 @@ export default class PaymentV2 extends Transaction {
   serialize(): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
 
-    const paymentV2 = this.toPaymentProto()
+    const paymentV2 = this.toProto()
     const txn = BlockchainTxn.create({ paymentV2 })
     return BlockchainTxn.encode(txn).finish()
   }
 
   async sign({ payer: payerKeypair }: SignOptions): Promise<PaymentV2> {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
-    const payment = this.toPaymentProto()
+    const payment = this.toProto()
     const serialized = PaymentTxn.encode(payment).finish()
     const signature = await payerKeypair.sign(serialized)
     this.signature = signature
     return this
   }
 
-  private toPaymentProto(): proto.helium.blockchain_txn_payment_v2 {
+  private toProto(): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
 
