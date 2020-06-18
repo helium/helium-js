@@ -36,8 +36,10 @@ export default class AssertLocationV1 extends Transaction {
     this.payer = opts.payer
     this.location = opts.location
     this.nonce = opts.nonce
-    this.stakingFee = Transaction.stakingFeeTxnAssertLocationV1
+    this.stakingFee = 0
+    this.fee = 0
     this.fee = this.calculateFee()
+    this.stakingFee = Transaction.stakingFeeTxnAssertLocationV1
   }
 
   serialize(): Uint8Array {
@@ -49,7 +51,7 @@ export default class AssertLocationV1 extends Transaction {
 
   async sign(keypairs: SignOptions): Promise<AssertLocationV1> {
     const AssertLocation = proto.helium.blockchain_txn_assert_location_v1
-    const assertLocation = this.toProto()
+    const assertLocation = this.toProto(true)
     const serialized = AssertLocation.encode(assertLocation).finish()
 
     if (keypairs.owner) {
@@ -70,15 +72,26 @@ export default class AssertLocationV1 extends Transaction {
     return this
   }
 
-  private toProto(): proto.helium.blockchain_txn_assert_location_v1 {
+  private toProto(
+    forSigning: boolean = false,
+  ): proto.helium.blockchain_txn_assert_location_v1 {
     const AssertLocation = proto.helium.blockchain_txn_assert_location_v1
     return AssertLocation.create({
       owner: this.owner ? toUint8Array(this.owner.bin) : null,
       gateway: this.gateway ? toUint8Array(this.gateway.bin) : null,
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
-      ownerSignature: this.ownerSignature ? toUint8Array(this.ownerSignature) : null,
-      gatewaySignature: this.gatewaySignature ? toUint8Array(this.gatewaySignature) : null,
-      payerSignature: this.payerSignature ? toUint8Array(this.payerSignature) : null,
+      ownerSignature:
+        this.ownerSignature && !forSigning
+          ? toUint8Array(this.ownerSignature)
+          : null,
+      gatewaySignature:
+        this.gatewaySignature && !forSigning
+          ? toUint8Array(this.gatewaySignature)
+          : null,
+      payerSignature:
+        this.payerSignature && !forSigning
+          ? toUint8Array(this.payerSignature)
+          : null,
       stakingFee: this.stakingFee,
       fee: this.fee,
       location: this.location,

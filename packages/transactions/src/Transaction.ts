@@ -34,9 +34,10 @@ export default abstract class Transaction {
     return Buffer.from(this.serialize()).toString('base64')
   }
 
-  static calculateFee(payload: Uint8Array) {
-    const payloadBytes = payload.byteLength
-    const payloadSize = payloadBytes * Transaction.txnFeeMultiplier
-    return Math.ceil(payloadSize / Transaction.dcPayloadSize)
+  static calculateFee(payload: Uint8Array): number {
+    return (
+      Math.ceil(payload.byteLength / Transaction.dcPayloadSize) *
+      Transaction.txnFeeMultiplier
+    )
   }
 }

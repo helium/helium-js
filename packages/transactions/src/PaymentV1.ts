@@ -28,6 +28,7 @@ export default class PaymentV1 extends Transaction {
     this.payee = opts.payee
     this.amount = opts.amount
     this.nonce = opts.nonce
+    this.fee = 0
     this.fee = this.calculateFee()
   }
 
@@ -40,14 +41,16 @@ export default class PaymentV1 extends Transaction {
 
   async sign({ payer: payerKeypair }: SignOptions): Promise<PaymentV1> {
     const Payment = proto.helium.blockchain_txn_payment_v1
-    const payment = this.toProto()
+    const payment = this.toProto(true)
     const serialized = Payment.encode(payment).finish()
     const signature = await payerKeypair.sign(serialized)
     this.signature = signature
     return this
   }
 
-  private toProto(): proto.helium.blockchain_txn_payment_v1 {
+  private toProto(
+    forSigning: boolean = false,
+  ): proto.helium.blockchain_txn_payment_v1 {
     const Payment = proto.helium.blockchain_txn_payment_v1
     return Payment.create({
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
@@ -55,10 +58,11 @@ export default class PaymentV1 extends Transaction {
       amount: this.amount,
       fee: this.fee,
       nonce: this.nonce,
-      signature: this.signature ? toUint8Array(this.signature) : null,
+      signature:
+        this.signature && !forSigning ? toUint8Array(this.signature) : null,
     })
   }
-  
+
   calculateFee(): number {
     this.signature = EMPTY_SIGNATURE
     const payload = this.serialize()

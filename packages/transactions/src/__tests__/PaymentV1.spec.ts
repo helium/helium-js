@@ -30,7 +30,7 @@ test('create a payment txn', async () => {
   expect(payment.payee?.b58).toBe(aliceB58)
   expect(payment.amount).toBe(10)
   expect(payment.nonce).toBe(1)
-  expect(payment.fee).toBe(29792)
+  expect(payment.fee).toBe(35000)
 })
 
 describe('serialize', () => {

@@ -30,8 +30,10 @@ export default class AddGatewayV1 extends Transaction {
     this.owner = opts.owner
     this.gateway = opts.gateway
     this.payer = opts.payer
-    this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+    this.stakingFee = 0
+    this.fee = 0
     this.fee = this.calculateFee()
+    this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
   }
 
   serialize(): Uint8Array {
@@ -43,7 +45,7 @@ export default class AddGatewayV1 extends Transaction {
 
   async sign(keypairs: SignOptions): Promise<AddGatewayV1> {
     const AddGateway = proto.helium.blockchain_txn_add_gateway_v1
-    const addGateway = this.toProto()
+    const addGateway = this.toProto(true)
     const serialized = AddGateway.encode(addGateway).finish()
 
     if (keypairs.owner) {
@@ -64,15 +66,26 @@ export default class AddGatewayV1 extends Transaction {
     return this
   }
 
-  private toProto(): proto.helium.blockchain_txn_add_gateway_v1 {
+  private toProto(
+    forSigning: boolean = false,
+  ): proto.helium.blockchain_txn_add_gateway_v1 {
     const AddGateway = proto.helium.blockchain_txn_add_gateway_v1
     return AddGateway.create({
       owner: this.owner ? toUint8Array(this.owner.bin) : null,
       gateway: this.gateway ? toUint8Array(this.gateway.bin) : null,
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
-      ownerSignature: this.ownerSignature ? toUint8Array(this.ownerSignature) : null,
-      gatewaySignature: this.gatewaySignature ? toUint8Array(this.gatewaySignature) : null,
-      payerSignature: this.payerSignature ? toUint8Array(this.payerSignature) : null,
+      ownerSignature:
+        this.ownerSignature && !forSigning
+          ? toUint8Array(this.ownerSignature)
+          : null,
+      gatewaySignature:
+        this.gatewaySignature && !forSigning
+          ? toUint8Array(this.gatewaySignature)
+          : null,
+      payerSignature:
+        this.payerSignature && !forSigning
+          ? toUint8Array(this.payerSignature)
+          : null,
       stakingFee: this.stakingFee,
       fee: this.fee,
     })

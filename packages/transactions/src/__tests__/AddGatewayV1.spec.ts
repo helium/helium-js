@@ -26,7 +26,7 @@ test('create an add gateway txn', async () => {
   const addGw = await addGatewayFixture()
   expect(addGw.owner?.b58).toBe(bobB58)
   expect(addGw.gateway?.b58).toBe(aliceB58)
-  expect(addGw.fee).toBe(43750)
+  expect(addGw.fee).toBe(45000)
   expect(addGw.stakingFee).toBe(4000000)
 })
 
@@ -42,7 +42,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.addGateway?.fee.toNumber()).toBe(43750)
+    expect(decoded.addGateway?.fee.toNumber()).toBe(45000)
   })
 })
 

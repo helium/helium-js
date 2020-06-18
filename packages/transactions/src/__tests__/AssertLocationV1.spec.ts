@@ -30,7 +30,7 @@ test('create an assert location txn', async () => {
   expect(txn.gateway?.b58).toBe(aliceB58)
   expect(txn.location).toBe('8c383092841a7ff')
   expect(txn.nonce).toBe(1)
-  expect(txn.fee).toBe(47500)
+  expect(txn.fee).toBe(50000)
   expect(txn.stakingFee).toBe(1000000)
 })
 
@@ -46,7 +46,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.assertLocation?.fee.toNumber()).toBe(47500)
+    expect(decoded.assertLocation?.fee.toNumber()).toBe(50000)
   })
 })
 
