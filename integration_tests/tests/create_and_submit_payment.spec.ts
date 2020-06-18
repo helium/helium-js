@@ -19,7 +19,7 @@ test('create and submit a payment txn', async () => {
   const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
   const serializedTxn = signedPaymentTxn.toString()
   expect(serializedTxn).toBe(
-    'Qo4BCiEBNRpxwi/v7CIxk2rSgmshfs452fd/xsSWOZJimcOGkpUSIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBgKIAAoATJAfwNjBkMvaeA/QJuI2tayI2E21H4/wve5NCbRqRFc45ixUj9SZXL+n6XusSqGoG7CKGFjXtWseu3XX/B0gIMDBg==',
+    'QowBCiEBNRpxwi/v7CIxk2rSgmshfs452fd/xsSWOZJimcOGkpUSIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBgKKAEyQMsS6J6SCN1nTYjYPfVmkZUuttx85MSKjzO1b46+tibRZ2a0j+M7nSL8+rz/1PWq1yJQ24srzuZ34jTOrT5rswc=',
   )
 
   nock('https://api.helium.io')
@@ -57,7 +57,7 @@ test('create and submit a PaymentV2 txn', async () => {
   const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
   const serializedTxn = signedPaymentTxn.toString()
   expect(serializedTxn).toBe(
-    'wgGQAQohATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVEiUKIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBAKGAAgASpAHE6gcCKf7tv31cWvIZeSlk6llAA219/m4ETmsLva3qIlO7U2ljfmf91nPJiijeQ6dRwxlqu+fmwh5bk5Qkt3BA=='
+    'wgGOAQohATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVEiUKIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBAKIAEqQK88GjmG9CrESHVdcL//ZfWD+KsBnbKmZqKlx8oD89FUms7OjZNcL5NiQ4o0jREg+ahkjc2jX4SgKBBniM+QoAA='
   )
 
   nock('https://api.helium.io')

@@ -67,7 +67,7 @@ export default class PaymentV2 extends Transaction {
     return PaymentTxn.create({
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
       payments,
-      fee: this.fee,
+      fee: this.fee && this.fee > 0 ? this.fee : null,
       nonce: this.nonce,
       signature:
         this.signature && !forSigning ? toUint8Array(this.signature) : null,

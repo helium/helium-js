@@ -87,7 +87,7 @@ export default class AddGatewayV1 extends Transaction {
           ? toUint8Array(this.payerSignature)
           : null,
       stakingFee: this.stakingFee,
-      fee: this.fee,
+      fee: this.fee && this.fee > 0 ? this.fee : null,
     })
   }
 
