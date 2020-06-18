@@ -1,17 +1,12 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array } from './utils'
+import { toUint8Array, EMPTY_SIGNATURE } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface AddGatewayOptions {
   owner?: Addressable
   gateway?: Addressable
   payer?: Addressable
-  ownerSignature?: Uint8Array | string
-  gatewaySignature?: Uint8Array | string
-  payerSignature?: Uint8Array | string
-  stakingFee?: number
-  fee?: number
 }
 
 interface SignOptions {
@@ -24,9 +19,9 @@ export default class AddGatewayV1 extends Transaction {
   public owner?: Addressable
   public gateway?: Addressable
   public payer?: Addressable
-  public ownerSignature?: Uint8Array | string
-  public gatewaySignature?: Uint8Array | string
-  public payerSignature?: Uint8Array | string
+  public ownerSignature?: Uint8Array
+  public gatewaySignature?: Uint8Array
+  public payerSignature?: Uint8Array
   public stakingFee?: number
   public fee?: number
 
@@ -35,11 +30,8 @@ export default class AddGatewayV1 extends Transaction {
     this.owner = opts.owner
     this.gateway = opts.gateway
     this.payer = opts.payer
-    this.stakingFee = opts.stakingFee
-    this.fee = opts.fee
-    this.ownerSignature = opts.ownerSignature
-    this.gatewaySignature = opts.gatewaySignature
-    this.payerSignature = opts.payerSignature
+    this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+    this.fee = this.calculateFee()
   }
 
   serialize(): Uint8Array {
@@ -84,5 +76,15 @@ export default class AddGatewayV1 extends Transaction {
       stakingFee: this.stakingFee,
       fee: this.fee,
     })
+  }
+
+  calculateFee(): number {
+    this.ownerSignature = EMPTY_SIGNATURE
+    this.gatewaySignature = EMPTY_SIGNATURE
+    if (this.payer) {
+      this.payerSignature = EMPTY_SIGNATURE
+    }
+    const payload = this.serialize()
+    return Transaction.calculateFee(payload)
   }
 }

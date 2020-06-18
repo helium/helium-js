@@ -1,9 +1,17 @@
-import { AddGatewayV1 } from '..'
+import proto from '@helium/proto'
+import { AddGatewayV1, Transaction } from '..'
 import {
   usersFixture,
   bobB58,
   aliceB58,
 } from '../../../../integration_tests/fixtures/users'
+
+Transaction.config({
+  txnFeeMultiplier: 5000,
+  dcPayloadSize: 24,
+  stakingFeeTxnAddGatewayV1: 40 * 100000,
+  stakingFeeTxnAssertLocationV1: 10 * 100000,
+})
 
 const addGatewayFixture = async () => {
   const { bob, alice } = await usersFixture()
@@ -11,10 +19,6 @@ const addGatewayFixture = async () => {
   return new AddGatewayV1({
     owner: bob.address,
     gateway: alice.address,
-    fee: 3,
-    stakingFee: 100,
-    ownerSignature: "bob's signature",
-    gatewaySignature: "alice's signature",
   })
 }
 
@@ -22,23 +26,23 @@ test('create an add gateway txn', async () => {
   const addGw = await addGatewayFixture()
   expect(addGw.owner?.b58).toBe(bobB58)
   expect(addGw.gateway?.b58).toBe(aliceB58)
-  expect(addGw.fee).toBe(3)
-  expect(addGw.stakingFee).toBe(100)
-  expect(addGw.ownerSignature).toBe("bob's signature")
-  expect(addGw.gatewaySignature).toBe("alice's signature")
+  expect(addGw.fee).toBe(43750)
+  expect(addGw.stakingFee).toBe(4000000)
 })
 
 describe('serialize', () => {
   it('serializes an add gw txn', async () => {
     const txn = await addGatewayFixture()
-    expect(txn.serialize().length).toBe(112)
+    expect(txn.serialize().length).toBeGreaterThan(0)
   })
 
   it('serializes to base64 string', async () => {
     const txn = await addGatewayFixture()
-    expect(txn.toString()).toBe(
-      'Cm4KIQE1GnHCL+/sIjGTatKCayF+zjnZ93/GxJY5kmKZw4aSlRIhAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkGg9ib2IncyBzaWduYXR1cmUiEWFsaWNlJ3Mgc2lnbmF0dXJlOGRAAw==',
-    )
+    const txnString = txn.toString()
+    // verify that we can decode it back from its serialized string
+    const buf = Buffer.from(txnString, 'base64')
+    const decoded = proto.helium.blockchain_txn.decode(buf)
+    expect(decoded.addGateway?.fee.toNumber()).toBe(43750)
   })
 })
 
@@ -48,17 +52,12 @@ describe('sign', () => {
     const payment = new AddGatewayV1({
       owner: bob.address,
       gateway: alice.address,
-      fee: 3,
-      stakingFee: 100,
     })
 
-    const signedPayment = await payment.sign({ owner: bob })
+    const signedTxn = await payment.sign({ owner: bob })
 
-    if (!signedPayment.ownerSignature) throw new Error('null')
-
-    expect(Buffer.from(signedPayment.ownerSignature).toString('base64')).toBe(
-      'YFAAIdy06QP8YbN7RWDZllLYNA6dK2iBn2N7UvVX/lV9teMkyEg8weiw9uU8Bt/dwSw+puvXO7lLg0ux7JvXBw==',
-    )
+    if (!signedTxn.ownerSignature) throw new Error('null')
+    expect(Buffer.byteLength(Buffer.from(signedTxn.ownerSignature))).toBe(64)
   })
 
   it('adds the gateway signature', async () => {
@@ -66,17 +65,13 @@ describe('sign', () => {
     const payment = new AddGatewayV1({
       owner: bob.address,
       gateway: alice.address,
-      fee: 3,
-      stakingFee: 100,
     })
 
-    const signedPayment = await payment.sign({ gateway: alice })
+    const signedTxn = await payment.sign({ gateway: alice })
 
-    if (!signedPayment.gatewaySignature) throw new Error('null')
+    if (!signedTxn.gatewaySignature) throw new Error('null')
 
-    expect(Buffer.from(signedPayment.gatewaySignature).toString('base64')).toBe(
-      'Si9IANAFXBYV/PDZK9Fzya/+yT26kYIdAqO0dqaO/H4jDL9svrfTYNUTEpWHRGk9kF8Y4Zv+YvQva2C7gyGmDw==',
-    )
+    expect(Buffer.byteLength(Buffer.from(signedTxn.gatewaySignature))).toBe(64)
   })
 
   it('adds the payer signature', async () => {
@@ -85,16 +80,12 @@ describe('sign', () => {
       owner: bob.address,
       gateway: alice.address,
       payer: bob.address,
-      fee: 3,
-      stakingFee: 100,
     })
 
-    const signedPayment = await payment.sign({ payer: alice })
+    const signedTxn = await payment.sign({ payer: alice })
 
-    if (!signedPayment.payerSignature) throw new Error('null')
+    if (!signedTxn.payerSignature) throw new Error('null')
 
-    expect(Buffer.from(signedPayment.payerSignature).toString('base64')).toBe(
-      '2ybzlcc6pge6kL9aHYPBCOCIRlmAGx7//T8CY1MAyINHRxDLJ36is7HG2hw8xArbcCPvPydYY0LWaWI7dqppBA==',
-    )
+    expect(Buffer.byteLength(Buffer.from(signedTxn.payerSignature))).toBe(64)
   })
 })
