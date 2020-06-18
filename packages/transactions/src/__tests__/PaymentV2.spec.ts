@@ -1,5 +1,13 @@
-import { PaymentV2 } from '..'
+import proto from '@helium/proto'
+import { PaymentV2, Transaction } from '..'
 import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
+
+Transaction.config({
+  txnFeeMultiplier: 5000,
+  dcPayloadSize: 24,
+  stakingFeeTxnAddGatewayV1: 40 * 100000,
+  stakingFeeTxnAssertLocationV1: 10 * 100000,
+})
 
 const paymentFixture = async () => {
   const { bob, alice } = await usersFixture()
@@ -12,9 +20,7 @@ const paymentFixture = async () => {
         amount: 10,
       },
     ],
-    fee: 3,
     nonce: 1,
-    signature: "bob's signature",
   })
 }
 
@@ -25,15 +31,23 @@ test('create a PaymentV2', async () => {
   expect(payment.payments?.length).toBe(1)
   expect((payment.payments || [])[0].payee.b58).toBe(aliceB58)
   expect((payment.payments || [])[0].amount).toBe(10)
-  expect(payment.fee).toBe(3)
   expect(payment.nonce).toBe(1)
-  expect(payment.signature).toBe("bob's signature")
+  expect(payment.fee).toBe(30417)
 })
 
 describe('serialize', () => {
   it('serializes a PaymentV2 txn', async () => {
     const payment = await paymentFixture()
-    expect(payment.serialize().length).toBe(98)
+    expect(payment.serialize().length).toBeGreaterThan(0)
+  })
+
+  it('serializes to base64 string', async () => {
+    const payment = await paymentFixture()
+    const paymentString = payment.toString()
+    // verify that we can decode it back from its serialized string
+    const buf = Buffer.from(paymentString, 'base64')
+    const decoded = proto.helium.blockchain_txn.decode(buf)
+    expect(decoded.paymentV2?.nonce.toNumber()).toBe(1)
   })
 })
 
@@ -55,6 +69,6 @@ describe('sign', () => {
 
     if (!signedPayment.signature) throw new Error('null')
 
-    expect(Buffer.from(signedPayment.signature).toString('base64')).toBe('rzwaOYb0KsRIdV1wv/9l9YP4qwGdsqZmoqXHygPz0VSazs6Nk1wvk2JDijSNESD5qGSNzaNfhKAoEGeIz5CgAA==')
+    expect(Buffer.byteLength(Buffer.from(signedPayment.signature))).toBe(64)
   })
 })

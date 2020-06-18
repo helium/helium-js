@@ -35,10 +35,15 @@ The following examples demonstrate some of the more common use cases and show ho
 A payment from an owned keypair initialized with a 12 word mnemonic to an address specified by its base58 representation. The transaction is serialized to binary and submitted to the blockchain API.
 ```js
 import { Keypair, Address } from '@helium/crypto'
-import { PaymentV1 } from '@helium/transactions'
+import { PaymentV1, Transaction } from '@helium/transactions'
 import { Client } from '@helium/http'
 
 const client = new Client()
+
+// the transactions library needs to be configured
+// with the latest chain vars in order to calcluate fees
+const vars = await client.vars.get()
+Transaction.config(vars)
 
 // initialize an owned keypair from a 12 word mnemonic
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
@@ -57,6 +62,9 @@ const paymentTxn = new PaymentV1({
   nonce: account.speculativeNonce + 1,
 })
 
+// an appropriate transaction fee is calculated at initialization
+console.log('transaction fee is:', paymentTxn.fee)
+
 // sign the payment txn with bob's keypair
 const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
 
@@ -71,6 +79,13 @@ PaymentV2 transactions allow for specifying multiple recipients in the same tran
 import { Keypair, Address } from '@helium/crypto'
 import { PaymentV2 } from '@helium/transactions'
 import { Client } from '@helium/http'
+
+const client = new Client()
+
+// the transactions library needs to be configured
+// with the latest chain vars in order to calcluate fees
+const vars = await client.vars.get()
+Transaction.config(vars)
 
 // initialize an owned keypair from a 12 word mnemonic
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
@@ -95,10 +110,12 @@ const paymentTxn = new PaymentV2({
   nonce: 1,
 })
 
+// an appropriate transaction fee is calculated at initialization
+console.log('transaction fee is:', paymentTxn.fee)
+
 // sign the payment txn with bob's keypair
 const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
 
 // submit the serialized txn to the Blockchain HTTP API
-const client = new Client()
 client.transactions.submit(signedPaymentTxn.toString())
 ```

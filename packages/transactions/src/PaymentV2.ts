@@ -1,14 +1,12 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array } from './utils'
+import { toUint8Array, EMPTY_SIGNATURE } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
   payments?: Array<Payment>
-  fee?: number
   nonce?: number
-  signature?: Uint8Array | string
 }
 
 interface Payment {
@@ -25,15 +23,14 @@ export default class PaymentV2 extends Transaction {
   public payments: Array<Payment>
   public fee?: number
   public nonce?: number
-  public signature?: Uint8Array | string
+  public signature?: Uint8Array
 
   constructor(opts: PaymentOptions) {
     super()
     this.payer = opts.payer
     this.payments = opts.payments || []
-    this.fee = opts.fee
     this.nonce = opts.nonce
-    this.signature = opts.signature
+    this.fee = this.calculateFee()
   }
 
   serialize(): Uint8Array {
@@ -69,5 +66,11 @@ export default class PaymentV2 extends Transaction {
       nonce: this.nonce,
       signature: this.signature ? toUint8Array(this.signature) : null,
     })
+  }
+
+  calculateFee(): number {
+    this.signature = EMPTY_SIGNATURE
+    const payload = this.serialize()
+    return Transaction.calculateFee(payload)
   }
 }
