@@ -22,6 +22,29 @@ function toBalance(value: number | undefined, type: CurrencyType): Balance | und
   return new Balance(value, type)
 }
 
+export interface HTTPStatsObject {
+  last_week: Array<TimelineStats>
+  last_month: Array<TimelineStats>
+  last_day: Array<TimelineStats>
+}
+
+export interface TimelineStats {
+  timestamp: string
+  balance: number
+}
+
+export class AccountStats {
+  constructor(data: HTTPStatsObject) {
+    this.week = data.last_week.reverse()
+    this.month = data.last_month.reverse()
+    this.day = data.last_day.reverse()
+  }
+
+  public week: Array<TimelineStats>
+  public month: Array<TimelineStats>
+  public day: Array<TimelineStats>
+}
+
 export default class Account {
   private client: Client
   public speculativeNonce?: number

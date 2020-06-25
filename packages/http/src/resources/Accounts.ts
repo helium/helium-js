@@ -1,5 +1,5 @@
 import type Client from '../Client'
-import Account from '../models/Account'
+import Account, {AccountStats} from '../models/Account'
 import type { HTTPAccountObject } from '../models/Account'
 import ResourceList from '../ResourceList'
 
@@ -30,5 +30,11 @@ export default class Accounts {
     const url = `/accounts/${address}`
     const { data: { data: account } } = await this.client.get(url)
     return new Account(this.client, account)
+  }
+
+  async getStats(address: string): Promise<AccountStats> {
+    const url = `/accounts/${address}/stats`
+    const { data: { data: stats } } = await this.client.get(url)
+    return new AccountStats(stats)
   }
 }
