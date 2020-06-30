@@ -11,6 +11,6 @@ export default class Stats {
   async get(): Promise<any> {
     const url = `/stats`
     const { data: { data: stats } } = await this.client.get(url)
-    return camelcaseKeys(stats)
+    return camelcaseKeys(stats, { deep: true })
   }
 }
