@@ -23,26 +23,40 @@ function toBalance(value: number | undefined, type: CurrencyType): Balance | und
 }
 
 export interface HTTPStatsObject {
-  last_week: Array<TimelineStats>
-  last_month: Array<TimelineStats>
-  last_day: Array<TimelineStats>
+  last_week: Array<HTTPTimelineStats>
+  last_month: Array<HTTPTimelineStats>
+  last_day: Array<HTTPTimelineStats>
 }
 
-export interface TimelineStats {
+export interface HTTPTimelineStats {
   timestamp: string
   balance: number
 }
 
+export interface TimelineStats {
+  timestamp: string
+  balance?: Balance
+}
+
 export class AccountStats {
   constructor(data: HTTPStatsObject) {
-    this.week = data.last_week.reverse()
-    this.month = data.last_month.reverse()
-    this.day = data.last_day.reverse()
+    this.lastWeek = data.last_week.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
+    this.lastMonth = data.last_month.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
+    this.lastDay = data.last_day.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
   }
 
-  public week: Array<TimelineStats>
-  public month: Array<TimelineStats>
-  public day: Array<TimelineStats>
+  public lastWeek: Array<TimelineStats>
+  public lastMonth: Array<TimelineStats>
+  public lastDay: Array<TimelineStats>
 }
 
 export default class Account {

@@ -57,9 +57,9 @@ describe('getStats', () => {
   it('retrieves account stats', async () => {
     const client = new Client()
     const stats = await client.accounts.getStats('my-address')
-    expect(stats.week.length).toBe(1)
-    expect(stats.month.length).toBe(2)
-    expect(stats.day.length).toBe(0)
+    expect(stats.lastWeek.length).toBe(1)
+    expect(stats.lastMonth.length).toBe(2)
+    expect(stats.lastDay.length).toBe(0)
   })
 })
 

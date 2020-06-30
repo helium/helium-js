@@ -32,3 +32,17 @@ describe('toString', () => {
     expect(balance.toString(2)).toBe('0.0001 HNT')
   })
 })
+
+describe('floatBalance', () => {
+  it('returns a float based on the currency type', () => {
+    const balance = new Balance(123456789012, CurrencyType.default)
+    expect(balance.floatBalance).toBe(1234.56789012)
+  })
+})
+
+describe('integerBalance', () => {
+  it('returns the integer balance', () => {
+    const balance = new Balance(123456789012, CurrencyType.default)
+    expect(balance.integerBalance).toBe(123456789012)
+  })
+})
