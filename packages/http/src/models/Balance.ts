@@ -29,7 +29,7 @@ export default class Balance {
   }
 
   toString(maxDecimalPlaces?: number): string {
-    const number = this.bigBalance.times(this.type.coefficient)
+    const number = new BigNumber(this.floatBalance)
     let numberString = number.toFormat(maxDecimalPlaces)
     // if it's an integer, just show the integer
     if (parseInt(numberString.split('.')[1]) === 0) {
