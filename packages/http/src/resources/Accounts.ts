@@ -1,5 +1,5 @@
 import type Client from '../Client'
-import Account, {AccountStats} from '../models/Account'
+import Account, { AccountStats } from '../models/Account'
 import type { HTTPAccountObject } from '../models/Account'
 import ResourceList from '../ResourceList'
 
