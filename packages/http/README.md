@@ -92,6 +92,12 @@ await client.accounts.get('an-account-address')
 await client.accounts.list()
 ```
 
+##### Get an Accounts Stats
+
+```js
+await client.accounts.getStats('an-account-address')
+```
+
 #### Blocks
 ##### Get a Block
 
@@ -157,3 +163,16 @@ const pendingTxns = await list.take(10)
 pendingTxns //= [PendingTransacion]
 ```
 
+#### Election Groups
+
+##### Get an Election Group
+
+```js
+await client.elections.get('hash')
+```
+
+##### List Election Groups
+```js
+const list = await client.elections.list()
+const elections = await list.take(10)
+```

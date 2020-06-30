@@ -21,6 +21,7 @@ export default class Elections {
   }
 
   async get(hash: string): Promise<Election> {
+    // using transactions api for lookup, there is no /elections/hash endpoint
     const url = `/transactions/${hash}`
     const { data: { data: election } } = await this.client.get(url)
     return election
