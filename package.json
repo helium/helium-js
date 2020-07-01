@@ -31,11 +31,11 @@
     "eslint-plugin-import": "2.22.0",
     "jest": "26.1.0",
     "lerna": "3.22.1",
-    "nock": "13.0.0",
+    "nock": "13.0.2",
     "prettier-standard": "16.3.0",
     "rimraf": "3.0.2",
     "standard": "14.3.4",
     "ts-jest": "26.1.1",
-    "typescript": "3.9.5"
+    "typescript": "3.9.6"
   }
 }
