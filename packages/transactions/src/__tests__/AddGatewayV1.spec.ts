@@ -13,12 +13,13 @@ Transaction.config({
   stakingFeeTxnAssertLocationV1: 10 * 100000,
 })
 
-const addGatewayFixture = async () => {
+const addGatewayFixture = async (payer = false) => {
   const { bob, alice } = await usersFixture()
 
   return new AddGatewayV1({
     owner: bob.address,
     gateway: alice.address,
+    payer: payer ? bob.address : undefined,
   })
 }
 
@@ -27,6 +28,15 @@ test('create an add gateway txn', async () => {
   expect(addGw.owner?.b58).toBe(bobB58)
   expect(addGw.gateway?.b58).toBe(aliceB58)
   expect(addGw.fee).toBe(45000)
+  expect(addGw.stakingFee).toBe(4000000)
+})
+
+test('create an add gateway txn with payer', async () => {
+  const addGw = await addGatewayFixture(true)
+  expect(addGw.owner?.b58).toBe(bobB58)
+  expect(addGw.gateway?.b58).toBe(aliceB58)
+  expect(addGw.payer?.b58).toBe(bobB58)
+  expect(addGw.fee).toBe(65000)
   expect(addGw.stakingFee).toBe(4000000)
 })
 

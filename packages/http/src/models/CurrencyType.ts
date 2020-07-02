@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 const TICKER = 'HNT'
 const DC_TICKER = 'DC'
 const SEC_TICKER = 'STO'
+const USD = 'USD'
 
 export default class CurrencyType {
   public ticker: string
@@ -16,11 +17,15 @@ export default class CurrencyType {
     return new CurrencyType(TICKER, 0.00000001)
   }
 
-  static get data_credit(): CurrencyType {
+  static get dataCredit(): CurrencyType {
     return new CurrencyType(DC_TICKER, 1)
   }
 
   static get security(): CurrencyType {
     return new CurrencyType(SEC_TICKER, 0.00000001)
+  }
+
+  static get usd(): CurrencyType {
+    return new CurrencyType(USD, 0.00000001)
   }
 }

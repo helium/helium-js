@@ -78,7 +78,7 @@ export default class Account {
     this.secBalance = toBalance(account.sec_balance, CurrencyType.security)
     this.nonce = account.nonce
     this.dcNonce = account.dc_nonce
-    this.dcBalance = toBalance(account.dc_balance, CurrencyType.data_credit)
+    this.dcBalance = toBalance(account.dc_balance, CurrencyType.dataCredit)
     this.block = account.block
     this.balance = toBalance(account.balance, CurrencyType.default)
     this.address = account.address

@@ -15,33 +15,82 @@ BigNumber.config({
   FORMAT,
 })
 
+const DC_TO_USD_MULTIPLIER = 0.00001
+
 export default class Balance {
   public integerBalance: number
   public floatBalance: number
   public type: CurrencyType
-  private bigBalance: BigNumber
+  public bigBalance: BigNumber
 
   constructor(integerBalance: number | undefined, type: CurrencyType) {
     this.integerBalance = integerBalance || 0
-    this.bigBalance = new BigNumber(this.integerBalance)
-    this.floatBalance = this.bigBalance.times(type.coefficient).toNumber()
+    this.bigBalance = new BigNumber(this.integerBalance).times(type.coefficient)
+    this.floatBalance = this.bigBalance.toNumber()
     this.type = type
   }
 
   toString(maxDecimalPlaces?: number): string {
-    const number = new BigNumber(this.floatBalance)
-    let numberString = number.toFormat(maxDecimalPlaces)
+    let numberString = this.bigBalance.toFormat(maxDecimalPlaces)
     // if it's an integer, just show the integer
     if (parseInt(numberString.split('.')[1]) === 0) {
       numberString = numberString.split('.')[0]
     }
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
-      numberString = number.toFormat()
+      numberString = this.bigBalance.toFormat()
     }
-    return [
-      numberString,
-      this.type.ticker,
-    ].join(' ')
+    return [numberString, this.type.ticker].join(' ')
+  }
+
+  toDefault(oraclePrice?: Balance): Balance {
+    if (this.type.ticker === CurrencyType.default.ticker) return this
+    if (!oraclePrice) throw 'oracle price required'
+    return new Balance(
+      this.toUsd()
+        .bigBalance.dividedBy(oraclePrice.bigBalance)
+        .dividedBy(CurrencyType.default.coefficient)
+        .toNumber(),
+      CurrencyType.default,
+    )
+  }
+
+  toUsd(oraclePrice?: Balance): Balance {
+    switch (this.type.ticker) {
+      case CurrencyType.dataCredit.ticker:
+        return new Balance(
+          this.bigBalance
+            .times(DC_TO_USD_MULTIPLIER)
+            .dividedBy(CurrencyType.usd.coefficient)
+            .toNumber(),
+          CurrencyType.usd,
+        )
+      case CurrencyType.default.ticker:
+        if (!oraclePrice) throw 'oracle price required'
+        return new Balance(
+          this.bigBalance
+            .times(oraclePrice.bigBalance)
+            .dividedBy(CurrencyType.usd.coefficient)
+            .toNumber(),
+          CurrencyType.usd,
+        )
+      default:
+        return this
+    }
+  }
+
+  toDataCredit(oraclePrice?: Balance): Balance {
+    switch (this.type.ticker) {
+      case CurrencyType.usd.ticker:
+        return new Balance(
+          this.bigBalance.dividedBy(DC_TO_USD_MULTIPLIER).toNumber(),
+          CurrencyType.dataCredit,
+        )
+      case CurrencyType.default.ticker:
+        if (!oraclePrice) throw 'oracle price required'
+        return this.toUsd(oraclePrice).toDataCredit()
+      default:
+        return this
+    }
   }
 }

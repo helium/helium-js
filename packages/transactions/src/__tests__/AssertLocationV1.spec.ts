@@ -13,12 +13,13 @@ Transaction.config({
   stakingFeeTxnAssertLocationV1: 10 * 100000,
 })
 
-const assertLocationFixture = async () => {
+const assertLocationFixture = async (payer = false) => {
   const { bob, alice } = await usersFixture()
 
   return new AssertLocationV1({
     owner: bob.address,
     gateway: alice.address,
+    payer: payer ? bob.address : undefined,
     location: '8c383092841a7ff',
     nonce: 1,
   })
@@ -31,6 +32,17 @@ test('create an assert location txn', async () => {
   expect(txn.location).toBe('8c383092841a7ff')
   expect(txn.nonce).toBe(1)
   expect(txn.fee).toBe(50000)
+  expect(txn.stakingFee).toBe(1000000)
+})
+
+test('create an assert location txn with a payer', async () => {
+  const txn = await assertLocationFixture(true)
+  expect(txn.owner?.b58).toBe(bobB58)
+  expect(txn.gateway?.b58).toBe(aliceB58)
+  expect(txn.payer?.b58).toBe(bobB58)
+  expect(txn.location).toBe('8c383092841a7ff')
+  expect(txn.nonce).toBe(1)
+  expect(txn.fee).toBe(70000)
   expect(txn.stakingFee).toBe(1000000)
 })
 

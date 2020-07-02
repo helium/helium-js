@@ -176,3 +176,11 @@ await client.elections.get('hash')
 const list = await client.elections.list()
 const elections = await list.take(10)
 ```
+
+#### Price Oracle
+
+##### Get the Current Oracle Price
+
+```js
+await client.oracle.getCurrentPrice()
+```
