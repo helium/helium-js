@@ -22,6 +22,43 @@ function toBalance(value: number | undefined, type: CurrencyType): Balance | und
   return new Balance(value, type)
 }
 
+export interface HTTPStatsObject {
+  last_week: Array<HTTPTimelineStats>
+  last_month: Array<HTTPTimelineStats>
+  last_day: Array<HTTPTimelineStats>
+}
+
+export interface HTTPTimelineStats {
+  timestamp: string
+  balance: number
+}
+
+export interface TimelineStats {
+  timestamp: string
+  balance?: Balance
+}
+
+export class AccountStats {
+  constructor(data: HTTPStatsObject) {
+    this.lastWeek = data.last_week.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
+    this.lastMonth = data.last_month.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
+    this.lastDay = data.last_day.map((s) => ({
+      timestamp: s.timestamp,
+      balance: toBalance(s.balance, CurrencyType.default),
+    }))
+  }
+
+  public lastWeek: Array<TimelineStats>
+  public lastMonth: Array<TimelineStats>
+  public lastDay: Array<TimelineStats>
+}
+
 export default class Account {
   private client: Client
   public speculativeNonce?: number

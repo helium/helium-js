@@ -19,11 +19,14 @@ const DC_TO_USD_MULTIPLIER = 0.00001
 
 export default class Balance {
   public integerBalance: number
+  public floatBalance: number
   public type: CurrencyType
   public bigBalance: BigNumber
 
   constructor(integerBalance: number | undefined, type: CurrencyType) {
-    this.integerBalance = Math.round(integerBalance || 0)
+    this.integerBalance = integerBalance || 0
+    this.bigBalance = new BigNumber(this.integerBalance)
+    this.floatBalance = this.bigBalance.times(type.coefficient).toNumber()
     this.type = type
     this.bigBalance = new BigNumber(this.integerBalance).times(type.coefficient)
   }

@@ -14,6 +14,7 @@ import PendingTransactions from './resources/PendingTransactions'
 import type Account from './models/Account'
 import type Block from './models/Block'
 import type Hotspot from './models/Hotspot'
+import Elections from './resources/Elections'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -33,8 +34,8 @@ export default class Client {
 
   constructor(network: Network = Network.production) {
     this.network = network
-    this.axios = axios.create({	
-      baseURL: this.network.endpoint,	
+    this.axios = axios.create({
+      baseURL: this.network.endpoint,
     })
     this.axios.defaults.raxConfig = {
       instance: this.axios,
@@ -66,6 +67,10 @@ export default class Client {
 
   public get hotspots(): Hotspots {
     return new Hotspots(this)
+  }
+
+  public get elections(): Elections {
+    return new Elections(this)
   }
 
   public get hotspot(): HotspotFromAddressFn {
