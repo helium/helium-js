@@ -57,7 +57,6 @@ export default class PaymentV1 extends Transaction {
       payee: this.payee ? toUint8Array(this.payee.bin) : null,
       amount: this.amount,
       fee: this.fee && this.fee > 0 ? this.fee : null,
-      // fee: this.fee,
       nonce: this.nonce,
       signature:
         this.signature && !forSigning ? toUint8Array(this.signature) : null,
