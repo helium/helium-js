@@ -9,6 +9,7 @@ import Hotspots from './resources/Hotspots'
 import Challenges from './resources/Challenges'
 import Stats from './resources/Stats'
 import Vars from './resources/Vars'
+import Oracle from './resources/Oracle'
 import PendingTransactions from './resources/PendingTransactions'
 import type Account from './models/Account'
 import type Block from './models/Block'
@@ -85,6 +86,10 @@ export default class Client {
 
   public get vars(): Vars {
     return new Vars(this)
+  }
+
+  public get oracle(): Oracle {
+    return new Oracle(this)
   }
 
   async get(path: string, params: Object = {}) {

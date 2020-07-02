@@ -97,11 +97,11 @@ export type AnyTransaction = PaymentV1 | RewardsV1 | AddGatewayV1 | AssertLocati
 
 function prepareTxn(txn: any) {
   if (txn.fee) {
-    txn.fee = new Balance(txn.fee, CurrencyType.data_credit)
+    txn.fee = new Balance(txn.fee, CurrencyType.dataCredit)
   }
 
   if (txn.stakingFee) {
-    txn.stakingFee = new Balance(txn.stakingFee, CurrencyType.data_credit)
+    txn.stakingFee = new Balance(txn.stakingFee, CurrencyType.dataCredit)
   }
 
   return camelcaseKeys(txn)
