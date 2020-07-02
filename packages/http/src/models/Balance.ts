@@ -45,7 +45,7 @@ export default class Balance {
   }
 
   toDefault(oraclePrice?: Balance): Balance {
-    if (this.type.ticker === 'HNT') return this
+    if (this.type.ticker === CurrencyType.default.ticker) return this
     if (!oraclePrice) throw 'oracle price required'
     return new Balance(
       this.toUsd()
@@ -58,7 +58,7 @@ export default class Balance {
 
   toUsd(oraclePrice?: Balance): Balance {
     switch (this.type.ticker) {
-      case 'DC':
+      case CurrencyType.dataCredit.ticker:
         return new Balance(
           this.bigBalance
             .times(DC_TO_USD_MULTIPLIER)
@@ -66,7 +66,7 @@ export default class Balance {
             .toNumber(),
           CurrencyType.usd,
         )
-      case 'HNT':
+      case CurrencyType.default.ticker:
         if (!oraclePrice) throw 'oracle price required'
         return new Balance(
           this.bigBalance
@@ -82,12 +82,12 @@ export default class Balance {
 
   toDataCredit(oraclePrice?: Balance): Balance {
     switch (this.type.ticker) {
-      case 'USD':
+      case CurrencyType.usd.ticker:
         return new Balance(
           this.bigBalance.dividedBy(DC_TO_USD_MULTIPLIER).toNumber(),
           CurrencyType.dataCredit,
         )
-      case 'HNT':
+      case CurrencyType.default.ticker:
         if (!oraclePrice) throw 'oracle price required'
         return this.toUsd(oraclePrice).toDataCredit()
       default:
