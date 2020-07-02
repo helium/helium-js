@@ -25,10 +25,9 @@ export default class Balance {
 
   constructor(integerBalance: number | undefined, type: CurrencyType) {
     this.integerBalance = integerBalance || 0
-    this.bigBalance = new BigNumber(this.integerBalance)
-    this.floatBalance = this.bigBalance.times(type.coefficient).toNumber()
-    this.type = type
     this.bigBalance = new BigNumber(this.integerBalance).times(type.coefficient)
+    this.floatBalance = this.bigBalance.toNumber()
+    this.type = type
   }
 
   toString(maxDecimalPlaces?: number): string {
