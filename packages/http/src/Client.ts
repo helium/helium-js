@@ -15,6 +15,7 @@ import type Account from './models/Account'
 import type Block from './models/Block'
 import type Hotspot from './models/Hotspot'
 import Elections from './resources/Elections'
+import Cities from './resources/Cities'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -95,6 +96,10 @@ export default class Client {
 
   public get oracle(): Oracle {
     return new Oracle(this)
+  }
+
+  public get cities(): Cities {
+    return new Cities(this)
   }
 
   async get(path: string, params: Object = {}) {

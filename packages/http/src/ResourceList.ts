@@ -6,19 +6,21 @@ export default class ResourceList<T> {
   public data: Array<T>
   private fetchMore?: FetchMoreFn
   private cursor?: string
+  private params?: object
   private takeIterator?: AsyncGenerator<any, void, any>
 
-  constructor(data: Array<T>, fetchMore?: FetchMoreFn, cursor?: string) {
+  constructor(data: Array<T>, fetchMore?: FetchMoreFn, cursor?: string, params: object = {}) {
     this.data = data
     this.fetchMore = fetchMore
     this.cursor = cursor
+    this.params = params
   }
 
   async nextPage(): Promise<ResourceList<T>> {
     if (!this.fetchMore) {
       throw new Error('fetchMore is undefined')
     }
-    return this.fetchMore({ cursor: this.cursor })
+    return this.fetchMore({ cursor: this.cursor, ...this.params })
   }
 
   public get hasMore(): boolean {
@@ -30,7 +32,7 @@ export default class ResourceList<T> {
       yield item
     }
     if (!this.fetchMore || !this.cursor) return
-    yield* await this.fetchMore({ cursor: this.cursor })
+    yield* await this.fetchMore({ cursor: this.cursor, ...this.params })
   }
 
   async take(count: number): Promise<Array<T>> {
