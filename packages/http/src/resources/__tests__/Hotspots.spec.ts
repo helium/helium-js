@@ -1,7 +1,7 @@
 import nock from 'nock'
 import Client from '../../Client'
 
-const hotspotFixture = (params = {}) => ({
+export const hotspotFixture = (params = {}) => ({
   score_update_height: 213456,
   score: 0.25,
   owner: 'fake-owner-address',
