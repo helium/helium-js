@@ -15,9 +15,15 @@ import type Account from './models/Account'
 import type Block from './models/Block'
 import type Hotspot from './models/Hotspot'
 import Elections from './resources/Elections'
+import Cities from './resources/Cities'
+import City from './models/City'
 
 interface AccountFromAddressFn {
   (address: string): Account
+}
+
+interface CityFromIdFn {
+  (cityId: string): City
 }
 
 interface HotspotFromAddressFn {
@@ -30,6 +36,7 @@ interface BlockFromHeightOrHashFn {
 
 export default class Client {
   public network!: Network
+
   private axios!: AxiosInstance
 
   constructor(network: Network = Network.production) {
@@ -95,6 +102,14 @@ export default class Client {
 
   public get oracle(): Oracle {
     return new Oracle(this)
+  }
+
+  public get cities(): Cities {
+    return new Cities(this)
+  }
+
+  public get city(): CityFromIdFn {
+    return this.cities.fromId.bind(this.cities)
   }
 
   async get(path: string, params: Object = {}) {

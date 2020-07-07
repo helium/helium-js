@@ -184,3 +184,25 @@ const elections = await list.take(10)
 ```js
 await client.oracle.getCurrentPrice()
 ```
+
+#### Cities
+
+##### List all cities with hotspots
+
+```js
+const list = await client.cities.list()
+const cities = await list.take(10)
+```
+
+##### Search for a city
+
+```js
+const list = await client.cities.list({ query: 'san francisco' })
+const cities = await list.take(10)
+```
+
+##### List hotspots in a city
+```js
+const list = await client.city('city-id').hotspots.list()
+const hotspots = await list.take(10)
+```

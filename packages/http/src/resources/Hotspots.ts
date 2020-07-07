@@ -2,12 +2,13 @@ import type Client from '../Client'
 import Hotspot, { HTTPHotspotObject } from '../models/Hotspot'
 import ResourceList from '../ResourceList'
 import Account from '../models/Account'
+import City from '../models/City'
 
 interface ListParams {
   cursor?: string
 }
 
-type Context = Account
+type Context = Account | City
 
 export default class Hotspots {
   private client!: Client
@@ -27,6 +28,10 @@ export default class Hotspots {
     if (this.context instanceof Account) {
       const account = this.context as Account
       url = `/accounts/${account.address}/hotspots`
+    }
+    if (this.context instanceof City) {
+      const city = this.context as City
+      url = `/cities/${city.cityId}/hotspots`
     }
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: hotspots, cursor } } = response
