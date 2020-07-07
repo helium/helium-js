@@ -75,3 +75,22 @@ describe('list from account', () => {
     expect(hotspots[1].name).toBe('hotspot-2')
   })
 })
+
+describe('list from city', () => {
+  nock('https://api.helium.io')
+    .get('/v1/cities/fake-address/hotspots')
+    .reply(200, {
+      data: [
+        hotspotFixture({ name: 'hotspot-1' }),
+        hotspotFixture({ name: 'hotspot-2' }),
+      ],
+    })
+
+  it('lists hotspots in a city', async () => {
+    const client = new Client()
+    const list = await client.city('fake-address').hotspots.list()
+    const hotspots = await list.take(2)
+    expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[1].name).toBe('hotspot-2')
+  })
+})

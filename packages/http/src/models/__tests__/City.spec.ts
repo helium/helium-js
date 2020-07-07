@@ -1,8 +1,10 @@
 import City from '../City'
+import Client from '../../Client'
 
 
 test('create City from HTTP response', () => {
-  const city = new City({
+  const client = new Client()
+  const city = new City(client, {
     short_state: 'CA',
     short_country: 'US',
     short_city: 'SF',
