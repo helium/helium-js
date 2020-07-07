@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto-react-native",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding for React Native",
   "keywords": [
     "helium",
