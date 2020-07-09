@@ -68,6 +68,7 @@ describe('list from account payment_v2', () => {
     const [pendingTxn] = await list.take(1)
     expect(pendingTxn.type).toBe('payment_v2')
     expect(pendingTxn.txn.payments[0].amount.integerBalance).toBe(1)
+    expect(pendingTxn.txn.totalAmount.integerBalance).toBe(1)
   })
 })
 

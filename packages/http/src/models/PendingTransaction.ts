@@ -22,7 +22,7 @@ function processTxn(transaction: HTTPPendingTransactionObject): any {
     case 'payment_v1':
       return {
         ...txn,
-        amount: new Balance(txn.amount, CurrencyType.default)
+        amount: new Balance(txn.amount, CurrencyType.default),
       }
 
     case 'payment_v2':
@@ -30,10 +30,14 @@ function processTxn(transaction: HTTPPendingTransactionObject): any {
         ...txn,
         payments: txn.payments.map((p: any) => ({
           ...p,
-          amount: new Balance(p.amount, CurrencyType.default)
-        }))
+          amount: new Balance(p.amount, CurrencyType.default),
+        })),
+        totalAmount: new Balance(txn.payments.reduce(
+          (sum: number, { amount }: any) => sum + amount,
+          0,
+        ), CurrencyType.default)
       }
-  
+
     default:
       return txn
   }
