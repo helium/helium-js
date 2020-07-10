@@ -67,3 +67,15 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
 
   return payload
 }
+
+export const bs58KeyType = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const keyType = Buffer.from(bin).slice(0, 1)[0]
+  return keyType
+}
+
+export const bs58Version = (bs58Address: string): number => {
+  const bin = bs58.decode(bs58Address)
+  const version = bin.slice(0, 1)[0]
+  return version
+}

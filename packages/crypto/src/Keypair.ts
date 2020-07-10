@@ -20,7 +20,7 @@ export default class Keypair {
   }
 
   get address(): Address {
-    return new Address(ED25519_KEY_TYPE, this.publicKey)
+    return new Address(0, ED25519_KEY_TYPE, this.publicKey)
   }
 
   static async makeRandom(): Promise<Keypair> {

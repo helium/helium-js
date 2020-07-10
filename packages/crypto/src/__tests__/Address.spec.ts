@@ -11,7 +11,7 @@ const BTC_ADDRESS = '18wxa7qM8C8AXmGwJj13C7sGqn8hyFdcdR'
 describe('b58', () => {
   it('returns a b58 check encoded representation of the address', async () => {
     const { bob } = await usersFixture()
-    const address = new Address(1, bob.publicKey)
+    const address = new Address(0, 1, bob.publicKey)
     expect(address.b58).toBe(bobB58)
   })
 
@@ -29,7 +29,7 @@ describe('b58', () => {
 describe('bin', () => {
   it('returns a binary representation of the address', async () => {
     const { bob } = await usersFixture()
-    const address = new Address(1, bob.publicKey)
+    const address = new Address(0, 1, bob.publicKey)
     expect(address.bin[0]).toBe(1)
   })
 })
@@ -50,7 +50,7 @@ describe('unsupported key types', () => {
 
   it('throws an error if initialized with an unsupported key type', async () => {
     expect(() => {
-      new Address(57, Buffer.from('some random public key'))
+      new Address(0, 57, Buffer.from('some random public key'))
     }).toThrow()
   })
 })
@@ -72,5 +72,14 @@ describe('isValid', () => {
 
   it('returns false if the key type is unsupported', () => {
     expect(Address.isValid(BTC_ADDRESS)).toBeFalsy()
+  })
+})
+
+describe('unsupported versions', () => {
+  it('throws an error if b58 check encoded version is not 0', async () => {
+    const { bob } = await usersFixture()
+    expect(() => {
+      new Address(1, 1, bob.publicKey)
+    }).toThrow()
   })
 })

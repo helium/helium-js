@@ -7,9 +7,8 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
   return Buffer.from(sodium.randombytes_buf(n))
 }
 
-export const sha256 = (buffer: Buffer | string): string => (
+export const sha256 = (buffer: Buffer | string): string =>
   createHash('sha256').update(buffer).digest().toString('hex')
-)
 
 export const lpad = (
   str: string | any[],
@@ -21,9 +20,12 @@ export const lpad = (
   return strOut
 }
 
-export const bytesToBinary = (bytes: any[]) => bytes
-  .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
-  .join('')
+export const bytesToBinary = (bytes: any[]) =>
+  bytes
+    .map((x: { toString: (arg0: number) => string | any[] }) =>
+      lpad(x.toString(2), '0', 8),
+    )
+    .join('')
 
 export const binaryToByte = (bin: string) => parseInt(bin, 2)
 
@@ -35,22 +37,19 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
+export const bs58CheckEncode = (
+  version: number,
+  binary: Buffer | Uint8Array,
+): string => {
   // VPayload = <<Version:8/unsigned-integer, Payload/binary>>,
-  const vPayload = Buffer.concat([
-    Buffer.from([version]),
-    binary,
-  ])
+  const vPayload = Buffer.concat([Buffer.from([version]), binary])
 
   // <<Checksum:4/binary, _/binary>> = crypto:hash(sha256, crypto:hash(sha256, VPayload)),
   const checksum = sha256(Buffer.from(sha256(vPayload), 'hex'))
   const checksumBytes = Buffer.alloc(4, checksum, 'hex')
 
   // Result = <<VPayload/binary, Checksum/binary>>,
-  const result = Buffer.concat([
-    vPayload,
-    checksumBytes,
-  ])
+  const result = Buffer.concat([vPayload, checksumBytes])
 
   // base58:binary_to_base58(Result).
   return bs58.encode(result)
@@ -70,4 +69,22 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   }
 
   return payload
+}
+
+export const bs58KeyType = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const keyType = Buffer.from(bin).slice(0, 1)[0]
+  return keyType
+}
+
+export const bs58Version = (bs58Address: string): number => {
+  const bin = bs58.decode(bs58Address)
+  const version = bin.slice(0, 1)[0]
+  return version
+}
+
+export const bs58PublicKey = (bs58Address: string): Buffer => {
+  const bin = bs58ToBin(bs58Address)
+  const publicKey = Buffer.from(bin).slice(1)
+  return publicKey
 }
