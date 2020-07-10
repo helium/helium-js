@@ -1,6 +1,7 @@
 import Sodium from 'react-native-sodium'
 import Mnemonic from './Mnemonic'
 import Address from './Address'
+import { ED25519_KEY_TYPE } from './KeyType'
 
 interface SodiumKeyPair {
   sk: string
@@ -20,7 +21,7 @@ export default class Keypair {
   }
 
   get address(): Address {
-    return new Address(this.publicKey)
+    return new Address(ED25519_KEY_TYPE ,this.publicKey)
   }
 
   static async makeRandom(): Promise<Keypair> {
