@@ -4,6 +4,7 @@ import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
 import CurrencyType from './CurrencyType'
 import Balance from './Balance'
+import Challenges from '../resources/Challenges'
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
@@ -90,6 +91,10 @@ export default class Account {
 
   public get hotspots(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  public get challenges(): Challenges {
+    return new Challenges(this.client, this)
   }
 
   public get pendingTransactions(): PendingTransactions {
