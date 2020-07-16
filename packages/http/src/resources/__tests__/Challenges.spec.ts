@@ -59,8 +59,27 @@ describe('list', () => {
   it('lists challenges', async () => {
     const client = new Client()
     const list = await client.challenges.list()
-    const hotspots = await list.take(2)
-    expect(hotspots[0].hash).toBe('fake-hash-1')
-    expect(hotspots[1].hash).toBe('fake-hash-2')
+    const challenges = await list.take(2)
+    expect(challenges[0].hash).toBe('fake-hash-1')
+    expect(challenges[1].hash).toBe('fake-hash-2')
+  })
+})
+
+describe('list from account', () => {
+  nock('https://api.helium.io')
+    .get('/v1/accounts/fake-address/challenges')
+    .reply(200, {
+      data: [
+        challengeFixture({ hash: 'fake-hash-1' }),
+        challengeFixture({ hash: 'fake-hash-2' }),
+      ],
+    })
+
+  it('lists challenges from an account', async () => {
+    const client = new Client()
+    const list = await client.account('fake-address').challenges.list()
+    const challenges = await list.take(2)
+    expect(challenges[0].hash).toBe('fake-hash-1')
+    expect(challenges[1].hash).toBe('fake-hash-2')
   })
 })
