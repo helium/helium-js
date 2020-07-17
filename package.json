@@ -35,7 +35,7 @@
     "prettier-standard": "16.4.1",
     "rimraf": "3.0.2",
     "standard": "14.3.4",
-    "ts-jest": "26.1.1",
-    "typescript": "3.9.6"
+    "ts-jest": "26.1.3",
+    "typescript": "3.9.7"
   }
 }
