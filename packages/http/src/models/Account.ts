@@ -1,9 +1,8 @@
+import { Balance, CurrencyType } from '@helium/currency'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
-import CurrencyType from './CurrencyType'
-import Balance from './Balance'
 import Challenges from '../resources/Challenges'
 
 export interface HTTPAccountObject {

@@ -1,6 +1,5 @@
 import camelcaseKeys from 'camelcase-keys'
-import Balance from './Balance'
-import CurrencyType from './CurrencyType'
+import { Balance, CurrencyType } from '@helium/currency'
 
 export interface TxnJsonObject {
   type: string

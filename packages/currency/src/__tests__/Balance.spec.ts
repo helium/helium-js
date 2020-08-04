@@ -1,5 +1,4 @@
-import Balance from '../Balance'
-import CurrencyType from '../CurrencyType'
+import { Balance, CurrencyType } from '..'
 
 describe('floatBalance', () => {
   it('returns a float based on the currency type', () => {
@@ -44,6 +43,54 @@ describe('toString', () => {
   it('does not round if the result would be 0 HNT', () => {
     const balance = new Balance(10000, CurrencyType.default)
     expect(balance.toString(2)).toBe('0.0001 HNT')
+  })
+})
+
+describe('plus', () => {
+  it('adds two balances together', () => {
+    const balanceA = new Balance(100000000, CurrencyType.default)
+    const balanceB = new Balance(200000000, CurrencyType.default)
+    expect(balanceA.plus(balanceB).integerBalance).toBe(300000000)
+  })
+
+  it('throws an error if currency types are mixed', () => {
+    const balanceA = new Balance(100000000, CurrencyType.default)
+    const balanceB = new Balance(200000000, CurrencyType.dataCredit)
+    
+    expect(() => {
+      balanceA.plus(balanceB)
+    }).toThrow()
+  })
+})
+
+describe('minus', () => {
+  it('subtracts one balance from another', () => {
+    const balanceA = new Balance(500000000, CurrencyType.default)
+    const balanceB = new Balance(200000000, CurrencyType.default)
+    expect(balanceA.minus(balanceB).integerBalance).toBe(300000000)
+  })
+
+  it('throws an error if currency types are mixed', () => {
+    const balanceA = new Balance(100000000, CurrencyType.default)
+    const balanceB = new Balance(200000000, CurrencyType.dataCredit)
+    
+    expect(() => {
+      balanceA.minus(balanceB)
+    }).toThrow()
+  })
+})
+
+describe('times', () => {
+  it('multiplies a balance by some number', () => {
+    const balanceA = new Balance(300000000, CurrencyType.default)
+    expect(balanceA.times(2).integerBalance).toBe(600000000)
+  })
+})
+
+describe('dividedBy', () => {
+  it('divides a balance by some number', () => {
+    const balanceA = new Balance(900000000, CurrencyType.default)
+    expect(balanceA.dividedBy(3).integerBalance).toBe(300000000)
   })
 })
 

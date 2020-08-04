@@ -1,6 +1,5 @@
 import type Client from '../Client'
-import Balance from '../models/Balance'
-import CurrencyType from '../models/CurrencyType'
+import { Balance, CurrencyType } from '@helium/currency'
 
 export default class Oracle {
   private client!: Client
