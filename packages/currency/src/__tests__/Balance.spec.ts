@@ -114,43 +114,43 @@ describe('toUsd', () => {
   })
 })
 
-describe('toDefault', () => {
+describe('toNetworkTokens', () => {
   it('converts a dc balance to an hnt balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
-    const hntBalance = dcBalance.toDefault(oraclePrice)
+    const hntBalance = dcBalance.toNetworkTokens(oraclePrice)
     expect(hntBalance.toString(2)).toBe('22.22 HNT')
   })
 
   it('converts a usd balance to an hnt balance', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
-    const hntBalance = usdBalance.toDefault(oraclePrice)
+    const hntBalance = usdBalance.toNetworkTokens(oraclePrice)
     expect(hntBalance.toString(2)).toBe('22.22 HNT')
   })
 
   it('returns itself if called on an hnt balance', () => {
     const hntBalance = new Balance(10 * 100000000, CurrencyType.default)
-    expect(hntBalance.toDefault().toString()).toBe('10 HNT')
+    expect(hntBalance.toNetworkTokens().toString()).toBe('10 HNT')
   })
 })
 
-describe('toDataCredit', () => {
+describe('toDataCredits', () => {
   it('converts a usd balance to a dc balance', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
-    const dcBalance = usdBalance.toDataCredit()
+    const dcBalance = usdBalance.toDataCredits()
     expect(dcBalance.toString()).toBe('1,000,000 DC')
   })
 
   it('converts an hnt balance to a dc balance', () => {
     const hntBalance = new Balance(10 * 100000000, CurrencyType.default)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
-    const dcBalance = hntBalance.toDataCredit(oraclePrice)
+    const dcBalance = hntBalance.toDataCredits(oraclePrice)
     expect(dcBalance.toString()).toBe('450,000 DC')
   })
 
   it('returns itself if called on a dc balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
-    expect(dcBalance.toDataCredit().toString()).toBe('1,000,000 DC')
+    expect(dcBalance.toDataCredits().toString()).toBe('1,000,000 DC')
   })
 })

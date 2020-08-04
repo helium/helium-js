@@ -76,19 +76,19 @@ export default class Balance<T extends BaseCurrencyType> {
     return new Balance(this.bigInteger.dividedBy(n).toNumber(), this.type)
   }
 
-  toDefault(oraclePrice?: Balance<T>): Balance<NetworkTokens> {
+  toNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<NetworkTokens> {
     if (this.type instanceof NetworkTokens) return this
     if (!oraclePrice) throw OraclePriceRequiredError
     return new Balance(
       this.toUsd()
         .bigBalance.dividedBy(oraclePrice.bigBalance)
-        .dividedBy(CurrencyType.default.coefficient)
+        .dividedBy(CurrencyType.networkToken.coefficient)
         .toNumber(),
-      CurrencyType.default,
+      CurrencyType.networkToken,
     )
   }
 
-  toUsd(oraclePrice?: Balance<T>): Balance<USDollars> {
+  toUsd(oraclePrice?: Balance<USDollars>): Balance<USDollars> {
     if (this.type instanceof DataCredits) {
       return new Balance(
         this.bigBalance
@@ -111,7 +111,7 @@ export default class Balance<T extends BaseCurrencyType> {
     return this
   }
 
-  toDataCredit(oraclePrice?: Balance<T>): Balance<DataCredits> {
+  toDataCredits(oraclePrice?: Balance<USDollars>): Balance<DataCredits> {
     if (this.type instanceof USDollars) {
       return new Balance(
         this.bigBalance.dividedBy(DC_TO_USD_MULTIPLIER).toNumber(),
@@ -120,7 +120,7 @@ export default class Balance<T extends BaseCurrencyType> {
     }
     if (this.type instanceof NetworkTokens) {
       if (!oraclePrice) throw OraclePriceRequiredError
-      return this.toUsd(oraclePrice).toDataCredit()
+      return this.toUsd(oraclePrice).toDataCredits()
     }
     return this
   }

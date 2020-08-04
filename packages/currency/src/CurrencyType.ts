@@ -10,6 +10,10 @@ export default class CurrencyType {
     return new NetworkTokens()
   }
 
+  static get networkToken(): NetworkTokens {
+    return new NetworkTokens()
+  }
+
   static get dataCredit(): DataCredits {
     return new DataCredits()
   }
