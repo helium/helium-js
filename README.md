@@ -16,7 +16,7 @@ This SDK is a collection of TypeScrypt libraries for interacting with the Helium
 | [`@helium/transactions`](https://github.com/helium/helium-js/tree/master/packages/transactions) | ![npm](https://img.shields.io/npm/v/@helium/transactions) | Construct and serialize transaction primatives from their [protobuf](https://developers.google.com/protocol-buffers) definitions |
 | [`@helium/proto`](https://github.com/helium/proto) | ![npm](https://img.shields.io/npm/v/@helium/proto) | Protobuf definitions for Helium transactions |
 | [`@helium/http`](https://github.com/helium/helium-js/tree/master/packages/http) | ![npm](https://img.shields.io/npm/v/@helium/http) | An HTTP client for the blockchain REST API |
-| `@helium/cli` |  | A CLI for managing accounts locally and querying the blockchain API |
+| [`@helium/currency`](https://github.com/helium/helium-js/tree/master/packages/currency) | ![npm](https://img.shields.io/npm/v/@helium/currency) | Utilities for representing amounts of the different currencies supported by Helium |
 
 
 ## Installation
@@ -90,6 +90,9 @@ Transaction.config(vars)
 // initialize an owned keypair from a 12 word mnemonic
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
 
+// get the speculative nonce for the keypair
+const account = await client.accounts.get(bob.address.b58)
+
 // initialize recipient addresses from b58 strings
 const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const charlie = Address.fromB58('13JoEpkGQUd8bzn2BquFZe1CbmfzhL4cYpEohWH71yxy7cEY59Z')
@@ -107,7 +110,7 @@ const paymentTxn = new PaymentV2({
       amount: 10,
     },
   ],
-  nonce: 1,
+  nonce: account.speculativeNonce + 1,
 })
 
 // an appropriate transaction fee is calculated at initialization
@@ -119,3 +122,75 @@ const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
 // submit the serialized txn to the Blockchain HTTP API
 client.transactions.submit(signedPaymentTxn.toString())
 ```
+
+### Sending an Account's full balance
+Sending the maximum amount from an account (leaving a 0 HNT balance) requires taking into account the transaction fee. All fees are denominated in Data Credits (DC), which is equal to $0.00001 USD, meaning 35,000 DC equals $0.35 USD. DC are obtained by _burning_ HNT, permanantly removing it from circulation. If you do not already have DC in your account, the appropriate amount of HNT will be burned to cover the fee.
+
+The general formula is:
+`amountToSend = balance - feeInHNT`
+
+The packages in helium-js provide utility functions to calculate the above:
+
+```js
+import { Keypair, Address } from '@helium/crypto'
+import { PaymentV2 } from '@helium/transactions'
+import { Client } from '@helium/http'
+import { Balance, CurrencyType } from '@helium/currency'
+
+const client = new Client()
+
+// the transactions library needs to be configured
+// with the latest chain vars in order to calcluate fees
+const vars = await client.vars.get()
+Transaction.config(vars)
+
+// assuming bob has a balance of 100 HNT
+const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
+
+// initialize an address from a b58 string
+const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
+
+// get the speculative nonce for the keypair
+const account = await client.accounts.get(bob.address.b58)
+
+// construct a PaymentV2 txn for the purpose
+// of calculating the fee
+const paymentTxnForFee = new PaymentV2({
+  payer: bob.address,
+  payments: [
+    {
+      payee: alice,
+      amount: account.balance.integerBalance,
+    },
+  ],
+  nonce: account.speculativeNonce + 1,
+})
+
+// calculate max sendable amount
+const feeInDC = new Balance(paymentTxnForFee.fee, CurrencyType.dataCredit)
+const oracle = await client.oracle.getCurrentPrice()
+const feeInHNT = feeInDC.toNetworkTokens(oracle.price)
+const amountToSend = account.balance.minus(feeInHNT).integerBalance
+
+// construct a PaymentV2 txn to sign
+const paymentTxnForFee = new PaymentV2({
+  payer: bob.address,
+  payments: [
+    {
+      payee: alice,
+      amount: amountToSend,
+    },
+  ],
+  nonce: account.speculativeNonce + 1,
+})
+
+// sign the payment txn with bob's keypair
+const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
+
+// submit the serialized txn to the Blockchain HTTP API
+client.transactions.submit(signedPaymentTxn.toString())
+
+```
+
+> :warning: Note that oracle prices change over time. It's possible for a transaction to fail if the oracle price changes in between the time the transaction is conrstructed and when it is absorbed by the consensus group. The API exposes what the next oracle price will be at `https://api.helium.io
+/v1/oracle/predictions`. See https://developer.helium.com/blockchain/api/oracle for more details. To avoid failed transactions, it may be worth querying both the oracle predictions, and the current oracle value, and taking the greater of those values.
