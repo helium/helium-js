@@ -6,7 +6,11 @@ import {
   DataCredits,
   BaseCurrencyType,
 } from './currency_types'
-import { MixedCurrencyTypeError, OraclePriceRequiredError } from './Errors'
+import {
+  MixedCurrencyTypeError,
+  OraclePriceRequiredError,
+  UnsupportedCurrencyConversionError,
+} from './Errors'
 
 const FORMAT = {
   decimalSeparator: '.',
@@ -89,6 +93,7 @@ export default class Balance<T extends BaseCurrencyType> {
   }
 
   toUsd(oraclePrice?: Balance<USDollars>): Balance<USDollars> {
+    if (this.type instanceof USDollars) return this
     if (this.type instanceof DataCredits) {
       return new Balance(
         this.bigBalance
@@ -108,10 +113,12 @@ export default class Balance<T extends BaseCurrencyType> {
         CurrencyType.usd,
       )
     }
-    return this
+
+    throw UnsupportedCurrencyConversionError
   }
 
   toDataCredits(oraclePrice?: Balance<USDollars>): Balance<DataCredits> {
+    if (this.type instanceof DataCredits) return this
     if (this.type instanceof USDollars) {
       return new Balance(
         this.bigBalance.dividedBy(DC_TO_USD_MULTIPLIER).toNumber(),
@@ -122,6 +129,7 @@ export default class Balance<T extends BaseCurrencyType> {
       if (!oraclePrice) throw OraclePriceRequiredError
       return this.toUsd(oraclePrice).toDataCredits()
     }
-    return this
+
+    throw UnsupportedCurrencyConversionError
   }
 }

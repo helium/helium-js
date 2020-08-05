@@ -56,7 +56,7 @@ describe('plus', () => {
   it('throws an error if currency types are mixed', () => {
     const balanceA = new Balance(100000000, CurrencyType.default)
     const balanceB = new Balance(200000000, CurrencyType.dataCredit)
-    
+
     expect(() => {
       balanceA.plus(balanceB)
     }).toThrow()
@@ -73,7 +73,7 @@ describe('minus', () => {
   it('throws an error if currency types are mixed', () => {
     const balanceA = new Balance(100000000, CurrencyType.default)
     const balanceB = new Balance(200000000, CurrencyType.dataCredit)
-    
+
     expect(() => {
       balanceA.minus(balanceB)
     }).toThrow()
@@ -152,5 +152,28 @@ describe('toDataCredits', () => {
   it('returns itself if called on a dc balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     expect(dcBalance.toDataCredits().toString()).toBe('1,000,000 DC')
+  })
+})
+
+describe('trying to convert a security token balance', () => {
+  it('throws an error when converting to usd', () => {
+    const hstBalance = new Balance(100000000, CurrencyType.security)
+    expect(() => {
+      hstBalance.toUsd()
+    }).toThrow()
+  })
+
+  it('throws an error when converting to hnt', () => {
+    const hstBalance = new Balance(100000000, CurrencyType.security)
+    expect(() => {
+      hstBalance.toNetworkTokens()
+    }).toThrow()
+  })
+
+  it('throws an error when converting to dc', () => {
+    const hstBalance = new Balance(100000000, CurrencyType.security)
+    expect(() => {
+      hstBalance.toDataCredits()
+    }).toThrow()
   })
 })
