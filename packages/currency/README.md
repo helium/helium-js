@@ -83,10 +83,10 @@ hntBalance.toUsd(oraclePrice).toString(2) // 4.50 USD
 hntBalance.toDataCredits(oraclePrice).toString() // 450,000 DC
 
 const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
-dcbalance.toHnt(oraclePrice).toString(2) // 22.22 HNT
+dcbalance.toNetworkTokens(oraclePrice).toString(2) // 22.22 HNT
 dcbalance.toUsd().toString(2) // 10 USD
 
 const usdBalance = new Balance(10 * 10000000, CurrencyType.usd)
-usdBalance.toHnt(oraclePrice).toString(2) // 22.22 HNT
+usdBalance.toNetworkTokens(oraclePrice).toString(2) // 22.22 HNT
 usdBalance.toDataCredits().toString() // 1,000,000 DC
 ```
