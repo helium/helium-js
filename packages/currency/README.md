@@ -51,7 +51,7 @@ usdBalance.toString() // 1 USD
 
 > :point_up: note that the Helium blockchain represents USD with 8 decimal places, when displaying oracle prices for example.
 
-### Arithemtic Operations
+### Arithmetic Operations
 Balances can be added or subtracted from each other, and a balance can be multiplied by or divided by a number. This takes advantage of the underlying `bignumber.js` library for handling large numbers accurately without running into floating point errors.
 
 ```js
