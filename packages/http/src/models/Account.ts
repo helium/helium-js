@@ -1,4 +1,11 @@
-import { Balance, CurrencyType } from '@helium/currency'
+import {
+  Balance,
+  CurrencyType,
+  AnyCurrencyType,
+  DataCredits,
+  SecurityTokens,
+  NetworkTokens,
+} from '@helium/currency'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import PendingTransactions from '../resources/PendingTransactions'
@@ -17,7 +24,10 @@ export interface HTTPAccountObject {
   address: string
 }
 
-function toBalance(value: number | undefined, type: CurrencyType): Balance | undefined {
+function toBalance(
+  value: number | undefined,
+  type: AnyCurrencyType,
+): Balance<AnyCurrencyType> | undefined {
   if (value === undefined) return undefined
   return new Balance(value, type)
 }
@@ -35,7 +45,7 @@ export interface HTTPTimelineStats {
 
 export interface TimelineStats {
   timestamp: string
-  balance?: Balance
+  balance?: Balance<AnyCurrencyType>
 }
 
 export class AccountStats {
@@ -63,12 +73,12 @@ export default class Account {
   private client: Client
   public speculativeNonce?: number
   public secNonce?: number
-  public secBalance?: Balance
+  public secBalance?: Balance<SecurityTokens>
   public nonce?: number
   public dcNonce?: number
-  public dcBalance?: Balance
+  public dcBalance?: Balance<DataCredits>
   public block?: number
-  public balance?: Balance
+  public balance?: Balance<NetworkTokens>
   public address: string
 
   constructor(client: Client, account: HTTPAccountObject) {

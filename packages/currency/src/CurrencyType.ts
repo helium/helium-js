@@ -5,6 +5,12 @@ import {
   USDollars,
 } from './currency_types'
 
+export type AnyCurrencyType =
+  | NetworkTokens
+  | SecurityTokens
+  | DataCredits
+  | USDollars
+
 export default class CurrencyType {
   static get default(): NetworkTokens {
     return new NetworkTokens()

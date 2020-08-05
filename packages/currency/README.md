@@ -1,5 +1,5 @@
 # `@helium/currency`
-![npm](https://img.shields.io/npm/v/@helium/http)
+![npm](https://img.shields.io/npm/v/@helium/currency)
 
 Utilities for handling the different currency types on the Helium blockchain. For more details see the following resources:
 
