@@ -1,6 +1,10 @@
 import camelcaseKeys from 'camelcase-keys'
-import Balance from './Balance'
-import CurrencyType from './CurrencyType'
+import {
+  Balance,
+  CurrencyType,
+  DataCredits,
+  NetworkTokens,
+} from '@helium/currency'
 
 export interface TxnJsonObject {
   type: string
@@ -53,8 +57,8 @@ export interface PaymentV1 {
   nonce: number
   height: number
   hash: string
-  fee: Balance
-  amount: Balance
+  fee: Balance<DataCredits>
+  amount: Balance<NetworkTokens>
 }
 
 export interface PaymentV2 {
@@ -66,13 +70,13 @@ export interface PaymentV2 {
   nonce: number
   height: number
   hash: string
-  fee: Balance
-  totalAmount: Balance
+  fee: Balance<DataCredits>
+  totalAmount: Balance<NetworkTokens>
 }
 
 export interface Payment {
   payee: string
-  amount: Balance
+  amount: Balance<NetworkTokens>
 }
 
 export interface RewardsV1 {
@@ -83,17 +87,22 @@ export interface RewardsV1 {
   height: number
   hash: string
   endEpoch: number
-  totalAmount: Balance
+  totalAmount: Balance<NetworkTokens>
 }
 
 export interface Reward {
   type: string
   gateway: string
-  amount: Balance
+  amount: Balance<NetworkTokens>
   account: string
 }
 
-export type AnyTransaction = PaymentV1 | RewardsV1 | AddGatewayV1 | AssertLocationV1 | object
+export type AnyTransaction =
+  | PaymentV1
+  | RewardsV1
+  | AddGatewayV1
+  | AssertLocationV1
+  | object
 
 function prepareTxn(txn: any) {
   if (txn.fee) {
@@ -132,7 +141,7 @@ export default class Transaction {
   }
 
   static toPaymentV2(json: TxnJsonObject): PaymentV2 {
-    const payments = (json.payments || []).map(p => ({
+    const payments = (json.payments || []).map((p) => ({
       ...p,
       amount: new Balance(p.amount, CurrencyType.default),
     }))
@@ -157,7 +166,7 @@ export default class Transaction {
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {
-    const rewards = (json.rewards || []).map(r => ({
+    const rewards = (json.rewards || []).map((r) => ({
       ...r,
       amount: new Balance(r.amount, CurrencyType.default),
     })) as Reward[]

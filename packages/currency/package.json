@@ -1,11 +1,11 @@
 {
-  "name": "@helium/http",
+  "name": "@helium/currency",
   "version": "0.0.32",
-  "description": "HTTP library for interacting with the Helium blockchain API",
+  "description": "Utilities for handling different currency types on the Helium blockchain",
   "keywords": [
     "helium",
     "blockchain",
-    "api"
+    "currency"
   ],
   "contributors": [
     "Andrew Allen <allenan@helium.com>"
@@ -26,14 +26,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/currency": "^0.0.32",
-    "axios": "^0.19.2",
-    "camelcase-keys": "^6.2.2",
-    "qs": "^6.9.3",
-    "retry-axios": "^2.1.2"
-  },
-  "devDependencies": {
-    "@types/qs": "6.9.4"
+    "bignumber.js": "^9.0.0"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }

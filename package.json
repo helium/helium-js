@@ -17,6 +17,7 @@
       "packages/crypto/src",
       "packages/http/src",
       "packages/transactions/src",
+      "packages/currency/src",
       "integration_tests/tests"
     ],
     "collectCoverageFrom": [
