@@ -1,14 +1,14 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE } from './utils'
+import { EMPTY_SIGNATURE, toUint8Array } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface TokenBurnOptions {
-  payer?: Addressable
-  payee?: Addressable
-  amount?: number
-  nonce?: number
-  memo?: number
+  payer: Addressable
+  payee: Addressable
+  amount: number
+  nonce: number
+  memo: number
 }
 
 interface SignOptions {
@@ -16,13 +16,13 @@ interface SignOptions {
 }
 
 export default class TokenBurnV1 extends Transaction {
-  public payer?: Addressable
-  public payee?: Addressable
-  public amount?: number
-  public nonce?: number
+  public payer: Addressable
+  public payee: Addressable
+  public amount: number
+  public nonce: number
   public signature?: Uint8Array
   public fee?: number
-  public memo?: number
+  public memo: number
 
   constructor(opts: TokenBurnOptions) {
     super()
@@ -46,16 +46,15 @@ export default class TokenBurnV1 extends Transaction {
     const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
     const tokenBurn = this.toProto(true)
     const serialized = TokenBurnTxn.encode(tokenBurn).finish()
-    const signature = await payerKeypair.sign(serialized)
-    this.signature = signature
+    this.signature = await payerKeypair.sign(serialized)
     return this
   }
 
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_token_burn_v1 {
     const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
     return TokenBurnTxn.create({
-      payer: this.payer ? toUint8Array(this.payer.bin) : null,
-      payee: this.payee ? toUint8Array(this.payee.bin) : null,
+      payer: toUint8Array(this.payer.bin),
+      payee: toUint8Array(this.payee.bin),
       amount: this.amount,
       nonce: this.nonce,
       signature: this.signature && !forSigning ? toUint8Array(this.signature) : null,
