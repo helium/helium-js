@@ -6,13 +6,13 @@ Construct and serialize transaction primatives from their protobuf definitions.
 ```ts
 // create transcation
  const transaction =  new TokenBurnV1({
-    payer: 'payer_address',
-    payee: 'payee_address',
+    payer: payerAddress,
+    payee: payeeAddress,
     amount: 10,
     nonce: 1,
     memo: 1234567890,
 })
 
 // sign transaction
-const signedTransaction = await transaction.sign({ payer: 'payer_address' })
+const signedTransaction = await transaction.sign({ payer: payerKeypair })
 ```
