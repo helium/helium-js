@@ -27,7 +27,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/proto": "^1.0.0",
+    "@helium/proto": "^1.1.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
