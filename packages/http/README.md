@@ -152,8 +152,9 @@ See [`@helium/transactions`](https://github.com/helium/helium-js) for instructio
 
 #### Pending Transactions
 ##### Check Status of Pending Transaction
+This returns an array of pending transactions. In the case that a transaction fails and is submitted again it will return multiple pending transactions.
 ```js
-const pendingTxn = await client.pendingTransactions.get('fake-pending-txn-hash')
+const pendingTxns = await client.pendingTransactions.get('fake-pending-txn-hash')
 ```
 
 ##### List Pending Transactions for an Account

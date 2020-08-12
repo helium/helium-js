@@ -7,6 +7,7 @@ type Context = Account
 
 export default class PendingTransactions {
   private client!: Client
+
   private context?: Context
 
   constructor(client: Client, context?: Context) {
@@ -14,10 +15,14 @@ export default class PendingTransactions {
     this.context = context
   }
 
-  async get(hash: string): Promise<PendingTransaction> {
+  async get(hash: string): Promise<PendingTransaction[]> {
     const url = `/pending_transactions/${hash}`
     const { data: { data } } = await this.client.get(url)
-    return new PendingTransaction(data)
+    const pendingTransactions: PendingTransaction[] = []
+    data.forEach((txn: HTTPPendingTransactionObject) => {
+      pendingTransactions.push(new PendingTransaction(txn))
+    })
+    return pendingTransactions
   }
 
   async list(): Promise<ResourceList<PendingTransaction>> {
