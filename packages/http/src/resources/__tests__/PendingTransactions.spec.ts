@@ -80,36 +80,83 @@ describe('list without context', () => {
       await client.pendingTransactions.list()
     }
     await expect(makeList()).rejects.toThrow()
-    
-  });
-});
+  })
+})
 
 describe('get pending transaction', () => {
-  nock('https://api.helium.io')
-    .get('/v1/pending_transactions/fake-hash')
-    .reply(200, {
-      data: {
-        updated_at: '2020-04-27T23:30:35.730237Z',
-        type: 'payment_v1',
-        txn: {
-          signature: 'fake-signature',
-          payer: 'fake-address',
-          payee: 'fake-address-2',
-          nonce: 1,
-          fee: 0,
-          amount: 1,
-        },
-        status: 'pending',
-        hash: 'fake-hash',
-        failed_reason: '',
-        created_at: '2020-04-27T23:30:35.365656Z',
-      },
-    })
-
   it('gets a single pending transaction by hash', async () => {
+    nock('https://api.helium.io')
+      .get('/v1/pending_transactions/fake-hash')
+      .reply(200, {
+        data: [{
+          updated_at: '2020-04-27T23:30:35.730237Z',
+          type: 'payment_v1',
+          txn: {
+            signature: 'fake-signature',
+            payer: 'fake-address',
+            payee: 'fake-address-2',
+            nonce: 1,
+            fee: 0,
+            amount: 1,
+          },
+          status: 'pending',
+          hash: 'fake-hash',
+          failed_reason: '',
+          created_at: '2020-04-27T23:30:35.365656Z',
+        }],
+      })
     const client = new Client()
-    const pendingTxn = await client.pendingTransactions.get('fake-hash')
-    expect(pendingTxn.type).toBe('payment_v1')
-    expect(pendingTxn.txn.amount.integerBalance).toBe(1)
+    const list = await client.pendingTransactions.get('fake-hash')
+    const pendingTxns = await list.take(100)
+    expect(pendingTxns.length).toBe(1)
+    expect(pendingTxns[0].type).toBe('payment_v1')
+    expect(pendingTxns[0].txn.amount.integerBalance).toBe(1)
+  })
+
+  it('gets multiple pending transaction by hash', async () => {
+    nock('https://api.helium.io')
+      .get('/v1/pending_transactions/fake-hash')
+      .reply(200, {
+        data: [{
+          updated_at: '2020-04-27T23:30:35.730237Z',
+          type: 'payment_v1',
+          txn: {
+            signature: 'fake-signature',
+            payer: 'fake-address',
+            payee: 'fake-address-2',
+            nonce: 1,
+            fee: 0,
+            amount: 1,
+          },
+          status: 'pending',
+          hash: 'fake-hash',
+          failed_reason: '',
+          created_at: '2020-04-27T23:30:35.365656Z',
+        },
+        {
+          updated_at: '2020-04-27T23:30:35.730237Z',
+          type: 'payment_v1',
+          txn: {
+            signature: 'fake-signature',
+            payer: 'fake-address',
+            payee: 'fake-address-2',
+            nonce: 1,
+            fee: 0,
+            amount: 1,
+          },
+          status: 'failed',
+          hash: 'fake-hash',
+          failed_reason: 'invalid',
+          created_at: '2020-04-27T23:31:35.365656Z',
+        }],
+      })
+    const client = new Client()
+    const list = await client.pendingTransactions.get('fake-hash')
+    const pendingTxns = await list.take(100)
+    expect(pendingTxns.length).toBe(2)
+    expect(pendingTxns[0].type).toBe('payment_v1')
+    expect(pendingTxns[0].txn.amount.integerBalance).toBe(1)
+    expect(pendingTxns[0].status).toBe('pending')
+    expect(pendingTxns[1].status).toBe('failed')
   })
 })
