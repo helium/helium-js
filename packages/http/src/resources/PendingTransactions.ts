@@ -15,14 +15,12 @@ export default class PendingTransactions {
     this.context = context
   }
 
-  async get(hash: string): Promise<PendingTransaction[]> {
+  async get(hash: string): Promise<ResourceList<PendingTransaction>> {
     const url = `/pending_transactions/${hash}`
-    const { data: { data } } = await this.client.get(url)
-    const pendingTransactions: PendingTransaction[] = []
-    data.forEach((txn: HTTPPendingTransactionObject) => {
-      pendingTransactions.push(new PendingTransaction(txn))
-    })
-    return pendingTransactions
+    const response = await this.client.get(url)
+    const { data: { data: txns } } = response
+    const data = txns.map((d: HTTPPendingTransactionObject) => new PendingTransaction(d))
+    return new ResourceList(data)
   }
 
   async list(): Promise<ResourceList<PendingTransaction>> {

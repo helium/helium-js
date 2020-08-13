@@ -106,7 +106,8 @@ describe('get pending transaction', () => {
         }],
       })
     const client = new Client()
-    const pendingTxns = await client.pendingTransactions.get('fake-hash')
+    const list = await client.pendingTransactions.get('fake-hash')
+    const pendingTxns = await list.take(100)
     expect(pendingTxns.length).toBe(1)
     expect(pendingTxns[0].type).toBe('payment_v1')
     expect(pendingTxns[0].txn.amount.integerBalance).toBe(1)
@@ -150,7 +151,8 @@ describe('get pending transaction', () => {
         }],
       })
     const client = new Client()
-    const pendingTxns = await client.pendingTransactions.get('fake-hash')
+    const list = await client.pendingTransactions.get('fake-hash')
+    const pendingTxns = await list.take(100)
     expect(pendingTxns.length).toBe(2)
     expect(pendingTxns[0].type).toBe('payment_v1')
     expect(pendingTxns[0].txn.amount.integerBalance).toBe(1)
