@@ -10,7 +10,7 @@ Construct and serialize transaction primatives from their protobuf definitions.
     payee: payeeAddress,
     amount: 10,
     nonce: 1,
-    memo: 1234567890,
+    memo: 'MTIzNDU2Nzg5MA==',
 })
 
 // sign transaction
