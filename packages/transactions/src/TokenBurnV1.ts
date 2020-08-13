@@ -1,14 +1,17 @@
 import proto from '@helium/proto'
+import * as JSLong from 'long'
 import Transaction from './Transaction'
 import { EMPTY_SIGNATURE, toUint8Array } from './utils'
 import { Addressable, SignableKeypair } from './types'
+
+type Base64Memo = string
 
 interface TokenBurnOptions {
   payer: Addressable
   payee: Addressable
   amount: number
   nonce: number
-  memo: number
+  memo: Base64Memo
 }
 
 interface SignOptions {
@@ -22,7 +25,7 @@ export default class TokenBurnV1 extends Transaction {
   public nonce: number
   public signature?: Uint8Array
   public fee?: number
-  public memo: number
+  public memo: Base64Memo
 
   constructor(opts: TokenBurnOptions) {
     super()
@@ -52,6 +55,7 @@ export default class TokenBurnV1 extends Transaction {
 
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_token_burn_v1 {
     const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
+    const memoBuffer = Buffer.from(this.memo, 'base64')
     return TokenBurnTxn.create({
       payer: toUint8Array(this.payer.bin),
       payee: toUint8Array(this.payee.bin),
@@ -59,7 +63,7 @@ export default class TokenBurnV1 extends Transaction {
       nonce: this.nonce,
       signature: this.signature && !forSigning ? toUint8Array(this.signature) : null,
       fee: this.fee,
-      memo: this.memo,
+      memo: JSLong.fromBytes(Array.from(memoBuffer), true, true),
     })
   }
 

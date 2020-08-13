@@ -21,7 +21,7 @@ const tokenBurnFixture = async () => {
     payee: alice.address,
     amount: 10,
     nonce: 1,
-    memo: 1234567890,
+    memo: 'MTIzNDU2Nzg5MA==',
   })
 }
 
@@ -32,7 +32,7 @@ test('create a token burn txn', async () => {
   expect(tokenBurn.amount).toBe(10)
   expect(tokenBurn.nonce).toBe(1)
   expect(tokenBurn.fee).toBe(35000)
-  expect(tokenBurn.memo).toBe(1234567890)
+  expect(tokenBurn.memo).toBe('MTIzNDU2Nzg5MA==')
 })
 
 describe('serialize', () => {
@@ -47,7 +47,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(burnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.tokenBurn?.amount.toNumber()).toBe(10)
+    expect(decoded.tokenBurn?.amount?.toString()).toBe('10')
   })
 })
 
@@ -59,7 +59,7 @@ describe('sign', () => {
       payee: alice.address,
       amount: 10,
       nonce: 1,
-      memo: 1234567890,
+      memo: 'MTIzNDU2Nzg5MA==',
     })
 
     const signedPayment = await tokenBurn.sign({ payer: bob })
