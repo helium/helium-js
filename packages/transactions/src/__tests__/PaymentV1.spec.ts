@@ -45,7 +45,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(paymentString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.payment?.amount.toNumber()).toBe(10)
+    expect(decoded.payment?.amount?.toString()).toBe('10')
   })
 })
 
