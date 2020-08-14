@@ -52,7 +52,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.addGateway?.fee.toNumber()).toBe(45000)
+    expect(decoded.addGateway?.fee?.toString()).toBe('45000')
   })
 })
 

@@ -1,5 +1,5 @@
 import proto from '@helium/proto'
-import { PaymentV1, Transaction } from '..'
+import { TokenBurnV1, Transaction } from '..'
 import {
   usersFixture,
   bobB58,
@@ -13,53 +13,56 @@ Transaction.config({
   stakingFeeTxnAssertLocationV1: 10 * 100000,
 })
 
-const paymentFixture = async () => {
+const tokenBurnFixture = async () => {
   const { bob, alice } = await usersFixture()
 
-  return new PaymentV1({
+  return new TokenBurnV1({
     payer: bob.address,
     payee: alice.address,
     amount: 10,
     nonce: 1,
+    memo: 'MTIzNDU2Nzg5MA==',
   })
 }
 
-test('create a payment txn', async () => {
-  const payment = await paymentFixture()
-  expect(payment.payer?.b58).toBe(bobB58)
-  expect(payment.payee?.b58).toBe(aliceB58)
-  expect(payment.amount).toBe(10)
-  expect(payment.nonce).toBe(1)
-  expect(payment.fee).toBe(30000)
+test('create a token burn txn', async () => {
+  const tokenBurn = await tokenBurnFixture()
+  expect(tokenBurn.payer?.b58).toBe(bobB58)
+  expect(tokenBurn.payee?.b58).toBe(aliceB58)
+  expect(tokenBurn.amount).toBe(10)
+  expect(tokenBurn.nonce).toBe(1)
+  expect(tokenBurn.fee).toBe(35000)
+  expect(tokenBurn.memo).toBe('MTIzNDU2Nzg5MA==')
 })
 
 describe('serialize', () => {
   it('serializes a payment txn', async () => {
-    const payment = await paymentFixture()
-    expect(payment.serialize().length).toBeGreaterThan(0)
+    const tokenBurn = await tokenBurnFixture()
+    expect(tokenBurn.serialize().length).toBeGreaterThan(0)
   })
 
   it('serializes to base64 string', async () => {
-    const payment = await paymentFixture()
-    const paymentString = payment.toString()
+    const tokenBurn = await tokenBurnFixture()
+    const burnString = tokenBurn.toString()
     // verify that we can decode it back from its serialized string
-    const buf = Buffer.from(paymentString, 'base64')
+    const buf = Buffer.from(burnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.payment?.amount?.toString()).toBe('10')
+    expect(decoded.tokenBurn?.amount?.toString()).toBe('10')
   })
 })
 
 describe('sign', () => {
   it('adds the payer signature', async () => {
     const { bob, alice } = await usersFixture()
-    const payment = new PaymentV1({
+    const tokenBurn = new TokenBurnV1({
       payer: bob.address,
       payee: alice.address,
       amount: 10,
       nonce: 1,
+      memo: 'MTIzNDU2Nzg5MA==',
     })
 
-    const signedPayment = await payment.sign({ payer: bob })
+    const signedPayment = await tokenBurn.sign({ payer: bob })
 
     if (!signedPayment.signature) throw new Error('null')
 
