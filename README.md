@@ -13,6 +13,7 @@ This SDK is a collection of TypeScrypt libraries for interacting with the Helium
 | Package | NPM Version | What it's for |
 |-------------------------------------------------------------------------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | [`@helium/crypto`](https://github.com/helium/helium-js/tree/master/packages/crypto) | ![npm](https://img.shields.io/npm/v/@helium/crypto) | Cryptography utilities including keypairs, mnemonics and base58-check encoding |
+| [`@helium/crypto-react-native`](https://github.com/helium/helium-js/tree/master/packages/crypto-react-native) | ![npm](https://img.shields.io/npm/v/@helium/crypto-react-native) | Cryptography utilities following the same interface as `@helium/crypto` but for React Native |
 | [`@helium/transactions`](https://github.com/helium/helium-js/tree/master/packages/transactions) | ![npm](https://img.shields.io/npm/v/@helium/transactions) | Construct and serialize transaction primatives from their [protobuf](https://developers.google.com/protocol-buffers) definitions |
 | [`@helium/proto`](https://github.com/helium/proto) | ![npm](https://img.shields.io/npm/v/@helium/proto) | Protobuf definitions for Helium transactions |
 | [`@helium/http`](https://github.com/helium/helium-js/tree/master/packages/http) | ![npm](https://img.shields.io/npm/v/@helium/http) | An HTTP client for the blockchain REST API |
