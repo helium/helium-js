@@ -1,6 +1,6 @@
 {
   "name": "@helium/currency",
-  "version": "0.0.33",
+  "version": "1.0.0",
   "description": "Utilities for handling different currency types on the Helium blockchain",
   "keywords": [
     "helium",
