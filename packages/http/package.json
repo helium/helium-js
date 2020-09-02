@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@helium/currency": "^1.0.0",
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
     "retry-axios": "^2.1.2"
