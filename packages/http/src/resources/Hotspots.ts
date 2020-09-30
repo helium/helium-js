@@ -8,6 +8,10 @@ interface ListParams {
   cursor?: string
 }
 
+interface WitnessParams {
+  address?: string
+}
+
 type Context = Account | City
 
 export default class Hotspots {
@@ -21,6 +25,14 @@ export default class Hotspots {
 
   fromAddress(address: string): Hotspot {
     return new Hotspot(this.client, { address })
+  }
+
+  async listWitnesses(params: WitnessParams = {}): Promise<ResourceList<Hotspot>> {
+    const url = `/hotspots/${params.address}/witnesses`
+    const response = await this.client.get(url)
+    const { data: { data: hotspots } } = response
+    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
+    return new ResourceList(data, this.listWitnesses.bind(this))
   }
 
   async list(params: ListParams = {}): Promise<ResourceList<Hotspot>> {
