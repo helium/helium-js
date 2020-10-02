@@ -69,7 +69,7 @@ describe('list witnesses', () => {
 
   it('lists hotspots witnesses', async () => {
     const client = new Client()
-    const list = await client.hotspots.listWitnesses({ address: 'fake-address' })
+    const list = await client.hotspot('fake-address').witnesses.list()
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')

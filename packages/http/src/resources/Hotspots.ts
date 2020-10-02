@@ -8,11 +8,7 @@ interface ListParams {
   cursor?: string
 }
 
-interface WitnessParams {
-  address?: string
-}
-
-type Context = Account | City
+type Context = Account | City | Hotspot
 
 export default class Hotspots {
   private client!: Client
@@ -27,14 +23,6 @@ export default class Hotspots {
     return new Hotspot(this.client, { address })
   }
 
-  async listWitnesses(params: WitnessParams = {}): Promise<ResourceList<Hotspot>> {
-    const url = `/hotspots/${params.address}/witnesses`
-    const response = await this.client.get(url)
-    const { data: { data: hotspots } } = response
-    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
-    return new ResourceList(data, this.listWitnesses.bind(this))
-  }
-
   async list(params: ListParams = {}): Promise<ResourceList<Hotspot>> {
     let url = '/hotspots'
     if (this.context instanceof Account) {
@@ -44,6 +32,10 @@ export default class Hotspots {
     if (this.context instanceof City) {
       const city = this.context as City
       url = `/cities/${city.cityId}/hotspots`
+    }
+    if (this.context instanceof Hotspot) {
+      const hotspot = this.context as Hotspot
+      url = `/hotspots/${hotspot.address}/witnesses`
     }
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: hotspots, cursor } } = response

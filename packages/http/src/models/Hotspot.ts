@@ -1,6 +1,7 @@
 import camelcaseKeys from 'camelcase-keys'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
+import Hotspots from "../resources/Hotspots"
 
 export interface HTTPHotspotObject {
   score_update_height?: number
@@ -83,5 +84,9 @@ export default class Hotspot {
 
   public get activity(): Transactions {
     return new Transactions(this.client, this)
+  }
+
+  public get witnesses(): Hotspots {
+    return new Hotspots(this.client, this)
   }
 }
