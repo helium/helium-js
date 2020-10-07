@@ -15,18 +15,18 @@ export interface HTTPChallengeObject {
   challenger: string
 }
 
-interface HTTPPathObject {
+export interface HTTPPathObject {
   witnesses: HTTPWitnessesObject[]
   receipt: HTTPReceiptObject
   geocode: HTTPGeocodeObject
   challengee_owner: string
-  challengee_lon: string
+  challengee_lon: number
   challengee_location: string
-  challengee_lat: string
+  challengee_lat: number
   challengee: string
 }
 
-interface HTTPGeocodeObject {
+export interface HTTPGeocodeObject {
   short_street: string
   short_state: string
   short_country: string
@@ -38,7 +38,7 @@ interface HTTPGeocodeObject {
   city_id: string
 }
 
-interface HTTPWitnessesObject {
+export interface HTTPWitnessesObject {
   timestamp: number
   snr: number
   signal: number
@@ -52,7 +52,7 @@ interface HTTPWitnessesObject {
   channel: number
 }
 
-interface HTTPReceiptObject {
+export interface HTTPReceiptObject {
   timestamp: number
   snr: number
   signal: number
@@ -87,9 +87,9 @@ export interface Path {
   receipt: Receipt
   geocode: Geocode
   challengeeOwner: string
-  challengeeLon: string
+  challengeeLon: number
   challengeeLocation: string
-  challengeeLat: string
+  challengeeLat: number
   challengee: string
   result: PathResult
 }
