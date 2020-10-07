@@ -119,6 +119,12 @@ await client.blocks.list()
 await client.blocks.getHeight()
 ```
 
+#### Stats
+##### Get Network Stats
+```js
+await client.stats.get()
+```
+
 #### Transactions
 ##### Get Transaction Activity for an Account
 ```js
