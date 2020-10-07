@@ -18,19 +18,19 @@ export const mockReceipt = {
   channel: 0,
 } as HTTPReceiptObject
 
-export const mockWitness = {
+export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
   timestamp: 1602013549762689800,
   snr: 7,
   signal: -103,
   packet_hash: 'fake-packet_hash',
   owner: 'fake-owner',
   location: 'fake-location',
-  is_valid: true,
+  is_valid: isValid,
   gateway: 'fake-witness-gateway',
   frequency: 904.7000122070312,
   datarate: [83, 70, 56, 66, 87, 49, 50, 53],
   channel: 4,
-} as HTTPWitnessesObject
+})
 
 export const mockGeocode = {
   short_street: 'fake-short_street',
@@ -85,7 +85,7 @@ describe('Challenge Model', () => {
   it('handles valid witness, receipt, and geocode', () => {
     const challenge = new Challenge(challengeJson([
       {
-        witnesses: [mockWitness] as HTTPWitnessesObject[],
+        witnesses: [mockWitness()] as HTTPWitnessesObject[],
         receipt: mockReceipt,
         geocode: mockGeocode,
         ...mockPathData,
@@ -97,11 +97,23 @@ describe('Challenge Model', () => {
     expect(challenge.path[0].receipt.gateway).toBe('fake-gateway')
   })
 
+  it('is invalid if witness is not valid', () => {
+    const challenge = new Challenge(challengeJson([
+      {
+        witnesses: [mockWitness(false)] as HTTPWitnessesObject[],
+        receipt: mockReceipt,
+        geocode: mockGeocode,
+        ...mockPathData,
+      } as HTTPPathObject,
+    ] as HTTPPathObject[]))
+    expect(challenge.path[0].result).toBe(PathResult.FAILURE)
+  })
+
   describe('successful beacon', () => {
     it('first element has witness && receipt', () => {
       const challenge = new Challenge(challengeJson([
         {
-          witnesses: [mockWitness] as HTTPWitnessesObject[],
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
           receipt: mockReceipt,
           geocode: mockGeocode,
           ...mockPathData,
@@ -118,7 +130,7 @@ describe('Challenge Model', () => {
           ...mockPathData,
         } as HTTPPathObject,
         {
-          witnesses: [mockWitness] as HTTPWitnessesObject[],
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
           geocode: mockGeocode,
           ...mockPathData,
         } as HTTPPathObject,
@@ -149,7 +161,7 @@ describe('Challenge Model', () => {
     it('valid path then skip then witness', () => {
       const challenge = new Challenge(challengeJson([
         {
-          witnesses: [mockWitness] as HTTPWitnessesObject[],
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
           receipt: mockReceipt,
           geocode: mockGeocode,
           ...mockPathData,
@@ -160,7 +172,7 @@ describe('Challenge Model', () => {
           ...mockPathData,
         } as HTTPPathObject,
         {
-          witnesses: [mockWitness] as HTTPWitnessesObject[],
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
           receipt: mockReceipt,
           geocode: mockGeocode,
           ...mockPathData,
@@ -175,7 +187,7 @@ describe('Challenge Model', () => {
     it('no receipt', () => {
       const challenge = new Challenge(challengeJson([
         {
-          witnesses: [mockWitness] as HTTPWitnessesObject[],
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
           geocode: mockGeocode,
           ...mockPathData,
         } as HTTPPathObject,
