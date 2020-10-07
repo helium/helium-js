@@ -127,6 +127,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     const hasReceipt = pathObject.receipt
     const hasGeocode = pathObject.geocode
     const hasWitness = pathObject.witnesses.length > 0
+        && pathObject.witnesses.some((w) => w.is_valid)
     const hasReceiptOrWitnesses = hasReceipt || hasWitness
     const hasReceiptAndWitnesses = hasReceipt && hasWitness
     const nextElement = path[i + 1]
