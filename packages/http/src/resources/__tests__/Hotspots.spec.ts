@@ -57,6 +57,25 @@ describe('list', () => {
   })
 })
 
+describe('list witnesses', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/witnesses')
+    .reply(200, {
+      data: [
+        hotspotFixture({ name: 'hotspot-1' }),
+        hotspotFixture({ name: 'hotspot-2' }),
+      ],
+    })
+
+  it('lists hotspots witnesses', async () => {
+    const client = new Client()
+    const list = await client.hotspot('fake-address').witnesses.list()
+    const hotspots = await list.take(2)
+    expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[1].name).toBe('hotspot-2')
+  })
+})
+
 describe('list from account', () => {
   nock('https://api.helium.io')
     .get('/v1/accounts/fake-address/hotspots')

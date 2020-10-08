@@ -8,7 +8,7 @@ interface ListParams {
   cursor?: string
 }
 
-type Context = Account | City
+type Context = Account | City | Hotspot
 
 export default class Hotspots {
   private client!: Client
@@ -32,6 +32,10 @@ export default class Hotspots {
     if (this.context instanceof City) {
       const city = this.context as City
       url = `/cities/${city.cityId}/hotspots`
+    }
+    if (this.context instanceof Hotspot) {
+      const hotspot = this.context as Hotspot
+      url = `/hotspots/${hotspot.address}/witnesses`
     }
     const response = await this.client.get(url, { cursor: params.cursor })
     const { data: { data: hotspots, cursor } } = response
