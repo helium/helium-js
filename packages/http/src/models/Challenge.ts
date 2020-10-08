@@ -126,21 +126,19 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
   return path.map((pathObject, i) => {
     const hasReceipt = pathObject.receipt
     const hasGeocode = pathObject.geocode
-    const hasWitness = pathObject.witnesses.length > 0
-        && pathObject.witnesses.some((w) => w.is_valid)
-    const hasReceiptOrWitnesses = hasReceipt || hasWitness
-    const hasReceiptAndWitnesses = hasReceipt && hasWitness
+    const hasValidWitness = pathObject.witnesses.some((w) => w.is_valid)
+    const hasReceiptOrValidWitnesses = hasReceipt || hasValidWitness
     const nextElement = path[i + 1]
-    const nextElementHasReceiptOrWitness = nextElement && (nextElement.receipt
-        || nextElement.witnesses.length > 0)
+    const nextElementHasReceiptOrValidWitness = nextElement && (nextElement.receipt
+        || nextElement.witnesses.some((w) => w.is_valid))
     const isFirstElement = i === 0
-    const isValidBeacon = isBeacon && hasReceipt && hasWitness
+    const isValidBeacon = isBeacon && hasValidWitness
     const isValidChallenge = !isBeacon && (
       isFirstElement
-        ? (hasReceiptAndWitnesses || nextElementHasReceiptOrWitness)
-        : (hasReceiptOrWitnesses || nextElementHasReceiptOrWitness)
+        ? (hasValidWitness || nextElementHasReceiptOrValidWitness)
+        : (hasReceiptOrValidWitnesses || nextElementHasReceiptOrValidWitness)
     )
-    const isFailure = isFirstElement ? !hasWitness : !hasReceipt && !hasWitness
+    const isFailure = isFirstElement ? !hasValidWitness : !hasReceipt && !hasValidWitness
     let result: PathResult = PathResult.UNTESTED
     if (!hasFailedPath && (isValidBeacon || isValidChallenge)) {
       result = PathResult.SUCCESS
@@ -149,7 +147,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
       hasFailedPath = true
     }
     return {
-      witnesses: hasWitness ? pathObject.witnesses.map((witness) => ({
+      witnesses: pathObject.witnesses.map((witness) => ({
         timestamp: witness.timestamp,
         snr: witness.snr,
         signal: witness.signal,
@@ -161,7 +159,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
         frequency: witness.frequency,
         datarate: witness.datarate,
         channel: witness.channel,
-      } as Witness)) as Witness[] : [],
+      } as Witness)) as Witness[],
       receipt: hasReceipt ? {
         timestamp: pathObject.receipt.timestamp,
         snr: pathObject.receipt.snr,

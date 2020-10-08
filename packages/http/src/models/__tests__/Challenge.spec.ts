@@ -122,6 +122,17 @@ describe('Challenge Model', () => {
       expect(challenge.path[0].result).toBe(PathResult.SUCCESS)
     })
 
+    it('first element has witness but no receipt', () => {
+      const challenge = new Challenge(challengeJson([
+        {
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
+          geocode: mockGeocode,
+          ...mockPathData,
+        } as HTTPPathObject,
+      ] as HTTPPathObject[]))
+      expect(challenge.path[0].result).toBe(PathResult.SUCCESS)
+    })
+
     it('second element has witness', () => {
       const challenge = new Challenge(challengeJson([
         {
@@ -184,16 +195,6 @@ describe('Challenge Model', () => {
     })
   })
   describe('failed beacon', () => {
-    it('no receipt', () => {
-      const challenge = new Challenge(challengeJson([
-        {
-          witnesses: [mockWitness()] as HTTPWitnessesObject[],
-          geocode: mockGeocode,
-          ...mockPathData,
-        } as HTTPPathObject,
-      ] as HTTPPathObject[]))
-      expect(challenge.path[0].result).toBe(PathResult.UNTESTED)
-    })
     it('no witness', () => {
       const challenge = new Challenge(challengeJson([
         {
