@@ -5,6 +5,7 @@ import {
   DataCredits,
   NetworkTokens,
 } from '@helium/currency'
+import Challenge, { HTTPChallengeObject } from './Challenge'
 
 export interface TxnJsonObject {
   type: string
@@ -97,11 +98,14 @@ export interface Reward {
   account: string
 }
 
+export interface PocReceiptsV1 extends Challenge {}
+
 export type AnyTransaction =
   | PaymentV1
   | RewardsV1
   | AddGatewayV1
   | AssertLocationV1
+  | PocReceiptsV1
   | object
 
 function prepareTxn(txn: any) {
@@ -127,6 +131,8 @@ export default class Transaction {
         return this.toAddGatewayV1(json)
       case 'rewards_v1':
         return this.toRewardsV1(json)
+      case 'poc_receipts_v1':
+        return this.toPocReceiptsV1(json)
       default:
         return prepareTxn(json)
     }
@@ -163,6 +169,10 @@ export default class Transaction {
 
   static toAssertLocationV1(json: TxnJsonObject): AssertLocationV1 {
     return prepareTxn(json) as AssertLocationV1
+  }
+
+  static toPocReceiptsV1(json: TxnJsonObject): PocReceiptsV1 {
+    return new Challenge(json as HTTPChallengeObject)
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {

@@ -1,4 +1,8 @@
-import Transaction, { PaymentV2, RewardsV1 } from '../Transaction'
+import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1 } from '../Transaction'
+import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
+import {
+  challengeJson, mockGeocode, mockPathData, mockReceipt, mockWitness,
+} from './Challenge.spec'
 
 describe('PaymentV2', () => {
   it('exposes balances for currency fields', () => {
@@ -50,5 +54,19 @@ describe('RewardsV1', () => {
     }
     const txn = Transaction.fromJsonObject(json) as RewardsV1
     expect(txn.totalAmount.integerBalance).toBe(3000)
+  })
+})
+
+describe('PocReceiptsV1', () => {
+  it('correctly converts poc_receipts_v1', () => {
+    const txn = Transaction.fromJsonObject(challengeJson([
+      {
+        witnesses: [mockWitness()] as HTTPWitnessesObject[],
+        receipt: mockReceipt,
+        geocode: mockGeocode,
+        ...mockPathData,
+      } as HTTPPathObject,
+    ] as HTTPPathObject[])) as PocReceiptsV1
+    expect(txn.challenger).toBe('fake-challenger')
   })
 })

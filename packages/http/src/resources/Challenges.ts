@@ -25,14 +25,14 @@ export default class Challenges {
       url = `/accounts/${account.address}/challenges`
     }
     const response = await this.client.get(url, { cursor: params.cursor })
-    const { data: { data: hotspots, cursor } } = response
-    const data = hotspots.map((d: HTTPChallengeObject) => new Challenge(d))
+    const { data: { data: challenges, cursor } } = response
+    const data = challenges.map((d: HTTPChallengeObject) => new Challenge(d))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
   async get(hash: string): Promise<Challenge> {
     const url = `/challenges/${hash}`
-    const { data: { data: hotspot } } = await this.client.get(url)
-    return new Challenge(hotspot)
+    const { data: { data: challenge } } = await this.client.get(url)
+    return new Challenge(challenge)
   }
 }
