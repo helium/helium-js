@@ -18,6 +18,16 @@ export const mockReceipt = {
   channel: 0,
 } as HTTPReceiptObject
 
+// pre POCv10
+export const mockLegacyWitness = (): HTTPWitnessesObject => ({
+  timestamp: 1602013549762689800,
+  packet_hash: 'fake-packet_hash',
+  owner: 'fake-owner',
+  location: 'fake-location',
+  gateway: 'fake-witness-gateway',
+  channel: 4,
+} as HTTPWitnessesObject)
+
 export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
   timestamp: 1602013549762689800,
   snr: 7,
@@ -80,6 +90,17 @@ describe('Challenge Model', () => {
     expect(challenge.path[0].geocode).not.toBeDefined()
     expect(challenge.path[0].receipt).not.toBeDefined()
     expect(challenge.path[0].witnesses.length).toBe(0)
+  })
+
+  it('handles legacy poc data (pre POCv10)', () => {
+    const challenge = new Challenge(challengeJson([
+      {
+        witnesses: [mockLegacyWitness()] as HTTPWitnessesObject[],
+        ...mockPathData,
+      } as HTTPPathObject,
+    ] as HTTPPathObject[]))
+    expect(challenge.path.length).toBe(1)
+    expect(challenge.path[0].witnesses[0].isValid).toBe(true)
   })
 
   it('handles valid witness, receipt, and geocode', () => {

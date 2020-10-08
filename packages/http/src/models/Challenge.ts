@@ -120,17 +120,19 @@ export interface Receipt {
   channel: number
 }
 
+const isValidWitness = (w: HTTPWitnessesObject) => (w.is_valid === undefined ? true : w.is_valid)
+
 const constructPath = (path: HTTPPathObject[]): Path[] => {
   let hasFailedPath = false
   const isBeacon = path.length === 1
   return path.map((pathObject, i) => {
     const hasReceipt = pathObject.receipt
     const hasGeocode = pathObject.geocode
-    const hasValidWitness = pathObject.witnesses.some((w) => w.is_valid)
+    const hasValidWitness = pathObject.witnesses.some(isValidWitness)
     const hasReceiptOrValidWitnesses = hasReceipt || hasValidWitness
     const nextElement = path[i + 1]
     const nextElementHasReceiptOrValidWitness = nextElement && (nextElement.receipt
-        || nextElement.witnesses.some((w) => w.is_valid))
+        || nextElement.witnesses.some(isValidWitness))
     const isFirstElement = i === 0
     const isValidBeacon = isBeacon && hasValidWitness
     const isValidChallenge = !isBeacon && (
@@ -154,7 +156,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
         packetHash: witness.packet_hash,
         owner: witness.owner,
         location: witness.location,
-        isValid: witness.is_valid,
+        isValid: isValidWitness(witness),
         gateway: witness.gateway,
         frequency: witness.frequency,
         datarate: witness.datarate,
