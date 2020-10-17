@@ -8,7 +8,7 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
 }
 
 export const sha256 = (buffer: Buffer | string): string =>
-  createHash('sha256').update(buffer).digest().toString('hex')
+  createHash('sha256').update(buffer).digest()
 
 export const lpad = (
   str: string | any[],
