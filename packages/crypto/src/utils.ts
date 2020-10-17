@@ -7,7 +7,7 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
   return Buffer.from(sodium.randombytes_buf(n))
 }
 
-export const sha256 = (buffer: Buffer | string): string =>
+export const sha256 = (buffer: Buffer | string): Buffer =>
   createHash('sha256').update(buffer).digest()
 
 export const lpad = (
