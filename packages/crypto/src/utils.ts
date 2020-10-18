@@ -32,7 +32,7 @@ export const binaryToByte = (bin: string) => parseInt(bin, 2)
 export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   const ENT = entropyBuffer.length * 8
   const CS = ENT / 32
-  const hash = sha256(entropyBuffer)
+  const hash = sha256(entropyBuffer).toString('hex')
 
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
