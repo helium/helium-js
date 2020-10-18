@@ -45,7 +45,7 @@ export const bs58CheckEncode = (
   const vPayload = Buffer.concat([Buffer.from([version]), binary])
 
   // <<Checksum:4/binary, _/binary>> = crypto:hash(sha256, crypto:hash(sha256, VPayload)),
-  const checksum = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksum = sha256(Buffer.from(sha256(vPayload)))
   const checksumBytes = Buffer.alloc(4, checksum, 'hex')
 
   // Result = <<VPayload/binary, Checksum/binary>>,
@@ -61,7 +61,7 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   const payload = bin.slice(1, -4)
   const checksum = bin.slice(-4)
 
-  const checksumVerify = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksumVerify = sha256(Buffer.from(sha256(vPayload)))
   const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
 
   if (!checksumVerifyBytes.equals(checksum)) {
