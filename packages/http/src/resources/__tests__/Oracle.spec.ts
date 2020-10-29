@@ -51,8 +51,8 @@ describe('oracle predicted price exists', () => {
   it('gets the oracle price prediction', async () => {
     const client = new Client()
     const price = await client.oracle.getPredictedPrice()
-    expect(price.price.integerBalance).toBe(42040700)
-    expect(price.time).toBe(1594410146)
+    expect(price[0].price.integerBalance).toBe(42040700)
+    expect(price[0].time).toBe(1594410146)
   })
 })
 
@@ -74,8 +74,9 @@ describe('oracle predicted price has multiple values', () => {
   it('gets the first oracle price prediction', async () => {
     const client = new Client()
     const price = await client.oracle.getPredictedPrice()
-    expect(price.price.integerBalance).toBe(42040700)
-    expect(price.time).toBe(1594410146)
+    expect(price.length).toBe(2)
+    expect(price[0].price.integerBalance).toBe(42040700)
+    expect(price[0].time).toBe(1594410146)
   })
 })
 
@@ -91,7 +92,5 @@ describe('oracle predicted price is empty', () => {
     const price = await client.oracle.getPredictedPrice()
     expect(price).toBeInstanceOf(Array)
     expect(price.length).toBe(0)
-    expect(price.price).toBeUndefined()
-    expect(price.time).toBeUndefined()
   })
 })
