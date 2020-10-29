@@ -1,5 +1,17 @@
+import { Balance, CurrencyType, USDollars } from '@helium/currency'
 import type Client from '../Client'
-import { Balance, CurrencyType } from '@helium/currency'
+
+interface HTTPOraclePrice {
+  price: number
+  height?: number
+  time?: number
+}
+
+interface OraclePrice {
+  price: Balance<USDollars>
+  height?: number
+  time?: number
+}
 
 export default class Oracle {
   private client!: Client
@@ -8,28 +20,31 @@ export default class Oracle {
     this.client = client
   }
 
-  async getCurrentPrice(): Promise<any> {
+  async getCurrentPrice(): Promise<OraclePrice> {
     const url = '/oracle/prices/current'
     const { data: { data: { price, block } } } = await this.client.get(url)
 
     return { price: new Balance(price, CurrencyType.usd), height: block }
   }
 
-  async getPriceAtBlock(height: number): Promise<any> {
+  async getPriceAtBlock(height: number): Promise<OraclePrice> {
     const url = `/oracle/prices/${height}`
     const { data: { data: { price, block } } } = await this.client.get(url)
 
     return { price: new Balance(price, CurrencyType.usd), height: block }
   }
 
-  async getPredictedPrice(): Promise<any> {
+  async getPredictedPrice(): Promise<OraclePrice[]> {
     const url = '/oracle/predictions'
     const response = await this.client.get(url)
     if (!response.data.data || !response.data.data.length) {
       return []
     }
 
-    const { data: { data: [{ price, time }] } } = response
-    return { price: new Balance(price, CurrencyType.usd), time }
+    const { data: { data: predictions } } = response
+    return predictions.map((prediction: HTTPOraclePrice) => ({
+      time: prediction.time,
+      price: new Balance(prediction.price, CurrencyType.usd),
+    }))
   }
 }
