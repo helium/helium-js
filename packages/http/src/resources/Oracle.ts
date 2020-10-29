@@ -2,8 +2,9 @@ import { Balance, CurrencyType } from '@helium/currency'
 import type Client from '../Client'
 
 interface HTTPOraclePrice {
-  time: number
   price: number
+  height?: number
+  time?: number
 }
 
 interface OraclePrice {
