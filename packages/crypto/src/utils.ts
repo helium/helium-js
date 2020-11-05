@@ -7,8 +7,8 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
   return Buffer.from(sodium.randombytes_buf(n))
 }
 
-export const sha256 = (buffer: Buffer | string): string =>
-  createHash('sha256').update(buffer).digest().toString('hex')
+export const sha256 = (buffer: Buffer | string): Buffer =>
+  createHash('sha256').update(buffer).digest()
 
 export const lpad = (
   str: string | any[],
@@ -32,7 +32,7 @@ export const binaryToByte = (bin: string) => parseInt(bin, 2)
 export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   const ENT = entropyBuffer.length * 8
   const CS = ENT / 32
-  const hash = sha256(entropyBuffer)
+  const hash = sha256(entropyBuffer).toString('hex')
 
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
@@ -45,7 +45,7 @@ export const bs58CheckEncode = (
   const vPayload = Buffer.concat([Buffer.from([version]), binary])
 
   // <<Checksum:4/binary, _/binary>> = crypto:hash(sha256, crypto:hash(sha256, VPayload)),
-  const checksum = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksum = sha256(Buffer.from(sha256(vPayload)))
   const checksumBytes = Buffer.alloc(4, checksum, 'hex')
 
   // Result = <<VPayload/binary, Checksum/binary>>,
@@ -61,7 +61,7 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   const payload = bin.slice(1, -4)
   const checksum = bin.slice(-4)
 
-  const checksumVerify = sha256(Buffer.from(sha256(vPayload), 'hex'))
+  const checksumVerify = sha256(Buffer.from(sha256(vPayload)))
   const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
 
   if (!checksumVerifyBytes.equals(checksum)) {
