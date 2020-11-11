@@ -17,10 +17,3 @@ On iOS, install pods:
 ```
 cd ios && pod install
 ```
-
-Add the following to your `App.js` file:
-
-```js
-global.Buffer = require('safe-buffer').Buffer
-```
-
