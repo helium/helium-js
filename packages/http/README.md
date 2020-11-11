@@ -132,7 +132,7 @@ await client.account('an-account-address').activity.list()
 
 // optionally filter by transaction types
 await client.account('an-account-address').activity.list({
-  transactionTypes: ['payment_v1' ]
+  filterTypes: ['payment_v1' ]
 })
 ```
 
