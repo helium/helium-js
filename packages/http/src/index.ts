@@ -1,4 +1,6 @@
 export { default as Client } from './Client'
+export { default } from './Client'
 export { default as Network } from './Network'
 export { default as ResourceList } from './ResourceList'
-export { default } from './Client'
+export { HTTPHotspotObject as Hotspot } from './models/Hotspot'
+export { HTTPAccountObject as Account } from './models/Account'
