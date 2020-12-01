@@ -1,7 +1,10 @@
 import camelcaseKeys from 'camelcase-keys'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
-import Hotspots from "../resources/Hotspots"
+import Hotspots from '../resources/Hotspots'
+import DataModel from './DataModel'
+
+export type HotspotData = Omit<Hotspot, 'client'>
 
 export interface HTTPHotspotObject {
   score_update_height?: number
@@ -48,25 +51,38 @@ interface Status {
   online: string
 }
 
-export default class Hotspot {
-  private client: Client
+export default class Hotspot extends DataModel {
   public scoreUpdateHeight?: number
+
   public score?: number
+
   public owner?: string
+
   public name?: string
+
   public location?: string
+
   public lng?: number
+
   public lat?: number
+
   public block?: number
+
   public geocode?: Geocode
+
   public address: string
+
   public status?: Status
+
   public nonce?: number
+
   public blockAdded?: number
+
   public timestampAdded?: string
 
   constructor(client: Client, hotspot: HTTPHotspotObject) {
-    this.client = client
+    super(client)
+
     this.scoreUpdateHeight = hotspot.score_update_height
     this.score = hotspot.score
     this.owner = hotspot.owner
