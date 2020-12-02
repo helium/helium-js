@@ -52,6 +52,8 @@ interface Status {
 }
 
 export default class Hotspot extends DataModel {
+  private client: Client
+
   public scoreUpdateHeight?: number
 
   public score?: number
@@ -81,8 +83,8 @@ export default class Hotspot extends DataModel {
   public timestampAdded?: string
 
   constructor(client: Client, hotspot: HTTPHotspotObject) {
-    super(client)
-
+    super()
+    this.client = client
     this.scoreUpdateHeight = hotspot.score_update_height
     this.score = hotspot.score
     this.owner = hotspot.owner
@@ -107,5 +109,11 @@ export default class Hotspot extends DataModel {
 
   public get witnesses(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  get data(): HotspotData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { client, ...rest } = this
+    return { ...rest }
   }
 }

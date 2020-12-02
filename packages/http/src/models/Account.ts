@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {
   Balance,
   CurrencyType,
@@ -11,6 +12,7 @@ import Transactions from '../resources/Transactions'
 import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
 import Challenges from '../resources/Challenges'
+import DataModel from './DataModel'
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
@@ -48,6 +50,8 @@ export interface TimelineStats {
   balance?: Balance<AnyCurrencyType>
 }
 
+export type AccountData = Omit<Account, 'client'>
+
 export class AccountStats {
   constructor(data: HTTPStatsObject) {
     this.lastWeek = data.last_week.map((s) => ({
@@ -65,23 +69,35 @@ export class AccountStats {
   }
 
   public lastWeek: Array<TimelineStats>
+
   public lastMonth: Array<TimelineStats>
+
   public lastDay: Array<TimelineStats>
 }
 
-export default class Account {
+export default class Account extends DataModel {
   private client: Client
+
   public speculativeNonce?: number
+
   public secNonce?: number
+
   public secBalance?: Balance<SecurityTokens>
+
   public nonce?: number
+
   public dcNonce?: number
+
   public dcBalance?: Balance<DataCredits>
+
   public block?: number
+
   public balance?: Balance<NetworkTokens>
+
   public address: string
 
   constructor(client: Client, account: HTTPAccountObject) {
+    super()
     this.client = client
     this.speculativeNonce = account.speculative_nonce
     this.secNonce = account.sec_nonce
@@ -108,5 +124,11 @@ export default class Account {
 
   public get pendingTransactions(): PendingTransactions {
     return new PendingTransactions(this.client, this)
+  }
+
+  get data(): AccountData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { client, ...rest } = this
+    return { ...rest }
   }
 }

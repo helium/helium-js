@@ -1,5 +1,5 @@
 import type Client from '../Client'
-import Hotspot, { HTTPHotspotObject, HotspotData } from '../models/Hotspot'
+import Hotspot, { HTTPHotspotObject } from '../models/Hotspot'
 import ResourceList from '../ResourceList'
 import Account from '../models/Account'
 import City from '../models/City'
@@ -27,12 +27,6 @@ export default class Hotspots {
   async list(params: ListParams = {}): Promise<ResourceList<Hotspot>> {
     const { hotspots, cursor } = await this.fetchList(params)
     const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
-    return new ResourceList(data, this.list.bind(this), cursor)
-  }
-
-  async listData(params: ListParams = {}): Promise<ResourceList<HotspotData>> {
-    const { hotspots, cursor } = await this.fetchList(params)
-    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d).data)
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
