@@ -1,6 +1,7 @@
 import nock from 'nock'
 import Client from '../../Client'
 
+// eslint-disable-next-line import/prefer-default-export
 export const hotspotFixture = (params = {}) => ({
   score_update_height: 213456,
   score: 0.25,
@@ -26,11 +27,9 @@ export const hotspotFixture = (params = {}) => ({
 })
 
 describe('get', () => {
-  nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-hotspot-address')
-    .reply(200, {
-      data: hotspotFixture(),
-    })
+  nock('https://api.helium.io').get('/v1/hotspots/fake-hotspot-address').reply(200, {
+    data: hotspotFixture(),
+  })
 
   it('retrieves a hotspot by address', async () => {
     const client = new Client()
@@ -44,10 +43,7 @@ describe('list', () => {
   nock('https://api.helium.io')
     .get('/v1/hotspots')
     .reply(200, {
-      data: [
-        hotspotFixture({ name: 'hotspot-1' }),
-        hotspotFixture({ name: 'hotspot-2' }),
-      ],
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
     })
 
   it('lists hotspots', async () => {
@@ -59,14 +55,35 @@ describe('list', () => {
   })
 })
 
-describe('list witnesses', () => {
+describe('listJson', () => {
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/witnesses')
+    .get('/v1/hotspots')
     .reply(200, {
       data: [
         hotspotFixture({ name: 'hotspot-1' }),
         hotspotFixture({ name: 'hotspot-2' }),
+        hotspotFixture({ name: 'hotspot-3' }),
+        hotspotFixture({ name: 'hotspot-4' }),
       ],
+    })
+
+  it('lists hotspots', async () => {
+    const client = new Client()
+    const list = await client.hotspots.list()
+    const hotspots = await list.takeJSON(2)
+    expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[1].name).toBe('hotspot-2')
+    const hotspots2 = await list.takeJSON(2)
+    expect(hotspots2[0].name).toBe('hotspot-3')
+    expect(hotspots2[1].name).toBe('hotspot-4')
+  })
+})
+
+describe('list witnesses', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/witnesses')
+    .reply(200, {
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
     })
 
   it('lists hotspots witnesses', async () => {
@@ -82,10 +99,7 @@ describe('list from account', () => {
   nock('https://api.helium.io')
     .get('/v1/accounts/fake-address/hotspots')
     .reply(200, {
-      data: [
-        hotspotFixture({ name: 'hotspot-1' }),
-        hotspotFixture({ name: 'hotspot-2' }),
-      ],
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
     })
 
   it('lists hotspots from an account', async () => {
@@ -101,10 +115,7 @@ describe('list from city', () => {
   nock('https://api.helium.io')
     .get('/v1/cities/fake-address/hotspots')
     .reply(200, {
-      data: [
-        hotspotFixture({ name: 'hotspot-1' }),
-        hotspotFixture({ name: 'hotspot-2' }),
-      ],
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
     })
 
   it('lists hotspots in a city', async () => {

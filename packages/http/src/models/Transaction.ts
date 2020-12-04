@@ -2,7 +2,7 @@
 import camelcaseKeys from 'camelcase-keys'
 import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
-import DataModel from './DataModel'
+import DataModel, { GenericDataModel } from './DataModel'
 
 export interface TxnJsonObject {
   type: string
@@ -200,6 +200,7 @@ export type AnyTransaction =
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
+  | GenericDataModel
 
 function prepareTxn(txn: any) {
   if (txn.fee) {
@@ -214,7 +215,7 @@ function prepareTxn(txn: any) {
 }
 
 export default class Transaction {
-  public static fromJsonObject(json: TxnJsonObject) {
+  public static fromJsonObject(json: TxnJsonObject): AnyTransaction {
     switch (json.type) {
       case 'payment_v1':
         return this.toPaymentV1(json)
@@ -224,11 +225,10 @@ export default class Transaction {
         return this.toAddGatewayV1(json)
       case 'rewards_v1':
         return this.toRewardsV1(json)
-      default:
       case 'poc_receipts_v1':
         return this.toPocReceiptsV1(json)
-      // default:
-      //   return prepareTxn(json)
+      default:
+        return new GenericDataModel(prepareTxn(json))
     }
   }
 
