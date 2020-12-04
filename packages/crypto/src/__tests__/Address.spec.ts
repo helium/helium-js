@@ -34,6 +34,15 @@ describe('bin', () => {
   })
 })
 
+describe('fromBin', () => {
+  it('builds an Address from a binary representation', async () => {
+    const { bob } = await usersFixture()
+    const { bin } = new Address(0, 1, bob.publicKey)
+    const address = Address.fromBin(bin)
+    expect(address.b58).toBe(bob.address.b58)
+  })
+})
+
 describe('fromB58', () => {
   it('builds an Address from a b58 string', () => {
     const address = Address.fromB58(bobB58)
