@@ -1,3 +1,5 @@
+import DataModel from './DataModel'
+
 export interface HTTPChallengeObject {
   type: string
   time: number
@@ -131,15 +133,13 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     const hasValidWitness = pathObject.witnesses.some(isValidWitness)
     const hasReceiptOrValidWitnesses = hasReceipt || hasValidWitness
     const nextElement = path[i + 1]
-    const nextElementHasReceiptOrValidWitness = nextElement && (nextElement.receipt
-        || nextElement.witnesses.some(isValidWitness))
+    const nextElementHasReceiptOrValidWitness = nextElement && (nextElement.receipt || nextElement.witnesses.some(isValidWitness))
     const isFirstElement = i === 0
     const isValidBeacon = isBeacon && hasValidWitness
-    const isValidChallenge = !isBeacon && (
-      isFirstElement
-        ? (hasValidWitness || nextElementHasReceiptOrValidWitness)
-        : (hasReceiptOrValidWitnesses || nextElementHasReceiptOrValidWitness)
-    )
+    const isValidChallenge = !isBeacon
+      && (isFirstElement
+        ? hasValidWitness || nextElementHasReceiptOrValidWitness
+        : hasReceiptOrValidWitnesses || nextElementHasReceiptOrValidWitness)
     const isFailure = isFirstElement ? !hasValidWitness : !hasReceipt && !hasValidWitness
     let result: PathResult = PathResult.UNTESTED
     if (!hasFailedPath && (isValidBeacon || isValidChallenge)) {
@@ -149,41 +149,47 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
       hasFailedPath = true
     }
     return {
-      witnesses: pathObject.witnesses.map((witness) => ({
-        timestamp: witness.timestamp,
-        snr: witness.snr,
-        signal: witness.signal,
-        packetHash: witness.packet_hash,
-        owner: witness.owner,
-        location: witness.location,
-        isValid: isValidWitness(witness),
-        gateway: witness.gateway,
-        frequency: witness.frequency,
-        datarate: witness.datarate,
-        channel: witness.channel,
-      } as Witness)) as Witness[],
-      receipt: hasReceipt ? {
-        timestamp: pathObject.receipt.timestamp,
-        snr: pathObject.receipt.snr,
-        signal: pathObject.receipt.signal,
-        origin: pathObject.receipt.origin,
-        gateway: pathObject.receipt.gateway,
-        frequency: pathObject.receipt.frequency,
-        datarate: pathObject.receipt.datarate,
-        data: pathObject.receipt.data,
-        channel: pathObject.receipt.channel,
-      } as Receipt : undefined,
-      geocode: hasGeocode ? {
-        shortStreet: pathObject.geocode.short_street,
-        shortState: pathObject.geocode.short_state,
-        shortCountry: pathObject.geocode.short_country,
-        shortCity: pathObject.geocode.short_city,
-        longStreet: pathObject.geocode.long_street,
-        longState: pathObject.geocode.long_state,
-        longCountry: pathObject.geocode.long_country,
-        longCity: pathObject.geocode.long_city,
-        cityId: pathObject.geocode.city_id,
-      } as Geocode : undefined,
+      witnesses: pathObject.witnesses.map(
+        (witness) => ({
+          timestamp: witness.timestamp,
+          snr: witness.snr,
+          signal: witness.signal,
+          packetHash: witness.packet_hash,
+          owner: witness.owner,
+          location: witness.location,
+          isValid: isValidWitness(witness),
+          gateway: witness.gateway,
+          frequency: witness.frequency,
+          datarate: witness.datarate,
+          channel: witness.channel,
+        } as Witness),
+      ) as Witness[],
+      receipt: hasReceipt
+        ? ({
+          timestamp: pathObject.receipt.timestamp,
+          snr: pathObject.receipt.snr,
+          signal: pathObject.receipt.signal,
+          origin: pathObject.receipt.origin,
+          gateway: pathObject.receipt.gateway,
+          frequency: pathObject.receipt.frequency,
+          datarate: pathObject.receipt.datarate,
+          data: pathObject.receipt.data,
+          channel: pathObject.receipt.channel,
+        } as Receipt)
+        : undefined,
+      geocode: hasGeocode
+        ? ({
+          shortStreet: pathObject.geocode.short_street,
+          shortState: pathObject.geocode.short_state,
+          shortCountry: pathObject.geocode.short_country,
+          shortCity: pathObject.geocode.short_city,
+          longStreet: pathObject.geocode.long_street,
+          longState: pathObject.geocode.long_state,
+          longCountry: pathObject.geocode.long_country,
+          longCity: pathObject.geocode.long_city,
+          cityId: pathObject.geocode.city_id,
+        } as Geocode)
+        : undefined,
       challengeeOwner: pathObject.challengee_owner,
       challengeeLon: pathObject.challengee_lon,
       challengeeLocation: pathObject.challengee_location,
@@ -194,23 +200,39 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
   })
 }
 
-export default class Challenge {
+export type ChallengeData = Challenge
+
+export default class Challenge extends DataModel {
   public type: string
+
   public time: number
+
   public secret: string
+
   public requestBlockHash: string
+
   public path: Path[]
+
   public onionKeyHash: string
+
   public height: number
+
   public hash: string
+
   public fee: number
+
   public challengerOwner: string
+
   public challengerLon: number
+
   public challengerLocation: string
+
   public challengerLat: number
+
   public challenger: string
 
   constructor(challenge: HTTPChallengeObject) {
+    super()
     this.type = challenge.type
     this.time = challenge.time
     this.secret = challenge.secret
@@ -225,5 +247,10 @@ export default class Challenge {
     this.challengerLocation = challenge.challenger_location
     this.challengerLat = challenge.challenger_lat
     this.challenger = challenge.challenger
+  }
+
+  get data(): ChallengeData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return this
   }
 }

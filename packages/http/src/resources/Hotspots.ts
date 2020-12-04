@@ -12,6 +12,7 @@ type Context = Account | City | Hotspot
 
 export default class Hotspots {
   private client!: Client
+
   private context?: Context
 
   constructor(client: Client, context?: Context) {
@@ -24,6 +25,14 @@ export default class Hotspots {
   }
 
   async list(params: ListParams = {}): Promise<ResourceList<Hotspot>> {
+    const { hotspots, cursor } = await this.fetchList(params)
+    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
+    return new ResourceList(data, this.list.bind(this), cursor)
+  }
+
+  private async fetchList(
+    params: ListParams = {},
+  ): Promise<{ hotspots: HTTPHotspotObject[]; cursor?: string }> {
     let url = '/hotspots'
     if (this.context instanceof Account) {
       const account = this.context as Account
@@ -38,14 +47,17 @@ export default class Hotspots {
       url = `/hotspots/${hotspot.address}/witnesses`
     }
     const response = await this.client.get(url, { cursor: params.cursor })
-    const { data: { data: hotspots, cursor } } = response
-    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
-    return new ResourceList(data, this.list.bind(this), cursor)
+    const {
+      data: { data: hotspots, cursor },
+    } = response
+    return { hotspots, cursor }
   }
 
   async get(address: string): Promise<Hotspot> {
     const url = `/hotspots/${address}`
-    const { data: { data: hotspot } } = await this.client.get(url)
+    const {
+      data: { data: hotspot },
+    } = await this.client.get(url)
     return new Hotspot(this.client, hotspot)
   }
 }

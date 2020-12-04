@@ -1,5 +1,6 @@
-import Hotspots from "../resources/Hotspots";
-import Client from "../Client";
+import Hotspots from '../resources/Hotspots'
+import Client from '../Client'
+import DataModel from './DataModel'
 
 export interface HTTPCityObject {
   short_state?: string
@@ -12,18 +13,29 @@ export interface HTTPCityObject {
   city_id: string
 }
 
-export default class City {
+export type CityData = Omit<City, 'client'>
+
+export default class City extends DataModel {
   private client: Client
+
   public shortState?: string
+
   public shortCountry?: string
+
   public shortCity?: string
+
   public longState?: string
+
   public longCountry?: string
+
   public longCity?: string
+
   public hotspotCount?: number
+
   public cityId: string
 
   constructor(client: Client, data: HTTPCityObject) {
+    super()
     this.client = client
     this.shortState = data.short_state
     this.shortCountry = data.short_country
@@ -37,5 +49,11 @@ export default class City {
 
   public get hotspots(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  get data(): CityData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { client, ...rest } = this
+    return { ...rest }
   }
 }
