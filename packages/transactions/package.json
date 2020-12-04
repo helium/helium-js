@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@helium/crypto": "^3.7.0",
-    "@helium/proto": "^1.1.0",
+    "@helium/proto": "^1.2.0",
     "long": "^4.0.0",
     "path": "^0.12.7"
   },

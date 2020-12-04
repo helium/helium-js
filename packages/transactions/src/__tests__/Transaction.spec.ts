@@ -23,4 +23,9 @@ describe('config', () => {
     expect(Transaction.stakingFeeTxnAddGatewayV1).toBe(1000)
     expect(Transaction.stakingFeeTxnAssertLocationV1).toBe(2000)
   })
+
+  it('configures transactions without chain vars', () => {
+    Transaction.config({})
+    expect(Transaction).toBeDefined()
+  })
 })
