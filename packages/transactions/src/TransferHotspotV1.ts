@@ -1,16 +1,22 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { EMPTY_SIGNATURE, toUint8Array } from './utils'
+import {
+  EMPTY_SIGNATURE,
+  toUint8Array,
+  toAddressable,
+  toNumber,
+} from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface TransferHotspotOptions {
-  gateway: Addressable
-  seller: Addressable
-  buyer: Addressable
+  gateway?: Addressable
+  seller?: Addressable
+  buyer?: Addressable
   sellerSignature?: Uint8Array
   buyerSignature?: Uint8Array
-  buyerNonce: number
-  amountToSeller: number
+  buyerNonce?: number
+  amountToSeller?: number
+  fee?: number
 }
 
 interface SignOptions {
@@ -19,17 +25,17 @@ interface SignOptions {
 }
 
 export default class TransferHotspotV1 extends Transaction {
-  public gateway: Addressable
+  public gateway?: Addressable
 
-  public seller: Addressable
+  public seller?: Addressable
 
-  public buyer: Addressable
+  public buyer?: Addressable
 
   public sellerSignature?: Uint8Array
 
   public buyerSignature?: Uint8Array
 
-  public buyerNonce: number
+  public buyerNonce?: number
 
   public amountToSeller?: number
 
@@ -55,6 +61,30 @@ export default class TransferHotspotV1 extends Transaction {
     return BlockchainTxn.encode(txn).finish()
   }
 
+  static fromString(serializedTxnString: string): TransferHotspotV1 {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const decoded = proto.helium.blockchain_txn.decode(buf)
+    const gateway = toAddressable(decoded.transferHotspot?.gateway)
+    const seller = toAddressable(decoded.transferHotspot?.seller)
+    const buyer = toAddressable(decoded.transferHotspot?.buyer)
+    const sellerSignature = toUint8Array(decoded.transferHotspot?.sellerSignature)
+    const buyerSignature = toUint8Array(decoded.transferHotspot?.buyerSignature)
+    const buyerNonce = toNumber(decoded.transferHotspot?.buyerNonce)
+    const amountToSeller = toNumber(decoded.transferHotspot?.amountToSeller)
+    const fee = toNumber(decoded.transferHotspot?.fee)
+
+    return new TransferHotspotV1({
+      gateway,
+      seller,
+      buyer,
+      sellerSignature,
+      buyerSignature,
+      buyerNonce,
+      amountToSeller,
+      fee,
+    })
+  }
+
   async sign(keypairs: SignOptions): Promise<TransferHotspotV1> {
     const TransferHotspotTxn = proto.helium.blockchain_txn_transfer_hotspot_v1
     const transferHotspot = this.toProto(true)
@@ -74,9 +104,9 @@ export default class TransferHotspotV1 extends Transaction {
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_transfer_hotspot_v1 {
     const TransferHotspotTxn = proto.helium.blockchain_txn_transfer_hotspot_v1
     return TransferHotspotTxn.create({
-      gateway: toUint8Array(this.gateway.bin),
-      seller: toUint8Array(this.seller.bin),
-      buyer: toUint8Array(this.buyer.bin),
+      gateway: this.gateway ? toUint8Array(this.gateway.bin) : null,
+      seller: this.seller ? toUint8Array(this.seller.bin) : null,
+      buyer: this.buyer ? toUint8Array(this.buyer.bin) : null,
       sellerSignature: this.sellerSignature && !forSigning
         ? toUint8Array(this.sellerSignature) : null,
       buyerSignature: this.buyerSignature && !forSigning

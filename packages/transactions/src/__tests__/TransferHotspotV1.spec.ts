@@ -35,7 +35,7 @@ test('create a transfer hotspot txn', async () => {
   expect(transferHotspot.fee).toBe(55000)
 })
 
-describe('serialize', () => {
+describe('serialize and deserialize', () => {
   it('serializes a transfer hotspot txn', async () => {
     const transferHotspot = await transferHotspotFixture()
     expect(transferHotspot.serialize().length).toBeGreaterThan(0)
@@ -43,11 +43,23 @@ describe('serialize', () => {
 
   it('serializes to base64 string', async () => {
     const transferHotspot = await transferHotspotFixture()
-    const burnString = transferHotspot.toString()
+    const transferHotspotString = transferHotspot.toString()
     // verify that we can decode it back from its serialized string
-    const buf = Buffer.from(burnString, 'base64')
+    const buf = Buffer.from(transferHotspotString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
     expect(decoded.transferHotspot?.amountToSeller?.toString()).toBe('10')
+  })
+
+  it('deserializes from a base64 string', async () => {
+    const transferHotspot = await transferHotspotFixture()
+    const transferHotspotString = transferHotspot.toString()
+    const deserialized = TransferHotspotV1.fromString(transferHotspotString)
+    expect(deserialized.gateway?.b58).toBe(transferHotspot.gateway?.b58)
+    expect(deserialized.buyer?.b58).toBe(transferHotspot.buyer?.b58)
+    expect(deserialized.seller?.b58).toBe(transferHotspot.seller?.b58)
+    expect(deserialized.amountToSeller).toBe(transferHotspot.amountToSeller)
+    expect(deserialized.buyerNonce).toBe(transferHotspot.buyerNonce)
+    expect(deserialized.fee).toBe(transferHotspot.fee)
   })
 })
 
