@@ -67,16 +67,16 @@ describe('sign', () => {
   it('adds the seller signature', async () => {
     const { alice } = await usersFixture()
     const transferHotspot = await transferHotspotFixture()
-    const signedPayment = await transferHotspot.sign({ seller: alice })
-    if (!signedPayment.sellerSignature) throw new Error('null')
-    expect(Buffer.byteLength(Buffer.from(signedPayment.sellerSignature))).toBe(64)
+    const signedTxn = await transferHotspot.sign({ seller: alice })
+    if (!signedTxn.sellerSignature) throw new Error('null')
+    expect(Buffer.byteLength(Buffer.from(signedTxn.sellerSignature))).toBe(64)
   })
 
   it('adds the buyer signature', async () => {
     const { bob } = await usersFixture()
     const transferHotspot = await transferHotspotFixture()
-    const signedPayment = await transferHotspot.sign({ buyer: bob })
-    if (!signedPayment.buyerSignature) throw new Error('null')
-    expect(Buffer.byteLength(Buffer.from(signedPayment.buyerSignature))).toBe(64)
+    const signedTxn = await transferHotspot.sign({ buyer: bob })
+    if (!signedTxn.buyerSignature) throw new Error('null')
+    expect(Buffer.byteLength(Buffer.from(signedTxn.buyerSignature))).toBe(64)
   })
 })
