@@ -20,6 +20,7 @@ export const hotspotFixture = (params = {}) => ({
     long_city: 'San Francisco',
   },
   block: 123456,
+  timestamp_added: '2020-11-24T02:52:12.000000Z',
   address: 'fake-hotspot-address',
   ...params,
 })
@@ -35,6 +36,7 @@ describe('get', () => {
     const client = new Client()
     const hotspot = await client.hotspots.get('fake-hotspot-address')
     expect(hotspot.name).toBe('some-hotspot-name')
+    expect(hotspot.timestampAdded).toBe('2020-11-24T02:52:12.000000Z')
   })
 })
 

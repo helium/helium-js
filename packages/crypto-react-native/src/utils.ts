@@ -4,7 +4,7 @@ import bs58 from 'bs58'
 
 export const randomBytes = async (n: number): Promise<Buffer> => {
   const bytes = await Sodium.randombytes_buf(n)
-  return Buffer.from(bytes)
+  return Buffer.from(bytes, 'base64')
 }
 
 export const lpad = (

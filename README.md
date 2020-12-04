@@ -78,7 +78,7 @@ PaymentV2 transactions allow for specifying multiple recipients in the same tran
 
 ```js
 import { Keypair, Address } from '@helium/crypto'
-import { PaymentV2 } from '@helium/transactions'
+import { PaymentV2, Transaction } from '@helium/transactions'
 import { Client } from '@helium/http'
 
 const client = new Client()
@@ -134,7 +134,7 @@ The packages in helium-js provide utility functions to calculate the above:
 
 ```js
 import { Keypair, Address } from '@helium/crypto'
-import { PaymentV2 } from '@helium/transactions'
+import { PaymentV2, Transaction } from '@helium/transactions'
 import { Client } from '@helium/http'
 import { Balance, CurrencyType } from '@helium/currency'
 

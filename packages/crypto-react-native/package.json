@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto-react-native",
-  "version": "3.0.0",
+  "version": "3.5.0",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding for React Native",
   "keywords": [
     "helium",
@@ -28,8 +28,10 @@
   },
   "dependencies": {
     "bs58": "^4.0.1",
+    "buffer": "^6.0.1",
     "js-sha256": "^0.9.0",
-    "react-native-sodium": "^0.3.8"
+    "react-native-sodium": "^0.3.8",
+    "safe-buffer": "^5.2.1"
   },
   "devDependencies": {
     "@types/bs58": "4.0.1"

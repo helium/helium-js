@@ -17,6 +17,7 @@ export interface HTTPHotspotObject {
   address: string
   status?: Status
   nonce?: number
+  timestamp_added?: string
 }
 
 interface HTTPGeocodeObject {
@@ -62,6 +63,7 @@ export default class Hotspot {
   public status?: Status
   public nonce?: number
   public blockAdded?: number
+  public timestampAdded?: string
 
   constructor(client: Client, hotspot: HTTPHotspotObject) {
     this.client = client
@@ -76,6 +78,7 @@ export default class Hotspot {
     this.status = hotspot.status
     this.nonce = hotspot.nonce
     this.blockAdded = hotspot.block_added
+    this.timestampAdded = hotspot.timestamp_added
     if (hotspot.geocode) {
       this.geocode = camelcaseKeys(hotspot.geocode) as any
     }

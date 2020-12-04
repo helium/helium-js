@@ -1,4 +1,10 @@
-import { lpad, deriveChecksumBits, binaryToByte, bytesToBinary } from './utils'
+import {
+  lpad,
+  deriveChecksumBits,
+  binaryToByte,
+  bytesToBinary,
+  randomBytes,
+} from './utils'
 import wordlist from './wordlists/english.json'
 
 export default class Mnemonic {
@@ -6,6 +12,11 @@ export default class Mnemonic {
 
   constructor(words: Array<string>) {
     this.words = words
+  }
+
+  static async create(): Promise<Mnemonic> {
+    const entropy = await randomBytes(16)
+    return Mnemonic.fromEntropy(entropy)
   }
 
   static fromEntropy(entropy: Buffer): Mnemonic {

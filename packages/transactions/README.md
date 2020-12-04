@@ -34,3 +34,17 @@ const signedTransaction = await transaction.sign({ buyer: buyerKeypair })
 // sign transaction as seller
 const signedTransaction = await transaction.sign({ seller: sellerKeypair })
 ```
+
+## Deserialization
+
+```ts
+const paymentTxn = new PaymentV2({
+  payer,
+  payments,
+  nonce,
+})
+
+const serializedPaymentV2 = paymentTxn.toString()
+
+const deserializedPaymentV2 = PaymentV2.fromString(serializedPaymentV2)
+```
