@@ -1,12 +1,14 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE } from './utils'
+import { toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
   payments?: Array<Payment>
   nonce?: number
+  fee?: number
+  signature?: Uint8Array
 }
 
 interface Payment {
@@ -30,8 +32,13 @@ export default class PaymentV2 extends Transaction {
     this.payer = opts.payer
     this.payments = opts.payments || []
     this.nonce = opts.nonce
-    this.fee = 0
-    this.fee = this.calculateFee()
+    if (opts.fee) {
+      this.fee = opts.fee
+    } else {
+      this.fee = 0
+      this.fee = this.calculateFee()
+    }
+    this.signature = opts.signature
   }
 
   serialize(): Uint8Array {
@@ -40,6 +47,27 @@ export default class PaymentV2 extends Transaction {
     const paymentV2 = this.toProto()
     const txn = BlockchainTxn.create({ paymentV2 })
     return BlockchainTxn.encode(txn).finish()
+  }
+
+  static fromString(serializedTxnString: string) {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const decoded = proto.helium.blockchain_txn.decode(buf)
+    const payer = toAddressable(decoded.paymentV2?.payer)
+    const payments = (decoded.paymentV2?.payments || []).map((p) => ({
+      payee: toAddressable(p!.payee) as Addressable,
+      amount: toNumber(p!.amount) as number,
+    }))
+    const fee = toNumber(decoded.paymentV2?.fee)
+    const nonce = toNumber(decoded.paymentV2?.nonce)
+    const signature = toUint8Array(decoded.paymentV2?.signature)
+
+    return new PaymentV2({
+      payer,
+      payments,
+      fee,
+      nonce,
+      signature,
+    })
   }
 
   async sign({ payer: payerKeypair }: SignOptions): Promise<PaymentV2> {
