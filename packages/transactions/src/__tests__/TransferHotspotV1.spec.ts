@@ -32,7 +32,7 @@ test('create a transfer hotspot txn', async () => {
   expect(transferHotspot.seller?.b58).toBe(aliceB58)
   expect(transferHotspot.amountToSeller).toBe(10)
   expect(transferHotspot.buyerNonce).toBe(1)
-  expect(transferHotspot.fee).toBe(35000)
+  expect(transferHotspot.fee).toBe(55000)
 })
 
 describe('serialize', () => {
@@ -47,7 +47,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(burnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.transferHotspot?.amount_to_seller?.toString()).toBe('10')
+    expect(decoded.transferHotspot?.amountToSeller?.toString()).toBe('10')
   })
 })
 

@@ -77,12 +77,12 @@ export default class TransferHotspotV1 extends Transaction {
       gateway: toUint8Array(this.gateway.bin),
       seller: toUint8Array(this.seller.bin),
       buyer: toUint8Array(this.buyer.bin),
-      seller_signature: this.sellerSignature && !forSigning
+      sellerSignature: this.sellerSignature && !forSigning
         ? toUint8Array(this.sellerSignature) : null,
-      buyer_signature: this.buyerSignature && !forSigning
+      buyerSignature: this.buyerSignature && !forSigning
         ? toUint8Array(this.buyerSignature) : null,
-      buyer_nonce: this.buyerNonce,
-      amount_to_seller: this.amountToSeller,
+      buyerNonce: this.buyerNonce,
+      amountToSeller: this.amountToSeller,
       fee: this.fee,
     })
   }
