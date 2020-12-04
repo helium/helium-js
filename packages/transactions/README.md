@@ -16,3 +16,21 @@ Construct and serialize transaction primatives from their protobuf definitions.
 // sign transaction
 const signedTransaction = await transaction.sign({ payer: payerKeypair })
 ```
+
+## Transfer Hotspot V1
+```ts
+// create transcation
+ const transaction =  new TransferHotspotV1({
+    gateway: gatewayAddress,
+    buyer: buyerAddress,
+    seller: sellerAddress,
+    amountToSeller: 100,
+    buyerNonce: 1,
+})
+
+// sign transaction as buyer
+const signedTransaction = await transaction.sign({ buyer: buyerKeypair })
+
+// sign transaction as seller
+const signedTransaction = await transaction.sign({ seller: sellerKeypair })
+```
