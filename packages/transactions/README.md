@@ -16,3 +16,17 @@ Construct and serialize transaction primatives from their protobuf definitions.
 // sign transaction
 const signedTransaction = await transaction.sign({ payer: payerKeypair })
 ```
+
+## Deserialization
+
+```ts
+const paymentTxn = new PaymentV2({
+  payer,
+  payments,
+  nonce,
+})
+
+const serializedPaymentV2 = paymentTxn.toString()
+
+const deserializedPaymentV2 = PaymentV2.fromString(serializedPaymentV2)
+```
