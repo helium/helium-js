@@ -21,8 +21,3 @@ export const toNumber = (long: Long | number | undefined | null): number | undef
   if (typeof long === 'number') return long
   return long.toNumber()
 }
-
-export const stripNull = (value: any): any => {
-  if (value === null) return undefined
-  return value
-}
