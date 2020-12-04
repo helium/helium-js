@@ -1,5 +1,6 @@
 import camelcaseKeys from 'camelcase-keys'
 import { Balance, CurrencyType } from '@helium/currency'
+import DataModel from './DataModel'
 
 export interface HTTPPendingTransactionObject {
   type: string
@@ -10,6 +11,8 @@ export interface HTTPPendingTransactionObject {
   created_at: string
   updated_at: string
 }
+
+export type PendingTransactionData = PendingTransaction
 
 function processTxn(transaction: HTTPPendingTransactionObject): any {
   if (transaction.status === 'received') return null
@@ -31,10 +34,10 @@ function processTxn(transaction: HTTPPendingTransactionObject): any {
           ...p,
           amount: new Balance(p.amount, CurrencyType.default),
         })),
-        totalAmount: new Balance(txn.payments.reduce(
-          (sum: number, { amount }: any) => sum + amount,
-          0,
-        ), CurrencyType.default)
+        totalAmount: new Balance(
+          txn.payments.reduce((sum: number, { amount }: any) => sum + amount, 0),
+          CurrencyType.default,
+        ),
       }
 
     default:
@@ -42,16 +45,23 @@ function processTxn(transaction: HTTPPendingTransactionObject): any {
   }
 }
 
-export default class PendingTransaction {
+export default class PendingTransaction extends DataModel {
   public type: string
+
   public txn: any
+
   public status: string
+
   public hash: string
+
   public failedReason: string | null
+
   public createdAt: string
+
   public updatedAt: string
 
   constructor(transaction: HTTPPendingTransactionObject) {
+    super()
     this.type = transaction.type
     this.txn = processTxn(transaction)
     this.status = transaction.status
@@ -59,5 +69,9 @@ export default class PendingTransaction {
     this.hash = transaction.hash
     this.createdAt = transaction.created_at
     this.updatedAt = transaction.updated_at
+  }
+
+  get data(): PendingTransactionData {
+    return this
   }
 }

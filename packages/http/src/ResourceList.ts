@@ -1,11 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import DataModel from './models/DataModel'
+
 interface FetchMoreFn {
   (params: object): Promise<ResourceList<any>>
 }
 
-export default class ResourceList<T> {
+export default class ResourceList<T extends DataModel> {
   public data: Array<T>
+
   private fetchMore?: FetchMoreFn
+
   private cursor?: string
+
   private takeIterator?: AsyncGenerator<any, void, any>
 
   constructor(data: Array<T>, fetchMore?: FetchMoreFn, cursor?: string) {
@@ -48,5 +54,10 @@ export default class ResourceList<T> {
 
   takeReset() {
     this.takeIterator = undefined
+  }
+
+  async takeJSON(count: number): Promise<Omit<T, 'client'>[]> {
+    const values = await this.take(count)
+    return values.map((d) => d.data)
   }
 }
