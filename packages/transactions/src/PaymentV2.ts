@@ -32,7 +32,7 @@ export default class PaymentV2 extends Transaction {
     this.payer = opts.payer
     this.payments = opts.payments || []
     this.nonce = opts.nonce
-    if (opts.fee) {
+    if (opts.fee !== undefined) {
       this.fee = opts.fee
     } else {
       this.fee = 0
