@@ -37,6 +37,13 @@ export default class Address {
     return new Address(version, keyType, publicKey)
   }
 
+  static fromBin(bin: Buffer): Address {
+    const version = 0
+    const keyType = bin[0]
+    const publicKey = bin.slice(1, bin.length)
+    return new Address(version, keyType, publicKey)
+  }
+
   static isValid(b58: string): boolean {
     try {
       Address.fromB58(b58)
