@@ -22,6 +22,8 @@ const transferHotspotFixture = async () => {
     seller: alice.address,
     amountToSeller: 10,
     buyerNonce: 1,
+    sellerSignature: await alice.sign('sellerSignature'),
+    buyerSignature: await alice.sign('buyerSignature'),
   })
 }
 
@@ -60,6 +62,8 @@ describe('serialize and deserialize', () => {
     expect(deserialized.amountToSeller).toBe(transferHotspot.amountToSeller)
     expect(deserialized.buyerNonce).toBe(transferHotspot.buyerNonce)
     expect(deserialized.fee).toBe(transferHotspot.fee)
+    expect(deserialized.sellerSignature).toBe(transferHotspot.sellerSignature)
+    expect(deserialized.buyerSignature).toBe(transferHotspot.buyerSignature)
   })
 })
 

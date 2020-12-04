@@ -46,11 +46,16 @@ export default class TransferHotspotV1 extends Transaction {
     this.gateway = opts.gateway
     this.seller = opts.seller
     this.buyer = opts.buyer
-    this.sellerSignature = opts.sellerSignature
-    this.buyerSignature = opts.buyerSignature
     this.buyerNonce = opts.buyerNonce
     this.amountToSeller = opts.amountToSeller
-    this.fee = this.calculateFee()
+    if (opts.fee !== undefined) {
+      this.fee = opts.fee
+    } else {
+      this.fee = 0
+      this.fee = this.calculateFee()
+    }
+    this.sellerSignature = opts.sellerSignature
+    this.buyerSignature = opts.buyerSignature
   }
 
   serialize(): Uint8Array {
