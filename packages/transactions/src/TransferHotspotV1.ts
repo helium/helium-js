@@ -60,7 +60,6 @@ export default class TransferHotspotV1 extends Transaction {
 
   serialize(): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
-
     const transferHotspot = this.toProto()
     const txn = BlockchainTxn.create({ transferHotspot })
     return BlockchainTxn.encode(txn).finish()
@@ -117,8 +116,8 @@ export default class TransferHotspotV1 extends Transaction {
       buyerSignature: this.buyerSignature && !forSigning
         ? toUint8Array(this.buyerSignature) : null,
       buyerNonce: this.buyerNonce,
-      amountToSeller: this.amountToSeller,
-      fee: this.fee,
+      amountToSeller: this.amountToSeller ? this.amountToSeller : null,
+      fee: this.fee ? this.fee : null,
     })
   }
 
