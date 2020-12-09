@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message diagnostics_v1 {
+    map<string, string>diagnostics = 1;
+}

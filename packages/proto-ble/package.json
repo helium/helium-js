@@ -1,0 +1,36 @@
+{
+  "name": "proto-ble",
+  "version": "3.9.1",
+  "description": "Proto definitions for hotspot bluetooth interactions",
+  "keywords": [
+    "helium"
+  ],
+  "contributors": [
+    "Matthew Reetz <matt@headway.io>"
+  ],
+  "homepage": "https://github.com/helium/helium-js",
+  "license": "Apache-2.0",
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf build",
+    "setup": "mkdirp build",
+    "compile": "pbjs -w commonjs -t static-module -o build/index.js src/*.proto",
+    "types": "pbts -o build/index.d.ts build/index.js",
+    "build": "yarn clean && yarn setup && yarn compile && yarn types",
+    "test": "jest"
+  },
+  "dependencies": {
+    "protobufjs": "^6.8.9"
+  },
+  "devDependencies": {
+    "jest": "^25.4.0",
+    "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2"
+  }
+}
