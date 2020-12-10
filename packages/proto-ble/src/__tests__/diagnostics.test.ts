@@ -1,7 +1,7 @@
 import { diagnostics_v1 as DiagnosticsV1 } from '../../build'
 
 const diagnosticDict: { diagnostics: { power: 'on' | 'off' } } = { diagnostics: { power: 'on' } }
-describe('wifi_remove_v1', () => {
+describe('diagnostics_v1', () => {
   it('can encode and decode', () => {
     const diag = DiagnosticsV1.create(diagnosticDict)
 

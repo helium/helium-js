@@ -7,7 +7,7 @@ const loc: Iassert_loc_v1 = {
   payer: 'Bear',
 }
 
-describe('wifi_remove_v1', () => {
+describe('assert_loc_v1', () => {
   it('can encode and decode', () => {
     const assLoc = AssertLocationV1.create(loc)
     const encoded = AssertLocationV1.encode(assLoc).finish()
