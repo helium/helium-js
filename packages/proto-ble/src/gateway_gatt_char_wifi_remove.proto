@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message wifi_remove_v1 {
+    string service = 1;
+}
