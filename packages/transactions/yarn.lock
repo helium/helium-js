@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@helium/crypto@^3.7.0":
+"@helium/crypto@^3.9.0":
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-3.7.0.tgz#9645cad30443582a3cf646457419d8480add785a"
   integrity sha512-pcy/HyIdWlXNaETAN7QJgpIET9HTZ2AL1aVmm/fHVG5dx28FZFDmjIzxSAfhva2MqpLcYfvr6zNlR66V1pti4g==

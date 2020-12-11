@@ -1,12 +1,14 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { EMPTY_SIGNATURE, toAddressable } from './utils'
+import { EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface AddGatewayOptions {
   owner?: Addressable
   gateway?: Addressable
   payer?: Addressable
+  fee?: number
+  stakingFee?: number
 }
 
 interface SignOptions {
@@ -34,13 +36,23 @@ export default class AddGatewayV1 extends Transaction {
 
   constructor(opts: AddGatewayOptions) {
     super()
+
     this.owner = opts.owner
     this.gateway = opts.gateway
     this.payer = opts.payer
     this.stakingFee = 0
     this.fee = 0
-    this.fee = this.calculateFee()
-    this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+
+    if (opts.fee !== undefined) {
+      this.fee = opts.fee
+    } else {
+      this.fee = this.calculateFee()
+    }
+    if (opts.stakingFee !== undefined) {
+      this.stakingFee = opts.stakingFee
+    } else {
+      this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+    }
   }
 
   serialize(): Uint8Array {
@@ -53,15 +65,23 @@ export default class AddGatewayV1 extends Transaction {
   static fromString(serializedTxnString: string): AddGatewayV1 {
     const buf = Buffer.from(serializedTxnString, 'base64')
     const { addGateway } = proto.helium.blockchain_txn.decode(buf)
-    const owner = toAddressable(addGateway?.owner)
-    const gateway = toAddressable(addGateway?.gateway)
-    const payer = toAddressable(addGateway?.payer)
 
-    return new AddGatewayV1({
+    const payer = addGateway?.payer?.length ? toAddressable(addGateway?.payer) : undefined
+    const owner = addGateway?.owner?.length ? toAddressable(addGateway?.owner) : undefined
+    const gateway = addGateway?.gateway?.length ? toAddressable(addGateway?.gateway) : undefined
+
+    const fee = toNumber(addGateway?.fee)
+    const stakingFee = toNumber(addGateway?.stakingFee)
+
+    const addGatewayV1 = new AddGatewayV1({
       owner,
       gateway,
       payer,
+      fee,
+      stakingFee,
     })
+
+    return addGatewayV1
   }
 
   async sign(keypairs: SignOptions): Promise<AddGatewayV1> {

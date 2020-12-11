@@ -1,10 +1,6 @@
 import proto from '@helium/proto'
 import { AddGatewayV1, Transaction } from '..'
-import {
-  usersFixture,
-  bobB58,
-  aliceB58,
-} from '../../../../integration_tests/fixtures/users'
+import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
   txnFeeMultiplier: 5000,
@@ -40,7 +36,7 @@ test('create an add gateway txn with payer', async () => {
   expect(addGw.stakingFee).toBe(4000000)
 })
 
-describe('serialize', () => {
+describe('serialize and deserialize', () => {
   it('serializes an add gw txn', async () => {
     const txn = await addGatewayFixture()
     expect(txn.serialize().length).toBeGreaterThan(0)
@@ -53,6 +49,17 @@ describe('serialize', () => {
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
     expect(decoded.addGateway?.fee?.toString()).toBe('45000')
+  })
+
+  it('deserializes from a base64 string', async () => {
+    const addGateway = await addGatewayFixture()
+    const paymentString = addGateway.toString()
+    const deserialized = AddGatewayV1.fromString(paymentString)
+    expect(deserialized.owner?.b58).toBe(addGateway.owner?.b58)
+    expect(deserialized.payer?.b58).toBe(addGateway.payer?.b58)
+    expect(deserialized.gateway?.b58).toBe(addGateway.gateway?.b58)
+    expect(deserialized.fee).toBe(addGateway.fee)
+    expect(deserialized.stakingFee).toBe(addGateway.stakingFee)
   })
 })
 
