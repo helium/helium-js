@@ -9,6 +9,9 @@ interface AddGatewayOptions {
   payer?: Addressable
   fee?: number
   stakingFee?: number
+  ownerSignature?: Uint8Array
+  gatewaySignature?: Uint8Array
+  payerSignature?: Uint8Array
 }
 
 interface SignOptions {
@@ -37,22 +40,37 @@ export default class AddGatewayV1 extends Transaction {
   constructor(opts: AddGatewayOptions) {
     super()
 
-    this.owner = opts.owner
-    this.gateway = opts.gateway
-    this.payer = opts.payer
+    const {
+      owner,
+      gateway,
+      payer,
+      stakingFee,
+      fee,
+      ownerSignature,
+      gatewaySignature,
+      payerSignature,
+    } = opts
+
+    this.owner = owner
+    this.gateway = gateway
+    this.payer = payer
     this.stakingFee = 0
     this.fee = 0
 
-    if (opts.fee !== undefined) {
-      this.fee = opts.fee
+    if (fee !== undefined) {
+      this.fee = fee
     } else {
       this.fee = this.calculateFee()
     }
-    if (opts.stakingFee !== undefined) {
-      this.stakingFee = opts.stakingFee
+    if (stakingFee !== undefined) {
+      this.stakingFee = stakingFee
     } else {
       this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
     }
+
+    if (ownerSignature) this.ownerSignature = ownerSignature
+    if (gatewaySignature) this.gatewaySignature = gatewaySignature
+    if (payerSignature) this.payerSignature = payerSignature
   }
 
   serialize(): Uint8Array {
@@ -66,9 +84,19 @@ export default class AddGatewayV1 extends Transaction {
     const buf = Buffer.from(serializedTxnString, 'base64')
     const { addGateway } = proto.helium.blockchain_txn.decode(buf)
 
-    const payer = addGateway?.payer?.length ? toAddressable(addGateway?.payer) : undefined
     const owner = addGateway?.owner?.length ? toAddressable(addGateway?.owner) : undefined
     const gateway = addGateway?.gateway?.length ? toAddressable(addGateway?.gateway) : undefined
+    const payer = addGateway?.payer?.length ? toAddressable(addGateway?.payer) : undefined
+
+    const ownerSignature = addGateway?.ownerSignature?.length
+      ? toUint8Array(addGateway?.ownerSignature)
+      : undefined
+    const gatewaySignature = addGateway?.gatewaySignature?.length
+      ? toUint8Array(addGateway?.gatewaySignature)
+      : undefined
+    const payerSignature = addGateway?.payerSignature?.length
+      ? toUint8Array(addGateway?.payerSignature)
+      : undefined
 
     const fee = toNumber(addGateway?.fee)
     const stakingFee = toNumber(addGateway?.stakingFee)
@@ -79,6 +107,9 @@ export default class AddGatewayV1 extends Transaction {
       payer,
       fee,
       stakingFee,
+      ownerSignature,
+      gatewaySignature,
+      payerSignature,
     })
 
     return addGatewayV1

@@ -60,6 +60,9 @@ describe('serialize and deserialize', () => {
     expect(deserialized.gateway?.b58).toBe(addGateway.gateway?.b58)
     expect(deserialized.fee).toBe(addGateway.fee)
     expect(deserialized.stakingFee).toBe(addGateway.stakingFee)
+    expect(deserialized.ownerSignature).toEqual(addGateway.ownerSignature)
+    expect(deserialized.payerSignature).toEqual(addGateway.payerSignature)
+    expect(deserialized.gatewaySignature).toEqual(addGateway.gatewaySignature)
   })
 })
 
