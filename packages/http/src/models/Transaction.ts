@@ -229,7 +229,7 @@ export class TransferHotspotV1 extends DataModel {
 
   gateway!: string
 
-  buyer_nonce!: number
+  buyerNonce!: number
 
   buyer!: number
 
