@@ -10,6 +10,7 @@ export interface TxnJsonObject {
   payments?: any[]
   rewards?: any[]
   fee?: number
+  amount_to_seller?: number
 }
 
 export class AddGatewayV1 extends DataModel {
@@ -200,6 +201,7 @@ export type AnyTransaction =
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
+  | TransferHotspotV1
   | GenericDataModel
 
 function prepareTxn(txn: any) {
@@ -212,6 +214,37 @@ function prepareTxn(txn: any) {
   }
 
   return camelcaseKeys(txn)
+}
+
+export class TransferHotspotV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  seller!: string
+
+  height!: number
+
+  hash!: string
+
+  gateway!: string
+
+  buyerNonce!: number
+
+  buyer!: number
+
+  fee!: Balance<DataCredits>
+
+  amountToSeller!: Balance<NetworkTokens>
+
+  constructor(data: TransferHotspotV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): TransferHotspotV1 {
+    return this
+  }
 }
 
 export default class Transaction {
@@ -227,6 +260,8 @@ export default class Transaction {
         return this.toRewardsV1(json)
       case 'poc_receipts_v1':
         return this.toPocReceiptsV1(json)
+      case 'transfer_hotspot_v1':
+        return this.toTransferHotspotV1(json)
       default:
         return new GenericDataModel(prepareTxn(json))
     }
@@ -268,6 +303,17 @@ export default class Transaction {
 
   static toPocReceiptsV1(json: TxnJsonObject): PocReceiptsV1 {
     return new Challenge(json as HTTPChallengeObject)
+  }
+
+  static toTransferHotspotV1(json: TxnJsonObject): TransferHotspotV1 {
+    const amountToSeller = new Balance(json.amount_to_seller, CurrencyType.default)
+
+    return new TransferHotspotV1(
+      prepareTxn({
+        ...json,
+        amountToSeller,
+      }),
+    )
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {
