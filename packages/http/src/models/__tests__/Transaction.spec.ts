@@ -1,7 +1,11 @@
-import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1 } from '../Transaction'
+import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1, TransferHotspotV1 } from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
-  challengeJson, mockGeocode, mockPathData, mockReceipt, mockWitness,
+  challengeJson,
+  mockGeocode,
+  mockPathData,
+  mockReceipt,
+  mockWitness,
 } from './Challenge.spec'
 
 describe('PaymentV2', () => {
@@ -57,16 +61,38 @@ describe('RewardsV1', () => {
   })
 })
 
+describe('TransferHotspotV1', () => {
+  it('exposes balances for currency fields', () => {
+    const json = {
+      type: 'transfer_hotspot_v1',
+      time: 1607559551,
+      seller: '133yVfiCKZKTxHgWY6UQ8uD6CX2j9q5e2BNjZGCdmcUMLSMubn5',
+      height: 625011,
+      hash: 'rHkOU-wR2JpsN5zL5Pr46MFGpUuFiMleZPu1NRiyq1c',
+      gateway: '112AMbwEAp4QyZeBQYuTMt8wa5W6ceK1xNjG59duxqB6Dx7fS1c4',
+      fee: 55000,
+      buyer_nonce: 2,
+      buyer: '13U1qigMC832L2oJLYqEYEdBH1JBMNqbRYZ6RuduNr6ntsKP7om',
+      amount_to_seller: 500000000,
+    }
+    const txn = Transaction.fromJsonObject(json) as TransferHotspotV1
+    expect(txn.amountToSeller.integerBalance).toBe(500000000)
+    expect(txn.fee.integerBalance).toBe(55000)
+  })
+})
+
 describe('PocReceiptsV1', () => {
   it('correctly converts poc_receipts_v1', () => {
-    const txn = Transaction.fromJsonObject(challengeJson([
-      {
-        witnesses: [mockWitness()] as HTTPWitnessesObject[],
-        receipt: mockReceipt,
-        geocode: mockGeocode,
-        ...mockPathData,
-      } as HTTPPathObject,
-    ] as HTTPPathObject[])) as PocReceiptsV1
+    const txn = Transaction.fromJsonObject(
+      challengeJson([
+        {
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
+          receipt: mockReceipt,
+          geocode: mockGeocode,
+          ...mockPathData,
+        } as HTTPPathObject,
+      ] as HTTPPathObject[]),
+    ) as PocReceiptsV1
     expect(txn.challenger).toBe('fake-challenger')
   })
 })
