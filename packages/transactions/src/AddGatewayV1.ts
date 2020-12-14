@@ -1,12 +1,17 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE } from './utils'
+import { EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface AddGatewayOptions {
   owner?: Addressable
   gateway?: Addressable
   payer?: Addressable
+  fee?: number
+  stakingFee?: number
+  ownerSignature?: Uint8Array
+  gatewaySignature?: Uint8Array
+  payerSignature?: Uint8Array
 }
 
 interface SignOptions {
@@ -17,23 +22,55 @@ interface SignOptions {
 
 export default class AddGatewayV1 extends Transaction {
   public owner?: Addressable
+
   public gateway?: Addressable
+
   public payer?: Addressable
+
   public ownerSignature?: Uint8Array
+
   public gatewaySignature?: Uint8Array
+
   public payerSignature?: Uint8Array
+
   public stakingFee?: number
+
   public fee?: number
 
   constructor(opts: AddGatewayOptions) {
     super()
-    this.owner = opts.owner
-    this.gateway = opts.gateway
-    this.payer = opts.payer
+
+    const {
+      owner,
+      gateway,
+      payer,
+      stakingFee,
+      fee,
+      ownerSignature,
+      gatewaySignature,
+      payerSignature,
+    } = opts
+
+    this.owner = owner
+    this.gateway = gateway
+    this.payer = payer
     this.stakingFee = 0
     this.fee = 0
-    this.fee = this.calculateFee()
-    this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+
+    if (fee !== undefined) {
+      this.fee = fee
+    } else {
+      this.fee = this.calculateFee()
+    }
+    if (stakingFee !== undefined) {
+      this.stakingFee = stakingFee
+    } else {
+      this.stakingFee = Transaction.stakingFeeTxnAddGatewayV1
+    }
+
+    if (ownerSignature) this.ownerSignature = ownerSignature
+    if (gatewaySignature) this.gatewaySignature = gatewaySignature
+    if (payerSignature) this.payerSignature = payerSignature
   }
 
   serialize(): Uint8Array {
@@ -41,6 +78,41 @@ export default class AddGatewayV1 extends Transaction {
     const addGateway = this.toProto()
     const txn = Txn.create({ addGateway })
     return Txn.encode(txn).finish()
+  }
+
+  static fromString(serializedTxnString: string): AddGatewayV1 {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const { addGateway } = proto.helium.blockchain_txn.decode(buf)
+
+    const owner = addGateway?.owner?.length ? toAddressable(addGateway?.owner) : undefined
+    const gateway = addGateway?.gateway?.length ? toAddressable(addGateway?.gateway) : undefined
+    const payer = addGateway?.payer?.length ? toAddressable(addGateway?.payer) : undefined
+
+    const ownerSignature = addGateway?.ownerSignature?.length
+      ? toUint8Array(addGateway?.ownerSignature)
+      : undefined
+    const gatewaySignature = addGateway?.gatewaySignature?.length
+      ? toUint8Array(addGateway?.gatewaySignature)
+      : undefined
+    const payerSignature = addGateway?.payerSignature?.length
+      ? toUint8Array(addGateway?.payerSignature)
+      : undefined
+
+    const fee = toNumber(addGateway?.fee)
+    const stakingFee = toNumber(addGateway?.stakingFee)
+
+    const addGatewayV1 = new AddGatewayV1({
+      owner,
+      gateway,
+      payer,
+      fee,
+      stakingFee,
+      ownerSignature,
+      gatewaySignature,
+      payerSignature,
+    })
+
+    return addGatewayV1
   }
 
   async sign(keypairs: SignOptions): Promise<AddGatewayV1> {
@@ -66,28 +138,17 @@ export default class AddGatewayV1 extends Transaction {
     return this
   }
 
-  private toProto(
-    forSigning: boolean = false,
-  ): proto.helium.blockchain_txn_add_gateway_v1 {
+  private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_add_gateway_v1 {
     const AddGateway = proto.helium.blockchain_txn_add_gateway_v1
     return AddGateway.create({
       owner: this.owner ? toUint8Array(this.owner.bin) : null,
       gateway: this.gateway ? toUint8Array(this.gateway.bin) : null,
       payer: this.payer ? toUint8Array(this.payer.bin) : null,
-      ownerSignature:
-        this.ownerSignature && !forSigning
-          ? toUint8Array(this.ownerSignature)
-          : null,
+      ownerSignature: this.ownerSignature && !forSigning ? toUint8Array(this.ownerSignature) : null,
       gatewaySignature:
-        this.gatewaySignature && !forSigning
-          ? toUint8Array(this.gatewaySignature)
-          : null,
-      payerSignature:
-        this.payerSignature && !forSigning
-          ? toUint8Array(this.payerSignature)
-          : null,
-      stakingFee:
-        this.stakingFee && this.stakingFee > 0 ? this.stakingFee : null,
+        this.gatewaySignature && !forSigning ? toUint8Array(this.gatewaySignature) : null,
+      payerSignature: this.payerSignature && !forSigning ? toUint8Array(this.payerSignature) : null,
+      stakingFee: this.stakingFee && this.stakingFee > 0 ? this.stakingFee : null,
       fee: this.fee && this.fee > 0 ? this.fee : null,
     })
   }
