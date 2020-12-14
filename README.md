@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="120" height="120" src="https://github.com/helium/helium-js/blob/master/icon.png">
+</p>
+
 # Helium JS SDK
 
 [![Build Status](https://travis-ci.com/helium/helium-js.svg?branch=master)](https://travis-ci.com/helium/helium-js)
