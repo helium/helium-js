@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@helium/crypto@^3.9.0":
+"@helium/crypto@^3.7.0":
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-3.7.0.tgz#9645cad30443582a3cf646457419d8480add785a"
   integrity sha512-pcy/HyIdWlXNaETAN7QJgpIET9HTZ2AL1aVmm/fHVG5dx28FZFDmjIzxSAfhva2MqpLcYfvr6zNlR66V1pti4g==
@@ -70,6 +70,11 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
+
+"@types/libsodium-wrappers@^0.7.8":
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/@types/libsodium-wrappers/-/libsodium-wrappers-0.7.8.tgz#34575d7692fdbb7a7fdb63afcde381db86ec0de2"
+  integrity sha512-vkDSj6enD3K0+Ep83wnoGUk+f7sqsO4alsqxxEZ8BcTJhFmcY4UehYH3rTf4M3JGHXNhdpGFDdMbWFMgyvw/fA==
 
 "@types/long@^4.0.0":
   version "4.0.1"
