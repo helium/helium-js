@@ -26,6 +26,22 @@ export const hotspotFixture = (params = {}) => ({
   ...params,
 })
 
+export const rewardSumFixture = () => ({
+  meta: {
+    min_time: '2020-12-17T00:00:00Z',
+    max_time: '2020-12-18T00:00:00Z',
+  },
+  data: {
+    total: 13.17717245,
+    sum: 1317717245,
+    stddev: 1.10445133,
+    min: 0,
+    median: 1.98726309,
+    max: 2,
+    avg: 1.4641302722222223,
+  },
+})
+
 describe('get', () => {
   nock('https://api.helium.io').get('/v1/hotspots/fake-hotspot-address').reply(200, {
     data: hotspotFixture(),
@@ -92,6 +108,22 @@ describe('list witnesses', () => {
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')
+  })
+})
+
+describe('get reward sum', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .reply(200, rewardSumFixture())
+
+  it('gets hotspot rewards sum', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const rewards = await client.hotspot('fake-address').rewards.getSum(minTime, maxTime)
+    expect(rewards.total).toBe(13.17717245)
+    expect(rewards.maxTime).toBe('2020-12-18T00:00:00Z')
+    expect(rewards.data.total).toBe(13.17717245)
   })
 })
 
