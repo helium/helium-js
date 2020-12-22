@@ -3,6 +3,7 @@ import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import Hotspots from '../resources/Hotspots'
 import DataModel from './DataModel'
+import HotspotRewards from '../resources/HotspotRewards'
 
 export type HotspotData = Omit<Hotspot, 'client'>
 
@@ -109,6 +110,10 @@ export default class Hotspot extends DataModel {
 
   public get witnesses(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  public get rewards(): HotspotRewards {
+    return new HotspotRewards(this.client, this.address)
   }
 
   get data(): HotspotData {
