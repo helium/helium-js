@@ -2,7 +2,7 @@
 import camelcaseKeys from 'camelcase-keys'
 import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
-import DataModel, { GenericDataModel } from './DataModel'
+import DataModel from './DataModel'
 
 export interface TxnJsonObject {
   type: string
@@ -153,6 +153,21 @@ export class PaymentV2 extends DataModel {
   }
 }
 
+export class UnknownTransaction extends DataModel {
+  type!: string
+
+  time!: number
+
+  constructor(data: UnknownTransaction) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): UnknownTransaction {
+    return this
+  }
+}
+
 export interface Payment {
   payee: string
   amount: Balance<NetworkTokens>
@@ -202,7 +217,7 @@ export type AnyTransaction =
   | AssertLocationV1
   | PocReceiptsV1
   | TransferHotspotV1
-  | GenericDataModel
+  | UnknownTransaction
 
 function prepareTxn(txn: any) {
   if (txn.fee) {
@@ -265,7 +280,7 @@ export default class Transaction {
       case 'assert_location_v1':
         return this.toAssertLocationV1(json)
       default:
-        return new GenericDataModel(prepareTxn(json))
+        return this.toUnknownTransaction(json)
     }
   }
 
@@ -301,6 +316,10 @@ export default class Transaction {
 
   static toAssertLocationV1(json: TxnJsonObject): AssertLocationV1 {
     return new AssertLocationV1(prepareTxn(json))
+  }
+
+  static toUnknownTransaction(json: TxnJsonObject): UnknownTransaction {
+    return new UnknownTransaction(prepareTxn(json))
   }
 
   static toPocReceiptsV1(json: TxnJsonObject): PocReceiptsV1 {
