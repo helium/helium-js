@@ -36,6 +36,7 @@ export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
   owner: 'fake-owner',
   location: 'fake-location',
   is_valid: isValid,
+  ...(!isValid && { invalid_reason: 'fake_invalid_reason' }),
   gateway: 'fake-witness-gateway',
   frequency: 904.7000122070312,
   datarate: [83, 70, 56, 66, 87, 49, 50, 53],
@@ -128,6 +129,19 @@ describe('Challenge Model', () => {
       } as HTTPPathObject,
     ] as HTTPPathObject[]))
     expect(challenge.path[0].result).toBe(PathResult.FAILURE)
+  })
+
+  it('has invalid reason when witness is not valid', () => {
+    const challenge = new Challenge(challengeJson([
+      {
+        witnesses: [mockWitness(false)] as HTTPWitnessesObject[],
+        receipt: mockReceipt,
+        geocode: mockGeocode,
+        ...mockPathData,
+      } as HTTPPathObject,
+    ] as HTTPPathObject[]))
+    expect(challenge.path[0].witnesses[0].invalidReason).not.toBeUndefined();
+    expect(challenge.path[0].witnesses[0].invalidReason).toBe('fake_invalid_reason');
   })
 
   describe('successful beacon', () => {

@@ -48,6 +48,7 @@ export interface HTTPWitnessesObject {
   owner: string
   location: string
   is_valid: boolean
+  invalid_reason?: string
   gateway: string
   frequency: number
   datarate: number[]
@@ -104,6 +105,7 @@ export interface Witness {
   owner: string
   location: string
   isValid: boolean
+  invalidReason?: string
   gateway: string
   frequency: number
   datarate: number[]
@@ -150,19 +152,21 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     }
     return {
       witnesses: pathObject.witnesses.map(
-        (witness) => ({
-          timestamp: witness.timestamp,
-          snr: witness.snr,
-          signal: witness.signal,
-          packetHash: witness.packet_hash,
-          owner: witness.owner,
-          location: witness.location,
-          isValid: isValidWitness(witness),
-          gateway: witness.gateway,
-          frequency: witness.frequency,
-          datarate: witness.datarate,
-          channel: witness.channel,
-        } as Witness),
+        (witness) =>
+          ({
+            timestamp: witness.timestamp,
+            snr: witness.snr,
+            signal: witness.signal,
+            packetHash: witness.packet_hash,
+            owner: witness.owner,
+            location: witness.location,
+            isValid: isValidWitness(witness),
+            ...(witness.hasOwnProperty('invalid_reason') && { invalidReason: witness.invalid_reason }),
+            gateway: witness.gateway,
+            frequency: witness.frequency,
+            datarate: witness.datarate,
+            channel: witness.channel,
+          } as Witness),
       ) as Witness[],
       receipt: hasReceipt
         ? ({
