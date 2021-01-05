@@ -152,8 +152,8 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     }
     return {
       witnesses: pathObject.witnesses.map(
-        (witness) => {
-          let witnessObject = {
+        (witness) =>
+          ({
             timestamp: witness.timestamp,
             snr: witness.snr,
             signal: witness.signal,
@@ -161,14 +161,12 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
             owner: witness.owner,
             location: witness.location,
             isValid: isValidWitness(witness),
+            ...(witness.hasOwnProperty('invalid_reason') && { invalidReason: witness.invalid_reason }),
             gateway: witness.gateway,
             frequency: witness.frequency,
             datarate: witness.datarate,
             channel: witness.channel,
-          } as Witness
-          if (!isValidWitness(witness)) witnessObject = { ...witnessObject, invalidReason: witness.invalid_reason }
-          return witnessObject
-        },
+          } as Witness),
       ) as Witness[],
       receipt: hasReceipt
         ? ({

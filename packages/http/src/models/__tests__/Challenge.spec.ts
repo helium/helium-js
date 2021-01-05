@@ -28,23 +28,20 @@ export const mockLegacyWitness = (): HTTPWitnessesObject => ({
   channel: 4,
 } as HTTPWitnessesObject)
 
-export const mockWitness = (isValid = true): HTTPWitnessesObject => {
-  let witnessObject = {
-    timestamp: 1602013549762689800,
-    snr: 7,
-    signal: -103,
-    packet_hash: 'fake-packet_hash',
-    owner: 'fake-owner',
-    location: 'fake-location',
-    is_valid: isValid,
-    gateway: 'fake-witness-gateway',
-    frequency: 904.7000122070312,
-    datarate: [83, 70, 56, 66, 87, 49, 50, 53],
-    channel: 4,
-  } as HTTPWitnessesObject
-  if (!isValid) witnessObject = { ...witnessObject, invalid_reason: 'fake_invalid_reason'};
-  return witnessObject
-}
+export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
+  timestamp: 1602013549762689800,
+  snr: 7,
+  signal: -103,
+  packet_hash: 'fake-packet_hash',
+  owner: 'fake-owner',
+  location: 'fake-location',
+  is_valid: isValid,
+  ...(!isValid && { invalid_reason: 'fake_invalid_reason' }),
+  gateway: 'fake-witness-gateway',
+  frequency: 904.7000122070312,
+  datarate: [83, 70, 56, 66, 87, 49, 50, 53],
+  channel: 4,
+})
 
 export const mockGeocode = {
   short_street: 'fake-short_street',
@@ -144,6 +141,7 @@ describe('Challenge Model', () => {
       } as HTTPPathObject,
     ] as HTTPPathObject[]))
     expect(challenge.path[0].witnesses[0].invalidReason).not.toBeUndefined();
+    expect(challenge.path[0].witnesses[0].invalidReason).toBe('fake_invalid_reason');
   })
 
   describe('successful beacon', () => {
