@@ -19,3 +19,4 @@ export {
   AssertLocationV1,
   PocReceiptsV1,
 } from './models/Transaction'
+export { GenericDataModel } from './models/DataModel'
