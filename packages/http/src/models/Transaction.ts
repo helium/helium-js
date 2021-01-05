@@ -262,6 +262,8 @@ export default class Transaction {
         return this.toPocReceiptsV1(json)
       case 'transfer_hotspot_v1':
         return this.toTransferHotspotV1(json)
+      case 'assert_location_v1':
+        return this.toAssertLocationV1(json)
       default:
         return new GenericDataModel(prepareTxn(json))
     }

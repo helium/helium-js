@@ -1,6 +1,6 @@
 import nock from 'nock'
 import Client from '../../Client'
-import type { PaymentV1 } from '../../models/Transaction'
+import { PaymentV1, AssertLocationV1, AddGatewayV1 } from '../../index'
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {
@@ -79,9 +79,7 @@ describe('list from account', () => {
 
   it('lists transaction activity for an account', async () => {
     const client = new Client()
-    const list = await client
-      .account('my-address')
-      .activity.list({ filterTypes: ['payment_v1'] })
+    const list = await client.account('my-address').activity.list({ filterTypes: ['payment_v1'] })
     const payments = (await list.take(2)) as PaymentV1[]
     expect(payments[0].amount.integerBalance).toBe(10000)
     expect(payments[1].amount.integerBalance).toBe(20000)
@@ -164,9 +162,14 @@ describe('list from block by hash', () => {
   it('lists transactions', async () => {
     const client = new Client()
     const list = await client.block('fake-hash').transactions.list()
-    const payments = (await list.take(2)) as PaymentV1[]
-    expect(payments[0].amount.integerBalance).toBe(10000)
-    expect(payments[1].amount.integerBalance).toBe(20000)
+    const payments = await list.take(2)
+    const txn0 = payments[0]
+    const txn1 = payments[1]
+    expect(txn0 instanceof PaymentV1).toBeTruthy()
+    expect(txn1 instanceof PaymentV1).toBeTruthy()
+
+    expect((txn0 as PaymentV1).amount.integerBalance).toBe(10000)
+    expect((txn1 as PaymentV1).amount.integerBalance).toBe(20000)
   })
 })
 
@@ -207,9 +210,14 @@ describe('list from hotspot', () => {
   it('lists transaction activity for an account', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').activity.list()
-    const txns = (await list.take(2)) as any[]
-    expect(txns[0].hash).toBe('fake-hash-1')
-    expect(txns[1].hash).toBe('fake-hash-2')
+    const txns = await list.take(2)
+    const txn0 = txns[0]
+    const txn1 = txns[1]
+    expect(txn0 instanceof AssertLocationV1).toBeTruthy()
+    expect(txn1 instanceof AddGatewayV1).toBeTruthy()
+
+    expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
+    expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
   })
 })
 
