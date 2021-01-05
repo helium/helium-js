@@ -1,6 +1,6 @@
 import nock from 'nock'
 import Client from '../../Client'
-import { PaymentV1, AssertLocationV1, AddGatewayV1 } from '../../index'
+import { UnknownTransaction, PaymentV1, AssertLocationV1, AddGatewayV1 } from '../../index'
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {
@@ -204,20 +204,27 @@ describe('list from hotspot', () => {
           gateway: 'fake-gateway',
           fee: 0,
         },
+        {
+          type: 'some_future_type',
+          time: 1587299256,
+        },
       ],
     })
 
   it('lists transaction activity for an account', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').activity.list()
-    const txns = await list.take(2)
+    const txns = await list.take(3)
     const txn0 = txns[0]
     const txn1 = txns[1]
+    const txn2 = txns[2]
     expect(txn0 instanceof AssertLocationV1).toBeTruthy()
     expect(txn1 instanceof AddGatewayV1).toBeTruthy()
+    expect(txn2 instanceof UnknownTransaction).toBeTruthy()
 
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
+    expect((txn2 as UnknownTransaction).time).toBe(1587299256)
   })
 })
 
