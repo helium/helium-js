@@ -54,8 +54,8 @@ describe('serialize and deserialize', () => {
 
   it('deserializes from a base64 string', async () => {
     const addGateway = await addGatewayFixture()
-    const paymentString = addGateway.toString()
-    const deserialized = AddGatewayV1.fromString(paymentString)
+    const addGatewayString = addGateway.toString()
+    const deserialized = AddGatewayV1.fromString(addGatewayString)
     expect(deserialized.owner?.b58).toBe(addGateway.owner?.b58)
     expect(deserialized.payer?.b58).toBe(addGateway.payer?.b58)
     expect(deserialized.gateway?.b58).toBe(addGateway.gateway?.b58)
