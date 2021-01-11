@@ -1,3 +1,5 @@
+import proto from '@helium/proto'
+
 interface ChainVars {
   txnFeeMultiplier?: number
   dcPayloadSize?: number
@@ -32,6 +34,13 @@ export default abstract class Transaction {
 
   toString(): string {
     return Buffer.from(this.serialize()).toString('base64')
+  }
+
+  static stringType(serializedTxnString: string): string {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const decoded = proto.helium.blockchain_txn.decode(buf)
+    const obj = proto.helium.blockchain_txn.toObject(decoded)
+    return Object.keys(obj)[0]
   }
 
   static calculateFee(payload: Uint8Array): number {

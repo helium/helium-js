@@ -29,3 +29,12 @@ describe('config', () => {
     expect(Transaction).toBeDefined()
   })
 })
+
+describe('stringType', () => {
+  it('returns the type of a serialized transaction', () => {
+    const serializedAddGwTxn =
+      'CrMCCiEBHph7m4n8je5IHzLmg544qkxQb+K1g3efKHufp0dKURYSIQGySNPajUxhsIp5CIsV2et+Kx1XwECUOCUd4BBjekSeQxpAYCTigGLV8ch+5WmbbhO14L7mM2Djhidhl19b5zgE/Uo7T7j8OSa+Egir7oX3gkhs8frsUT4uNDrfi48ezN3tAiJAAqe3gcYc5sj3XWl0oUyVbHFhZSRu8gDcXV5+IeN6jwK6amQNm4clp1wR/JprHbI3kYbinzEwWIqzQs6miKWiByohAS85rAe4whjJEsnzyByyxV8UPRHvjl74cMb1+LadnbUjMkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOMC4Ag=='
+
+    expect(Transaction.stringType(serializedAddGwTxn)).toBe('addGateway')
+  })
+})
