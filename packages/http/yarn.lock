@@ -2,29 +2,17 @@
 # yarn lockfile v1
 
 
-"@helium/currency@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-3.0.0.tgz#c730be8fded993f311f40e6c02f4ac100b4d30d9"
-  integrity sha512-Nh83a+N+kQ12Je2lbr4knJ878+cVHKLq82wNvQVmnJu+3E35Lzo7a0zzRf84iLI1dW+dLsWWCclujA1JvY8yIA==
-  dependencies:
-    bignumber.js "^9.0.0"
-
 "@types/qs@6.9.5":
   version "6.9.5"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.5.tgz#434711bdd49eb5ee69d90c1d67c354a9a8ecb18b"
   integrity sha512-/JHkVHtx/REVG0VVToGRGH2+23hsYLHdyG+GrvoUGlGAd0ErauXDyvHtRI/7H7mzLm+tBCKA7pfcpkQ1lf58iQ==
 
-axios@^0.21.0:
+axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
-
-bignumber.js@^9.0.0:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.1.tgz#8d7ba124c882bfd8e43260c67475518d0689e4e5"
-  integrity sha512-IdZR9mh6ahOBv/hYGiXyVuyCetmGJhtYkqLBpTStdhEGjegpPlUawydyaF3pbIOFynJTpllEs+NP+CS9jKFLjA==
 
 camelcase-keys@^6.2.2:
   version "6.2.2"
