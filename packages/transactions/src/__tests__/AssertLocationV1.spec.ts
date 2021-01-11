@@ -60,6 +60,22 @@ describe('serialize', () => {
     const decoded = proto.helium.blockchain_txn.decode(buf)
     expect(decoded.assertLocation?.fee?.toString()).toBe('50000')
   })
+
+  it('deserializes from a base64 string', async () => {
+    const assertLocation = await assertLocationFixture()
+    const assertLocationString = assertLocation.toString()
+    const deserialized = AssertLocationV1.fromString(assertLocationString)
+    expect(deserialized.owner?.b58).toBe(assertLocation.owner?.b58)
+    expect(deserialized.payer?.b58).toBe(assertLocation.payer?.b58)
+    expect(deserialized.gateway?.b58).toBe(assertLocation.gateway?.b58)
+    expect(deserialized.location).toBe(assertLocation.location)
+    expect(deserialized.nonce).toBe(assertLocation.nonce)
+    expect(deserialized.fee).toBe(assertLocation.fee)
+    expect(deserialized.stakingFee).toBe(assertLocation.stakingFee)
+    expect(deserialized.ownerSignature).toEqual(assertLocation.ownerSignature)
+    expect(deserialized.payerSignature).toEqual(assertLocation.payerSignature)
+    expect(deserialized.gatewaySignature).toEqual(assertLocation.gatewaySignature)
+  })
 })
 
 describe('sign', () => {

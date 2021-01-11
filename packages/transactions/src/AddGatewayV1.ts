@@ -101,7 +101,7 @@ export default class AddGatewayV1 extends Transaction {
     const fee = toNumber(addGateway?.fee)
     const stakingFee = toNumber(addGateway?.stakingFee)
 
-    const addGatewayV1 = new AddGatewayV1({
+    return new AddGatewayV1({
       owner,
       gateway,
       payer,
@@ -111,8 +111,6 @@ export default class AddGatewayV1 extends Transaction {
       gatewaySignature,
       payerSignature,
     })
-
-    return addGatewayV1
   }
 
   async sign(keypairs: SignOptions): Promise<AddGatewayV1> {
