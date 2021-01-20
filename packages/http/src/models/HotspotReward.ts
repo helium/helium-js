@@ -27,7 +27,7 @@ interface HTTPHotspotRewardsSum {
 export type HotspotRewardData = HotspotReward
 
 function toBalance(floatValue: number): Balance<NetworkTokens> {
-  return new Balance(floatValue * 100000000, CurrencyType.networkToken)
+  return Balance.fromFloat(floatValue, CurrencyType.networkToken)
 }
 
 export default class HotspotReward extends DataModel {
