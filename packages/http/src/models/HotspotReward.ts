@@ -1,3 +1,4 @@
+import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
 
@@ -25,6 +26,10 @@ interface HTTPHotspotRewardsSum {
 
 export type HotspotRewardData = HotspotReward
 
+function toBalance(floatValue: number): Balance<NetworkTokens> {
+  return new Balance(floatValue * 100000000, CurrencyType.networkToken)
+}
+
 export default class HotspotReward extends DataModel {
   private client: Client
 
@@ -32,32 +37,29 @@ export default class HotspotReward extends DataModel {
 
   public maxTime: string
 
-  public total: number
+  public total: Balance<NetworkTokens>
 
-  public sum: number
+  public stddev: Balance<NetworkTokens>
 
-  public stddev: number
+  public min: Balance<NetworkTokens>
 
-  public min: number
+  public median: Balance<NetworkTokens>
 
-  public median: number
+  public max: Balance<NetworkTokens>
 
-  public max: number
-
-  public avg: number
+  public avg: Balance<NetworkTokens>
 
   constructor(client: Client, rewards: HTTPHotspotRewardsSum) {
     super()
     this.client = client
     this.minTime = rewards.meta.min_time
     this.maxTime = rewards.meta.max_time
-    this.total = rewards.data.total
-    this.sum = rewards.data.sum
-    this.stddev = rewards.data.stddev
-    this.min = rewards.data.min
-    this.median = rewards.data.median
-    this.max = rewards.data.max
-    this.avg = rewards.data.avg
+    this.total = toBalance(rewards.data.total)
+    this.stddev = toBalance(rewards.data.stddev)
+    this.min = toBalance(rewards.data.min)
+    this.median = toBalance(rewards.data.median)
+    this.max = toBalance(rewards.data.max)
+    this.avg = toBalance(rewards.data.avg)
   }
 
   get data(): HotspotRewardsData {

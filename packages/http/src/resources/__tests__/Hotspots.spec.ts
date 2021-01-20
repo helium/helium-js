@@ -121,9 +121,9 @@ describe('get reward sum', () => {
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
     const rewards = await client.hotspot('fake-address').rewards.getSum(minTime, maxTime)
-    expect(rewards.total).toBe(13.17717245)
+    expect(rewards.total.floatBalance).toBe(13.17717245)
     expect(rewards.maxTime).toBe('2020-12-18T00:00:00Z')
-    expect(rewards.data.total).toBe(13.17717245)
+    expect(rewards.data.total.floatBalance).toBe(13.17717245)
   })
 })
 
