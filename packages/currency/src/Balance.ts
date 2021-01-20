@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import CurrencyType from './CurrencyType'
+import CurrencyType, { AnyCurrencyType } from './CurrencyType'
 import {
   NetworkTokens,
   USDollars,
@@ -30,9 +30,13 @@ const DC_TO_USD_MULTIPLIER = 0.00001
 
 export default class Balance<T extends BaseCurrencyType> {
   public type: T
+
   public integerBalance: number
+
   public floatBalance: number
+
   public bigBalance: BigNumber
+
   public bigInteger: BigNumber
 
   constructor(integerBalance: number | undefined, type: T) {
@@ -41,6 +45,12 @@ export default class Balance<T extends BaseCurrencyType> {
     this.bigInteger = new BigNumber(this.integerBalance)
     this.bigBalance = this.bigInteger.times(type.coefficient)
     this.floatBalance = this.bigBalance.toNumber()
+  }
+
+  static fromFloat(float: number, currencyType: AnyCurrencyType) {
+    const bigFloat = new BigNumber(float)
+    const integerBalance = bigFloat.dividedBy(currencyType.coefficient).toNumber()
+    return new Balance(integerBalance, currencyType)
   }
 
   toString(maxDecimalPlaces?: number): string {
