@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
 import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
@@ -18,7 +19,7 @@ export class AddGatewayV1 extends DataModel {
 
   time!: number
 
-  stakingFee!: number
+  stakingFee!: Balance<DataCredits>
 
   payerSignature!: string
 
@@ -36,7 +37,7 @@ export class AddGatewayV1 extends DataModel {
 
   gateway!: string
 
-  fee!: number
+  fee!: Balance<DataCredits>
 
   constructor(data: AddGatewayV1) {
     super()
@@ -65,9 +66,9 @@ export class TokenBurnV1 extends DataModel {
 
   hash!: string
 
-  fee!: number
+  fee!: Balance<DataCredits>
 
-  amount!: number
+  amount!: Balance<NetworkTokens>
 
   constructor(data: TokenBurnV1) {
     super()
@@ -84,7 +85,7 @@ export class AssertLocationV1 extends DataModel {
 
   time!: number
 
-  stakingFee!: number
+  stakingFee!: Balance<DataCredits>
 
   payerSignature!: string
 
@@ -110,7 +111,7 @@ export class AssertLocationV1 extends DataModel {
 
   gateway!: string
 
-  fee!: number
+  fee!: Balance<DataCredits>
 
   constructor(data: AssertLocationV1) {
     super()
@@ -252,14 +253,25 @@ export type AnyTransaction =
   | UnknownTransaction
 
 function prepareTxn(txn: any) {
-  if (txn.fee) {
+  if (txn.fee && typeof txn.fee === 'number') {
     txn.fee = new Balance(txn.fee, CurrencyType.dataCredit)
   }
 
-  if (txn.stakingFee) {
+  if (txn.stakingFee && typeof txn.stakingFee === 'number') {
     txn.stakingFee = new Balance(txn.stakingFee, CurrencyType.dataCredit)
   }
 
+  if (txn.amount && typeof txn.amount === 'number') {
+    txn.amount = new Balance(txn.amount, CurrencyType.networkToken)
+  }
+
+  if (txn.totalAmount && typeof txn.totalAmount === 'number') {
+    txn.totalAmount = new Balance(txn.totalAmount, CurrencyType.networkToken)
+  }
+
+  if (txn.amountToSeller && typeof txn.amountToSeller === 'number') {
+    txn.amountToSeller = new Balance(txn.amountToSeller, CurrencyType.networkToken)
+  }
   return camelcaseKeys(txn)
 }
 

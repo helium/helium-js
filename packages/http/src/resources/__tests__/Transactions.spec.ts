@@ -232,7 +232,7 @@ describe('list from hotspot', () => {
   it('lists transaction activity for an account', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').activity.list()
-    const txns = await list.take(3)
+    const txns = await list.take(4)
     const txn0 = txns[0]
     const txn1 = txns[1]
     const txn2 = txns[2]
@@ -245,7 +245,7 @@ describe('list from hotspot', () => {
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
     expect((txn2 as UnknownTransaction).time).toBe(1587299256)
-    expect((txn3 as TokenBurnV1).fee).toBe(35000)
+    expect((txn3 as TokenBurnV1).fee.toDataCredits().toString()).toBe('35,000 DC')
   })
 })
 
