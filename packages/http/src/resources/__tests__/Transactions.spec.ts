@@ -1,6 +1,12 @@
 import nock from 'nock'
 import Client from '../../Client'
-import { UnknownTransaction, PaymentV1, AssertLocationV1, AddGatewayV1 } from '../../index'
+import {
+  UnknownTransaction,
+  PaymentV1,
+  AssertLocationV1,
+  AddGatewayV1,
+  TokenBurnV1,
+} from '../../index'
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {
@@ -208,6 +214,18 @@ describe('list from hotspot', () => {
           type: 'some_future_type',
           time: 1587299256,
         },
+        {
+          type: 'token_burn_v1',
+          time: 1611090989,
+          payer: '1398hLeHESZHE5jVtaLAV5fdg2vrUeZEs2B92t7TzeQTtugr8dL',
+          payee: '13daGGWvDQyTyHFDCPz8zDSVTWgPNNfJ4oh31Teec4TRWfjMx53',
+          nonce: 28,
+          memo: 'AAAAAAAAAAA=',
+          height: 683373,
+          hash: 'Dm7WReN3RpL0g5grUojWwavJJiweBEOWMkXjrXnPcNA',
+          fee: 35000,
+          amount: 500000000000,
+        },
       ],
     })
 
@@ -218,13 +236,16 @@ describe('list from hotspot', () => {
     const txn0 = txns[0]
     const txn1 = txns[1]
     const txn2 = txns[2]
+    const txn3 = txns[3]
     expect(txn0 instanceof AssertLocationV1).toBeTruthy()
     expect(txn1 instanceof AddGatewayV1).toBeTruthy()
     expect(txn2 instanceof UnknownTransaction).toBeTruthy()
+    expect(txn3 instanceof TokenBurnV1).toBeTruthy()
 
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
     expect((txn2 as UnknownTransaction).time).toBe(1587299256)
+    expect((txn3 as TokenBurnV1).fee).toBe(35000)
   })
 })
 

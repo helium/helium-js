@@ -48,6 +48,37 @@ export class AddGatewayV1 extends DataModel {
   }
 }
 
+export class TokenBurnV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  payer!: string
+
+  payee!: string
+
+  nonce!: number
+
+  memo!: string
+
+  height!: number
+
+  hash!: string
+
+  fee!: number
+
+  amount!: number
+
+  constructor(data: TokenBurnV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): TokenBurnV1 {
+    return this
+  }
+}
+
 export class AssertLocationV1 extends DataModel {
   type!: string
 
@@ -217,6 +248,7 @@ export type AnyTransaction =
   | AssertLocationV1
   | PocReceiptsV1
   | TransferHotspotV1
+  | TokenBurnV1
   | UnknownTransaction
 
 function prepareTxn(txn: any) {
@@ -279,6 +311,8 @@ export default class Transaction {
         return this.toTransferHotspotV1(json)
       case 'assert_location_v1':
         return this.toAssertLocationV1(json)
+      case 'token_burn_v1':
+        return this.toTokenBurnV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -316,6 +350,10 @@ export default class Transaction {
 
   static toAssertLocationV1(json: TxnJsonObject): AssertLocationV1 {
     return new AssertLocationV1(prepareTxn(json))
+  }
+
+  static toTokenBurnV1(json: TxnJsonObject): TokenBurnV1 {
+    return new TokenBurnV1(prepareTxn(json))
   }
 
   static toUnknownTransaction(json: TxnJsonObject): UnknownTransaction {
