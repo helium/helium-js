@@ -65,7 +65,7 @@ export class TokenBurnV1 extends DataModel {
 
   hash!: string
 
-  fee!: number
+  fee!: Balance<DataCredits>
 
   amount!: number
 
