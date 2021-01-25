@@ -2,7 +2,7 @@ import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
 
-export type HotspotSumRewardData = Omit<HotspotSumReward, 'client'>
+export type HotspotRewardSumData = Omit<HotspotRewardSum, 'client'>
 export type HotspotRewardData = Omit<HotspotReward, 'client'>
 
 export interface HTTPHotspotRewardSum {
@@ -38,7 +38,7 @@ function integerToBalance(integerValue: number): Balance<NetworkTokens> {
   return new Balance(integerValue, CurrencyType.networkToken)
 }
 
-export class HotspotSumReward extends DataModel {
+export class HotspotRewardSum extends DataModel {
   private client: Client
 
   public minTime: string
@@ -70,7 +70,7 @@ export class HotspotSumReward extends DataModel {
     this.avg = floatToBalance(rewards.data.avg)
   }
 
-  get data(): HotspotSumRewardData {
+  get data(): HotspotRewardSumData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
     return { ...rest }
