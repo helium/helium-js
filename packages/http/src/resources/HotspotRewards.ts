@@ -1,5 +1,12 @@
 import type Client from '../Client'
-import HotspotReward from '../models/HotspotReward'
+import { HotspotReward, HotspotSumReward, HTTPHotspotReward } from '../models/HotspotReward'
+import ResourceList from '../ResourceList'
+
+interface ListRewardsParams {
+  minTime?: Date
+  maxTime?: Date
+  cursor?: string
+}
 
 export default class HotspotRewards {
   private client: Client
@@ -11,12 +18,23 @@ export default class HotspotRewards {
     this.address = address
   }
 
-  async getSum(minTime: Date, maxTime: Date): Promise<HotspotReward> {
+  async list(params: ListRewardsParams): Promise<ResourceList<HotspotReward>> {
+    const url = `/hotspots/${this.address}/rewards`
+    const { data: { data: rewards, cursor } } = await this.client.get(url, {
+      cursor: params.cursor,
+      min_time: params.minTime?.toISOString(),
+      max_time: params.maxTime?.toISOString(),
+    })
+    const data = rewards.map((d: HTTPHotspotReward) => new HotspotReward(this.client, d))
+    return new ResourceList(data, this.list.bind(this), cursor)
+  }
+
+  async getSum(minTime: Date, maxTime: Date): Promise<HotspotSumReward> {
     const url = `/hotspots/${this.address}/rewards/sum`
     const { data: httpRewards } = await this.client.get(url, {
       min_time: minTime.toISOString(),
       max_time: maxTime.toISOString(),
     })
-    return new HotspotReward(this.client, httpRewards)
+    return new HotspotSumReward(this.client, httpRewards)
   }
 }
