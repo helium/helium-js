@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
-import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
+import {
+  Balance, CurrencyType, DataCredits, NetworkTokens,
+} from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
 
@@ -290,7 +292,7 @@ export class TransferHotspotV1 extends DataModel {
 
   buyerNonce!: number
 
-  buyer!: number
+  buyer!: string
 
   fee!: Balance<DataCredits>
 
