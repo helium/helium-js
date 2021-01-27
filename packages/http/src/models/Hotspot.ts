@@ -10,6 +10,7 @@ export type HotspotData = Omit<Hotspot, 'client'>
 export interface HTTPHotspotObject {
   score_update_height?: number
   score?: number
+  reward_scale?: number
   owner?: string
   name?: string
   location?: string
@@ -59,6 +60,8 @@ export default class Hotspot extends DataModel {
 
   public score?: number
 
+  public rewardScale?: number
+  
   public owner?: string
 
   public name?: string
@@ -88,6 +91,7 @@ export default class Hotspot extends DataModel {
     this.client = client
     this.scoreUpdateHeight = hotspot.score_update_height
     this.score = hotspot.score
+    this.rewardScale = hotspot.reward_scale
     this.owner = hotspot.owner
     this.name = hotspot.name
     this.location = hotspot.location

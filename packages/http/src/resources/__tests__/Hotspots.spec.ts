@@ -5,6 +5,7 @@ import Client from '../../Client'
 export const hotspotFixture = (params = {}) => ({
   score_update_height: 213456,
   score: 0.25,
+  reward_scale: 0.07049560546875,
   owner: 'fake-owner-address',
   name: 'some-hotspot-name',
   location: 'an-h3-address',
@@ -82,6 +83,11 @@ describe('get', () => {
     expect(hotspot.name).toBe('some-hotspot-name')
     expect(hotspot.timestampAdded).toBe('2020-11-24T02:52:12.000000Z')
   })
+  it('has reward scaling', async () => {
+    const client = new Client()
+    const hotspot = await client.hotspots.get('fake-hotspot-address')
+    expect(hotspot.rewardScale).toBe(0.07049560546875)
+  }, 30000)
 })
 
 describe('list', () => {
