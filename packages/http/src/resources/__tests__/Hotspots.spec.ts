@@ -82,12 +82,8 @@ describe('get', () => {
     const hotspot = await client.hotspots.get('fake-hotspot-address')
     expect(hotspot.name).toBe('some-hotspot-name')
     expect(hotspot.timestampAdded).toBe('2020-11-24T02:52:12.000000Z')
-  })
-  it('has reward scaling', async () => {
-    const client = new Client()
-    const hotspot = await client.hotspots.get('fake-hotspot-address')
     expect(hotspot.rewardScale).toBe(0.07049560546875)
-  }, 30000)
+  })
 })
 
 describe('list', () => {
