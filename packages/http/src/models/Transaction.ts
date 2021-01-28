@@ -259,20 +259,20 @@ function prepareTxn(txn: any) {
     txn.fee = new Balance(txn.fee, CurrencyType.dataCredit)
   }
 
-  if (txn.stakingFee && typeof txn.stakingFee === 'number') {
-    txn.stakingFee = new Balance(txn.stakingFee, CurrencyType.dataCredit)
+  if (txn.staking_fee && typeof txn.staking_fee === 'number') {
+    txn.staking_fee = new Balance(txn.staking_fee, CurrencyType.dataCredit)
   }
 
   if (txn.amount && typeof txn.amount === 'number') {
     txn.amount = new Balance(txn.amount, CurrencyType.networkToken)
   }
 
-  if (txn.totalAmount && typeof txn.totalAmount === 'number') {
-    txn.totalAmount = new Balance(txn.totalAmount, CurrencyType.networkToken)
+  if (txn.total_amount && typeof txn.total_amount === 'number') {
+    txn.total_amount = new Balance(txn.total_amount, CurrencyType.networkToken)
   }
 
-  if (txn.amountToSeller && typeof txn.amountToSeller === 'number') {
-    txn.amountToSeller = new Balance(txn.amountToSeller, CurrencyType.networkToken)
+  if (txn.amount_to_seller && typeof txn.amount_to_seller === 'number') {
+    txn.amount_to_seller = new Balance(txn.amount_to_seller, CurrencyType.networkToken)
   }
   return camelcaseKeys(txn)
 }
@@ -333,13 +333,7 @@ export default class Transaction {
   }
 
   static toPaymentV1(json: TxnJsonObject): PaymentV1 {
-    const amount = new Balance(json.amount, CurrencyType.default)
-    return new PaymentV1(
-      prepareTxn({
-        ...json,
-        amount,
-      }),
-    )
+    return new PaymentV1(prepareTxn(json))
   }
 
   static toPaymentV2(json: TxnJsonObject): PaymentV2 {
@@ -379,14 +373,7 @@ export default class Transaction {
   }
 
   static toTransferHotspotV1(json: TxnJsonObject): TransferHotspotV1 {
-    const amountToSeller = new Balance(json.amount_to_seller, CurrencyType.default)
-
-    return new TransferHotspotV1(
-      prepareTxn({
-        ...json,
-        amountToSeller,
-      }),
-    )
+    return new TransferHotspotV1(prepareTxn(json))
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {

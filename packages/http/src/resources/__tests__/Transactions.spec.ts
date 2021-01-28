@@ -244,6 +244,7 @@ describe('list from hotspot', () => {
 
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
+    expect((txn1 as AddGatewayV1).stakingFee.toDataCredits().toString()).toBe('1 DC')
     expect((txn2 as UnknownTransaction).time).toBe(1587299256)
     expect((txn3 as TokenBurnV1).fee.toDataCredits().toString()).toBe('35,000 DC')
   })
