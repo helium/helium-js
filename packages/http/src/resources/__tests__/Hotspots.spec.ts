@@ -85,7 +85,6 @@ export const rewardSumFixture = () => ({
   },
 })
 
-
 export const rewardSumListFixture = () => ({
   meta: {
     min_time: '2020-12-17T00:00:00Z',
@@ -193,6 +192,10 @@ describe('list witnesses', () => {
     })
 
   nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/witnesses/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=week')
+    .reply(200, witnessSumFixture())
+
+  nock('https://api.helium.io')
     .get('/v1/hotspots/fake-address/witnesses/sum?min_time=-30%20day&bucket=week')
     .reply(200, witnessSumFixture())
 
@@ -204,9 +207,19 @@ describe('list witnesses', () => {
     expect(hotspots[1].name).toBe('hotspot-2')
   })
 
-  it('lists hotspot witness sums', async () => {
+  it('lists hotspot witness sums with date time', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-address').witnessSums.list({ minTime: '-30 day', bucket: 'week' })
+    const witnessSums = await list.take(4)
+    expect(witnessSums.length).toBe(4)
+    expect(witnessSums[0].max).toBe(9)
+  })
+
+  it('lists hotspot witness sums with string time', async () => {
+    const client = new Client()
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const list = await client.hotspot('fake-address').witnessSums.list({ minTime, maxTime, bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
