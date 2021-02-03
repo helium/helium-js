@@ -6,12 +6,13 @@ import {
   HTTPHotspotRewardSum,
 } from '../models/HotspotReward'
 import ResourceList from '../ResourceList'
+import { Bucket, NaturalDate } from '../models/Hotspot'
 
 interface ListRewardsParams {
-  minTime?: Date | string // Date or natural format eg: '-30 day' '-1 week' '-5 hour'
-  maxTime?: Date | string // Date or leave out for current time
+  minTime?: Date | NaturalDate
+  maxTime?: Date
+  bucket?: Bucket
   cursor?: string
-  bucket?: 'hour' | 'day' | 'week'
 }
 
 export default class HotspotRewards {

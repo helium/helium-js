@@ -209,7 +209,7 @@ describe('list witnesses', () => {
 
   it('lists hotspot witness sums with date time', async () => {
     const client = new Client()
-    const list = await client.hotspot('fake-address').witnessSums.list({ minTime: '-30 day', bucket: 'week' })
+    const list = await client.hotspot('fake-address').witnesses.listSums({ minTime: '-30 day', bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
@@ -219,7 +219,7 @@ describe('list witnesses', () => {
     const client = new Client()
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
-    const list = await client.hotspot('fake-address').witnessSums.list({ minTime, maxTime, bucket: 'week' })
+    const list = await client.hotspot('fake-address').witnesses.listSums({ minTime, maxTime, bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)

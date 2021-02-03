@@ -1,12 +1,15 @@
 import camelcaseKeys from 'camelcase-keys'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
-import Hotspots from '../resources/Hotspots'
 import DataModel from './DataModel'
 import HotspotRewards from '../resources/HotspotRewards'
-import WitnessSums from '../resources/WitnessSums'
+import Witnesses from '../resources/Witnesses'
 
 export type HotspotData = Omit<Hotspot, 'client'>
+
+export type Bucket = 'hour' | 'day' | 'week'
+
+export type NaturalDate = `-${number} ${Bucket}`
 
 export interface HTTPHotspotObject {
   score_update_height?: number
@@ -113,12 +116,8 @@ export default class Hotspot extends DataModel {
     return new Transactions(this.client, this)
   }
 
-  public get witnesses(): Hotspots {
-    return new Hotspots(this.client, this)
-  }
-
-  public get witnessSums(): WitnessSums {
-    return new WitnessSums(this.client, this.address)
+  public get witnesses(): Witnesses {
+    return new Witnesses(this.client, this)
   }
 
   public get rewards(): HotspotRewards {
