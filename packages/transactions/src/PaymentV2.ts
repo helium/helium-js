@@ -22,10 +22,16 @@ interface SignOptions {
 
 export default class PaymentV2 extends Transaction {
   public payer?: Addressable
+
   public payments: Array<Payment>
+
   public fee?: number
+
   public nonce?: number
+
   public signature?: Uint8Array
+
+  public type: string = 'payment_v2'
 
   constructor(opts: PaymentOptions) {
     super()

@@ -20,12 +20,20 @@ interface SignOptions {
 
 export default class TokenBurnV1 extends Transaction {
   public payer: Addressable
+
   public payee: Addressable
+
   public amount: number
+
   public nonce: number
+
   public signature?: Uint8Array
+
   public fee?: number
+
   public memo: Base64Memo
+
+  public type: string = 'token_burn_v1'
 
   constructor(opts: TokenBurnOptions) {
     super()

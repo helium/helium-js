@@ -33,6 +33,7 @@ test('create a token burn txn', async () => {
   expect(tokenBurn.nonce).toBe(1)
   expect(tokenBurn.fee).toBe(35000)
   expect(tokenBurn.memo).toBe('MTIzNDU2Nzg5MA==')
+  expect(tokenBurn.type).toBe('token_burn_v1')
 })
 
 describe('serialize', () => {

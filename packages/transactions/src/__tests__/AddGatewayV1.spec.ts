@@ -26,6 +26,7 @@ test('create an add gateway txn', async () => {
   expect(addGw.gateway?.b58).toBe(aliceB58)
   expect(addGw.fee).toBe(45000)
   expect(addGw.stakingFee).toBe(4000000)
+  expect(addGw.type).toBe('add_gateway_v1')
 })
 
 test('create an add gateway txn with payer', async () => {
