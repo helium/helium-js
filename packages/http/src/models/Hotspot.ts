@@ -4,6 +4,7 @@ import Transactions from '../resources/Transactions'
 import Hotspots from '../resources/Hotspots'
 import DataModel from './DataModel'
 import HotspotRewards from '../resources/HotspotRewards'
+import WitnessSums from '../resources/WitnessSums'
 
 export type HotspotData = Omit<Hotspot, 'client'>
 
@@ -61,7 +62,7 @@ export default class Hotspot extends DataModel {
   public score?: number
 
   public rewardScale?: number
-  
+
   public owner?: string
 
   public name?: string
@@ -114,6 +115,10 @@ export default class Hotspot extends DataModel {
 
   public get witnesses(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  public get witnessSums(): WitnessSums {
+    return new WitnessSums(this.client, this.address)
   }
 
   public get rewards(): HotspotRewards {

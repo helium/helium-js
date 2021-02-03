@@ -6,19 +6,13 @@ export type HotspotRewardSumData = Omit<HotspotRewardSum, 'client'>
 export type HotspotRewardData = Omit<HotspotReward, 'client'>
 
 export interface HTTPHotspotRewardSum {
-  meta: {
-    min_time: string
-    max_time: string
-  }
-  data: {
-    total: number
-    sum: number
-    stddev: number
-    min: number
-    median: number
-    max: number
-    avg: number
-  }
+  total: number
+  sum: number
+  stddev: number
+  min: number
+  median: number
+  max: number
+  avg: number
 }
 
 export interface HTTPHotspotReward {
@@ -41,10 +35,6 @@ function integerToBalance(integerValue: number): Balance<NetworkTokens> {
 export class HotspotRewardSum extends DataModel {
   private client: Client
 
-  public minTime: string
-
-  public maxTime: string
-
   public total: Balance<NetworkTokens>
 
   public stddev: Balance<NetworkTokens>
@@ -60,14 +50,12 @@ export class HotspotRewardSum extends DataModel {
   constructor(client: Client, rewards: HTTPHotspotRewardSum) {
     super()
     this.client = client
-    this.minTime = rewards.meta.min_time
-    this.maxTime = rewards.meta.max_time
-    this.total = floatToBalance(rewards.data.total)
-    this.stddev = floatToBalance(rewards.data.stddev)
-    this.min = floatToBalance(rewards.data.min)
-    this.median = floatToBalance(rewards.data.median)
-    this.max = floatToBalance(rewards.data.max)
-    this.avg = floatToBalance(rewards.data.avg)
+    this.total = floatToBalance(rewards.total)
+    this.stddev = floatToBalance(rewards.stddev)
+    this.min = floatToBalance(rewards.min)
+    this.median = floatToBalance(rewards.median)
+    this.max = floatToBalance(rewards.max)
+    this.avg = floatToBalance(rewards.avg)
   }
 
   get data(): HotspotRewardSumData {

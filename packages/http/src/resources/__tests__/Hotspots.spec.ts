@@ -27,6 +27,48 @@ export const hotspotFixture = (params = {}) => ({
   ...params,
 })
 
+export const witnessSumFixture = () => ({
+  meta: {
+    min_time: '2021-01-04T21:55:18Z',
+    max_time: '2021-02-03T21:55:18Z',
+    bucket: 'week',
+  },
+  data: [
+    {
+      timestamp: '2021-01-27T21:55:18.000000Z',
+      stddev: 0.7387766471133708,
+      min: 7,
+      median: 9,
+      max: 9,
+      avg: 8.382978723404255,
+    },
+    {
+      timestamp: '2021-01-20T21:55:18.000000Z',
+      stddev: 3.327131676805893,
+      min: 0,
+      median: 6,
+      max: 12,
+      avg: 4.946428571428571,
+    },
+    {
+      timestamp: '2021-01-13T21:55:18.000000Z',
+      stddev: 0.8293691019953858,
+      min: 10,
+      median: 12,
+      max: 12,
+      avg: 11.416666666666666,
+    },
+    {
+      timestamp: '2021-01-06T21:55:18.000000Z',
+      stddev: 0.4562439130098156,
+      min: 9,
+      median: 10,
+      max: 10,
+      avg: 9.712121212121213,
+    },
+  ],
+})
+
 export const rewardSumFixture = () => ({
   meta: {
     min_time: '2020-12-17T00:00:00Z',
@@ -41,6 +83,23 @@ export const rewardSumFixture = () => ({
     max: 2,
     avg: 1.4641302722222223,
   },
+})
+
+
+export const rewardSumListFixture = () => ({
+  meta: {
+    min_time: '2020-12-17T00:00:00Z',
+    max_time: '2020-12-18T00:00:00Z',
+  },
+  data: [{
+    total: 13.17717245,
+    sum: 1317717245,
+    stddev: 1.10445133,
+    min: 0,
+    median: 1.98726309,
+    max: 2,
+    avg: 1.4641302722222223,
+  }],
 })
 
 export const rewardsFixture = () => ({
@@ -133,12 +192,24 @@ describe('list witnesses', () => {
       data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
     })
 
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/witnesses/sum?min_time=-30%20day&bucket=week')
+    .reply(200, witnessSumFixture())
+
   it('lists hotspots witnesses', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-address').witnesses.list()
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')
+  })
+
+  it('lists hotspot witness sums', async () => {
+    const client = new Client()
+    const list = await client.hotspot('fake-address').witnessSums.list({ minTime: '-30 day', bucket: 'week' })
+    const witnessSums = await list.take(4)
+    expect(witnessSums.length).toBe(4)
+    expect(witnessSums[0].max).toBe(9)
   })
 })
 
@@ -151,13 +222,20 @@ describe('get rewards', () => {
     .get('/v1/hotspots/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
     .reply(200, rewardsFixture())
 
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .reply(200, rewardSumListFixture())
+
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/rewards/sum?min_time=-1%20day&bucket=day')
+    .reply(200, rewardSumListFixture())
+
   it('gets hotspot rewards sum', async () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
     const rewards = await client.hotspot('fake-address').rewards.getSum(minTime, maxTime)
     expect(rewards.total.floatBalance).toBe(13.17717245)
-    expect(rewards.maxTime).toBe('2020-12-18T00:00:00Z')
     expect(rewards.data.total.floatBalance).toBe(13.17717245)
   })
 
@@ -172,6 +250,37 @@ describe('get rewards', () => {
     expect(rewards[1].gateway).toBe('mock-gateway')
     expect(rewards[2].gateway).toBe('mock-gateway')
     expect(rewards[0].gateway).toBe('mock-gateway')
+  })
+
+  it('list hotspot reward sums no bucket', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    expect.assertions(1)
+    try {
+      await client.hotspot('fake-address').rewards.listSums({ minTime, maxTime })
+    } catch (error) {
+      expect(error.message).toBe('missing bucket param')
+    }
+  })
+
+  it('list hotspot reward sums by date', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const rewardsList = await client.hotspot('fake-address').rewards.listSums({ minTime, maxTime, bucket: 'day' })
+    const rewards = await rewardsList.take(5)
+    expect(rewards.length).toBe(1)
+    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+  })
+
+  it('list hotspot reward sums by bucket', async () => {
+    const minTime = '-1 day'
+    const client = new Client()
+    const rewardsList = await client.hotspot('fake-address').rewards.listSums({ minTime, bucket: 'day' })
+    const rewards = await rewardsList.take(5)
+    expect(rewards.length).toBe(1)
+    expect(rewards[0].total.floatBalance).toBe(13.17717245)
   })
 })
 
