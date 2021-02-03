@@ -19,14 +19,14 @@ By default, the client will be initialized with the production network: `https:/
 ```js
 import { Client } from '@helium/http'
 const client = new Client()
-client.endpoint //= https://api.helium.io/v1
+client.network.endpoint //= https://api.helium.io/v1
 ```
 
 To specify a specific network, such as staging, the client can be initialized with a `Network` instance
 ```js
 import { Client, Network } from '@helium/http'
 const client = new Client(Network.staging)
-client.endpoint //= https://api.helium.wtf/v1
+client.network.endpoint //= https://api.helium.wtf/v1
 ```
 
 ##### Available Networks
