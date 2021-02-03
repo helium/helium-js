@@ -37,6 +37,7 @@ test('create a PaymentV2', async () => {
   expect((payment.payments || [])[0].amount).toBe(10)
   expect(payment.nonce).toBe(1)
   expect(payment.fee).toBe(35000)
+  expect(payment.type).toBe('payment_v2')
 })
 
 describe('serialize and deserialize', () => {

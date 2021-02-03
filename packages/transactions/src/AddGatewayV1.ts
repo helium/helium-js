@@ -37,6 +37,8 @@ export default class AddGatewayV1 extends Transaction {
 
   public fee?: number
 
+  public type: string = 'add_gateway_v1'
+
   constructor(opts: AddGatewayOptions) {
     super()
 

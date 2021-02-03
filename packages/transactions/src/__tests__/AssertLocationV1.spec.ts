@@ -33,6 +33,7 @@ test('create an assert location txn', async () => {
   expect(txn.nonce).toBe(1)
   expect(txn.fee).toBe(50000)
   expect(txn.stakingFee).toBe(1000000)
+  expect(txn.type).toBe('assert_location_v1')
 })
 
 test('create an assert location txn with a payer', async () => {

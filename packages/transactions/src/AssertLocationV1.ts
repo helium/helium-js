@@ -43,6 +43,8 @@ export default class AssertLocationV1 extends Transaction {
 
   public nonce?: number
 
+  public type: string = 'assert_location_v1'
+
   constructor(opts: AssertLocationOptions) {
     super()
 

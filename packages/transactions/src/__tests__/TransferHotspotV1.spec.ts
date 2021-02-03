@@ -35,6 +35,7 @@ test('create a transfer hotspot txn', async () => {
   expect(transferHotspot.amountToSeller).toBe(10)
   expect(transferHotspot.buyerNonce).toBe(1)
   expect(transferHotspot.fee).toBe(55000)
+  expect(transferHotspot.type).toBe('transfer_hotspot_v1')
 })
 
 describe('serialize and deserialize', () => {

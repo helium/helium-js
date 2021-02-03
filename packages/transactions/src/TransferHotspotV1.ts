@@ -41,6 +41,8 @@ export default class TransferHotspotV1 extends Transaction {
 
   public fee?: number
 
+  public type: string = 'transfer_hotspot_v1'
+
   constructor(opts: TransferHotspotOptions) {
     super()
     this.gateway = opts.gateway
