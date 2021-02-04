@@ -24,3 +24,4 @@ export {
   UnknownTransaction,
 } from './models/Transaction'
 export { GenericDataModel } from './models/DataModel'
+export { WitnessSum } from './models/WitnessSum'
