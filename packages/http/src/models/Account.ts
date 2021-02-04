@@ -13,6 +13,7 @@ import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
 import Challenges from '../resources/Challenges'
 import DataModel from './DataModel'
+import Rewards from '../resources/Rewards'
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
@@ -124,6 +125,10 @@ export default class Account extends DataModel {
 
   public get pendingTransactions(): PendingTransactions {
     return new PendingTransactions(this.client, this)
+  }
+
+  public get rewards(): Rewards {
+    return new Rewards(this.client, this)
   }
 
   get data(): AccountData {

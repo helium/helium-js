@@ -2,8 +2,8 @@ import camelcaseKeys from 'camelcase-keys'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import DataModel from './DataModel'
-import HotspotRewards from '../resources/HotspotRewards'
 import Witnesses from '../resources/Witnesses'
+import Rewards from '../resources/Rewards'
 
 export type HotspotData = Omit<Hotspot, 'client'>
 
@@ -120,8 +120,8 @@ export default class Hotspot extends DataModel {
     return new Witnesses(this.client, this)
   }
 
-  public get rewards(): HotspotRewards {
-    return new HotspotRewards(this.client, this.address)
+  public get rewards(): Rewards {
+    return new Rewards(this.client, this)
   }
 
   get data(): HotspotData {

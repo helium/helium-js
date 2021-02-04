@@ -136,3 +136,135 @@ describe('list', () => {
     })
   })
 })
+
+export const rewardSumFixture = () => ({
+  meta: {
+    min_time: '2020-12-17T00:00:00Z',
+    max_time: '2020-12-18T00:00:00Z',
+  },
+  data: {
+    total: 13.17717245,
+    sum: 1317717245,
+    stddev: 1.10445133,
+    min: 0,
+    median: 1.98726309,
+    max: 2,
+    avg: 1.4641302722222223,
+  },
+})
+
+export const rewardSumListFixture = () => ({
+  meta: {
+    min_time: '2020-12-17T00:00:00Z',
+    max_time: '2020-12-18T00:00:00Z',
+  },
+  data: [{
+    total: 13.17717245,
+    sum: 1317717245,
+    stddev: 1.10445133,
+    min: 0,
+    median: 1.98726309,
+    max: 2,
+    avg: 1.4641302722222223,
+  }],
+})
+
+export const rewardsFixture = () => ({
+  data: [
+    {
+      timestamp: '2020-12-17T19:23:30.000000Z',
+      hash: 'mock-hash',
+      gateway: 'mock-gateway',
+      block: 681810,
+      amount: 206665349,
+      account: 'mock-account',
+    },
+    {
+      timestamp: '2020-12-17T17:31:36.000000Z',
+      hash: 'mock-hash',
+      gateway: 'mock-gateway',
+      block: 681693,
+      amount: 240226051,
+      account: 'mock-account',
+    },
+    {
+      timestamp: '2020-12-17T16:51:34.000000Z',
+      hash: 'mock-hash',
+      gateway: 'mock-gateway',
+      block: 681645,
+      amount: 6454681,
+      account: 'mock-account',
+    },
+  ],
+})
+
+describe('get rewards', () => {
+  nock('https://api.helium.io')
+    .get('/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .reply(200, rewardSumFixture())
+
+  nock('https://api.helium.io')
+    .get('/v1/accounts/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .reply(200, rewardsFixture())
+
+  nock('https://api.helium.io')
+    .get('/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .reply(200, rewardSumListFixture())
+
+  nock('https://api.helium.io')
+    .get('/v1/accounts/fake-address/rewards/sum?min_time=-1%20day&bucket=day')
+    .reply(200, rewardSumListFixture())
+
+  it('gets account rewards sum', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const rewards = await client.account('fake-address').rewards.getSum(minTime, maxTime)
+    expect(rewards.total.floatBalance).toBe(13.17717245)
+    expect(rewards.data.total.floatBalance).toBe(13.17717245)
+  })
+
+  it('list account rewards', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const rewardsList = await client.account('fake-address').rewards.list({ minTime, maxTime })
+    const rewards = await rewardsList.take(5)
+    expect(rewards.length).toBe(3)
+    expect(rewards[0].gateway).toBe('mock-gateway')
+    expect(rewards[1].gateway).toBe('mock-gateway')
+    expect(rewards[2].gateway).toBe('mock-gateway')
+    expect(rewards[0].gateway).toBe('mock-gateway')
+  })
+
+  it('list account reward sums no bucket', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    expect.assertions(1)
+    try {
+      await client.account('fake-address').rewards.listSums({ minTime, maxTime })
+    } catch (error) {
+      expect(error.message).toBe('missing bucket param')
+    }
+  })
+
+  it('list account reward sums by date', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const rewardsList = await client.account('fake-address').rewards.listSums({ minTime, maxTime, bucket: 'day' })
+    const rewards = await rewardsList.take(5)
+    expect(rewards.length).toBe(1)
+    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+  })
+
+  it('list account reward sums by bucket', async () => {
+    const minTime = '-1 day'
+    const client = new Client()
+    const rewardsList = await client.account('fake-address').rewards.listSums({ minTime, bucket: 'day' })
+    const rewards = await rewardsList.take(5)
+    expect(rewards.length).toBe(1)
+    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+  })
+})
