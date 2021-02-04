@@ -247,7 +247,7 @@ describe('get rewards', () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
-    const rewards = await client.hotspot('fake-address').rewards.getSum(minTime, maxTime)
+    const rewards = await client.hotspot('fake-address').rewards.sum.get(minTime, maxTime)
     expect(rewards.total.floatBalance).toBe(13.17717245)
     expect(rewards.data.total.floatBalance).toBe(13.17717245)
   })
@@ -271,7 +271,7 @@ describe('get rewards', () => {
     const client = new Client()
     expect.assertions(1)
     try {
-      await client.hotspot('fake-address').rewards.listSums({ minTime, maxTime })
+      await client.hotspot('fake-address').rewards.sum.list({ minTime, maxTime })
     } catch (error) {
       expect(error.message).toBe('missing bucket param')
     }
@@ -281,7 +281,7 @@ describe('get rewards', () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
-    const rewardsList = await client.hotspot('fake-address').rewards.listSums({ minTime, maxTime, bucket: 'day' })
+    const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, maxTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].total.floatBalance).toBe(13.17717245)
@@ -290,7 +290,7 @@ describe('get rewards', () => {
   it('list hotspot reward sums by bucket', async () => {
     const minTime = '-1 day'
     const client = new Client()
-    const rewardsList = await client.hotspot('fake-address').rewards.listSums({ minTime, bucket: 'day' })
+    const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].total.floatBalance).toBe(13.17717245)
