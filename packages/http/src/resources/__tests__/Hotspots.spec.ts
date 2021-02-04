@@ -278,7 +278,7 @@ describe('get rewards', () => {
     const rewards = await client.hotspot('fake-address').rewards.sum.get(minTime, maxTime)
     expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
     expect(rewards.total).toBe(13.17717245)
-    expect(rewards.data.balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards.data.total).toBe(13.17717245)
   })
 
   it('list hotspot rewards', async () => {

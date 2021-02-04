@@ -221,7 +221,7 @@ describe('get rewards', () => {
     const client = new Client()
     const rewards = await client.account('fake-address').rewards.sum.get(minTime, maxTime)
     expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
-    expect(rewards.data.balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards.data.total).toBe(13.17717245)
   })
 
   it('list account rewards', async () => {

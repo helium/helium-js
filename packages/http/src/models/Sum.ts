@@ -24,60 +24,59 @@ export default class Sum extends DataModel {
 
   public total: number
 
-  public balanceTotal: Balance<NetworkTokens>
-
   public stddev: number
-
-  public balanceStddev: Balance<NetworkTokens>
 
   public min: number
 
-  public balanceMin: Balance<NetworkTokens>
-
   public median: number
-
-  public balanceMedian: Balance<NetworkTokens>
 
   public max: number
 
-  public balanceMax: Balance<NetworkTokens>
-
   public avg: number
-
-  public balanceAvg: Balance<NetworkTokens>
 
   public sum: number
 
-  public balanceSum: Balance<NetworkTokens>
-
   public type: SumsType
 
-  constructor(client: Client, rewards: HTTPSum, type: SumsType) {
+  constructor(client: Client, data: HTTPSum, type: SumsType) {
     super()
     this.client = client
     this.type = type
+    this.total = data.total
+    this.stddev = data.stddev
+    this.min = data.min
+    this.median = data.median
+    this.max = data.max
+    this.avg = data.avg
+    this.sum = typeof data.sum === 'string' ? parseFloat(data.sum) : data.sum
+  }
 
-    this.total = rewards.total
-    this.balanceTotal = floatToBalance(rewards.total)
+  get balanceTotal() {
+    return floatToBalance(this.total)
+  }
 
-    this.stddev = rewards.stddev
-    this.balanceStddev = floatToBalance(rewards.stddev)
+  get balanceStddev() {
+    return floatToBalance(this.stddev)
+  }
 
-    this.min = rewards.min
-    this.balanceMin = floatToBalance(rewards.min)
+  get balanceMin() {
+    return floatToBalance(this.min)
+  }
 
-    this.median = rewards.median
-    this.balanceMedian = floatToBalance(rewards.median)
+  get balanceMedian() {
+    return floatToBalance(this.median)
+  }
 
-    this.max = rewards.max
-    this.balanceMax = floatToBalance(rewards.max)
+  get balanceMax() {
+    return floatToBalance(this.max)
+  }
 
-    this.avg = rewards.avg
-    this.balanceAvg = floatToBalance(rewards.avg)
+  get balanceAvg() {
+    return floatToBalance(this.avg)
+  }
 
-    const sumFloat = typeof rewards.sum === 'string' ? parseFloat(rewards.sum) : rewards.sum
-    this.sum = sumFloat
-    this.balanceSum = floatToBalance(sumFloat)
+  get balanceSum() {
+    return floatToBalance(this.sum)
   }
 
   get data(): SumData {
