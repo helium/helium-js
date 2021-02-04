@@ -3,7 +3,7 @@ import ResourceList from '../ResourceList'
 import Hotspot, { Bucket, NaturalDate } from '../models/Hotspot'
 import Account from '../models/Account'
 import Reward, { HTTPReward } from '../models/Reward'
-import Sums from './Sums'
+import Sums, { SumsType } from './Sums'
 
 interface ListRewardsParams {
   minTime?: Date | NaturalDate
@@ -38,7 +38,7 @@ export default class Rewards {
   }
 
   public get sum() {
-    return new Sums(this.client, this.context)
+    return new Sums(this.client, this.context, SumsType.rewards)
   }
 
   get baseUrl() {

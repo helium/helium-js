@@ -220,8 +220,8 @@ describe('get rewards', () => {
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
     const rewards = await client.account('fake-address').rewards.sum.get(minTime, maxTime)
-    expect(rewards.total.floatBalance).toBe(13.17717245)
-    expect(rewards.data.total.floatBalance).toBe(13.17717245)
+    expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards.data.balanceTotal.floatBalance).toBe(13.17717245)
   })
 
   it('list account rewards', async () => {
@@ -256,7 +256,7 @@ describe('get rewards', () => {
     const rewardsList = await client.account('fake-address').rewards.sum.list({ minTime, maxTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
-    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+    expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
   })
 
   it('list account reward sums by bucket', async () => {
@@ -265,6 +265,6 @@ describe('get rewards', () => {
     const rewardsList = await client.account('fake-address').rewards.sum.list({ minTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
-    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+    expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
   })
 })

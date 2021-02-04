@@ -8,8 +8,7 @@ export { AccountData as Account } from './models/Account'
 export { BlockData as Block } from './models/Block'
 export { CityData as City } from './models/City'
 export { ElectionData as Election } from './models/Election'
-export { HotspotRewardData as HotspotReward } from './models/HotspotReward'
-export { HotspotRewardSumData as HotspotRewardSum } from './models/HotspotReward'
+export { SumData as Sum } from './models/Sum'
 export { PendingTransactionData as PendingTransaction } from './models/PendingTransaction'
 export {
   AnyTransaction,

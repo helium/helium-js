@@ -1,12 +1,13 @@
 import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
+import { SumsType } from '../resources/Sums'
 
-export type RewardSumData = Omit<Sum, 'client'>
+export type SumData = Omit<Sum, 'client'>
 
 export interface HTTPSum {
   total: number
-  sum: number
+  sum: number | string
   stddev: number
   min: number
   median: number
@@ -21,30 +22,65 @@ function floatToBalance(floatValue: number): Balance<NetworkTokens> {
 export default class Sum extends DataModel {
   private client: Client
 
-  public total: Balance<NetworkTokens>
+  public total: number
 
-  public stddev: Balance<NetworkTokens>
+  public balanceTotal: Balance<NetworkTokens>
 
-  public min: Balance<NetworkTokens>
+  public stddev: number
 
-  public median: Balance<NetworkTokens>
+  public balanceStddev: Balance<NetworkTokens>
 
-  public max: Balance<NetworkTokens>
+  public min: number
 
-  public avg: Balance<NetworkTokens>
+  public balanceMin: Balance<NetworkTokens>
 
-  constructor(client: Client, rewards: HTTPSum) {
+  public median: number
+
+  public balanceMedian: Balance<NetworkTokens>
+
+  public max: number
+
+  public balanceMax: Balance<NetworkTokens>
+
+  public avg: number
+
+  public balanceAvg: Balance<NetworkTokens>
+
+  public sum: number
+
+  public balanceSum: Balance<NetworkTokens>
+
+  public type: SumsType
+
+  constructor(client: Client, rewards: HTTPSum, type: SumsType) {
     super()
     this.client = client
-    this.total = floatToBalance(rewards.total)
-    this.stddev = floatToBalance(rewards.stddev)
-    this.min = floatToBalance(rewards.min)
-    this.median = floatToBalance(rewards.median)
-    this.max = floatToBalance(rewards.max)
-    this.avg = floatToBalance(rewards.avg)
+    this.type = type
+
+    this.total = rewards.total
+    this.balanceTotal = floatToBalance(rewards.total)
+
+    this.stddev = rewards.stddev
+    this.balanceStddev = floatToBalance(rewards.stddev)
+
+    this.min = rewards.min
+    this.balanceMin = floatToBalance(rewards.min)
+
+    this.median = rewards.median
+    this.balanceMedian = floatToBalance(rewards.median)
+
+    this.max = rewards.max
+    this.balanceMax = floatToBalance(rewards.max)
+
+    this.avg = rewards.avg
+    this.balanceAvg = floatToBalance(rewards.avg)
+
+    const sumFloat = typeof rewards.sum === 'string' ? parseFloat(rewards.sum) : rewards.sum
+    this.sum = sumFloat
+    this.balanceSum = floatToBalance(sumFloat)
   }
 
-  get data(): RewardSumData {
+  get data(): SumData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
     return { ...rest }

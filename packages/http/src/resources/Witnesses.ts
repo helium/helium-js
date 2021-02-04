@@ -1,15 +1,8 @@
 import type Client from '../Client'
 import ResourceList from '../ResourceList'
-import { HTTPWitnessSum, WitnessSum } from '../models/WitnessSum'
-import Hotspot, { Bucket, NaturalDate } from '../models/Hotspot'
+import Hotspot from '../models/Hotspot'
 import Hotspots from './Hotspots'
-
-interface ListSumsParams {
-  minTime?: Date | NaturalDate
-  maxTime?: Date
-  bucket?: Bucket
-  cursor?: string
-}
+import Sums, { SumsType } from './Sums'
 
 interface ListParams {
   cursor?: string
@@ -30,15 +23,7 @@ export default class Witnesses {
     return hotspots.list(params)
   }
 
-  async listSums(params: ListSumsParams): Promise<ResourceList<WitnessSum>> {
-    const url = `/hotspots/${this.hotspot.address}/witnesses/sum`
-    const { data: { data: witnessSums, cursor } } = await this.client.get(url, {
-      cursor: params.cursor,
-      min_time: params.minTime instanceof Date ? params.minTime?.toISOString() : params.minTime,
-      max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
-      bucket: params.bucket,
-    })
-    const data = witnessSums.map((d: HTTPWitnessSum) => new WitnessSum(this.client, d))
-    return new ResourceList(data, this.listSums.bind(this), cursor)
+  public get sum() {
+    return new Sums(this.client, this.hotspot, SumsType.witnesses)
   }
 }
