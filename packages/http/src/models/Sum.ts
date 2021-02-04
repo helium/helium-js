@@ -2,9 +2,9 @@ import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
 
-export type RewardSumData = Omit<RewardSum, 'client'>
+export type RewardSumData = Omit<Sum, 'client'>
 
-export interface HTTPRewardSum {
+export interface HTTPSum {
   total: number
   sum: number
   stddev: number
@@ -18,7 +18,7 @@ function floatToBalance(floatValue: number): Balance<NetworkTokens> {
   return Balance.fromFloat(floatValue, CurrencyType.networkToken)
 }
 
-export default class RewardSum extends DataModel {
+export default class Sum extends DataModel {
   private client: Client
 
   public total: Balance<NetworkTokens>
@@ -33,7 +33,7 @@ export default class RewardSum extends DataModel {
 
   public avg: Balance<NetworkTokens>
 
-  constructor(client: Client, rewards: HTTPRewardSum) {
+  constructor(client: Client, rewards: HTTPSum) {
     super()
     this.client = client
     this.total = floatToBalance(rewards.total)
