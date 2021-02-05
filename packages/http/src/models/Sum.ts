@@ -2,11 +2,12 @@ import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
 
-export type RewardSumData = Omit<Sum, 'client'>
+export type SumData = Omit<Sum, 'client'>
 
 export interface HTTPSum {
   total: number
-  sum: number
+  sum: number | string
+  timestamp: string
   stddev: number
   min: number
   median: number
@@ -21,30 +22,64 @@ function floatToBalance(floatValue: number): Balance<NetworkTokens> {
 export default class Sum extends DataModel {
   private client: Client
 
-  public total: Balance<NetworkTokens>
+  public total: number
 
-  public stddev: Balance<NetworkTokens>
+  public stddev: number
 
-  public min: Balance<NetworkTokens>
+  public min: number
 
-  public median: Balance<NetworkTokens>
+  public median: number
 
-  public max: Balance<NetworkTokens>
+  public max: number
 
-  public avg: Balance<NetworkTokens>
+  public avg: number
 
-  constructor(client: Client, rewards: HTTPSum) {
+  public sum: number
+
+  public timestamp: string
+
+  constructor(client: Client, data: HTTPSum) {
     super()
     this.client = client
-    this.total = floatToBalance(rewards.total)
-    this.stddev = floatToBalance(rewards.stddev)
-    this.min = floatToBalance(rewards.min)
-    this.median = floatToBalance(rewards.median)
-    this.max = floatToBalance(rewards.max)
-    this.avg = floatToBalance(rewards.avg)
+    this.total = data.total
+    this.stddev = data.stddev
+    this.min = data.min
+    this.median = data.median
+    this.max = data.max
+    this.avg = data.avg
+    this.timestamp = data.timestamp
+    this.sum = typeof data.sum === 'string' ? parseFloat(data.sum) : data.sum
   }
 
-  get data(): RewardSumData {
+  get balanceTotal() {
+    return floatToBalance(this.total)
+  }
+
+  get balanceStddev() {
+    return floatToBalance(this.stddev)
+  }
+
+  get balanceMin() {
+    return floatToBalance(this.min)
+  }
+
+  get balanceMedian() {
+    return floatToBalance(this.median)
+  }
+
+  get balanceMax() {
+    return floatToBalance(this.max)
+  }
+
+  get balanceAvg() {
+    return floatToBalance(this.avg)
+  }
+
+  get balanceSum() {
+    return new Balance(this.sum, CurrencyType.networkToken)
+  }
+
+  get data(): SumData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
     return { ...rest }

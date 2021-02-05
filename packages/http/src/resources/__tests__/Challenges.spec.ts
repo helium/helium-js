@@ -1,7 +1,7 @@
 import nock from 'nock'
 import Client from '../../Client'
 
-const challengeFixture = (params = {}) => ({
+export const challengeFixture = (params = {}) => ({
   type: 'poc_receipts_v1',
   time: 1589918979,
   signature: 'fake-sig',

@@ -13,14 +13,23 @@ interface ListRewardsParams {
 
 type Context = Account | Hotspot
 
+export enum SumsType {
+  rewards = 'rewards',
+  challenges = 'challenges',
+  witnesses = 'witnesses',
+}
+
 export default class Sums {
   private client: Client
 
   private context: Context
 
-  constructor(client: Client, context: Context) {
+  private type: SumsType
+
+  constructor(client: Client, context: Context, type: SumsType) {
     this.client = client
     this.context = context
+    this.type = type
   }
 
   async list(params: ListRewardsParams): Promise<ResourceList<Sum>> {
@@ -40,21 +49,19 @@ export default class Sums {
   }
 
   async get(minTime: Date, maxTime: Date): Promise<Sum> {
-    const {
-      data: { data: rewards },
-    } = await this.client.get(this.baseUrl, {
+    const { data: { data } } = await this.client.get(this.baseUrl, {
       min_time: minTime.toISOString(),
       max_time: maxTime.toISOString(),
     })
-    return new Sum(this.client, rewards)
+    return new Sum(this.client, data)
   }
 
   get baseUrl() {
     let url = ''
     if (this.context instanceof Hotspot) {
-      url = `/hotspots/${this.context.address}/rewards/sum`
+      url = `/hotspots/${this.context.address}/${this.type}/sum`
     } else if (this.context instanceof Account) {
-      url = `/accounts/${this.context.address}/rewards/sum`
+      url = `/accounts/${this.context.address}/${this.type}/sum`
     } else {
       throw new Error('invalid context')
     }

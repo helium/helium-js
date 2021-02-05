@@ -4,6 +4,7 @@ import Transactions from '../resources/Transactions'
 import DataModel from './DataModel'
 import Witnesses from '../resources/Witnesses'
 import Rewards from '../resources/Rewards'
+import Challenges from '../resources/Challenges'
 
 export type HotspotData = Omit<Hotspot, 'client'>
 
@@ -122,6 +123,10 @@ export default class Hotspot extends DataModel {
 
   public get rewards(): Rewards {
     return new Rewards(this.client, this)
+  }
+
+  public get challenges(): Challenges {
+    return new Challenges(this.client, this)
   }
 
   get data(): HotspotData {

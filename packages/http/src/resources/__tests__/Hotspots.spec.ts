@@ -1,5 +1,6 @@
 import nock from 'nock'
 import Client from '../../Client'
+import { challengeFixture } from './Challenges.spec'
 
 // eslint-disable-next-line import/prefer-default-export
 export const hotspotFixture = (params = {}) => ({
@@ -83,6 +84,33 @@ export const rewardSumFixture = () => ({
     max: 2,
     avg: 1.4641302722222223,
   },
+})
+
+export const challengeSumListFixture = () => ({
+  meta: {
+    min_time: '2020-12-17T00:00:00Z',
+    max_time: '2020-12-18T00:00:00Z',
+  },
+  data: [
+    {
+      timestamp: '2020-12-17T00:00:00Z',
+      sum: '40',
+      stddev: 0.22629428592141426,
+      min: 1,
+      median: 1,
+      max: 2,
+      avg: 1.0526315789473684,
+    },
+    {
+      timestamp: '2020-12-18T00:00:00Z',
+      sum: '37',
+      stddev: 0,
+      min: 1,
+      median: 1,
+      max: 1,
+      avg: 1,
+    },
+  ],
 })
 
 export const rewardSumListFixture = () => ({
@@ -209,7 +237,7 @@ describe('list witnesses', () => {
 
   it('lists hotspot witness sums with date time', async () => {
     const client = new Client()
-    const list = await client.hotspot('fake-address').witnesses.listSums({ minTime: '-30 day', bucket: 'week' })
+    const list = await client.hotspot('fake-address').witnesses.sum.list({ minTime: '-30 day', bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
@@ -219,7 +247,7 @@ describe('list witnesses', () => {
     const client = new Client()
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
-    const list = await client.hotspot('fake-address').witnesses.listSums({ minTime, maxTime, bucket: 'week' })
+    const list = await client.hotspot('fake-address').witnesses.sum.list({ minTime, maxTime, bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
@@ -248,8 +276,9 @@ describe('get rewards', () => {
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
     const rewards = await client.hotspot('fake-address').rewards.sum.get(minTime, maxTime)
-    expect(rewards.total.floatBalance).toBe(13.17717245)
-    expect(rewards.data.total.floatBalance).toBe(13.17717245)
+    expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards.total).toBe(13.17717245)
+    expect(rewards.data.total).toBe(13.17717245)
   })
 
   it('list hotspot rewards', async () => {
@@ -284,7 +313,8 @@ describe('get rewards', () => {
     const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, maxTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
-    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+    expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards[0].total).toBe(13.17717245)
   })
 
   it('list hotspot reward sums by bucket', async () => {
@@ -293,7 +323,8 @@ describe('get rewards', () => {
     const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
-    expect(rewards[0].total.floatBalance).toBe(13.17717245)
+    expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards[0].total).toBe(13.17717245)
   })
 })
 
@@ -326,5 +357,38 @@ describe('list from city', () => {
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')
+  })
+})
+
+describe('challenges', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/challenges')
+    .reply(200, {
+      data: [
+        challengeFixture({ hash: 'fake-hash-1' }),
+        challengeFixture({ hash: 'fake-hash-2' }),
+      ],
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/challenges/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .reply(200, challengeSumListFixture())
+
+  it('list challenges from hotspot', async () => {
+    const client = new Client()
+    const list = await client.hotspot('fake-address').challenges.list()
+    const challenges = await list.take(2)
+    expect(challenges[0].hash).toBe('fake-hash-1')
+    expect(challenges[1].hash).toBe('fake-hash-2')
+  })
+
+  it('list challenge sums from hotspot', async () => {
+    const minTime = new Date('2020-12-17T00:00:00Z')
+    const maxTime = new Date('2020-12-18T00:00:00Z')
+    const client = new Client()
+    const list = await client.hotspot('fake-address').challenges.sum.list({ minTime, maxTime, bucket: 'day' })
+    const challenges = await list.take(2)
+    expect(challenges[0].sum).toBe(40)
+    expect(challenges[1].sum).toBe(37)
   })
 })
