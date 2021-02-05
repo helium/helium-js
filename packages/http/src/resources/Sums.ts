@@ -44,7 +44,7 @@ export default class Sums {
       max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
       bucket: params.bucket,
     })
-    const data = rewards.map((d: HTTPSum) => new Sum(this.client, d, this.type))
+    const data = rewards.map((d: HTTPSum) => new Sum(this.client, d))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
@@ -55,7 +55,7 @@ export default class Sums {
       min_time: minTime.toISOString(),
       max_time: maxTime.toISOString(),
     })
-    return new Sum(this.client, rewards, this.type)
+    return new Sum(this.client, rewards)
   }
 
   get baseUrl() {

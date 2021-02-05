@@ -1,13 +1,13 @@
 import Balance, { CurrencyType, NetworkTokens } from '@helium/currency'
 import DataModel from './DataModel'
 import Client from '../Client'
-import { SumsType } from '../resources/Sums'
 
 export type SumData = Omit<Sum, 'client'>
 
 export interface HTTPSum {
   total: number
   sum: number | string
+  timestamp: string
   stddev: number
   min: number
   median: number
@@ -36,18 +36,18 @@ export default class Sum extends DataModel {
 
   public sum: number
 
-  public type: SumsType
+  public timestamp: string
 
-  constructor(client: Client, data: HTTPSum, type: SumsType) {
+  constructor(client: Client, data: HTTPSum) {
     super()
     this.client = client
-    this.type = type
     this.total = data.total
     this.stddev = data.stddev
     this.min = data.min
     this.median = data.median
     this.max = data.max
     this.avg = data.avg
+    this.timestamp = data.timestamp
     this.sum = typeof data.sum === 'string' ? parseFloat(data.sum) : data.sum
   }
 
