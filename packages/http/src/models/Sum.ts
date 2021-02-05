@@ -76,7 +76,7 @@ export default class Sum extends DataModel {
   }
 
   get balanceSum() {
-    return floatToBalance(this.sum)
+    return new Balance(this.sum, CurrencyType.networkToken)
   }
 
   get data(): SumData {

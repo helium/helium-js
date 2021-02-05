@@ -49,13 +49,11 @@ export default class Sums {
   }
 
   async get(minTime: Date, maxTime: Date): Promise<Sum> {
-    const {
-      data: { data: rewards },
-    } = await this.client.get(this.baseUrl, {
+    const { data: { data } } = await this.client.get(this.baseUrl, {
       min_time: minTime.toISOString(),
       max_time: maxTime.toISOString(),
     })
-    return new Sum(this.client, rewards)
+    return new Sum(this.client, data)
   }
 
   get baseUrl() {
