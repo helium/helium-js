@@ -1,6 +1,6 @@
 {
   "name": "@helium/http",
-  "version": "3.21.0",
+  "version": "3.22.0",
   "description": "HTTP library for interacting with the Helium blockchain API",
   "keywords": [
     "helium",
