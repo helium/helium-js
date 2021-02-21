@@ -26,6 +26,12 @@ BigNumber.config({
   FORMAT,
 })
 
+type StringFormatOptions = {
+  decimalSeparator?: string,
+  groupSeparator?: string,
+  showTicker?: boolean
+}
+
 const DC_TO_USD_MULTIPLIER = 0.00001
 
 export default class Balance<T extends BaseCurrencyType> {
@@ -53,17 +59,26 @@ export default class Balance<T extends BaseCurrencyType> {
     return new Balance(integerBalance, currencyType)
   }
 
-  toString(maxDecimalPlaces?: number): string {
-    let numberString = this.bigBalance.toFormat(maxDecimalPlaces)
+  toString(maxDecimalPlaces?: number, options?: StringFormatOptions): string {
+    const decimalSeparator = options?.decimalSeparator || '.'
+    const groupSeparator = options?.groupSeparator || ','
+    const showTicker = options?.showTicker === undefined ? true : options.showTicker
+
+    let numberString = maxDecimalPlaces
+      ? this.bigBalance.toFormat(
+        maxDecimalPlaces,
+        { decimalSeparator, groupSeparator, groupSize: 3 },
+      )
+      : this.bigBalance.toFormat({ decimalSeparator, groupSeparator, groupSize: 3 })
     // if it's an integer, just show the integer
-    if (parseInt(numberString.split('.')[1]) === 0) {
-      numberString = numberString.split('.')[0]
+    if (parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
+      [numberString] = numberString.split(decimalSeparator)
     }
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
-      numberString = this.bigBalance.toFormat()
+      numberString = this.bigBalance.toFormat({ decimalSeparator, groupSeparator })
     }
-    return [numberString, this.type.ticker].join(' ')
+    return showTicker ? [numberString, this.type.ticker].join(' ') : numberString
   }
 
   plus(balance: Balance<T>): Balance<T> {
