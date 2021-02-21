@@ -44,6 +44,18 @@ describe('toString', () => {
     const balance = new Balance(10000, CurrencyType.default)
     expect(balance.toString(2)).toBe('0.0001 HNT')
   })
+
+  describe('format options', () => {
+    it('show ticker', () => {
+      const balance = new Balance(10000, CurrencyType.default)
+      expect(balance.toString(2, { showTicker: false })).toBe('0.0001')
+    })
+
+    it('decimalSeparator and groupSeparator', () => {
+      const balance = new Balance(100000000001, CurrencyType.default)
+      expect(balance.toString(8, { decimalSeparator: ',', groupSeparator: '.' })).toBe('1.000,00000001 HNT')
+    })
+  })
 })
 
 describe('plus', () => {

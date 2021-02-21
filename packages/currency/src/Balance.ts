@@ -62,7 +62,7 @@ export default class Balance<T extends BaseCurrencyType> {
   toString(maxDecimalPlaces?: number, options?: StringFormatOptions): string {
     const decimalSeparator = options?.decimalSeparator || '.'
     const groupSeparator = options?.groupSeparator || ','
-    const showTicker = options?.showTicker || true
+    const showTicker = options?.showTicker === undefined ? true : options.showTicker
 
     let numberString = maxDecimalPlaces
       ? this.bigBalance.toFormat(
