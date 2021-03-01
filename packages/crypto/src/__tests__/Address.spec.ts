@@ -1,17 +1,16 @@
 import { Address } from '..'
-import {
-  usersFixture,
-  bobB58,
-} from '../../../../integration_tests/fixtures/users'
+import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
+import { ED25519_KEY_TYPE } from '../KeyType'
+import { MAINNET, TESTNET } from '../NetType'
 
-const ECC_COMPACT_ADDRESS =
-  '112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE'
+const ECC_COMPACT_ADDRESS = '112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE'
 const BTC_ADDRESS = '18wxa7qM8C8AXmGwJj13C7sGqn8hyFdcdR'
+const TESTNET_ADDRESS = '1bijtibPhc16wx4oJbyK8vtkAgdoRoaUvJeo7rXBnBCufEYakfd'
 
 describe('b58', () => {
   it('returns a b58 check encoded representation of the address', async () => {
     const { bob } = await usersFixture()
-    const address = new Address(0, 1, bob.publicKey)
+    const address = new Address(0, MAINNET, ED25519_KEY_TYPE, bob.publicKey)
     expect(address.b58).toBe(bobB58)
   })
 
@@ -29,7 +28,7 @@ describe('b58', () => {
 describe('bin', () => {
   it('returns a binary representation of the address', async () => {
     const { bob } = await usersFixture()
-    const address = new Address(0, 1, bob.publicKey)
+    const address = new Address(0, MAINNET, ED25519_KEY_TYPE, bob.publicKey)
     expect(address.bin[0]).toBe(1)
   })
 })
@@ -37,7 +36,7 @@ describe('bin', () => {
 describe('fromBin', () => {
   it('builds an Address from a binary representation', async () => {
     const { bob } = await usersFixture()
-    const { bin } = new Address(0, 1, bob.publicKey)
+    const { bin } = new Address(0, MAINNET, ED25519_KEY_TYPE, bob.publicKey)
     const address = Address.fromBin(bin)
     expect(address.b58).toBe(bob.address.b58)
   })
@@ -59,7 +58,7 @@ describe('unsupported key types', () => {
 
   it('throws an error if initialized with an unsupported key type', async () => {
     expect(() => {
-      new Address(0, 57, Buffer.from('some random public key'))
+      new Address(0, MAINNET, 57, Buffer.from('some random public key'))
     }).toThrow()
   })
 })
@@ -88,7 +87,14 @@ describe('unsupported versions', () => {
   it('throws an error if b58 check encoded version is not 0', async () => {
     const { bob } = await usersFixture()
     expect(() => {
-      new Address(1, 1, bob.publicKey)
+      new Address(1, MAINNET, ED25519_KEY_TYPE, bob.publicKey)
     }).toThrow()
+  })
+})
+
+describe('testnet addresses', () => {
+  it('decodes testnet addresses from b58', async () => {
+    const address = Address.fromB58(TESTNET_ADDRESS)
+    expect(address.netType).toBe(TESTNET)
   })
 })

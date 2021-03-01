@@ -1,5 +1,7 @@
 import { Keypair, Mnemonic } from '..'
 import { bobWords, bobB58 } from '../../../../integration_tests/fixtures/users'
+import { TESTNET } from '../NetType'
+import { bs58NetType } from '../utils'
 
 describe('makeRandom', () => {
   it('makes a new random keypair', async () => {
@@ -58,7 +60,20 @@ describe('sign', () => {
     const keypair = await Keypair.fromMnemonic(mnemonic)
     const message = 'the shark feeds at midnight'
     const signature = await keypair.sign(message)
-    const expectedSignature = 'NKGpxhYtcXdyFDDRbbY5KjY7r38R8q1ViBft85t4QcH/WrB2Mg9bg2RocfYy16YGcxjLLNSwTLOmfxsjwPWdBQ=='
+    const expectedSignature =
+      'NKGpxhYtcXdyFDDRbbY5KjY7r38R8q1ViBft85t4QcH/WrB2Mg9bg2RocfYy16YGcxjLLNSwTLOmfxsjwPWdBQ=='
     expect(Buffer.from(signature).toString('base64')).toBe(expectedSignature)
+  })
+})
+
+describe('testnet keypairs', () => {
+  it('can make a testnet keypair from entropy', async () => {
+    const entropy = Buffer.from(
+      '1f5b981baca0420259ab53996df7a8ce0e3549c6616854e7dff796304bafb6bf',
+      'hex',
+    )
+    const keypair = await Keypair.fromEntropy(entropy, TESTNET)
+    expect(keypair.address.netType).toBe(TESTNET)
+    expect(bs58NetType(keypair.address.b58)).toBe(TESTNET)
   })
 })

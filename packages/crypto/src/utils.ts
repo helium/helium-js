@@ -1,6 +1,9 @@
+/* eslint-disable no-bitwise */
 import createHash from 'create-hash'
 import bs58 from 'bs58'
 import sodium from 'libsodium-wrappers'
+import { NetType } from './NetType'
+import { KeyType } from './KeyType'
 
 export const randomBytes = async (n: number): Promise<Buffer> => {
   await sodium.ready
@@ -10,11 +13,7 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
 export const sha256 = (buffer: Buffer | string): Buffer =>
   createHash('sha256').update(buffer).digest()
 
-export const lpad = (
-  str: string | any[],
-  padString: string,
-  length: number,
-) => {
+export const lpad = (str: string | any[], padString: string, length: number) => {
   let strOut = str
   while (strOut.length < length) strOut = padString + strOut
   return strOut
@@ -22,9 +21,7 @@ export const lpad = (
 
 export const bytesToBinary = (bytes: any[]) =>
   bytes
-    .map((x: { toString: (arg0: number) => string | any[] }) =>
-      lpad(x.toString(2), '0', 8),
-    )
+    .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
     .join('')
 
 export const binaryToByte = (bin: string) => parseInt(bin, 2)
@@ -37,10 +34,7 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const bs58CheckEncode = (
-  version: number,
-  binary: Buffer | Uint8Array,
-): string => {
+export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
   // VPayload = <<Version:8/unsigned-integer, Payload/binary>>,
   const vPayload = Buffer.concat([Buffer.from([version]), binary])
 
@@ -71,10 +65,19 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   return payload
 }
 
-export const bs58KeyType = (bs58Address: string): number => {
+export const byteToNetType = (byte: number): NetType => byte & 0xf0
+export const byteToKeyType = (byte: number): KeyType => byte & 0x0f
+
+export const bs58NetType = (bs58Address: string): NetType => {
   const bin = bs58ToBin(bs58Address)
-  const keyType = Buffer.from(bin).slice(0, 1)[0]
-  return keyType
+  const byte = Buffer.from(bin).slice(0, 1)[0]
+  return byteToNetType(byte)
+}
+
+export const bs58KeyType = (bs58Address: string): KeyType => {
+  const bin = bs58ToBin(bs58Address)
+  const byte = Buffer.from(bin).slice(0, 1)[0]
+  return byteToKeyType(byte)
 }
 
 export const bs58Version = (bs58Address: string): number => {
