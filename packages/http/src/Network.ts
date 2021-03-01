@@ -14,7 +14,13 @@ export default class Network {
     version: 1,
   })
 
+  static testnet = new Network({
+    baseURL: 'https://testnet-api.helium.wtf',
+    version: 1,
+  })
+
   public baseURL: string
+
   public version: number
 
   constructor({ baseURL, version }: NetworkOptions) {

@@ -15,3 +15,11 @@ describe('staging', () => {
     expect(network.version).toBe(1)
   })
 })
+
+describe('testnet', () => {
+  it('returns the testnet network', () => {
+    const network = Network.testnet
+    expect(network.endpoint).toBe('https://testnet-api.helium.wtf/v1')
+    expect(network.version).toBe(1)
+  })
+})
