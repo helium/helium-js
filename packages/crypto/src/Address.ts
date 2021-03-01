@@ -24,7 +24,7 @@ export default class Address {
       throw new Error('unsupported version')
     }
     if (!SUPPORTED_NET_TYPES.includes(netType)) {
-      throw new Error('unsupported key tag')
+      throw new Error('unsupported net type')
     }
     if (!SUPPORTED_KEY_TYPES.includes(keyType)) {
       throw new Error('unsupported key type')
