@@ -7,7 +7,7 @@ interface HTTPOraclePrice {
   time?: number
 }
 
-interface OraclePrice {
+export interface OraclePrice {
   price: Balance<USDollars>
   height?: number
   time?: number
