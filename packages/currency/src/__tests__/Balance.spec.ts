@@ -30,7 +30,7 @@ describe('toString', () => {
     expect(balance.toString()).toBe('10.00000001 HNT')
   })
 
-  it('does not round the string by with null or undefined', () => {
+  it('does not round the string with null or undefined', () => {
     const balance = new Balance(1000000001, CurrencyType.default)
     // @ts-ignore
     expect(balance.toString(null)).toBe('10.00000001 HNT')
