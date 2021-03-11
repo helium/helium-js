@@ -30,6 +30,13 @@ describe('toString', () => {
     expect(balance.toString()).toBe('10.00000001 HNT')
   })
 
+  it('does not round the string by with null or undefined', () => {
+    const balance = new Balance(1000000001, CurrencyType.default)
+    // @ts-ignore
+    expect(balance.toString(null)).toBe('10.00000001 HNT')
+    expect(balance.toString(undefined)).toBe('10.00000001 HNT')
+  })
+
   it('optionally allows the string to be rounded', () => {
     const balance = new Balance(1001000001, CurrencyType.default)
     expect(balance.toString(2)).toBe('10.01 HNT')
@@ -43,6 +50,11 @@ describe('toString', () => {
   it('does not round if the result would be 0 HNT', () => {
     const balance = new Balance(10000, CurrencyType.default)
     expect(balance.toString(2)).toBe('0.0001 HNT')
+  })
+
+  it('rounds string with 0 max decimal places', () => {
+    const balance = new Balance(1234567891, CurrencyType.default)
+    expect(balance.toString(0)).toBe('12 HNT')
   })
 
   describe('format options', () => {
