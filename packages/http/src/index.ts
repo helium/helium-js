@@ -16,6 +16,7 @@ export {
   PaymentV1,
   PaymentV2,
   RewardsV1,
+  RewardsV2,
   AddGatewayV1,
   AssertLocationV1,
   PocReceiptsV1,

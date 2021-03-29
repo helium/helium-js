@@ -1,4 +1,4 @@
-import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1, TransferHotspotV1 } from '../Transaction'
+import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, TransferHotspotV1 } from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
   challengeJson,
@@ -57,6 +57,35 @@ describe('RewardsV1', () => {
       end_epoch: 300195,
     }
     const txn = Transaction.fromJsonObject(json) as RewardsV1
+    expect(txn.totalAmount.integerBalance).toBe(3000)
+  })
+})
+
+describe('RewardsV2', () => {
+  it('exposes a totalAmount balance', () => {
+    const json = {
+      type: 'rewards_v2',
+      time: 1587424041,
+      start_epoch: 300165,
+      rewards: [
+        {
+          type: 'poc_witnesses',
+          gateway: 'fake-gateway-address',
+          amount: 2000,
+          account: 'fake-owner-address',
+        },
+        {
+          type: 'poc_witnesses',
+          gateway: 'fake-gateway-address',
+          amount: 1000,
+          account: 'fake-owner-address',
+        },
+      ],
+      height: 123456,
+      hash: 'fake-txn-hash',
+      end_epoch: 300195,
+    }
+    const txn = Transaction.fromJsonObject(json) as RewardsV2
     expect(txn.totalAmount.integerBalance).toBe(3000)
   })
 })
