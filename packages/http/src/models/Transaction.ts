@@ -234,6 +234,8 @@ export class RewardsV1 extends DataModel {
   }
 }
 
+export class RewardsV2 extends RewardsV1 {}
+
 export interface Reward {
   type: string
   gateway: string
@@ -247,6 +249,7 @@ export type AnyTransaction =
   | PaymentV1
   | PaymentV2
   | RewardsV1
+  | RewardsV2
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
@@ -319,6 +322,8 @@ export default class Transaction {
         return this.toAddGatewayV1(json)
       case 'rewards_v1':
         return this.toRewardsV1(json)
+      case 'rewards_v2':
+        return this.toRewardsV2(json)
       case 'poc_receipts_v1':
         return this.toPocReceiptsV1(json)
       case 'transfer_hotspot_v1':
@@ -390,5 +395,9 @@ export default class Transaction {
         totalAmount,
       }),
     )
+  }
+
+  static toRewardsV2(json: TxnJsonObject): RewardsV2 {
+    return this.toRewardsV1(json)
   }
 }
