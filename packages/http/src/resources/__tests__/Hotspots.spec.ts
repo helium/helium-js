@@ -24,6 +24,8 @@ export const hotspotFixture = (params = {}) => ({
   },
   block: 123456,
   timestamp_added: '2020-11-24T02:52:12.000000Z',
+  last_poc_challenge: 213456,
+  last_change_block: 213456,
   address: 'fake-hotspot-address',
   ...params,
 })
@@ -118,15 +120,17 @@ export const rewardSumListFixture = () => ({
     min_time: '2020-12-17T00:00:00Z',
     max_time: '2020-12-18T00:00:00Z',
   },
-  data: [{
-    total: 13.17717245,
-    sum: 1317717245,
-    stddev: 1.10445133,
-    min: 0,
-    median: 1.98726309,
-    max: 2,
-    avg: 1.4641302722222223,
-  }],
+  data: [
+    {
+      total: 13.17717245,
+      sum: 1317717245,
+      stddev: 1.10445133,
+      min: 0,
+      median: 1.98726309,
+      max: 2,
+      avg: 1.4641302722222223,
+    },
+  ],
 })
 
 export const rewardsFixture = () => ({
@@ -168,6 +172,8 @@ describe('get', () => {
     const hotspot = await client.hotspots.get('fake-hotspot-address')
     expect(hotspot.name).toBe('some-hotspot-name')
     expect(hotspot.timestampAdded).toBe('2020-11-24T02:52:12.000000Z')
+    expect(hotspot.lastPocChallenge).toBe(213456)
+    expect(hotspot.lastChangeBlock).toBe(213456)
     expect(hotspot.rewardScale).toBe(0.07049560546875)
   })
 })
@@ -220,7 +226,9 @@ describe('list witnesses', () => {
     })
 
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/witnesses/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=week')
+    .get(
+      '/v1/hotspots/fake-address/witnesses/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=week',
+    )
     .reply(200, witnessSumFixture())
 
   nock('https://api.helium.io')
@@ -237,7 +245,9 @@ describe('list witnesses', () => {
 
   it('lists hotspot witness sums with date time', async () => {
     const client = new Client()
-    const list = await client.hotspot('fake-address').witnesses.sum.list({ minTime: '-30 day', bucket: 'week' })
+    const list = await client
+      .hotspot('fake-address')
+      .witnesses.sum.list({ minTime: '-30 day', bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
@@ -247,7 +257,9 @@ describe('list witnesses', () => {
     const client = new Client()
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
-    const list = await client.hotspot('fake-address').witnesses.sum.list({ minTime, maxTime, bucket: 'week' })
+    const list = await client
+      .hotspot('fake-address')
+      .witnesses.sum.list({ minTime, maxTime, bucket: 'week' })
     const witnessSums = await list.take(4)
     expect(witnessSums.length).toBe(4)
     expect(witnessSums[0].max).toBe(9)
@@ -256,15 +268,21 @@ describe('list witnesses', () => {
 
 describe('get rewards', () => {
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .get(
+      '/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z',
+    )
     .reply(200, rewardSumFixture())
 
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .get(
+      '/v1/hotspots/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z',
+    )
     .reply(200, rewardsFixture())
 
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .get(
+      '/v1/hotspots/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day',
+    )
     .reply(200, rewardSumListFixture())
 
   nock('https://api.helium.io')
@@ -310,7 +328,9 @@ describe('get rewards', () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
-    const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, maxTime, bucket: 'day' })
+    const rewardsList = await client
+      .hotspot('fake-address')
+      .rewards.sum.list({ minTime, maxTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
@@ -320,7 +340,9 @@ describe('get rewards', () => {
   it('list hotspot reward sums by bucket', async () => {
     const minTime = '-1 day'
     const client = new Client()
-    const rewardsList = await client.hotspot('fake-address').rewards.sum.list({ minTime, bucket: 'day' })
+    const rewardsList = await client
+      .hotspot('fake-address')
+      .rewards.sum.list({ minTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
@@ -364,14 +386,13 @@ describe('challenges', () => {
   nock('https://api.helium.io')
     .get('/v1/hotspots/fake-address/challenges')
     .reply(200, {
-      data: [
-        challengeFixture({ hash: 'fake-hash-1' }),
-        challengeFixture({ hash: 'fake-hash-2' }),
-      ],
+      data: [challengeFixture({ hash: 'fake-hash-1' }), challengeFixture({ hash: 'fake-hash-2' })],
     })
 
   nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/challenges/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .get(
+      '/v1/hotspots/fake-address/challenges/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day',
+    )
     .reply(200, challengeSumListFixture())
 
   it('list challenges from hotspot', async () => {
@@ -386,7 +407,9 @@ describe('challenges', () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
-    const list = await client.hotspot('fake-address').challenges.sum.list({ minTime, maxTime, bucket: 'day' })
+    const list = await client
+      .hotspot('fake-address')
+      .challenges.sum.list({ minTime, maxTime, bucket: 'day' })
     const challenges = await list.take(2)
     expect(challenges[0].sum).toBe(40)
     expect(challenges[1].sum).toBe(37)
