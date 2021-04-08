@@ -28,6 +28,8 @@ export interface HTTPHotspotObject {
   status?: Status
   nonce?: number
   timestamp_added?: string
+  last_poc_challenge?: number
+  last_change_block?: number
 }
 
 interface HTTPGeocodeObject {
@@ -91,6 +93,10 @@ export default class Hotspot extends DataModel {
 
   public timestampAdded?: string
 
+  public lastPocChallenge?: number
+
+  public lastChangeBlock?: number
+
   constructor(client: Client, hotspot: HTTPHotspotObject) {
     super()
     this.client = client
@@ -107,6 +113,8 @@ export default class Hotspot extends DataModel {
     this.nonce = hotspot.nonce
     this.blockAdded = hotspot.block_added
     this.timestampAdded = hotspot.timestamp_added
+    this.lastPocChallenge = hotspot.last_poc_challenge
+    this.lastChangeBlock = hotspot.last_change_block
     if (hotspot.geocode) {
       this.geocode = camelcaseKeys(hotspot.geocode) as any
     }
