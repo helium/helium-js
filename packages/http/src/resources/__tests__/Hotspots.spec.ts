@@ -179,30 +179,59 @@ describe('elected', () => {
     .get('/v1/elected/123456')
     .reply(200, {
       data: [
-        hotspotFixture({ name: 'hotspot-1' }),
-        hotspotFixture({ name: 'hotspot-2' }),
-        hotspotFixture({ name: 'hotspot-3' }),
-        hotspotFixture({ name: 'hotspot-4' }),
-        hotspotFixture({ name: 'hotspot-5' }),
-        hotspotFixture({ name: 'hotspot-6' }),
-        hotspotFixture({ name: 'hotspot-7' }),
-        hotspotFixture({ name: 'hotspot-8' }),
-        hotspotFixture({ name: 'hotspot-9' }),
-        hotspotFixture({ name: 'hotspot-10' }),
-        hotspotFixture({ name: 'hotspot-11' }),
-        hotspotFixture({ name: 'hotspot-12' }),
-        hotspotFixture({ name: 'hotspot-13' }),
-        hotspotFixture({ name: 'hotspot-14' }),
-        hotspotFixture({ name: 'hotspot-15' }),
-        hotspotFixture({ name: 'hotspot-16' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-1' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-2' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-3' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-4' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-5' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-6' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-7' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-8' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-9' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-10' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-11' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-12' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-13' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-14' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-15' }),
+        hotspotFixture({ name: 'previous-consensus-hotspot-16' }),
+      ],
+    })
+  nock('https://api.helium.io')
+    .get('/v1/elected')
+    .reply(200, {
+      data: [
+        hotspotFixture({ name: 'current-consensus-hotspot-1' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-2' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-3' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-4' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-5' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-6' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-7' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-8' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-9' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-10' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-11' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-12' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-13' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-14' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-15' }),
+        hotspotFixture({ name: 'current-consensus-hotspot-16' }),
       ],
     })
 
   it('retrieves elected hotspots at a given block height', async () => {
     const client = new Client()
     const elected = await client.hotspots.elected(123456)
-    expect(elected[15].name).toBe('hotspot-16')
-    expect(elected.length).toBe(16)
+    expect(elected[0].name).toBe('previous-consensus-hotspot-1')
+    expect(elected[elected.length - 1].name).toBe('previous-consensus-hotspot-16')
+  })
+
+  it('retrieves currently elected hotspots', async () => {
+    const client = new Client()
+    const elected = await client.hotspots.elected()
+    expect(elected[0].name).toBe('current-consensus-hotspot-1')
+    expect(elected[elected.length - 1].name).toBe('current-consensus-hotspot-16')
   })
 })
 
