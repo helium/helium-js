@@ -222,14 +222,18 @@ describe('elected', () => {
 
   it('retrieves elected hotspots at a given block height', async () => {
     const client = new Client()
-    const elected = await client.hotspots.elected(123456)
+    const list = await client.hotspots.elected(123456)
+    const elected = await list.take(16)
+    expect(elected.length).toBe(16)
     expect(elected[0].name).toBe('previous-consensus-hotspot-1')
     expect(elected[elected.length - 1].name).toBe('previous-consensus-hotspot-16')
   })
 
   it('retrieves currently elected hotspots', async () => {
     const client = new Client()
-    const elected = await client.hotspots.elected()
+    const list = await client.hotspots.elected()
+    const elected = await list.take(16)
+    expect(elected.length).toBe(16)
     expect(elected[0].name).toBe('current-consensus-hotspot-1')
     expect(elected[elected.length - 1].name).toBe('current-consensus-hotspot-16')
   })
