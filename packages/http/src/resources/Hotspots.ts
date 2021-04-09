@@ -60,4 +60,14 @@ export default class Hotspots {
     } = await this.client.get(url)
     return new Hotspot(this.client, hotspot)
   }
+
+  async elected(block?: number): Promise<ResourceList<Hotspot>> {
+    const url = block === undefined ? '/elected' : `/elected/${block}`
+    const response = await this.client.get(url)
+    const {
+      data: { data: hotspots },
+    } = response
+    const data = hotspots.map((h: HTTPHotspotObject) => new Hotspot(this.client, h))
+    return new ResourceList(data, this.list.bind(this))
+  }
 }
