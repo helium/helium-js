@@ -1,5 +1,21 @@
 ### How to Contribute to this repository
 
+## Running helium-js locally
+1. Clone the repo and navigate into the folder
+```zsh
+git clone https://github.com/helium/helium-js.git && cd helium-js
+```
+2. Get everything installed
+```zsh
+yarn && yarn bootstrap && yarn build
+```
+3. Run the tests
+```zsh
+yarn test
+```
+If everything went well, you should see a list of green lines that say "PASS" in your terminal. That should get you up and running!
+
+## About contributing
 We value contributions from the community and will do everything we
 can go get them reviewed in a timely fashion. If you have code to send
 our way or a bug to report:
