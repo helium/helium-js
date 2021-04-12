@@ -14,6 +14,12 @@ test('configure client with different endpoint', () => {
   expect(client.network.baseURL).toBe(stagingUrl)
 })
 
+test('configure client with different endpoint', () => {
+  const stagingUrl = 'https://api.helium.wtf'
+  const client = new Client(Network.staging)
+  expect(client.network.baseURL).toBe(stagingUrl)
+})
+
 describe('get', () => {
   it('creates a GET request to the full url', async () => {
     nock('https://api.helium.io').get('/v1/greeting').reply(200, {
@@ -30,11 +36,9 @@ describe('get', () => {
 
 describe('post', () => {
   it('creates a POST request to the full url', async () => {
-    nock('https://api.helium.io')
-      .post('/v1/greeting', { greeting: 'hello' })
-      .reply(200, {
-        response: 'hey there!',
-      })
+    nock('https://api.helium.io').post('/v1/greeting', { greeting: 'hello' }).reply(200, {
+      response: 'hey there!',
+    })
     const client = new Client()
     const params = { greeting: 'hello' }
 
@@ -55,5 +59,15 @@ describe('retry logic', () => {
     const { data } = await client.get('/greeting')
 
     expect(data.greeting).toBe('hello')
+  })
+})
+
+describe('retry disabled', () => {
+  nock('https://api.helium.io').get('/v1/greeting').reply(503, 'bad gateway')
+
+  it('disables retrying requests', async () => {
+    const client = new Client(Network.production, { retry: false })
+    const { data } = await client.get('/greeting')
+    expect(data).toBeUndefined()
   })
 })
