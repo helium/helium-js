@@ -40,7 +40,7 @@ interface Options {
 
 export default class Client {
   public network!: Network
-
+  public retry!: number | false
   private axios!: AxiosInstance
 
   constructor(network: Network = Network.production, options: Options = { retry: 5 }) {
@@ -48,12 +48,12 @@ export default class Client {
     this.axios = axios.create({
       baseURL: this.network.endpoint,
     })
-    let { retry } = options
-    if (!!retry) {
+    this.retry = options.retry
+    if (this.retry !== false) {
       this.axios.defaults.raxConfig = {
         instance: this.axios,
-        retry: retry,
-        noResponseRetries: 5,
+        retry: this.retry,
+        noResponseRetries: this.retry,
       }
       rax.attach(this.axios)
     }
