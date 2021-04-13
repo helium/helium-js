@@ -55,8 +55,8 @@ describe('retry logic', () => {
 
   it('retries requests with exponential backoff', async () => {
     const client = new Client()
+    expect(client.retry).toBe(5)
     const { data } = await client.get('/greeting')
-
     expect(data.greeting).toBe('hello')
   })
 })
