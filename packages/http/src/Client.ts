@@ -35,12 +35,12 @@ interface BlockFromHeightOrHashFn {
 }
 
 interface Options {
-  retry: number | false
+  retry: number
 }
 
 export default class Client {
   public network!: Network
-  public retry!: number | false
+  public retry!: number
   private axios!: AxiosInstance
 
   constructor(network: Network = Network.production, options: Options = { retry: 5 }) {
@@ -49,7 +49,7 @@ export default class Client {
       baseURL: this.network.endpoint,
     })
     this.retry = options.retry
-    if (this.retry !== false) {
+    if (this.retry > 0) {
       this.axios.defaults.raxConfig = {
         instance: this.axios,
         retry: this.retry,

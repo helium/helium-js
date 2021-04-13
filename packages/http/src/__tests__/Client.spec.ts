@@ -66,8 +66,8 @@ describe('retry disabled', () => {
   nock('https://api.helium.io').get('/v1/farewell').times(1).reply(200, 'good response')
 
   it('make request with retry disabled', async () => {
-    const client = new Client(Network.production, { retry: false })
-    expect(client.retry).toBe(false)
+    const client = new Client(Network.production, { retry: 0 })
+    expect(client.retry).toBe(0)
     const makeRequest = async () => {
       await client.get('/farewell')
     }
