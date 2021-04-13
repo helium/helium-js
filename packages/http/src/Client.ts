@@ -34,22 +34,29 @@ interface BlockFromHeightOrHashFn {
   (heightOrHash: number | string): Block
 }
 
+interface Options {
+  retry: number
+}
+
 export default class Client {
   public network!: Network
-
+  public retry!: number
   private axios!: AxiosInstance
 
-  constructor(network: Network = Network.production) {
+  constructor(network: Network = Network.production, options: Options = { retry: 5 }) {
     this.network = network
     this.axios = axios.create({
       baseURL: this.network.endpoint,
     })
-    this.axios.defaults.raxConfig = {
-      instance: this.axios,
-      retry: 5,
-      noResponseRetries: 5,
+    this.retry = options.retry
+    if (this.retry > 0) {
+      this.axios.defaults.raxConfig = {
+        instance: this.axios,
+        retry: this.retry,
+        noResponseRetries: this.retry,
+      }
+      rax.attach(this.axios)
     }
-    rax.attach(this.axios)
   }
 
   public get accounts(): Accounts {
