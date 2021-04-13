@@ -48,9 +48,8 @@ describe('post', () => {
 })
 
 describe('retry logic', () => {
-  nock('https://api.helium.io').get('/v1/greeting').reply(503, 'bad gateway')
-
-  nock('https://api.helium.io').get('/v1/greeting').reply(200, {
+  nock('https://api.helium.io').get('/v1/greeting').times(1).reply(503, 'bad gateway')
+  nock('https://api.helium.io').get('/v1/greeting').times(1).reply(200, {
     greeting: 'hello',
   })
 
@@ -63,17 +62,15 @@ describe('retry logic', () => {
 })
 
 describe('retry disabled', () => {
-  nock('https://api.helium.io').get('/v1/greeting').reply(503, 'bad gateway')
-  nock('https://api.helium.io').get('/v1/greeting').reply(200, 'good response')
+  nock('https://api.helium.io').get('/v1/farewell').times(1).reply(503, 'bad gateway')
+  nock('https://api.helium.io').get('/v1/farewell').times(1).reply(200, 'good response')
 
   it('make request with retry disabled', async () => {
     const client = new Client(Network.production, { retry: false })
     expect(client.retry).toBe(false)
-    // const getError = async () => {
-    //   return await client.get('/greeting')
-    // }
-    const { data } = await client.get('/greeting')
-    expect(data.greeting).toBeUndefined()
-    // expect(getError).toThrowError()
+    const makeRequest = async () => {
+      await client.get('/farewell')
+    }
+    await expect(makeRequest()).rejects.toThrow('Request failed with status code 503')
   })
 })
