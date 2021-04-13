@@ -24,6 +24,16 @@ export default class Hotspots {
     return new Hotspot(this.client, { address })
   }
 
+  async search(term:string): Promise<ResourceList<Hotspot>> {
+    const url = 'hotspots/name'
+    const response = await this.client.get(url, { search: term })
+    const {
+      data: { data: hotspots },
+    } = response
+    const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
+    return new ResourceList(data, this.list.bind(this))
+  }
+
   async list(params: ListParams = {}): Promise<ResourceList<Hotspot>> {
     const { hotspots, cursor } = await this.fetchList(params)
     const data = hotspots.map((d: HTTPHotspotObject) => new Hotspot(this.client, d))
