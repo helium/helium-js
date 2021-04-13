@@ -168,7 +168,7 @@ export default class AssertLocationV2 extends Transaction {
       location: this.location,
       nonce: this.nonce,
       gain: this.gain,
-      elevation: this.elevation,
+      elevation: this.elevation && this.elevation > 0 ? this.elevation : null,
       fee: this.fee && this.fee > 0 ? this.fee : null,
       stakingFee: this.stakingFee && this.stakingFee > 0 ? this.stakingFee : null,
       ownerSignature: this.ownerSignature && !forSigning ? toUint8Array(this.ownerSignature) : null,
