@@ -283,6 +283,23 @@ describe('listJson', () => {
   })
 })
 
+describe('search by hotspot name', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/name')
+    .query({ search: 'chicken-burrito' })
+    .reply(200, {
+      data: [hotspotFixture({ name: 'chicken-burrito-guacamole' }), hotspotFixture({ name: 'chicken-burrito-salsa' })],
+    })
+
+  it('lists hotspots', async () => {
+    const client = new Client()
+    const list = await client.hotspots.search('chicken-burrito')
+    const hotspots = await list.take(2)
+    expect(hotspots[0].name).toBe('chicken-burrito-guacamole')
+    expect(hotspots[1].name).toBe('chicken-burrito-salsa')
+  })
+})
+
 describe('list witnesses', () => {
   nock('https://api.helium.io')
     .get('/v1/hotspots/fake-address/witnesses')
