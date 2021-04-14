@@ -263,13 +263,16 @@ describe('list from hotspot', () => {
     expect(txn4 instanceof AssertLocationV2).toBeTruthy()
 
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
+    expect((txn0 as AssertLocationV1).data.hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
+    expect((txn1 as AddGatewayV1).data.hash).toBe('fake-hash-2')
     expect((txn1 as AddGatewayV1).stakingFee.toDataCredits().toString()).toBe('1 DC')
     expect((txn2 as UnknownTransaction).time).toBe(1587299256)
     expect((txn3 as TokenBurnV1).fee.toDataCredits().toString()).toBe('35,000 DC')
     expect((txn4 as AssertLocationV2).hash).toBe('fake-hash-4')
     expect((txn4 as AssertLocationV2).gain).toBe(12)
     expect((txn4 as AssertLocationV2).elevation).toBe(0)
+    expect((txn4 as AssertLocationV2).data.elevation).toBe(0)
   })
 })
 
