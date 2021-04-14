@@ -6,6 +6,7 @@ import {
   AssertLocationV1,
   AddGatewayV1,
   TokenBurnV1,
+  AssertLocationV2,
 } from '../../index'
 
 describe('submit', () => {
@@ -226,27 +227,49 @@ describe('list from hotspot', () => {
           fee: 35000,
           amount: 500000000000,
         },
+        {
+          type: 'assert_location_v2',
+          time: 1587251449,
+          staking_fee: 1,
+          payer: 'fake-payer-address',
+          owner: 'fake-owner-addres',
+          nonce: 1,
+          location: 'fake-h3-location',
+          lng: -123.03528172874591,
+          lat: 40.82000831418664,
+          height: 100000,
+          hash: 'fake-hash-4',
+          gateway: 'fake-gateway',
+          gain: 12,
+          fee: 0,
+          elevation: 0,
+        },
       ],
     })
 
   it('lists transaction activity for an account', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').activity.list()
-    const txns = await list.take(4)
+    const txns = await list.take(5)
     const txn0 = txns[0]
     const txn1 = txns[1]
     const txn2 = txns[2]
     const txn3 = txns[3]
+    const txn4 = txns[4]
     expect(txn0 instanceof AssertLocationV1).toBeTruthy()
     expect(txn1 instanceof AddGatewayV1).toBeTruthy()
     expect(txn2 instanceof UnknownTransaction).toBeTruthy()
     expect(txn3 instanceof TokenBurnV1).toBeTruthy()
+    expect(txn4 instanceof AssertLocationV2).toBeTruthy()
 
     expect((txn0 as AssertLocationV1).hash).toBe('fake-hash-1')
     expect((txn1 as AddGatewayV1).hash).toBe('fake-hash-2')
     expect((txn1 as AddGatewayV1).stakingFee.toDataCredits().toString()).toBe('1 DC')
     expect((txn2 as UnknownTransaction).time).toBe(1587299256)
     expect((txn3 as TokenBurnV1).fee.toDataCredits().toString()).toBe('35,000 DC')
+    expect((txn4 as AssertLocationV2).hash).toBe('fake-hash-4')
+    expect((txn4 as AssertLocationV2).gain).toBe(12)
+    expect((txn4 as AssertLocationV2).elevation).toBe(0)
   })
 })
 

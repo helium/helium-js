@@ -125,6 +125,51 @@ export class AssertLocationV1 extends DataModel {
   }
 }
 
+export class AssertLocationV2 extends DataModel {
+  type!: string
+
+  time!: number
+
+  stakingFee!: Balance<DataCredits>
+
+  payerSignature!: string
+
+  payer!: string
+
+  ownerSignature!: string
+
+  owner!: string
+
+  nonce!: number
+
+  location!: string
+
+  lng!: number
+
+  lat!: number
+
+  height!: number
+
+  hash!: string
+
+  gateway!: string
+
+  gain!: number
+
+  fee!: Balance<DataCredits>
+
+  elevation!: number
+
+  constructor(data: AssertLocationV2) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): AssertLocationV2 {
+    return this
+  }
+}
+
 export class PaymentV1 extends DataModel {
   type!: string
 
@@ -330,6 +375,8 @@ export default class Transaction {
         return this.toTransferHotspotV1(json)
       case 'assert_location_v1':
         return this.toAssertLocationV1(json)
+      case 'assert_location_v2':
+        return this.toAssertLocationV2(json)
       case 'token_burn_v1':
         return this.toTokenBurnV1(json)
       default:
@@ -363,6 +410,10 @@ export default class Transaction {
 
   static toAssertLocationV1(json: TxnJsonObject): AssertLocationV1 {
     return new AssertLocationV1(prepareTxn(json))
+  }
+
+  static toAssertLocationV2(json: TxnJsonObject): AssertLocationV2 {
+    return new AssertLocationV2(prepareTxn(json))
   }
 
   static toTokenBurnV1(json: TxnJsonObject): TokenBurnV1 {
