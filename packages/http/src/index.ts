@@ -19,6 +19,7 @@ export {
   RewardsV2,
   AddGatewayV1,
   AssertLocationV1,
+  AssertLocationV2,
   PocReceiptsV1,
   TransferHotspotV1,
   TokenBurnV1,

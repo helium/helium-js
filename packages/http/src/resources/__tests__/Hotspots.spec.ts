@@ -27,6 +27,8 @@ export const hotspotFixture = (params = {}) => ({
   last_poc_challenge: 213456,
   last_change_block: 213456,
   address: 'fake-hotspot-address',
+  gain: 12,
+  elevation: 3,
   ...params,
 })
 
