@@ -71,6 +71,7 @@ describe('get counts', () => {
     const client = new Client()
     const counts = await client.stats.counts()
     expect(counts.blocks).toBe(805339)
+    expect(counts.consensusGroups).toBe(20778)
     expect(counts.challenges).toBe(19724635)
   })
 })
