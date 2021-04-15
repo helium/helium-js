@@ -40,6 +40,15 @@ const statsFixture = () => ({
     },
   },
 })
+const countsFixture = () => ({
+  blocks: 805339,
+  challenges: 19724635,
+  cities: 3735,
+  consensus_groups: 20778,
+  countries: 66,
+  hotspots: 26973,
+  transactions: 52592071,
+})
 
 describe('get stats', () => {
   nock('https://api.helium.io').get('/v1/stats').reply(200, {
@@ -50,5 +59,19 @@ describe('get stats', () => {
     const client = new Client()
     const stats = await client.stats.get()
     expect(stats.tokenSupply).toBe(33319737.03712976)
+  })
+})
+
+describe('get counts', () => {
+  nock('https://api.helium.io').get('/v1/stats/counts').reply(200, {
+    data: countsFixture(),
+  })
+
+  it('retrieves network count stats', async () => {
+    const client = new Client()
+    const counts = await client.stats.counts()
+    expect(counts.blocks).toBe(805339)
+    expect(counts.consensusGroups).toBe(20778)
+    expect(counts.challenges).toBe(19724635)
   })
 })
