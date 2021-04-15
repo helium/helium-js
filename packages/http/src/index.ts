@@ -11,6 +11,7 @@ export { ElectionData as Election } from './models/Election'
 export { SumData as Sum } from './models/Sum'
 export { RewardData as Reward } from './models/Reward'
 export { PendingTransactionData as PendingTransaction } from './models/PendingTransaction'
+export { Counts } from './models/Stats'
 export {
   AnyTransaction,
   PaymentV1,
