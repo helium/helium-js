@@ -122,3 +122,39 @@ describe('get height', () => {
     expect(height).toBe(369627)
   })
 })
+
+describe('get stats', () => {
+  nock('https://api.helium.io')
+    .get('/v1/blocks/stats')
+    .reply(200,
+      {
+        data: {
+          last_week: {
+            stddev: 27.32198822711437,
+            avg: 60.27801036682616,
+          },
+          last_month: {
+            stddev: 45.59651282883883,
+            avg: 60.88299879520811,
+          },
+          last_hour: {
+            stddev: 5.753793366763954,
+            avg: 51.47826086956522,
+          },
+          last_day: {
+            stddev: 19.444424180975258,
+            avg: 55.99481193255512,
+          },
+        },
+      })
+
+  it('gets current block stats', async () => {
+    const client = new Client()
+
+    const stats = await client.blocks.stats()
+    expect(stats.lastWeek.avg).toBe(60.27801036682616)
+    expect(stats.lastMonth.avg).toBe(60.88299879520811)
+    expect(stats.lastHour.stddev).toBe(5.753793366763954)
+    expect(stats.lastDay.stddev).toBe(19.444424180975258)
+  })
+})

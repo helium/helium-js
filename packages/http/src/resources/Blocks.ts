@@ -1,3 +1,5 @@
+import camelcaseKeys from 'camelcase-keys'
+import BlockStats from '../models/BlockStats'
 import type Client from '../Client'
 import Block from '../models/Block'
 import type { HTTPBlockObject } from '../models/Block'
@@ -25,9 +27,8 @@ export default class Blocks {
     if (typeof heightOrHash === 'string') {
       if (stringIsInt(heightOrHash)) {
         return new Block(this.client, { height: parseInt(heightOrHash) })
-      } else {
-        return new Block(this.client, { hash: heightOrHash })
       }
+      return new Block(this.client, { hash: heightOrHash })
     }
     throw new Error('heightOrHash must be a number or string')
   }
@@ -61,5 +62,10 @@ export default class Blocks {
   async getHeight(): Promise<number> {
     const { data: { data: { height } } } = await this.client.get('/blocks/height')
     return height
+  }
+
+  async stats() {
+    const { data: { data: stats } } = await this.client.get('/blocks/stats')
+    return camelcaseKeys(stats) as BlockStats
   }
 }
