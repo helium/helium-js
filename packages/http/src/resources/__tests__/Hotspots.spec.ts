@@ -32,48 +32,6 @@ export const hotspotFixture = (params = {}) => ({
   ...params,
 })
 
-export const witnessSumFixture = () => ({
-  meta: {
-    min_time: '2021-01-04T21:55:18Z',
-    max_time: '2021-02-03T21:55:18Z',
-    bucket: 'week',
-  },
-  data: [
-    {
-      timestamp: '2021-01-27T21:55:18.000000Z',
-      stddev: 0.7387766471133708,
-      min: 7,
-      median: 9,
-      max: 9,
-      avg: 8.382978723404255,
-    },
-    {
-      timestamp: '2021-01-20T21:55:18.000000Z',
-      stddev: 3.327131676805893,
-      min: 0,
-      median: 6,
-      max: 12,
-      avg: 4.946428571428571,
-    },
-    {
-      timestamp: '2021-01-13T21:55:18.000000Z',
-      stddev: 0.8293691019953858,
-      min: 10,
-      median: 12,
-      max: 12,
-      avg: 11.416666666666666,
-    },
-    {
-      timestamp: '2021-01-06T21:55:18.000000Z',
-      stddev: 0.4562439130098156,
-      min: 9,
-      median: 10,
-      max: 10,
-      avg: 9.712121212121213,
-    },
-  ],
-})
-
 export const rewardSumFixture = () => ({
   meta: {
     min_time: '2020-12-17T00:00:00Z',
@@ -299,54 +257,6 @@ describe('search by hotspot name', () => {
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('chicken-burrito-guacamole')
     expect(hotspots[1].name).toBe('chicken-burrito-salsa')
-  })
-})
-
-describe('list witnesses', () => {
-  nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/witnesses')
-    .reply(200, {
-      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
-    })
-
-  nock('https://api.helium.io')
-    .get(
-      '/v1/hotspots/fake-address/witnesses/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=week',
-    )
-    .reply(200, witnessSumFixture())
-
-  nock('https://api.helium.io')
-    .get('/v1/hotspots/fake-address/witnesses/sum?min_time=-30%20day&bucket=week')
-    .reply(200, witnessSumFixture())
-
-  it('lists hotspots witnesses', async () => {
-    const client = new Client()
-    const list = await client.hotspot('fake-address').witnesses.list()
-    const hotspots = await list.take(2)
-    expect(hotspots[0].name).toBe('hotspot-1')
-    expect(hotspots[1].name).toBe('hotspot-2')
-  })
-
-  it('lists hotspot witness sums with date time', async () => {
-    const client = new Client()
-    const list = await client
-      .hotspot('fake-address')
-      .witnesses.sum.list({ minTime: '-30 day', bucket: 'week' })
-    const witnessSums = await list.take(4)
-    expect(witnessSums.length).toBe(4)
-    expect(witnessSums[0].max).toBe(9)
-  })
-
-  it('lists hotspot witness sums with string time', async () => {
-    const client = new Client()
-    const minTime = new Date('2020-12-17T00:00:00Z')
-    const maxTime = new Date('2020-12-18T00:00:00Z')
-    const list = await client
-      .hotspot('fake-address')
-      .witnesses.sum.list({ minTime, maxTime, bucket: 'week' })
-    const witnessSums = await list.take(4)
-    expect(witnessSums.length).toBe(4)
-    expect(witnessSums[0].max).toBe(9)
   })
 })
 
