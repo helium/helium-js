@@ -33,7 +33,7 @@ export interface HTTPWitnessObject {
 }
 
 interface HTTPWitnessInfoObject {
-  recent_time?: number
+  recent_time?: string
   histogram?: {
     '28'?: number
     '-92'?: number
@@ -47,11 +47,11 @@ interface HTTPWitnessInfoObject {
     '-108'?: number
     '-100'?: number
   }
-  first_time?: number
+  first_time?: string
 }
 
 interface WitnessInfo {
-  recentTime?: number
+  recentTime?: string
   histogram?: {
     '28'?: number
     '-92'?: number
@@ -65,7 +65,7 @@ interface WitnessInfo {
     '-108'?: number
     '-100'?: number
   }
-  firstTime?: number
+  firstTime?: string
 }
 
 interface HTTPGeocodeObject {
@@ -166,7 +166,9 @@ export default class Witness extends DataModel {
     }
     this.address = witness.address
     this.witnessFor = witness.witness_for
-    this.witnessInfo = witness.witness_info
+    if (witness.witness_info) {
+      this.witnessInfo = camelcaseKeys(witness.witness_info) as any
+    }
   }
 
   get data(): WitnessData {

@@ -28,7 +28,7 @@ export const witnessFixture = (params = {}) => ({
   gain: 12,
   elevation: 3,
   witness_info: {
-    recent_time: 1618969231803488000,
+    recent_time: '1618969231803488000',
     histogram: {
       '28': 0,
       '-92': 21,
@@ -42,7 +42,7 @@ export const witnessFixture = (params = {}) => ({
       '-108': 0,
       '-100': 1,
     },
-    first_time: 1618163719840575700,
+    first_time: '1618163719840575700',
   },
   witness_for: 'fake-witness-for-address',
   ...params,
@@ -115,6 +115,8 @@ describe('list witnesses', () => {
     expect(witnesses[1].name).toBe('hotspot-2')
     expect(witnesses[0].witnessFor).toBe('fake-witness-for-address')
     expect(witnesses[0].witnessInfo?.histogram?.['-92']).toBe(21)
+    expect(witnesses[0].witnessInfo?.recentTime).toBe('1618969231803488000')
+    expect(witnesses[0].witnessInfo?.firstTime).toBe('1618163719840575700')
   })
 
   it('lists hotspot witness sums with date time', async () => {
