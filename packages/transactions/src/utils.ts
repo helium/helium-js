@@ -16,6 +16,13 @@ export const toAddressable = (
   return Address.fromBin(buf)
 }
 
+export const toString = (long: Long | number | undefined | null): string | undefined => {
+  if (long === undefined || long === null) return undefined
+  const jsLong = typeof long === 'number' ? Long.fromNumber(long, true) : long
+  const buff = Buffer.from(jsLong.toBytesLE())
+  return buff.toString('utf8')
+}
+
 export const toNumber = (long: Long | number | undefined | null): number | undefined => {
   if (long === undefined || long === null) return undefined
   if (typeof long === 'number') return long
