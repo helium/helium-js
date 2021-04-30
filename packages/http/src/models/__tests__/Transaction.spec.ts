@@ -18,6 +18,7 @@ describe('PaymentV2', () => {
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 75,
+          memo: 'memo',
         },
       ],
       payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
@@ -29,6 +30,9 @@ describe('PaymentV2', () => {
     const txn = Transaction.fromJsonObject(json) as PaymentV2
     expect(txn.totalAmount.integerBalance).toBe(75)
     expect(txn.fee.integerBalance).toBe(3)
+    expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
+    expect(txn.payments[0].amount).toBe(75)
+    expect(txn.payments[0].memo).toBe('memo')
   })
 })
 
