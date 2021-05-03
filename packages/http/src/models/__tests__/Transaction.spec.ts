@@ -31,7 +31,7 @@ describe('PaymentV2', () => {
     expect(txn.totalAmount.integerBalance).toBe(75)
     expect(txn.fee.integerBalance).toBe(3)
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
-    expect(txn.payments[0].amount).toBe(75)
+    expect(txn.payments[0].amount.integerBalance).toBe(75)
     expect(txn.payments[0].memo).toBe('memo')
   })
 })
