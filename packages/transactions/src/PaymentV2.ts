@@ -96,7 +96,7 @@ export default class PaymentV2 extends Transaction {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
     const payments = this.payments.map(({ payee, amount, memo }) => {
-      const memoBuffer = memo ? Buffer.from(memo, 'utf8') : undefined
+      const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
       return Payment.create({
         payee: toUint8Array(payee.bin),
         amount,

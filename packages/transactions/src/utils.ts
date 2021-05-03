@@ -20,7 +20,7 @@ export const toString = (long: Long | number | undefined | null): string | undef
   if (long === undefined || long === null) return undefined
   const jsLong = typeof long === 'number' ? Long.fromNumber(long, true) : long
   const buff = Buffer.from(jsLong.toBytesLE())
-  return buff.toString('utf8')
+  return buff.toString('base64')
 }
 
 export const toNumber = (long: Long | number | undefined | null): number | undefined => {
