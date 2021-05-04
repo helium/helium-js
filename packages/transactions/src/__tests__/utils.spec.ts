@@ -1,5 +1,5 @@
-import {toAddressable, toNumber, toString} from '../utils'
-import * as JSLong from "long";
+import * as JSLong from 'long'
+import { toAddressable, toNumber, toString } from '../utils'
 
 test('toAddressable with undefined', () => {
   expect(toAddressable(undefined)).toBe(undefined)
