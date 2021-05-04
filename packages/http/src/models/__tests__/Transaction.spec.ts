@@ -30,6 +30,7 @@ describe('PaymentV2', () => {
     const txn = Transaction.fromJsonObject(json) as PaymentV2
     expect(txn.totalAmount.integerBalance).toBe(75)
     expect(txn.fee.integerBalance).toBe(3)
+    expect(txn.data.hash).toBe(txn.hash)
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
     expect(txn.payments[0].amount.integerBalance).toBe(75)
     expect(txn.payments[0].memo).toBe('memo')
@@ -62,6 +63,7 @@ describe('RewardsV1', () => {
     }
     const txn = Transaction.fromJsonObject(json) as RewardsV1
     expect(txn.totalAmount.integerBalance).toBe(3000)
+    expect(txn.data.hash).toBe(txn.hash)
   })
 })
 
@@ -91,6 +93,7 @@ describe('RewardsV2', () => {
     }
     const txn = Transaction.fromJsonObject(json) as RewardsV2
     expect(txn.totalAmount.integerBalance).toBe(3000)
+    expect(txn.data.hash).toBe(txn.hash)
   })
 })
 
@@ -111,6 +114,7 @@ describe('TransferHotspotV1', () => {
     const txn = Transaction.fromJsonObject(json) as TransferHotspotV1
     expect(txn.amountToSeller.integerBalance).toBe(500000000)
     expect(txn.fee.integerBalance).toBe(55000)
+    expect(txn.data.hash).toBe(txn.hash)
   })
 })
 
@@ -127,5 +131,6 @@ describe('PocReceiptsV1', () => {
       ] as HTTPPathObject[]),
     ) as PocReceiptsV1
     expect(txn.challenger).toBe('fake-challenger')
+    expect(txn.data.hash).toBe(txn.hash)
   })
 })
