@@ -29,6 +29,15 @@ export const hotspotFixture = (params = {}) => ({
   address: 'fake-hotspot-address',
   gain: 12,
   elevation: 3,
+  status: {
+    height: 832252,
+    listen_addrs: [
+      '/ip4/75.87.195.241/tcp/44158',
+      '/p2p/11SV4RTqrgQo8FdQeRRSLrhY9ge4FepycGHz5S8qz1GF8WChAVP/p2p-circuit/p2p/112sGGLw2v8qHkxguGijb28daDTsJdc9LyoexyvHXFfD2FY1K9HA',
+    ],
+    online: 'online',
+    gps: '',
+  },
   ...params,
 })
 
@@ -215,7 +224,9 @@ describe('list', () => {
     const list = await client.hotspots.list()
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[0].status?.listenAddrs[0]).toBe('/ip4/75.87.195.241/tcp/44158')
     expect(hotspots[1].name).toBe('hotspot-2')
+    expect(hotspots[1].status?.listenAddrs[0]).toBe('/ip4/75.87.195.241/tcp/44158')
   })
 })
 

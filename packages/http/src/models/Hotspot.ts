@@ -25,7 +25,12 @@ export interface HTTPHotspotObject {
   block_added?: number
   geocode?: HTTPGeocodeObject
   address: string
-  status?: Status
+  status?: {
+    gps: string
+    height: number
+    online: string
+    listen_addrs: string[]
+  }
   nonce?: number
   timestamp_added?: string
   last_poc_challenge?: number
@@ -60,6 +65,7 @@ interface Status {
   gps: string
   height: number
   online: string
+  listenAddrs: string[]
 }
 
 export default class Hotspot extends DataModel {
@@ -115,7 +121,12 @@ export default class Hotspot extends DataModel {
     this.lng = hotspot.lng
     this.lat = hotspot.lat
     this.block = hotspot.block
-    this.status = hotspot.status
+    this.status = {
+      gps: hotspot.status?.gps || '',
+      height: hotspot.status?.height || 0,
+      online: hotspot.status?.online || '',
+      listenAddrs: hotspot.status?.listen_addrs || [],
+    }
     this.nonce = hotspot.nonce
     this.blockAdded = hotspot.block_added
     this.timestampAdded = hotspot.timestamp_added
