@@ -2,9 +2,7 @@ import proto from '@helium/proto'
 import * as JSLong from 'long'
 import Transaction from './Transaction'
 import { EMPTY_SIGNATURE, toUint8Array } from './utils'
-import { Addressable, SignableKeypair } from './types'
-
-type Base64Memo = string
+import { Addressable, Base64Memo, SignableKeypair } from './types'
 
 interface TokenBurnOptions {
   payer: Addressable

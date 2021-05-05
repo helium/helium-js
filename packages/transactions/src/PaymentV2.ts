@@ -1,7 +1,10 @@
 import proto from '@helium/proto'
+import * as JSLong from 'long'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber } from './utils'
-import { Addressable, SignableKeypair } from './types'
+import {
+  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber, toString,
+} from './utils'
+import { Addressable, Base64Memo, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
@@ -14,6 +17,7 @@ interface PaymentOptions {
 interface Payment {
   payee: Addressable
   amount: number
+  memo?: Base64Memo
 }
 
 interface SignOptions {
@@ -62,6 +66,7 @@ export default class PaymentV2 extends Transaction {
     const payments = (decoded.paymentV2?.payments || []).map((p) => ({
       payee: toAddressable(p!.payee) as Addressable,
       amount: toNumber(p!.amount) as number,
+      memo: toString(p!.memo),
     }))
     const fee = toNumber(decoded.paymentV2?.fee)
     const nonce = toNumber(decoded.paymentV2?.nonce)
@@ -90,13 +95,14 @@ export default class PaymentV2 extends Transaction {
   ): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
-
-    const payments = this.payments.map(({ payee, amount }) =>
-      Payment.create({
+    const payments = this.payments.map(({ payee, amount, memo }) => {
+      const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
+      return Payment.create({
         payee: toUint8Array(payee.bin),
         amount,
-      }),
-    )
+        memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
+      })
+    })
 
     return PaymentTxn.create({
       payer: this.payer ? toUint8Array(this.payer.bin) : null,

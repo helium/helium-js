@@ -22,6 +22,7 @@ const paymentFixture = async () => {
       {
         payee: alice.address,
         amount: 10,
+        memo: 'bW9ja21lbW8=',
       },
     ],
     nonce: 1,
@@ -35,6 +36,7 @@ test('create a PaymentV2', async () => {
   expect(payment.payments?.length).toBe(1)
   expect((payment.payments || [])[0].payee.b58).toBe(aliceB58)
   expect((payment.payments || [])[0].amount).toBe(10)
+  expect((payment.payments || [])[0].memo).toBe('bW9ja21lbW8=')
   expect(payment.nonce).toBe(1)
   expect(payment.fee).toBe(35000)
   expect(payment.type).toBe('payment_v2')
@@ -65,6 +67,7 @@ describe('serialize and deserialize', () => {
     expect(deserialized.payments[0]?.payee.b58).toBe(
       payment.payments[0]?.payee.b58,
     )
+    expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
     expect(deserialized.fee).toBe(payment.fee)
   })
 })

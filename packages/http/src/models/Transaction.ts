@@ -250,6 +250,7 @@ export class UnknownTransaction extends DataModel {
 export interface Payment {
   payee: string
   amount: Balance<NetworkTokens>
+  memo?: string
 }
 
 export class RewardsV1 extends DataModel {
