@@ -24,6 +24,9 @@ export {
   PocReceiptsV1,
   TransferHotspotV1,
   TokenBurnV1,
+  StakeValidatorV1,
+  UnstakeValidatorV1,
+  TransferValidatorStakeV1,
   UnknownTransaction,
 } from './models/Transaction'
 export { GenericDataModel } from './models/DataModel'
