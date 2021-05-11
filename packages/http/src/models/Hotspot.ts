@@ -49,6 +49,7 @@ interface HTTPGeocodeObject {
   long_state: string
   long_country: string
   long_city: string
+  city_id: string
 }
 
 interface Geocode {
