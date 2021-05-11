@@ -1,4 +1,6 @@
-import Transaction, { PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, TransferHotspotV1 } from '../Transaction'
+import Transaction, {
+  PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, StakeValidatorV1, TransferHotspotV1,
+} from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
   challengeJson,
@@ -7,6 +9,26 @@ import {
   mockReceipt,
   mockWitness,
 } from './Challenge.spec'
+
+describe('StakeValidatorV1', () => {
+  it('Creates StakeValidatorV1 transaction', () => {
+    const json = {
+      type: 'stake_validator_v1',
+      time: 1587132741,
+      ownerSignature: 'RSXR9pkn9ZnkZOZ',
+      owner: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
+      fee: 3,
+      address: 'fake-address',
+    }
+    const txn = Transaction.fromJsonObject(json) as StakeValidatorV1
+    expect(txn.type).toBe('stake_validator_v1')
+    expect(txn.time).toBe(1587132741)
+    expect(txn.ownerSignature).toBe('RSXR9pkn9ZnkZOZ')
+    expect(txn.owner).toBe('13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu')
+    expect(txn.fee.integerBalance).toBe(3)
+    expect(txn.address).toBe('fake-address')
+  })
+})
 
 describe('PaymentV2', () => {
   it('exposes balances for currency fields', () => {
