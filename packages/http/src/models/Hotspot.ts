@@ -32,6 +32,7 @@ export interface HTTPHotspotObject {
     listen_addrs: string[]
   }
   nonce?: number
+  speculative_nonce?: number
   timestamp_added?: string
   last_poc_challenge?: number
   last_change_block?: number
@@ -97,6 +98,8 @@ export default class Hotspot extends DataModel {
 
   public nonce?: number
 
+  public speculativeNonce?: number
+
   public blockAdded?: number
 
   public timestampAdded?: string
@@ -128,6 +131,7 @@ export default class Hotspot extends DataModel {
       listenAddrs: hotspot.status?.listen_addrs || [],
     }
     this.nonce = hotspot.nonce
+    this.speculativeNonce = hotspot.speculative_nonce
     this.blockAdded = hotspot.block_added
     this.timestampAdded = hotspot.timestamp_added
     this.lastPocChallenge = hotspot.last_poc_challenge
