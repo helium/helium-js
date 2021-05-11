@@ -1,5 +1,6 @@
 import Transaction, {
-  PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, StakeValidatorV1, TransferHotspotV1,
+  PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, StakeValidatorV1,
+  TransferHotspotV1, UnstakeValidatorV1,
 } from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
@@ -27,6 +28,32 @@ describe('StakeValidatorV1', () => {
     expect(txn.owner).toBe('13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu')
     expect(txn.fee.integerBalance).toBe(3)
     expect(txn.address).toBe('fake-address')
+  })
+})
+
+describe('UnstakeValidatorV1', () => {
+  it('Creates UnstakeValidatorV1 transaction', () => {
+    const json = {
+      time: 1587132741,
+      type: 'unstake_validator_v1',
+      stake_release_height: 34981,
+      stake_amount: 1000000000000,
+      owner_signature: 'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      owner: '1aMxwNDpFqPtxt85Eco7HCJdaRJL2ogdd3kaHCHkLyoJ7Kfi6xH',
+      hash: 'Yf8i7KpE9beoLPfprU4Yty4387KgNST-GrhfkoUkxcE',
+      fee: 35000,
+      address: '1aMxwNDpFqPtxt85Eco7HCJdaRJL28diswZ8HCHkLyoJ7Kfi6xH',
+    }
+    const txn = Transaction.fromJsonObject(json) as UnstakeValidatorV1
+    expect(txn.type).toBe('unstake_validator_v1')
+    expect(txn.time).toBe(1587132741)
+    expect(txn.stakeReleaseHeight).toBe(34981)
+    expect(txn.stakeAmount.integerBalance).toBe(1000000000000)
+    expect(txn.ownerSignature).toBe('AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA')
+    expect(txn.owner).toBe('1aMxwNDpFqPtxt85Eco7HCJdaRJL2ogdd3kaHCHkLyoJ7Kfi6xH')
+    expect(txn.hash).toBe('Yf8i7KpE9beoLPfprU4Yty4387KgNST-GrhfkoUkxcE')
+    expect(txn.fee.integerBalance).toBe(35000)
+    expect(txn.address).toBe('1aMxwNDpFqPtxt85Eco7HCJdaRJL28diswZ8HCHkLyoJ7Kfi6xH')
   })
 })
 
