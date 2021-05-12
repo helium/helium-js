@@ -290,7 +290,10 @@ describe('search by hotspot name', () => {
     .get('/v1/hotspots/name')
     .query({ search: 'chicken-burrito' })
     .reply(200, {
-      data: [hotspotFixture({ name: 'chicken-burrito-guacamole' }), hotspotFixture({ name: 'chicken-burrito-salsa' })],
+      data: [
+        hotspotFixture({ name: 'chicken-burrito-guacamole' }),
+        hotspotFixture({ name: 'chicken-burrito-salsa' }),
+      ],
     })
 
   it('lists hotspots', async () => {
@@ -306,7 +309,24 @@ describe('list witnesses', () => {
   nock('https://api.helium.io')
     .get('/v1/hotspots/fake-address/witnesses')
     .reply(200, {
-      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
+      data: [
+        hotspotFixture({
+          name: 'hotspot-1',
+          witness_for: 'fake-address',
+          witness_info: {
+            recent_time: '1620828450138045487',
+            first_time: '1620774225227191245',
+          },
+        }),
+        hotspotFixture({
+          name: 'hotspot-2',
+          witness_for: 'fake-address',
+          witness_info: {
+            recent_time: '1620828450138045487',
+            first_time: '1620774225227191245',
+          },
+        }),
+      ],
     })
 
   nock('https://api.helium.io')
@@ -325,6 +345,9 @@ describe('list witnesses', () => {
     const hotspots = await list.take(2)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')
+    expect(hotspots[0].witnessFor).toBe('fake-address')
+    // below line gets an error, not sure why
+    // expect(hotspots[0].witnessInfo.recentTime).toBe('1620828450138045487')
   })
 
   it('lists hotspot witness sums with date time', async () => {

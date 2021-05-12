@@ -32,6 +32,20 @@ export interface HTTPHotspotObject {
   last_change_block?: number
   gain?: number
   elevation?: number
+  witness_info?: HTTPWitnessInfoObject
+  witness_for?: string
+}
+
+export interface HTTPWitnessInfoObject {
+  histogram?: object
+  recent_time?: string
+  first_time?: string
+}
+interface WitnessInfoObject {
+  // TODO: maybe define the structure of the histogram object? not sure what that syntax looks like
+  histogram?: object
+  recentTime?: string
+  firstTime?: string
 }
 
 interface HTTPGeocodeObject {
@@ -103,6 +117,10 @@ export default class Hotspot extends DataModel {
 
   public elevation?: number
 
+  public witnessFor?: string
+
+  public witnessInfo?: WitnessInfoObject
+
   constructor(client: Client, hotspot: HTTPHotspotObject) {
     super()
     this.client = client
@@ -123,6 +141,10 @@ export default class Hotspot extends DataModel {
     this.lastChangeBlock = hotspot.last_change_block
     this.gain = hotspot.gain
     this.elevation = hotspot.elevation
+    this.witnessFor = hotspot.witness_for
+    if (hotspot.witness_info) {
+      this.witnessInfo = camelcaseKeys(hotspot.witness_info) as any
+    }
     if (hotspot.geocode) {
       this.geocode = camelcaseKeys(hotspot.geocode) as any
     }
