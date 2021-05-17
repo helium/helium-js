@@ -259,7 +259,10 @@ describe('search by hotspot name', () => {
     .get('/v1/hotspots/name')
     .query({ search: 'chicken-burrito' })
     .reply(200, {
-      data: [hotspotFixture({ name: 'chicken-burrito-guacamole' }), hotspotFixture({ name: 'chicken-burrito-salsa' })],
+      data: [
+        hotspotFixture({ name: 'chicken-burrito-guacamole' }),
+        hotspotFixture({ name: 'chicken-burrito-salsa' }),
+      ],
     })
 
   it('lists hotspots', async () => {
@@ -418,5 +421,24 @@ describe('challenges', () => {
     const challenges = await list.take(2)
     expect(challenges[0].sum).toBe(40)
     expect(challenges[1].sum).toBe(37)
+  })
+})
+
+describe('hexes', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/hex/882664ca8dfffff')
+    .reply(200, {
+      data: [
+        hotspotFixture({ name: 'hotspot-1' }),
+        hotspotFixture({ name: 'hotspot-2' }),
+      ],
+    })
+
+  it('lists hotspots within a res8 hex index', async () => {
+    const client = new Client()
+    const list = await client.hotspots.hex('882664ca8dfffff')
+    const hotspots = await list.take(2)
+    expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[1].name).toBe('hotspot-2')
   })
 })

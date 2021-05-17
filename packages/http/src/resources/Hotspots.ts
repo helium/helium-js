@@ -76,4 +76,13 @@ export default class Hotspots {
     const data = hotspots.map((h: HTTPHotspotObject) => new Hotspot(this.client, h))
     return new ResourceList(data, this.list.bind(this))
   }
+
+  async hex(index?: string): Promise<ResourceList<Hotspot>> {
+    const response = await this.client.get(`/hotspots/hex/${index}`)
+    const {
+      data: { data: hotspots },
+    } = response
+    const data = hotspots.map((h: HTTPHotspotObject) => new Hotspot(this.client, h))
+    return new ResourceList(data, this.list.bind(this))
+  }
 }
