@@ -432,13 +432,24 @@ describe('hexes', () => {
         hotspotFixture({ name: 'hotspot-1' }),
         hotspotFixture({ name: 'hotspot-2' }),
       ],
+      cursor: 'cursor-1',
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/hex/882664ca8dfffff?cursor=cursor-1')
+    .reply(200, {
+      data: [
+        hotspotFixture({ name: 'hotspot-3' }),
+        hotspotFixture({ name: 'hotspot-4' }),
+      ],
     })
 
   it('lists hotspots within a res8 hex index', async () => {
     const client = new Client()
     const list = await client.hotspots.hex('882664ca8dfffff')
-    const hotspots = await list.take(2)
+    const hotspots = await list.take(3)
     expect(hotspots[0].name).toBe('hotspot-1')
     expect(hotspots[1].name).toBe('hotspot-2')
+    expect(hotspots[2].name).toBe('hotspot-3')
   })
 })
