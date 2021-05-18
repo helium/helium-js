@@ -232,6 +232,92 @@ export class PaymentV2 extends DataModel {
   }
 }
 
+export class StakeValidatorV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  stake!: Balance<NetworkTokens>
+
+  ownerSignature!:string
+
+  owner!:string
+
+  fee!: Balance<DataCredits>
+
+  address!: string
+
+  constructor(data: StakeValidatorV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): StakeValidatorV1 {
+    return this
+  }
+}
+
+export class UnstakeValidatorV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  stakeReleaseHeight!: number
+
+  stakeAmount!: Balance<NetworkTokens>
+
+  ownerSignature!:string
+
+  owner!:string
+
+  hash!: string
+
+  fee!: Balance<DataCredits>
+
+  address!: string
+
+  constructor(data: UnstakeValidatorV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): UnstakeValidatorV1 {
+    return this
+  }
+}
+
+export class TransferValidatorStakeV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  oldAddress!: string
+
+  newAddress!: string
+
+  oldOwner!:string
+
+  newOwner!:string
+
+  oldOwnerSignature!:string
+
+  newOwnerSignature!:string
+
+  fee!: Balance<DataCredits>
+
+  stakeAmount!: Balance<NetworkTokens>
+
+  paymentAmount!: Balance<NetworkTokens>
+
+  constructor(data: TransferValidatorStakeV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): TransferValidatorStakeV1 {
+    return this
+  }
+}
 export class UnknownTransaction extends DataModel {
   type!: string
 
@@ -301,28 +387,29 @@ export type AnyTransaction =
   | PocReceiptsV1
   | TransferHotspotV1
   | TokenBurnV1
+  | StakeValidatorV1
+  | UnstakeValidatorV1
+  | TransferValidatorStakeV1
   | UnknownTransaction
 
 function prepareTxn(txn: any) {
-  if (txn.fee && typeof txn.fee === 'number') {
-    txn.fee = new Balance(txn.fee, CurrencyType.dataCredit)
-  }
+  const balanceConversions = [
+    { key: 'fee', currencyType: CurrencyType.dataCredit },
+    { key: 'staking_fee', currencyType: CurrencyType.dataCredit },
+    { key: 'amount', currencyType: CurrencyType.networkToken },
+    { key: 'total_amount', currencyType: CurrencyType.networkToken },
+    { key: 'amount_to_seller', currencyType: CurrencyType.networkToken },
+    { key: 'stake', currencyType: CurrencyType.networkToken },
+    { key: 'payment_amount', currencyType: CurrencyType.networkToken },
+    { key: 'stake_amount', currencyType: CurrencyType.networkToken },
+  ]
 
-  if (txn.staking_fee && typeof txn.staking_fee === 'number') {
-    txn.staking_fee = new Balance(txn.staking_fee, CurrencyType.dataCredit)
-  }
+  balanceConversions.forEach(({ key, currencyType }) => {
+    if (txn[key] && typeof txn[key] === 'number') {
+      txn[key] = new Balance(txn[key], currencyType)
+    }
+  })
 
-  if (txn.amount && typeof txn.amount === 'number') {
-    txn.amount = new Balance(txn.amount, CurrencyType.networkToken)
-  }
-
-  if (txn.total_amount && typeof txn.total_amount === 'number') {
-    txn.total_amount = new Balance(txn.total_amount, CurrencyType.networkToken)
-  }
-
-  if (txn.amount_to_seller && typeof txn.amount_to_seller === 'number') {
-    txn.amount_to_seller = new Balance(txn.amount_to_seller, CurrencyType.networkToken)
-  }
   return camelcaseKeys(txn)
 }
 
@@ -380,6 +467,12 @@ export default class Transaction {
         return this.toAssertLocationV2(json)
       case 'token_burn_v1':
         return this.toTokenBurnV1(json)
+      case 'unstake_validator_v1':
+        return this.toUnstakeValidatorV1(json)
+      case 'stake_validator_v1':
+        return this.toStakeValidatorV1(json)
+      case 'transfer_validator_stake_v1':
+        return this.toTransferValidatorStakeV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -419,6 +512,18 @@ export default class Transaction {
 
   static toTokenBurnV1(json: TxnJsonObject): TokenBurnV1 {
     return new TokenBurnV1(prepareTxn(json))
+  }
+
+  static toUnstakeValidatorV1(json: TxnJsonObject): UnstakeValidatorV1 {
+    return new UnstakeValidatorV1(prepareTxn(json))
+  }
+
+  static toStakeValidatorV1(json: TxnJsonObject): StakeValidatorV1 {
+    return new StakeValidatorV1(prepareTxn(json))
+  }
+
+  static toTransferValidatorStakeV1(json: TxnJsonObject): TransferValidatorStakeV1 {
+    return new TransferValidatorStakeV1(prepareTxn(json))
   }
 
   static toUnknownTransaction(json: TxnJsonObject): UnknownTransaction {
