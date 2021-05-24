@@ -149,7 +149,7 @@ describe('get', () => {
 
 describe('elected', () => {
   nock('https://api.helium.io')
-    .get('/v1/elected/123456')
+    .get('/v1/hotspots/elected/123456')
     .reply(200, {
       data: [
         hotspotFixture({ name: 'previous-consensus-hotspot-1' }),
@@ -171,7 +171,7 @@ describe('elected', () => {
       ],
     })
   nock('https://api.helium.io')
-    .get('/v1/elected')
+    .get('/v1/hotspots/elected')
     .reply(200, {
       data: [
         hotspotFixture({ name: 'current-consensus-hotspot-1' }),
@@ -428,20 +428,14 @@ describe('hexes', () => {
   nock('https://api.helium.io')
     .get('/v1/hotspots/hex/882664ca8dfffff')
     .reply(200, {
-      data: [
-        hotspotFixture({ name: 'hotspot-1' }),
-        hotspotFixture({ name: 'hotspot-2' }),
-      ],
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
       cursor: 'cursor-1',
     })
 
   nock('https://api.helium.io')
     .get('/v1/hotspots/hex/882664ca8dfffff?cursor=cursor-1')
     .reply(200, {
-      data: [
-        hotspotFixture({ name: 'hotspot-3' }),
-        hotspotFixture({ name: 'hotspot-4' }),
-      ],
+      data: [hotspotFixture({ name: 'hotspot-3' }), hotspotFixture({ name: 'hotspot-4' })],
     })
 
   it('lists hotspots within a res8 hex index', async () => {
