@@ -24,7 +24,7 @@ export default class Hotspots {
     return new Hotspot(this.client, { address })
   }
 
-  async search(term:string): Promise<ResourceList<Hotspot>> {
+  async search(term: string): Promise<ResourceList<Hotspot>> {
     const url = 'hotspots/name'
     const response = await this.client.get(url, { search: term })
     const {
@@ -68,7 +68,7 @@ export default class Hotspots {
   }
 
   async elected(block?: number): Promise<ResourceList<Hotspot>> {
-    const url = block === undefined ? '/elected' : `/elected/${block}`
+    const url = block === undefined ? '/hotspots/elected' : `/hotspots/elected/${block}`
     const response = await this.client.get(url)
     const {
       data: { data: hotspots },
