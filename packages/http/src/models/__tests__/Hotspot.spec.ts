@@ -20,6 +20,7 @@ test('create Hotspot from HTTP response', () => {
     nonce: 1,
     name: 'mock-name',
     location: 'mock-location',
+    location_hex: 'mock-location-hex',
     last_poc_challenge: 123456,
     last_change_block: 123456,
     geocode: {
@@ -45,4 +46,5 @@ test('create Hotspot from HTTP response', () => {
   expect(hotspot.rewardScale).toBe(1)
   expect(hotspot.geocode?.longCity).toBe('mock-long-city')
   expect(hotspot.blockAdded).toBe(123456)
+  expect(hotspot.locationHex).toBe('mock-location-hex')
 })

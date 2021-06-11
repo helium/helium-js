@@ -19,6 +19,7 @@ export interface HTTPHotspotObject {
   owner?: string
   name?: string
   location?: string
+  location_hex?: string
   lng?: number
   lat?: number
   block?: number
@@ -85,6 +86,8 @@ export default class Hotspot extends DataModel {
 
   public location?: string
 
+  public locationHex?: string
+
   public lng?: number
 
   public lat?: number
@@ -122,6 +125,7 @@ export default class Hotspot extends DataModel {
     this.owner = hotspot.owner
     this.name = hotspot.name
     this.location = hotspot.location
+    this.locationHex = hotspot.location_hex
     this.lng = hotspot.lng
     this.lat = hotspot.lat
     this.block = hotspot.block
