@@ -8,6 +8,7 @@ export const witnessFixture = (params = {}) => ({
   owner: 'fake-owner-address',
   name: 'some-hotspot-name',
   location: 'an-h3-address',
+  location_hex: 'an-h3-address-hex',
   lng: -123.03528172874591,
   lat: 55.82000831418664,
   geocode: {
@@ -30,7 +31,7 @@ export const witnessFixture = (params = {}) => ({
   witness_info: {
     recent_time: '1618969231803488000',
     histogram: {
-      '28': 0,
+      28: 0,
       '-92': 21,
       '-84': 9,
       '-76': 0,
@@ -112,7 +113,9 @@ describe('list witnesses', () => {
     const list = await client.hotspot('fake-address').witnesses.list()
     const witnesses = await list.take(2)
     expect(witnesses[0].name).toBe('hotspot-1')
-    expect(witnesses[1].name).toBe('hotspot-2')
+    expect(witnesses[0].name).toBe('hotspot-1')
+    expect(witnesses[1].location).toBe('an-h3-address')
+    expect(witnesses[1].locationHex).toBe('an-h3-address-hex')
     expect(witnesses[0].witnessFor).toBe('fake-witness-for-address')
     expect(witnesses[0].witnessInfo?.histogram?.['-92']).toBe(21)
     expect(witnesses[0].witnessInfo?.recentTime).toBe('1618969231803488000')

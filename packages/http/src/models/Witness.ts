@@ -15,6 +15,7 @@ export interface HTTPWitnessObject {
   owner?: string
   name?: string
   location?: string
+  location_hex?: string
   lng?: number
   lat?: number
   block?: number
@@ -111,6 +112,8 @@ export default class Witness extends DataModel {
 
   public location?: string
 
+  public locationHex?: string
+
   public lng?: number
 
   public lat?: number
@@ -150,6 +153,7 @@ export default class Witness extends DataModel {
     this.owner = witness.owner
     this.name = witness.name
     this.location = witness.location
+    this.locationHex = witness.location_hex
     this.lng = witness.lng
     this.lat = witness.lat
     this.block = witness.block
