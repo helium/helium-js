@@ -47,6 +47,7 @@ export interface HTTPWitnessesObject {
   packet_hash: string
   owner: string
   location: string
+  location_hex: string
   is_valid: boolean
   invalid_reason?: string
   gateway: string
