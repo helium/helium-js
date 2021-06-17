@@ -35,6 +35,7 @@ export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
   packet_hash: 'fake-packet_hash',
   owner: 'fake-owner',
   location: 'fake-location',
+  location_hex: 'fake-location-hex',
   is_valid: isValid,
   ...(!isValid && { invalid_reason: 'fake_invalid_reason' }),
   gateway: 'fake-witness-gateway',
@@ -140,8 +141,8 @@ describe('Challenge Model', () => {
         ...mockPathData,
       } as HTTPPathObject,
     ] as HTTPPathObject[]))
-    expect(challenge.path[0].witnesses[0].invalidReason).not.toBeUndefined();
-    expect(challenge.path[0].witnesses[0].invalidReason).toBe('fake_invalid_reason');
+    expect(challenge.path[0].witnesses[0].invalidReason).not.toBeUndefined()
+    expect(challenge.path[0].witnesses[0].invalidReason).toBe('fake_invalid_reason')
   })
 
   describe('successful beacon', () => {

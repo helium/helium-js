@@ -10,7 +10,7 @@ export type HotspotData = Omit<Hotspot, 'client'>
 
 export type Bucket = 'hour' | 'day' | 'week'
 
-export type NaturalDate = `-${number} ${Bucket}`
+export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
 
 export interface HTTPHotspotObject {
   score_update_height?: number
@@ -41,7 +41,7 @@ export interface HTTPHotspotObject {
   elevation?: number
 }
 
-interface HTTPGeocodeObject {
+export interface HTTPGeocodeObject {
   short_street: string
   short_state: string
   short_country: string
@@ -53,7 +53,7 @@ interface HTTPGeocodeObject {
   city_id: string
 }
 
-interface Geocode {
+export interface Geocode {
   shortStreet: string
   shortState: string
   shortCountry: string
@@ -64,7 +64,7 @@ interface Geocode {
   longCity: string
 }
 
-interface Status {
+export interface Status {
   gps: string
   height: number
   online: string

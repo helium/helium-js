@@ -1,100 +1,39 @@
 import camelcaseKeys from 'camelcase-keys'
 import type Client from '../Client'
+import { Geocode, HTTPHotspotObject, Status } from './Hotspot'
 import DataModel from './DataModel'
 
 export type WitnessData = Omit<Witness, 'client'>
 
-export type Bucket = 'hour' | 'day' | 'week'
-
-export type NaturalDate = `-${number} ${Bucket}`
-
-export interface HTTPWitnessObject {
-  score_update_height?: number
-  score?: number
-  reward_scale?: number
-  owner?: string
-  name?: string
-  location?: string
-  location_hex?: string
-  lng?: number
-  lat?: number
-  block?: number
-  block_added?: number
-  geocode?: HTTPGeocodeObject
-  address: string
-  status?: Status
-  nonce?: number
-  timestamp_added?: string
-  last_poc_challenge?: number
-  last_change_block?: number
-  gain?: number
-  elevation?: number
+export interface HTTPWitnessObject extends HTTPHotspotObject {
   witness_for?: string
   witness_info?: HTTPWitnessInfoObject
 }
 
 interface HTTPWitnessInfoObject {
   recent_time?: string
-  histogram?: {
-    '28'?: number
-    '-92'?: number
-    '-84'?: number
-    '-76'?: number
-    '-68'?: number
-    '-60'?: number
-    '-132'?: number
-    '-124'?: number
-    '-116'?: number
-    '-108'?: number
-    '-100'?: number
-  }
+  histogram?: Histogram
   first_time?: string
 }
 
 interface WitnessInfo {
   recentTime?: string
-  histogram?: {
-    '28'?: number
-    '-92'?: number
-    '-84'?: number
-    '-76'?: number
-    '-68'?: number
-    '-60'?: number
-    '-132'?: number
-    '-124'?: number
-    '-116'?: number
-    '-108'?: number
-    '-100'?: number
-  }
+  histogram?: Histogram
   firstTime?: string
 }
 
-interface HTTPGeocodeObject {
-  short_street: string
-  short_state: string
-  short_country: string
-  short_city: string
-  long_street: string
-  long_state: string
-  long_country: string
-  long_city: string
-}
-
-interface Geocode {
-  shortStreet: string
-  shortState: string
-  shortCountry: string
-  shortCity: string
-  longStreet: string
-  longState: string
-  longCountry: string
-  longCity: string
-}
-
-interface Status {
-  gps: string
-  height: number
-  online: string
+interface Histogram {
+  '28'?: number
+  '-92'?: number
+  '-84'?: number
+  '-76'?: number
+  '-68'?: number
+  '-60'?: number
+  '-132'?: number
+  '-124'?: number
+  '-116'?: number
+  '-108'?: number
+  '-100'?: number
 }
 
 export default class Witness extends DataModel {
@@ -157,7 +96,12 @@ export default class Witness extends DataModel {
     this.lng = witness.lng
     this.lat = witness.lat
     this.block = witness.block
-    this.status = witness.status
+    this.status = {
+      gps: witness.status?.gps || '',
+      height: witness.status?.height || 0,
+      online: witness.status?.online || '',
+      listenAddrs: witness.status?.listen_addrs || [],
+    }
     this.nonce = witness.nonce
     this.blockAdded = witness.block_added
     this.timestampAdded = witness.timestamp_added
