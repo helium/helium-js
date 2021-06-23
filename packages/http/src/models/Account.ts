@@ -17,6 +17,7 @@ import Rewards from '../resources/Rewards'
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
+  staked_balance?: number
   sec_nonce?: number
   sec_balance?: number
   nonce?: number
@@ -81,6 +82,8 @@ export default class Account extends DataModel {
 
   public speculativeNonce?: number
 
+  public stakedBalance?: Balance<NetworkTokens>
+
   public secNonce?: number
 
   public secBalance?: Balance<SecurityTokens>
@@ -101,6 +104,7 @@ export default class Account extends DataModel {
     super()
     this.client = client
     this.speculativeNonce = account.speculative_nonce
+    this.stakedBalance = toBalance(account.staked_balance, CurrencyType.default)
     this.secNonce = account.sec_nonce
     this.secBalance = toBalance(account.sec_balance, CurrencyType.security)
     this.nonce = account.nonce

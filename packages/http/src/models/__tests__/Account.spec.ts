@@ -6,6 +6,7 @@ describe('balances', () => {
     const client = new Client()
     const account = new Account(client, {
       speculative_nonce: 1,
+      staked_balance: 100,
       sec_nonce: 1,
       sec_balance: 1,
       nonce: 1,
@@ -19,12 +20,14 @@ describe('balances', () => {
     expect(account.balance?.integerBalance).toBe(1)
     expect(account.secBalance?.integerBalance).toBe(1)
     expect(account.dcBalance?.integerBalance).toBe(1)
+    expect(account.stakedBalance?.integerBalance).toBe(100)
   })
 
   it('still returns a balance even if it is 0', () => {
     const client = new Client()
     const account = new Account(client, {
       speculative_nonce: 1,
+      staked_balance: 100,
       sec_nonce: 1,
       sec_balance: 0,
       nonce: 1,
