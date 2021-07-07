@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/bs58": "4.0.1",
     "@types/create-hash": "1.2.2",
-    "@types/libsodium-wrappers": "0.7.8"
+    "@types/libsodium-wrappers": "0.7.9"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
