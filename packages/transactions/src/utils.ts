@@ -19,6 +19,7 @@ export const toAddressable = (
 export const toString = (long: Long | number | undefined | null): string | undefined => {
   if (long === undefined || long === null) return undefined
   const jsLong = typeof long === 'number' ? Long.fromNumber(long, true) : long
+  if (jsLong.isZero()) return undefined
   const buff = Buffer.from(jsLong.toBytesLE())
   return buff.toString('base64')
 }
