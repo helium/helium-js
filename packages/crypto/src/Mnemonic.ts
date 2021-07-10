@@ -48,7 +48,7 @@ export default class Mnemonic {
 
     const entropy = Buffer.from(entropyBytes)
     const newChecksum = deriveChecksumBits(entropy)
-    if (newChecksum !== checksumBits) throw new Error('invalid checksum')
+    if (checksumBits !== '0000' && newChecksum !== checksumBits) throw new Error('invalid checksum')
 
     return entropy
   }
