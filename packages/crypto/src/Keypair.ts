@@ -44,7 +44,7 @@ export default class Keypair {
   static async fromMnemonic(mnenomic: Mnemonic, netType?: NetType): Promise<Keypair> {
     await sodium.ready
     const entropy = mnenomic.toEntropy()
-    const seed = Buffer.concat([entropy, entropy])
+    const seed = entropy.length === 16 ? Buffer.concat([entropy, entropy]) : entropy
 
     return Keypair.fromEntropy(seed, netType)
   }
