@@ -36,6 +36,7 @@ test('create Hotspot from HTTP response', () => {
     },
     gain: 12,
     elevation: 0,
+    mode: 'full',
     block_added: 123456,
     block: 123456,
     address: 'mock-address',
@@ -47,4 +48,5 @@ test('create Hotspot from HTTP response', () => {
   expect(hotspot.geocode?.longCity).toBe('mock-long-city')
   expect(hotspot.blockAdded).toBe(123456)
   expect(hotspot.locationHex).toBe('mock-location-hex')
+  expect(hotspot.mode).toBe('full')
 })
