@@ -36,6 +36,7 @@ test('create Hotspot from HTTP response', () => {
     },
     gain: 12,
     elevation: 0,
+    mode: 'full',
     block_added: 123456,
     block: 123456,
     address: 'mock-address',
