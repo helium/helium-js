@@ -8,7 +8,7 @@ test('create Hotspot from HTTP response', () => {
     lat: 12.34567890123,
     timestamp_added: '2021-05-11T21:01:17.000000Z',
     status: {
-      gps: 'mock-gps',
+      timestamp: '2021-07-13T05:31:11.562000Z',
       online: 'online',
       listen_addrs: [
         '/ip4/12.345.678.901/tcp/57449',
@@ -47,4 +47,5 @@ test('create Hotspot from HTTP response', () => {
   expect(hotspot.geocode?.longCity).toBe('mock-long-city')
   expect(hotspot.blockAdded).toBe(123456)
   expect(hotspot.locationHex).toBe('mock-location-hex')
+  expect(hotspot.status?.timestamp).toBe('2021-07-13T05:31:11.562000Z')
 })
