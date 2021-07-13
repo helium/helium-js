@@ -39,6 +39,7 @@ export interface HTTPHotspotObject {
   last_change_block?: number
   gain?: number
   elevation?: number
+  mode?: string
 }
 
 export interface HTTPGeocodeObject {
@@ -116,6 +117,8 @@ export default class Hotspot extends DataModel {
 
   public elevation?: number
 
+  public mode?: string
+
   constructor(client: Client, hotspot: HTTPHotspotObject) {
     super()
     this.client = client
@@ -143,6 +146,7 @@ export default class Hotspot extends DataModel {
     this.lastChangeBlock = hotspot.last_change_block
     this.gain = hotspot.gain
     this.elevation = hotspot.elevation
+    this.mode = hotspot.mode
     if (hotspot.geocode) {
       this.geocode = camelcaseKeys(hotspot.geocode) as any
     }
