@@ -97,7 +97,7 @@ export default class Witness extends DataModel {
     this.lat = witness.lat
     this.block = witness.block
     this.status = {
-      gps: witness.status?.gps || '',
+      timestamp: witness.status?.timestamp,
       height: witness.status?.height || 0,
       online: witness.status?.online || '',
       listenAddrs: witness.status?.listen_addrs || [],

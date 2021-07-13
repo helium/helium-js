@@ -27,7 +27,7 @@ export interface HTTPHotspotObject {
   geocode?: HTTPGeocodeObject
   address: string
   status?: {
-    gps: string
+    timestamp?: string
     height: number
     online: string
     listen_addrs: string[]
@@ -66,7 +66,7 @@ export interface Geocode {
 }
 
 export interface Status {
-  gps: string
+  timestamp?: string
   height: number
   online: string
   listenAddrs: string[]
@@ -133,7 +133,7 @@ export default class Hotspot extends DataModel {
     this.lat = hotspot.lat
     this.block = hotspot.block
     this.status = {
-      gps: hotspot.status?.gps || '',
+      timestamp: hotspot.status?.timestamp,
       height: hotspot.status?.height || 0,
       online: hotspot.status?.online || '',
       listenAddrs: hotspot.status?.listen_addrs || [],
