@@ -36,7 +36,6 @@ export const hotspotFixture = (params = {}) => ({
       '/p2p/11SV4RTqrgQo8FdQeRRSLrhY9ge4FepycGHz5S8qz1GF8WChAVP/p2p-circuit/p2p/112sGGLw2v8qHkxguGijb28daDTsJdc9LyoexyvHXFfD2FY1K9HA',
     ],
     online: 'online',
-    gps: '',
   },
   ...params,
 })
