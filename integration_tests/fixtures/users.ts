@@ -39,6 +39,8 @@ export const aliceWords = [
 export const bobB58 = '13M8dUbxymE3xtiAXszRkGMmezMhBS8Li7wEsMojLdb4Sdxc4wc'
 export const aliceB58 = '148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3'
 
+export const bobBip39Words = bobWords.map(word => word !== 'energy' ? word : 'episode')
+
 export const usersFixture = async () => ({
   bob: await Keypair.fromWords(bobWords),
   alice: await Keypair.fromWords(aliceWords),

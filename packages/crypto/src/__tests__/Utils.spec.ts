@@ -3,6 +3,16 @@ import { bobB58, usersFixture } from '../../../../integration_tests/fixtures/use
 import * as bs58 from 'bs58'
 import { MAINNET } from '../NetType'
 
+
+describe('deriveChecksumBits', () => {
+  it('should generate a bip39 checksum from entropy', async () => {
+    const entropy = '00000000000000000000000000000000'
+    const entropyBuffer = Buffer.from(entropy, 'hex');
+    const derivedChecksumBits = utils.deriveChecksumBits(entropyBuffer)
+    expect(derivedChecksumBits).toStrictEqual('0011')
+  })
+})
+
 describe('bs58checkEncode', () => {
   it('should encode a publickey payload to b58 address', async () => {
     const { bob } = await usersFixture()
@@ -28,4 +38,3 @@ describe('bs58ToBin', () => {
   	expect(checksumVerifyBytes).toStrictEqual(checksum)
   })
 })
-
