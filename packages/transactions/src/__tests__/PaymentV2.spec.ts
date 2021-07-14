@@ -111,4 +111,15 @@ describe('sign', () => {
     const deserializedPayment = PaymentV2.fromString(serializedPayment)
     expect(deserializedPayment.signature).toEqual(signedPayment.signature)
   })
+
+  it('should sign the correct signature while handling an empty memo', async () => {
+    const payment = await paymentFixture()
+    payment.payments[0].memo = 'AAAAAAAAAAA='
+    const reserializedTxn = PaymentV2.fromString(payment.toString())
+    const { bob } = await usersFixture()
+    const signedPayment = await reserializedTxn.sign({ payer: bob })
+    const decoded = proto.helium.blockchain_txn.decode(Buffer.from(signedPayment.toString(), 'base64'))
+    const base64Signature = (decoded.paymentV2?.signature as Buffer).toString('base64')
+    expect(base64Signature).toEqual('TKUrksvBBTjgjoPEPhFc79+jPzaVN7VBWgKo4+GvDYZ4BO9HujpEuskMSvzVWq0T/tf2KAKd6d+fT3mYnMRYCA==')
+  })
 })
