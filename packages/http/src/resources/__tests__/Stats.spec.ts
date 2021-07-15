@@ -40,6 +40,23 @@ const statsFixture = () => ({
     },
   },
 })
+
+const validatorStatsFixture = () => ({
+  unstaked: {
+    count: 94,
+    amount: 0,
+  },
+  staked: {
+    count: 1836,
+    amount: 18360000,
+  },
+  cooldown: {
+    count: 1,
+    amount: 10000,
+  },
+  active: 1794,
+})
+
 const countsFixture = () => ({
   blocks: 805339,
   challenges: 19724635,
@@ -59,6 +76,18 @@ describe('get stats', () => {
     const client = new Client()
     const stats = await client.stats.get()
     expect(stats.tokenSupply).toBe(33319737.03712976)
+  })
+})
+
+describe('get validator stats', () => {
+  nock('https://api.helium.io').get('/v1/validators/stats').reply(200, {
+    data: validatorStatsFixture(),
+  })
+
+  it('retrieves validators stats', async () => {
+    const client = new Client()
+    const stats = await client.validators.stats.get()
+    expect(stats.active).toBe(1794)
   })
 })
 

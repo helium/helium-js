@@ -2,6 +2,7 @@ import type Client from '../Client'
 import Validator, { HTTPValidatorObject } from '../models/Validator'
 import ResourceList from '../ResourceList'
 import Account from '../models/Account'
+import Stats from './Stats'
 
 interface ListParams {
   cursor?: string
@@ -70,5 +71,9 @@ export default class Validators {
     } = response
     const data = validators.map((h: HTTPValidatorObject) => new Validator(this.client, h))
     return new ResourceList(data, this.list.bind(this))
+  }
+
+  public get stats(): Stats {
+    return new Stats(this.client, 'validators')
   }
 }

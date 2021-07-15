@@ -27,6 +27,7 @@ type Context = Block | Account | Hotspot | Validator
 
 export default class Transactions {
   private client!: Client
+
   private context?: Context
 
   constructor(client: Client, context?: Context) {
