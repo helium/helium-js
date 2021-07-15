@@ -17,6 +17,8 @@ import type Hotspot from './models/Hotspot'
 import Elections from './resources/Elections'
 import Cities from './resources/Cities'
 import City from './models/City'
+import Validators from './resources/Validators'
+import Validator from './models/Validator'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -30,6 +32,10 @@ interface HotspotFromAddressFn {
   (address: string): Hotspot
 }
 
+interface ValidatorFromAddressFn {
+  (address: string): Validator
+}
+
 interface BlockFromHeightOrHashFn {
   (heightOrHash: number | string): Block
 }
@@ -40,7 +46,9 @@ interface Options {
 
 export default class Client {
   public network!: Network
+
   public retry!: number
+
   private axios!: AxiosInstance
 
   constructor(network: Network = Network.production, options: Options = { retry: 5 }) {
@@ -83,12 +91,20 @@ export default class Client {
     return new Hotspots(this)
   }
 
+  public get validators(): Validators {
+    return new Validators(this)
+  }
+
   public get elections(): Elections {
     return new Elections(this)
   }
 
   public get hotspot(): HotspotFromAddressFn {
     return this.hotspots.fromAddress.bind(this.hotspots)
+  }
+
+  public get validator(): ValidatorFromAddressFn {
+    return this.validators.fromAddress.bind(this.validators)
   }
 
   public get challenges(): Challenges {

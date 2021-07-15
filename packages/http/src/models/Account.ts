@@ -14,6 +14,7 @@ import Hotspots from '../resources/Hotspots'
 import Challenges from '../resources/Challenges'
 import DataModel from './DataModel'
 import Rewards from '../resources/Rewards'
+import Validators from '../resources/Validators'
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
@@ -121,6 +122,10 @@ export default class Account extends DataModel {
 
   public get hotspots(): Hotspots {
     return new Hotspots(this.client, this)
+  }
+
+  public get validators(): Validators {
+    return new Validators(this.client, this)
   }
 
   public get challenges(): Challenges {

@@ -2,7 +2,7 @@ import Balance, { CurrencyType, NetworkTokens } from '../../../currency/build'
 import type Client from '../Client'
 import DataModel from './DataModel'
 // import Transactions from '../resources/Transactions'
-// import Rewards from '../resources/Rewards'
+import Rewards from '../resources/Rewards'
 
 export type ValidatorData = Omit<Validator, 'client'>
 
@@ -11,21 +11,21 @@ export type Bucket = 'hour' | 'day' | 'week'
 export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
 
 export interface HTTPValidatorObject {
-  version_heartbeat: number
-  status: {
+  version_heartbeat?: number
+  status?: {
     height: number
     online: string
     listen_addrs: string[]
   }
-  stake_status: string
-  stake: number
-  penalty: number
-  penalties: Penalty[]
-  owner: string
-  name: string
-  last_heartbeat: number
-  block_added: number
-  block: number
+  stake_status?: string
+  stake?: number
+  penalty?: number
+  penalties?: Penalty[]
+  owner?: string
+  name?: string
+  last_heartbeat?: number
+  block_added?: number
+  block?: number
   address: string
 }
 
@@ -44,27 +44,27 @@ export interface Status {
 export default class Validator extends DataModel {
   private client: Client
 
-  public versionHeartbeat: number
+  public versionHeartbeat?: number
 
-  public status: Status
+  public status?: Status
 
-  public stakeStatus: string
+  public stakeStatus?: string
 
-  public stake: Balance<NetworkTokens>
+  public stake?: Balance<NetworkTokens>
 
-  public penalty: number
+  public penalty?: number
 
-  public penalties: Penalty[]
+  public penalties?: Penalty[]
 
-  public owner: string
+  public owner?: string
 
-  public name: string
+  public name?: string
 
-  public lastHeartbeat: number
+  public lastHeartbeat?: number
 
-  public blockAdded: number
+  public blockAdded?: number
 
-  public block: number
+  public block?: number
 
   public address: string
 
@@ -93,9 +93,9 @@ export default class Validator extends DataModel {
   //   return new Transactions(this.client, this)
   // }
 
-  // public get rewards(): Rewards {
-  //   return new Rewards(this.client, this)
-  // }
+  public get rewards(): Rewards {
+    return new Rewards(this.client, this)
+  }
 
   get data(): ValidatorData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

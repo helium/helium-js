@@ -3,6 +3,7 @@ import Sum, { HTTPSum } from '../models/Sum'
 import ResourceList from '../ResourceList'
 import Hotspot, { Bucket, NaturalDate } from '../models/Hotspot'
 import Account from '../models/Account'
+import Validator from '../models/Validator'
 
 interface ListRewardsParams {
   minTime?: Date | NaturalDate
@@ -11,7 +12,7 @@ interface ListRewardsParams {
   cursor?: string
 }
 
-type Context = Account | Hotspot
+type Context = Account | Hotspot | Validator
 
 export enum SumsType {
   rewards = 'rewards',
@@ -62,6 +63,8 @@ export default class Sums {
       url = `/hotspots/${this.context.address}/${this.type}/sum`
     } else if (this.context instanceof Account) {
       url = `/accounts/${this.context.address}/${this.type}/sum`
+    } else if (this.context instanceof Validator) {
+      url = `/validators/${this.context.address}/${this.type}/sum`
     } else {
       throw new Error('invalid context')
     }
