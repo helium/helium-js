@@ -4,6 +4,7 @@ import Hotspot, { Bucket, NaturalDate } from '../models/Hotspot'
 import Account from '../models/Account'
 import Reward, { HTTPReward } from '../models/Reward'
 import Sums, { SumsType } from './Sums'
+import Validator from '../models/Validator'
 
 interface ListRewardsParams {
   minTime?: Date | NaturalDate
@@ -12,7 +13,7 @@ interface ListRewardsParams {
   cursor?: string
 }
 
-type Context = Account | Hotspot
+type Context = Account | Hotspot | Validator
 
 export default class Rewards {
   private client: Client
@@ -47,6 +48,8 @@ export default class Rewards {
       url = `/hotspots/${this.context.address}/rewards`
     } else if (this.context instanceof Account) {
       url = `/accounts/${this.context.address}/rewards`
+    } else if (this.context instanceof Validator) {
+      url = `/validators/${this.context.address}/rewards`
     } else {
       throw new Error('invalid context')
     }

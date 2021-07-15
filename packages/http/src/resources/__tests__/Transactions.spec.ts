@@ -8,6 +8,7 @@ import {
   TokenBurnV1,
   AssertLocationV2,
 } from '../../index'
+import { RewardsV2 } from '../../models/Transaction'
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {
@@ -247,7 +248,7 @@ describe('list from hotspot', () => {
       ],
     })
 
-  it('lists transaction activity for an account', async () => {
+  it('lists transaction activity for a hotspot', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').activity.list()
     const txns = await list.take(5)
@@ -273,6 +274,50 @@ describe('list from hotspot', () => {
     expect((txn4 as AssertLocationV2).gain).toBe(12)
     expect((txn4 as AssertLocationV2).elevation).toBe(0)
     expect((txn4 as AssertLocationV2).data.elevation).toBe(0)
+  })
+})
+
+describe('list from validator', () => {
+  nock('https://api.helium.io')
+    .get('/v1/validators/fake-validator-address/activity')
+    .reply(200, {
+      data: [
+        {
+          version: 10000008,
+          type: 'validator_heartbeat_v1',
+          time: 1626147484,
+          signature: 'fake-signature',
+          height: 919213,
+          hash: 'fake-hash-1',
+          address: 'fake-validator-address',
+        },
+        {
+          type: 'rewards_v2',
+          time: 1626146826,
+          start_epoch: 919169,
+          rewards: [
+            {
+              type: 'consensus',
+              gateway: 'fake-validator-address',
+              amount: 520833333,
+              account: 'fake-owner-address',
+            },
+          ],
+          height: 919200,
+          hash: 'fake-hash-2',
+          end_epoch: 919199,
+        },
+      ],
+    })
+
+  it('lists transaction activity for a validator', async () => {
+    const client = new Client()
+    const list = await client.validator('fake-validator-address').activity.list()
+    const [txn0, txn1] = await list.take(2)
+
+    expect((txn0 as UnknownTransaction).time).toBe(1626147484)
+    expect((txn0 as UnknownTransaction).data.type).toBe('validator_heartbeat_v1')
+    expect((txn1 as RewardsV2).hash).toBe('fake-hash-2')
   })
 })
 
