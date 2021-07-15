@@ -6,6 +6,7 @@ import Transaction from '../models/Transaction'
 import PendingTransaction from '../models/PendingTransaction'
 import ResourceList from '../ResourceList'
 import Hotspot from '../models/Hotspot'
+import Validator from '../models/Validator'
 
 interface ListParams {
   cursor?: string
@@ -22,7 +23,7 @@ function transactionsUrlFromBlock(block: Block): string {
   throw new Error('Block must have either height or hash')
 }
 
-type Context = Block | Account | Hotspot
+type Context = Block | Account | Hotspot | Validator
 
 export default class Transactions {
   private client!: Client
@@ -55,6 +56,9 @@ export default class Transactions {
     if (this.context instanceof Hotspot) {
       return this.listFromHotspot(params)
     }
+    if (this.context instanceof Validator) {
+      return this.listFromValidator(params)
+    }
     throw new Error('Must provide a block, account or hotspot to list transactions from')
   }
 
@@ -80,6 +84,16 @@ export default class Transactions {
   private async listFromHotspot(params: ListParams): Promise<ResourceList<AnyTransaction>> {
     const hotspot = this.context as Hotspot
     const url = `/hotspots/${hotspot.address}/activity`
+    const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
+    const response = await this.client.get(url, { cursor: params.cursor, filter_types })
+    const { data: { data: txns, cursor } } = response
+    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
+    return new ResourceList(data, this.list.bind(this), cursor)
+  }
+
+  private async listFromValidator(params: ListParams): Promise<ResourceList<AnyTransaction>> {
+    const validator = this.context as Validator
+    const url = `/validators/${validator.address}/activity`
     const filter_types = params.filterTypes ? params.filterTypes.join() : undefined
     const response = await this.client.get(url, { cursor: params.cursor, filter_types })
     const { data: { data: txns, cursor } } = response

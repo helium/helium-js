@@ -1,7 +1,7 @@
 import Balance, { CurrencyType, NetworkTokens } from '../../../currency/build'
 import type Client from '../Client'
 import DataModel from './DataModel'
-// import Transactions from '../resources/Transactions'
+import Transactions from '../resources/Transactions'
 import Rewards from '../resources/Rewards'
 
 export type ValidatorData = Omit<Validator, 'client'>
@@ -89,9 +89,9 @@ export default class Validator extends DataModel {
     this.address = validator.address
   }
 
-  // public get activity(): Transactions {
-  //   return new Transactions(this.client, this)
-  // }
+  public get activity(): Transactions {
+    return new Transactions(this.client, this)
+  }
 
   public get rewards(): Rewards {
     return new Rewards(this.client, this)
