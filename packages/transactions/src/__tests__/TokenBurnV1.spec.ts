@@ -69,4 +69,14 @@ describe('sign', () => {
 
     expect(Buffer.byteLength(Buffer.from(signedPayment.signature))).toBe(64)
   })
+
+  it('should sign the correct signature while handling an empty memo', async () => {
+    const tokenBurn = await tokenBurnFixture()
+    tokenBurn.memo = 'AAAAAAAAAAA='
+    const { bob } = await usersFixture()
+    const signedPayment = await tokenBurn.sign({ payer: bob })
+    const decoded = proto.helium.blockchain_txn.decode(Buffer.from(signedPayment.toString(), 'base64'))
+    const base64Signature = (decoded.tokenBurn?.signature as Buffer).toString('base64')
+    expect(base64Signature).toEqual('RQu5O68m7dsfLusCV8/60POwgPxh4/KexWl5DS2OHr3MV/msEo1XJ893RswG/giHFrIuoIQYEaEQ+hSI7LmRBQ==')
+  })
 })
