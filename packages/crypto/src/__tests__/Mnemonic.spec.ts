@@ -17,6 +17,19 @@ describe('fromEntropy', () => {
     expect(mnemonic.words.length).toBe(12)
   })
 
+  it('creates a new 24-word mnemonic from given entropy', async () => {
+      const entropy = await randomBytes(32)
+      const mnemonic = Mnemonic.fromEntropy(entropy)
+      expect(mnemonic.words.length).toBe(24)
+    })
+
+  it('should generate bip39 checksum word', async () => {
+      // https://github.com/bitcoinjs/bip39/blob/master/test/vectors.json
+      const entropy = Buffer.from('00000000000000000000000000000000', 'hex')
+      const mnemonic = Mnemonic.fromEntropy(entropy)
+      expect(mnemonic.words[11]).toBe('about')
+    })
+
   it('throws an error if entropy is less than 16 bytes', async () => {
     const entropy = await randomBytes(12)
     expect(() => {
@@ -45,4 +58,11 @@ describe('toEntropy', () => {
     const mnemonic = Mnemonic.fromEntropy(entropy)
     expect(mnemonic.toEntropy()).toEqual(entropy)
   })
+
+  it('returns the entropy originally used to derive a 24-word mnemonic', async () => {
+    const entropy = await randomBytes(32)
+    const mnemonic = Mnemonic.fromEntropy(entropy)
+    expect(mnemonic.toEntropy()).toEqual(entropy)
+  })
+
 })

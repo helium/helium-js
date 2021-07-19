@@ -2,7 +2,7 @@ import nock from 'nock'
 import { Keypair, Address } from '@helium/crypto'
 import { Client } from '@helium/http'
 import { PaymentV1, PaymentV2 } from '@helium/transactions'
-import { bobWords, aliceB58 } from '../fixtures/users'
+import { bobWords, bobBip39Words, aliceB58 } from '../fixtures/users'
 
 test('create and submit a payment txn', async () => {
 
@@ -72,4 +72,28 @@ test('create and submit a PaymentV2 txn', async () => {
   const pendingTxn = await client.transactions.submit(serializedTxn)
 
   expect(pendingTxn.hash).toBe('txn hash')
+})
+
+test('using the bip39 checksum word should match serialization', async () => {
+
+  const bob = await Keypair.fromWords(bobBip39Words)
+  const aliceAddress = Address.fromB58(aliceB58)
+
+  const paymentTxn = new PaymentV2({
+    payer: bob.address,
+    payments: [
+      {
+        payee: aliceAddress,
+        amount: 10,
+      },
+    ],
+    nonce: 1,
+  })
+
+  const signedPaymentTxn = await paymentTxn.sign({ payer: bob })
+  const serializedTxn = signedPaymentTxn.toString()
+
+  expect(serializedTxn).toBe(
+    'wgGOAQohATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVEiUKIQGcZZ1yPMHoEKcuePfer0c2qH8Q74/PyAEAtTMn5+5JpBAKIAEqQK88GjmG9CrESHVdcL//ZfWD+KsBnbKmZqKlx8oD89FUms7OjZNcL5NiQ4o0jREg+ahkjc2jX4SgKBBniM+QoAA='
+  )
 })

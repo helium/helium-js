@@ -1,5 +1,5 @@
 import { Keypair, Mnemonic } from '..'
-import { bobWords, bobB58 } from '../../../../integration_tests/fixtures/users'
+import { bobWords, bobBip39Words, bobB58 } from '../../../../integration_tests/fixtures/users'
 import { TESTNET } from '../NetType'
 import { bs58NetType } from '../utils'
 
@@ -35,6 +35,14 @@ describe('address', () => {
   it('returns an Address derived from the public key', async () => {
     const account = await Keypair.fromWords(bobWords)
     expect(account.address.b58).toBe(bobB58)
+  })
+})
+
+describe('fromWords', () => {
+  it('returns the same keypair using both bip39 and legacy checksum words', async () => {
+    const legacy = await Keypair.fromWords(bobWords)
+    const bip39 = await Keypair.fromWords(bobBip39Words)
+    expect(legacy).toStrictEqual(bip39)
   })
 })
 
