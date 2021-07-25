@@ -13,6 +13,7 @@ export interface HTTPChallengeObject {
   challenger_owner: string
   challenger_lon: number
   challenger_location: string
+  challenger_location_hex: string
   challenger_lat: number
   challenger: string
 }
@@ -24,6 +25,7 @@ export interface HTTPPathObject {
   challengee_owner: string
   challengee_lon: number
   challengee_location: string
+  challengee_location_hex: string
   challengee_lat: number
   challengee: string
 }
@@ -93,6 +95,7 @@ export interface Path {
   challengeeOwner: string
   challengeeLon: number
   challengeeLocation: string
+  challengeeLocationHex: string
   challengeeLat: number
   challengee: string
   result: PathResult
@@ -105,6 +108,7 @@ export interface Witness {
   packetHash: string
   owner: string
   location: string
+  locationHex: string
   isValid: boolean
   invalidReason?: string
   gateway: string
@@ -161,6 +165,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
             packetHash: witness.packet_hash,
             owner: witness.owner,
             location: witness.location,
+            locationHex: witness.location_hex,
             isValid: isValidWitness(witness),
             ...(witness.hasOwnProperty('invalid_reason') && { invalidReason: witness.invalid_reason }),
             gateway: witness.gateway,
@@ -198,6 +203,7 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
       challengeeOwner: pathObject.challengee_owner,
       challengeeLon: pathObject.challengee_lon,
       challengeeLocation: pathObject.challengee_location,
+      challengeeLocationHex: pathObject.challengee_location_hex,
       challengeeLat: pathObject.challengee_lat,
       challengee: pathObject.challengee,
       result,
@@ -232,6 +238,8 @@ export default class Challenge extends DataModel {
 
   public challengerLocation: string
 
+  public challengerLocationHex: string
+
   public challengerLat: number
 
   public challenger: string
@@ -250,6 +258,7 @@ export default class Challenge extends DataModel {
     this.challengerOwner = challenge.challenger_owner
     this.challengerLon = challenge.challenger_lon
     this.challengerLocation = challenge.challenger_location
+    this.challengerLocationHex = challenge.challenger_location_hex
     this.challengerLat = challenge.challenger_lat
     this.challenger = challenge.challenger
   }
