@@ -83,6 +83,8 @@ export default class Witness extends DataModel {
 
   public witnessInfo?: WitnessInfo
 
+  public mode?: string
+
   constructor(client: Client, witness: HTTPWitnessObject) {
     super()
     this.client = client
@@ -117,6 +119,7 @@ export default class Witness extends DataModel {
     if (witness.witness_info) {
       this.witnessInfo = camelcaseKeys(witness.witness_info) as any
     }
+    this.mode = witness.mode
   }
 
   get data(): WitnessData {
