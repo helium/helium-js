@@ -35,7 +35,7 @@ export const mockWitness = (isValid = true): HTTPWitnessesObject => ({
   packet_hash: 'fake-packet_hash',
   owner: 'fake-owner',
   location: 'fake-location',
-  location_hex: 'fake-location-hex',
+  location_hex: 'fake-location_hex',
   is_valid: isValid,
   ...(!isValid && { invalid_reason: 'fake_invalid_reason' }),
   gateway: 'fake-witness-gateway',
@@ -60,6 +60,7 @@ export const mockPathData = {
   challengee_owner: 'fake-challengee_owner',
   challengee_lon: -123.1234567890,
   challengee_location: 'fake-challengee_location',
+  challengee_location_hex: 'fake-challengee_location_hex',
   challengee_lat: 12.1234567890,
   challengee: 'fake-challengee',
 }
@@ -76,7 +77,8 @@ export const challengeJson = (path: HTTPPathObject[]): HTTPChallengeObject => ({
   fee: 0,
   challenger_owner: 'fake-challenger-owner',
   challenger_lon: -123.1234567890,
-  challenger_location: 'fake-challenger-loc',
+  challenger_location: 'fake-challenger_location',
+  challenger_location_hex: 'fake-challenger_location_hex',
   challenger_lat: 12.1234567890,
   challenger: 'fake-challenger',
 } as HTTPChallengeObject)
@@ -146,6 +148,21 @@ describe('Challenge Model', () => {
   })
 
   describe('successful beacon', () => {
+    it('challenge has challenger and challengee location data', () => {
+      const challenge = new Challenge(challengeJson([
+        {
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
+          receipt: mockReceipt,
+          geocode: mockGeocode,
+          ...mockPathData,
+        } as HTTPPathObject,
+      ] as HTTPPathObject[]))
+      expect(challenge.challengerLocation).toBe('fake-challenger_location')
+      expect(challenge.challengerLocationHex).toBe('fake-challenger_location_hex')
+      expect(challenge.path[0].challengeeLocationHex).toBe('fake-challengee_location_hex')
+      expect(challenge.path[0].challengeeLocation).toBe('fake-challengee_location')
+    })
+
     it('first element has witness && receipt', () => {
       const challenge = new Challenge(challengeJson([
         {
