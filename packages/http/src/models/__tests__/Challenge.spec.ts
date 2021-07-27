@@ -77,7 +77,7 @@ export const challengeJson = (path: HTTPPathObject[]): HTTPChallengeObject => ({
   fee: 0,
   challenger_owner: 'fake-challenger-owner',
   challenger_lon: -123.1234567890,
-  challenger_location: 'fake-challenger-loc',
+  challenger_location: 'fake-challenger_location',
   challenger_location_hex: 'fake-challenger_location_hex',
   challenger_lat: 12.1234567890,
   challenger: 'fake-challenger',
@@ -148,6 +148,21 @@ describe('Challenge Model', () => {
   })
 
   describe('successful beacon', () => {
+    it('challenge has challenger and challengee location data', () => {
+      const challenge = new Challenge(challengeJson([
+        {
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
+          receipt: mockReceipt,
+          geocode: mockGeocode,
+          ...mockPathData,
+        } as HTTPPathObject,
+      ] as HTTPPathObject[]))
+      expect(challenge.challengerLocation).toBe('fake-challenger_location')
+      expect(challenge.challengerLocationHex).toBe('fake-challenger_location_hex')
+      expect(challenge.path[0].challengeeLocationHex).toBe('fake-challengee_location_hex')
+      expect(challenge.path[0].challengeeLocation).toBe('fake-challengee_location')
+    })
+
     it('first element has witness && receipt', () => {
       const challenge = new Challenge(challengeJson([
         {
