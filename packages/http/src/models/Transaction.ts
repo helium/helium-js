@@ -1,9 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
-import {
-  Balance, CurrencyType, DataCredits, NetworkTokens,
-} from '@helium/currency'
+import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
 
@@ -239,9 +237,9 @@ export class StakeValidatorV1 extends DataModel {
 
   stake!: Balance<NetworkTokens>
 
-  ownerSignature!:string
+  ownerSignature!: string
 
-  owner!:string
+  owner!: string
 
   fee!: Balance<DataCredits>
 
@@ -266,9 +264,9 @@ export class UnstakeValidatorV1 extends DataModel {
 
   stakeAmount!: Balance<NetworkTokens>
 
-  ownerSignature!:string
+  ownerSignature!: string
 
-  owner!:string
+  owner!: string
 
   hash!: string
 
@@ -295,13 +293,13 @@ export class TransferValidatorStakeV1 extends DataModel {
 
   newAddress!: string
 
-  oldOwner!:string
+  oldOwner!: string
 
-  newOwner!:string
+  newOwner!: string
 
-  oldOwnerSignature!:string
+  oldOwnerSignature!: string
 
-  newOwnerSignature!:string
+  newOwnerSignature!: string
 
   fee!: Balance<DataCredits>
 
@@ -318,6 +316,50 @@ export class TransferValidatorStakeV1 extends DataModel {
     return this
   }
 }
+
+interface StateChannelSummary {
+  owner: string
+  numPackets: number
+  numDcs: number
+  location: string
+  client: string
+}
+
+interface StateChannel {
+  summaries: StateChannelSummary[]
+  state: string
+  rootHash: string
+  owner: string
+  nonce: number
+  id: string
+  expireAtBlock: number
+}
+
+export class StateChannelCloseV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  height!: number
+
+  hash!: string
+
+  stateChannel!: StateChannel
+
+  conflictsWith?: StateChannel
+
+  closer!: string
+
+  constructor(data: StateChannelCloseV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): StateChannelCloseV1 {
+    return this
+  }
+}
+
 export class UnknownTransaction extends DataModel {
   type!: string
 
@@ -392,7 +434,7 @@ export type AnyTransaction =
   | TransferValidatorStakeV1
   | UnknownTransaction
 
-function prepareTxn(txn: any) {
+function prepareTxn(txn: any, { deep } = { deep: false }) {
   const balanceConversions = [
     { key: 'fee', currencyType: CurrencyType.dataCredit },
     { key: 'staking_fee', currencyType: CurrencyType.dataCredit },
@@ -410,7 +452,7 @@ function prepareTxn(txn: any) {
     }
   })
 
-  return camelcaseKeys(txn)
+  return camelcaseKeys(txn, { deep })
 }
 
 export class TransferHotspotV1 extends DataModel {
@@ -473,6 +515,8 @@ export default class Transaction {
         return this.toStakeValidatorV1(json)
       case 'transfer_validator_stake_v1':
         return this.toTransferValidatorStakeV1(json)
+      case 'state_channel_close_v1':
+        return this.toStateChannelCloseV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -536,6 +580,10 @@ export default class Transaction {
 
   static toTransferHotspotV1(json: TxnJsonObject): TransferHotspotV1 {
     return new TransferHotspotV1(prepareTxn(json))
+  }
+
+  static toStateChannelCloseV1(json: TxnJsonObject): StateChannelCloseV1 {
+    return new StateChannelCloseV1(prepareTxn(json, { deep: true }))
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {
