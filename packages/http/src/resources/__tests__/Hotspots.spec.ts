@@ -8,6 +8,7 @@ export const hotspotFixture = (params = {}) => ({
   score: 0.25,
   reward_scale: 0.07049560546875,
   owner: 'fake-owner-address',
+  payer: 'fake-payer-address',
   name: 'some-hotspot-name',
   location: 'an-h3-address',
   lng: -123.03528172874591,

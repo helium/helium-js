@@ -17,6 +17,7 @@ export interface HTTPHotspotObject {
   score?: number
   reward_scale?: number
   owner?: string
+  payer?: string
   name?: string
   location?: string
   location_hex?: string
@@ -83,6 +84,8 @@ export default class Hotspot extends DataModel {
 
   public owner?: string
 
+  public payer?: string
+
   public name?: string
 
   public location?: string
@@ -126,6 +129,7 @@ export default class Hotspot extends DataModel {
     this.score = hotspot.score
     this.rewardScale = hotspot.reward_scale
     this.owner = hotspot.owner
+    this.payer = hotspot.payer
     this.name = hotspot.name
     this.location = hotspot.location
     this.locationHex = hotspot.location_hex

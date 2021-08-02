@@ -17,6 +17,7 @@ test('create Hotspot from HTTP response', () => {
     },
     reward_scale: 1,
     owner: 'mock-owner',
+    payer: 'mock-payer',
     nonce: 1,
     name: 'mock-name',
     location: 'mock-location',
@@ -42,6 +43,8 @@ test('create Hotspot from HTTP response', () => {
     address: 'mock-address',
   })
   expect(hotspot.address).toBe('mock-address')
+  expect(hotspot.owner).toBe('mock-owner')
+  expect(hotspot.payer).toBe('mock-payer')
   expect(hotspot.speculativeNonce).toBe(2)
   expect(hotspot.nonce).toBe(1)
   expect(hotspot.rewardScale).toBe(1)
