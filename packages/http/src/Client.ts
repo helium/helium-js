@@ -19,6 +19,7 @@ import Cities from './resources/Cities'
 import City from './models/City'
 import Validators from './resources/Validators'
 import Validator from './models/Validator'
+import StateChannels from './resources/StateChannels'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -109,6 +110,10 @@ export default class Client {
 
   public get challenges(): Challenges {
     return new Challenges(this)
+  }
+
+  public get stateChannels(): StateChannels {
+    return new StateChannels(this)
   }
 
   public get pendingTransactions(): PendingTransactions {
