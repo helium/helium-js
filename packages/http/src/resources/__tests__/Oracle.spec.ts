@@ -6,16 +6,18 @@ describe('current oracle price', () => {
     .get('/v1/oracle/prices/current')
     .reply(200, {
       data: {
-        price: 42040700,
-        block: 385010,
+        timestamp: '2021-08-10T18:09:48.000000Z',
+        price: 1549650000,
+        block: 959820,
       },
     })
 
   it('gets the current price', async () => {
     const client = new Client()
     const price = await client.oracle.getCurrentPrice()
-    expect(price?.price?.integerBalance).toBe(42040700)
-    expect(price.height).toBe(385010)
+    expect(price?.price?.integerBalance).toBe(1549650000)
+    expect(price.height).toBe(959820)
+    expect(price.timestamp).toBe('2021-08-10T18:09:48.000000Z')
   })
 })
 
@@ -42,7 +44,11 @@ describe('listPrices', () => {
     const list = await client.oracle.listPrices()
     const [price1, price2] = await list.take(2)
     expect(price1?.price?.integerBalance).toBe(1549650000)
+    expect(price1.timestamp).toBe('2021-08-10T18:09:48.000000Z')
+    expect(price1.height).toBe(959820)
     expect(price2?.price?.integerBalance).toBe(1425951500)
+    expect(price2.timestamp).toBe('2021-08-10T16:34:02.000000Z')
+    expect(price2.height).toBe(959740)
   })
 })
 
@@ -51,6 +57,7 @@ describe('oracle price at block', () => {
     .get('/v1/oracle/prices/385010')
     .reply(200, {
       data: {
+        timestamp: '2020-06-23T15:45:33.000000Z',
         price: 42040700,
         block: 385010,
       },
@@ -61,6 +68,7 @@ describe('oracle price at block', () => {
     const price = await client.oracle.getPriceAtBlock(385010)
     expect(price?.price?.integerBalance).toBe(42040700)
     expect(price.height).toBe(385010)
+    expect(price.timestamp).toBe('2020-06-23T15:45:33.000000Z')
   })
 })
 
