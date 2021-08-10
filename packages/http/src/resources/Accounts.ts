@@ -26,6 +26,16 @@ export default class Accounts {
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
+  async listRich(): Promise<ResourceList<Account>> {
+    const url = '/accounts/rich'
+    const response = await this.client.get(url)
+    const {
+      data: { data: accounts },
+    } = response
+    const data = accounts.map((d: HTTPAccountObject) => new Account(this.client, d))
+    return new ResourceList(data, this.list.bind(this))
+  }
+
   async get(address: string): Promise<Account> {
     const url = `/accounts/${address}`
     const { data: { data: account } } = await this.client.get(url)
