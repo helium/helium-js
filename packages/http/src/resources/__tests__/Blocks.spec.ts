@@ -115,11 +115,26 @@ describe('get height', () => {
       },
     })
 
+  nock('https://api.helium.io')
+    .get('/v1/blocks/height?max_time=mock_max_time')
+    .reply(200, {
+      data: {
+        height: 500000,
+      },
+    })
+
   it('gets current block height', async () => {
     const client = new Client()
 
     const height = await client.blocks.getHeight()
     expect(height).toBe(369627)
+  })
+
+  it('gets block height with max time', async () => {
+    const client = new Client()
+
+    const height = await client.blocks.getHeight({ maxTime: 'mock_max_time' })
+    expect(height).toBe(500000)
   })
 })
 

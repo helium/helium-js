@@ -59,8 +59,12 @@ export default class Blocks {
     return new Block(this.client, block)
   }
 
-  async getHeight(): Promise<number> {
-    const { data: { data: { height } } } = await this.client.get('/blocks/height')
+  async getHeight(params?: {maxTime?: string}): Promise<number> {
+    let path = '/blocks/height'
+    if (params?.maxTime) {
+      path += `?max_time=${params?.maxTime}`
+    }
+    const { data: { data: { height } } } = await this.client.get(path)
     return height
   }
 
