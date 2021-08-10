@@ -49,9 +49,9 @@ export default class Sums {
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 
-  async get(minTime: Date, maxTime: Date): Promise<Sum> {
+  async get(minTime: Date | NaturalDate, maxTime: Date): Promise<Sum> {
     const { data: { data } } = await this.client.get(this.baseUrl, {
-      min_time: minTime.toISOString(),
+      min_time: minTime instanceof Date ? minTime?.toISOString() : minTime,
       max_time: maxTime.toISOString(),
     })
     return new Sum(this.client, data)
