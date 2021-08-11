@@ -14,6 +14,7 @@ export { SumData as Sum } from './models/Sum'
 export { RewardData as Reward } from './models/Reward'
 export { PendingTransactionData as PendingTransaction } from './models/PendingTransaction'
 export { Counts } from './models/Stats'
+export { OraclePriceData as OraclePrice } from './models/OraclePrice'
 export {
   AnyTransaction,
   PaymentV1,
@@ -32,4 +33,3 @@ export {
   UnknownTransaction,
 } from './models/Transaction'
 export { GenericDataModel } from './models/DataModel'
-export { OraclePrice } from './resources/Oracle'
