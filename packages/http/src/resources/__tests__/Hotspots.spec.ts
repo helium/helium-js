@@ -297,11 +297,24 @@ describe('get rewards', () => {
     .get('/v1/hotspots/fake-address/rewards/sum?min_time=-1%20day&bucket=day')
     .reply(200, rewardSumListFixture())
 
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/rewards/sum?min_time=-1%20day')
+    .reply(200, rewardSumFixture())
+
   it('gets hotspot rewards sum', async () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
     const rewards = await client.hotspot('fake-address').rewards.sum.get(minTime, maxTime)
+    expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
+    expect(rewards.total).toBe(13.17717245)
+    expect(rewards.data.total).toBe(13.17717245)
+  })
+
+  it('gets hotspot rewards sum with natural date', async () => {
+    const minTime = '-1 day'
+    const client = new Client()
+    const rewards = await client.hotspot('fake-address').rewards.sum.get(minTime)
     expect(rewards.balanceTotal.floatBalance).toBe(13.17717245)
     expect(rewards.total).toBe(13.17717245)
     expect(rewards.data.total).toBe(13.17717245)
