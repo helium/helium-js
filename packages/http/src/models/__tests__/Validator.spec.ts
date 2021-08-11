@@ -7,6 +7,7 @@ const mockHTTPValidator = {
   stake_status: 'staked',
   stake: 1000000000000,
   penalty: 1.123,
+  consensus_groups: 20,
   penalties: [
     { type: 'performance', height: 921773, amount: 0.099 },
     { type: 'tenure', height: 921622, amount: 0.5 },
@@ -37,4 +38,5 @@ test('create Hotspot from HTTP response', () => {
   expect(validator.blockAdded).toBe(123456)
   expect(validator.block).toBe(923409)
   expect(validator.address).toBe('fake-address')
+  expect(validator.consensusGroups).toBe(20)
 })
