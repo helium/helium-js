@@ -24,6 +24,7 @@ export interface HTTPValidatorObject {
   owner?: string
   name?: string
   last_heartbeat?: number
+  consensus_groups?: number
   block_added?: number
   block?: number
   address: string
@@ -45,6 +46,8 @@ export default class Validator extends DataModel {
   private client: Client
 
   public versionHeartbeat?: number
+
+  public consensusGroups?: number
 
   public status?: Status
 
@@ -84,6 +87,7 @@ export default class Validator extends DataModel {
     this.owner = validator.owner
     this.name = validator.name
     this.lastHeartbeat = validator.last_heartbeat
+    this.consensusGroups = validator.consensus_groups
     this.blockAdded = validator.block_added
     this.block = validator.block
     this.address = validator.address
