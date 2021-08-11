@@ -135,6 +135,30 @@ describe('list', () => {
       ])
     })
   })
+
+  describe('list richest accounts', () => {
+    nock('https://api.helium.io')
+      .get('/v1/accounts/rich')
+      .reply(200, {
+        data: [
+          accountFixture({ address: 'rich-address-1', balance: 10000000000000000 }),
+          accountFixture({ address: 'rich-address-2', balance: 9999999900000000 }),
+          accountFixture({ address: 'rich-address-3', balance: 9999999800000000 }),
+        ],
+      })
+
+    it('lists rich accounts', async () => {
+      const client = new Client()
+      const accounts = await client.accounts.listRich()
+
+      expect(accounts.data[0].address).toBe('rich-address-1')
+      expect(accounts.data[0].balance?.integerBalance).toBe(10000000000000000)
+      expect(accounts.data[1].address).toBe('rich-address-2')
+      expect(accounts.data[1].balance?.integerBalance).toBe(9999999900000000)
+      expect(accounts.data[2].address).toBe('rich-address-3')
+      expect(accounts.data[2].balance?.integerBalance).toBe(9999999800000000)
+    })
+  })
 })
 
 export const rewardSumFixture = () => ({
