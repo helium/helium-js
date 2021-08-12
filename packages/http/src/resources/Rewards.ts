@@ -18,9 +18,9 @@ type Context = Account | Hotspot | Validator
 export default class Rewards {
   private client: Client
 
-  private context: Context
+  private context?: Context
 
-  constructor(client: Client, context: Context) {
+  constructor(client: Client, context?: Context) {
     this.client = client
     this.context = context
   }
@@ -39,7 +39,7 @@ export default class Rewards {
   }
 
   public get sum() {
-    return new Sums(this.client, this.context, SumsType.rewards)
+    return new Sums(this.client, SumsType.rewards, this.context)
   }
 
   get baseUrl() {

@@ -28,6 +28,6 @@ export default class Witnesses {
   }
 
   public get sum() {
-    return new Sums(this.client, this.hotspot, SumsType.witnesses)
+    return new Sums(this.client, SumsType.witnesses, this.hotspot)
   }
 }
