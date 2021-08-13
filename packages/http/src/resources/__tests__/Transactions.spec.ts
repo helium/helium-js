@@ -331,3 +331,108 @@ describe('list without a block or account', () => {
     await expect(makeList()).rejects.toThrow()
   })
 })
+
+describe('list with limit', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/my-address/activity')
+    .query({ limit: 1 })
+    .reply(200, {
+      data: [
+        {
+          type: 'rewards_v2',
+          time: 1628886943,
+          start_epoch: 963888,
+          rewards: [
+            {
+              type: 'poc_witnesses',
+              gateway: 'fake-gateway',
+              amount: 2756407,
+              account: 'fake-account',
+            },
+          ],
+          height: 963920,
+          hash: 'fake-hash',
+          end_epoch: 963919,
+        },
+      ],
+    })
+
+  it('lists activity with a custom page limit', async () => {
+    const client = new Client()
+
+    const list = await client.hotspot('my-address').activity.list({ limit: 1 })
+    const [txn] = await list.take(1)
+    expect(txn.type).toBe('rewards_v2')
+  })
+})
+
+describe('list with min/max time', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/my-address/activity')
+    .query({ min_time: '2021-08-10T00:00:00.000Z', max_time: '2021-08-13T00:00:00.000Z' })
+    .reply(200, {
+      data: [
+        {
+          type: 'rewards_v2',
+          time: 1628886943,
+          start_epoch: 963888,
+          rewards: [
+            {
+              type: 'poc_witnesses',
+              gateway: 'fake-gateway',
+              amount: 2756407,
+              account: 'fake-account',
+            },
+          ],
+          height: 963920,
+          hash: 'fake-hash',
+          end_epoch: 963919,
+        },
+      ],
+    })
+
+  it('lists activity with a custom page limit', async () => {
+    const client = new Client()
+
+    const minTime = new Date('2021-08-10')
+    const maxTime = new Date('2021-08-13')
+
+    const list = await client.hotspot('my-address').activity.list({ minTime, maxTime })
+    const [txn] = await list.take(1)
+    expect(txn.type).toBe('rewards_v2')
+  })
+})
+
+describe('list with min/max natural dates', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/my-address/activity')
+    .query({ min_time: '-30 day', max_time: '-7 day' })
+    .reply(200, {
+      data: [
+        {
+          type: 'rewards_v2',
+          time: 1628886943,
+          start_epoch: 963888,
+          rewards: [
+            {
+              type: 'poc_witnesses',
+              gateway: 'fake-gateway',
+              amount: 2756407,
+              account: 'fake-account',
+            },
+          ],
+          height: 963920,
+          hash: 'fake-hash',
+          end_epoch: 963919,
+        },
+      ],
+    })
+
+  it('lists activity with a custom page limit', async () => {
+    const client = new Client()
+
+    const list = await client.hotspot('my-address').activity.list({ minTime: '-30 day', maxTime: '-7 day' })
+    const [txn] = await list.take(1)
+    expect(txn.type).toBe('rewards_v2')
+  })
+})
