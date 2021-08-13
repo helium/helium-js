@@ -6,8 +6,8 @@
   },
   "dependencies": {
     "@helium/crypto": "^3.38.0",
-    "@helium/http": "^3.39.0",
+    "@helium/http": "^3.40.0",
     "@helium/transactions": "^3.38.0"
   },
-  "version": "3.39.0"
+  "version": "3.40.0"
 }
