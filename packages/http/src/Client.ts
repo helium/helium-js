@@ -20,6 +20,7 @@ import City from './models/City'
 import Validators from './resources/Validators'
 import Validator from './models/Validator'
 import StateChannels from './resources/StateChannels'
+import Rewards from './resources/Rewards'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -138,6 +139,10 @@ export default class Client {
 
   public get city(): CityFromIdFn {
     return this.cities.fromId.bind(this.cities)
+  }
+
+  public get rewards(): Rewards {
+    return new Rewards(this)
   }
 
   async get(path: string, params: Object = {}) {

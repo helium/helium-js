@@ -23,11 +23,11 @@ export enum SumsType {
 export default class Sums {
   private client: Client
 
-  private context: Context
+  private context?: Context
 
   private type: SumsType
 
-  constructor(client: Client, context: Context, type: SumsType) {
+  constructor(client: Client, type: SumsType, context?: Context) {
     this.client = client
     this.context = context
     this.type = type
@@ -59,7 +59,9 @@ export default class Sums {
 
   get baseUrl() {
     let url = ''
-    if (this.context instanceof Hotspot) {
+    if (this.context === undefined) {
+      url = `/${this.type}/sum`
+    } else if (this.context instanceof Hotspot) {
       url = `/hotspots/${this.context.address}/${this.type}/sum`
     } else if (this.context instanceof Account) {
       url = `/accounts/${this.context.address}/${this.type}/sum`

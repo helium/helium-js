@@ -44,7 +44,7 @@ export default class Challenges {
 
   public get sum() {
     if (this.context instanceof Hotspot) {
-      return new Sums(this.client, this.context, SumsType.challenges)
+      return new Sums(this.client, SumsType.challenges, this.context)
     }
     throw new Error('invalid context')
   }
