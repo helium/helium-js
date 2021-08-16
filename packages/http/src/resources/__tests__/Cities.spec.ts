@@ -53,7 +53,7 @@ describe('list', () => {
   it('gets city info for given city id', async () => {
     const client = new Client()
     const city = await client.cities.get('mock-sf-1')
-    expect(city.cityId).toBe(100)
+    expect(city.cityId).toBe('mock-sf-1')
     expect(city.hotspotCount).toBe(100)
     expect(city.onlineCount).toBe(90)
     expect(city.offlineCount).toBe(10)
