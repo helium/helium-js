@@ -25,4 +25,12 @@ export default class Cities {
     const data = cities.map((city: HTTPCityObject) => new City(this.client, city))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
+
+  async get(cityid: string): Promise<City> {
+    const url = `/cities/${cityid}`
+    const {
+      data: { data: city },
+    } = await this.client.get(url)
+    return new City(this.client, city)
+  }
 }

@@ -9,6 +9,8 @@ const citiesFixture = (params = {}) => ({
   long_country: 'mock long_country',
   long_city: 'mock long_city',
   hotspot_count: 100,
+  online_count: 90,
+  offline_count: 10,
   ...params,
 })
 
@@ -32,6 +34,12 @@ describe('list', () => {
       ],
     })
 
+  nock('https://api.helium.io')
+    .get('/v1/cities/mock-sf-1')
+    .reply(200, {
+      data: citiesFixture({ city_id: 'mock-sf-1' }),
+    })
+
   it('lists cities', async () => {
     const client = new Client()
     const list = await client.cities.list()
@@ -40,6 +48,15 @@ describe('list', () => {
     expect(cities[0].cityId).toBe('mock-1')
     expect(cities[1].cityId).toBe('mock-2')
     expect(cities[2].cityId).toBe('mock-3')
+  })
+
+  it('gets city info for given city id', async () => {
+    const client = new Client()
+    const city = await client.cities.get('mock-sf-1')
+    expect(city.cityId).toBe(100)
+    expect(city.hotspotCount).toBe(100)
+    expect(city.onlineCount).toBe(90)
+    expect(city.offlineCount).toBe(10)
   })
 
   it('searches cities', async () => {

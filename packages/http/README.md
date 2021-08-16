@@ -209,6 +209,11 @@ const list = await client.cities.list({ query: 'san francisco' })
 const cities = await list.take(10)
 ```
 
+##### Get specific city data
+```js
+const city = await client.cities.get('city-id')
+```
+
 ##### List hotspots in a city
 ```js
 const list = await client.city('city-id').hotspots.list()
