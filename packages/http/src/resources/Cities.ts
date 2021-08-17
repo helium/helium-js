@@ -1,10 +1,12 @@
 import type Client from '../Client'
 import ResourceList from '../ResourceList'
 import City, { HTTPCityObject } from '../models/City'
+import { toSnakeCase } from '../utils'
 
 interface ListParams {
   cursor?: string
   query?: string
+  order?: 'hotspotCount' | 'onlineCount' | 'offlineCount'
 }
 
 export default class Cities {
@@ -20,8 +22,14 @@ export default class Cities {
 
   async list(params: ListParams = {}): Promise<ResourceList<City>> {
     const url = encodeURI('/cities')
-    const result = await this.client.get(url, { search: params.query, cursor: params.cursor })
-    const { data: { data: cities, cursor } } = result
+    const result = await this.client.get(url, {
+      search: params.query,
+      cursor: params.cursor,
+      order: toSnakeCase(params.order),
+    })
+    const {
+      data: { data: cities, cursor },
+    } = result
     const data = cities.map((city: HTTPCityObject) => new City(this.client, city))
     return new ResourceList(data, this.list.bind(this), cursor)
   }
