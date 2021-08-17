@@ -16,15 +16,6 @@ const citiesFixture = (params = {}) => ({
 
 describe('list', () => {
   nock('https://api.helium.io')
-    .get('/v1/cities?search=san%20francisco')
-    .reply(200, {
-      data: [
-        citiesFixture({ city_id: 'mock-sf-1' }),
-        citiesFixture({ city_id: 'mock-sf-2' }),
-      ],
-    })
-
-  nock('https://api.helium.io')
     .get('/v1/cities')
     .reply(200, {
       data: [
@@ -35,9 +26,24 @@ describe('list', () => {
     })
 
   nock('https://api.helium.io')
-    .get('/v1/cities/mock-sf-1')
+    .get('/v1/cities')
+    .query({ order: 'hotspot_count' })
     .reply(200, {
-      data: citiesFixture({ city_id: 'mock-sf-1' }),
+      data: [citiesFixture({ city_id: 'mock-la-1' })],
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/cities')
+    .query({ order: 'online_count' })
+    .reply(200, {
+      data: [citiesFixture({ city_id: 'mock-nyc-1' })],
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/cities')
+    .query({ order: 'offline_count' })
+    .reply(200, {
+      data: [citiesFixture({ city_id: 'mock-chi-1' })],
     })
 
   it('lists cities', async () => {
@@ -50,6 +56,35 @@ describe('list', () => {
     expect(cities[2].cityId).toBe('mock-3')
   })
 
+  it('orders by hotspot count', async () => {
+    const client = new Client()
+    const list = await client.cities.list({ order: 'hotspotCount' })
+    const cities = await list.take(1)
+    expect(cities[0].cityId).toBe('mock-la-1')
+  })
+
+  it('orders by online count', async () => {
+    const client = new Client()
+    const list = await client.cities.list({ order: 'onlineCount' })
+    const cities = await list.take(1)
+    expect(cities[0].cityId).toBe('mock-nyc-1')
+  })
+
+  it('orders by offline count', async () => {
+    const client = new Client()
+    const list = await client.cities.list({ order: 'offlineCount' })
+    const cities = await list.take(1)
+    expect(cities[0].cityId).toBe('mock-chi-1')
+  })
+})
+
+describe('get', () => {
+  nock('https://api.helium.io')
+    .get('/v1/cities/mock-sf-1')
+    .reply(200, {
+      data: citiesFixture({ city_id: 'mock-sf-1' }),
+    })
+
   it('gets city info for given city id', async () => {
     const client = new Client()
     const city = await client.cities.get('mock-sf-1')
@@ -58,6 +93,14 @@ describe('list', () => {
     expect(city.onlineCount).toBe(90)
     expect(city.offlineCount).toBe(10)
   })
+})
+
+describe('search', () => {
+  nock('https://api.helium.io')
+    .get('/v1/cities?search=san%20francisco')
+    .reply(200, {
+      data: [citiesFixture({ city_id: 'mock-sf-1' }), citiesFixture({ city_id: 'mock-sf-2' })],
+    })
 
   it('searches cities', async () => {
     const client = new Client()
