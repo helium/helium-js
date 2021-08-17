@@ -21,6 +21,7 @@ import Validators from './resources/Validators'
 import Validator from './models/Validator'
 import StateChannels from './resources/StateChannels'
 import Rewards from './resources/Rewards'
+import Locations from './resources/Locations'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -143,6 +144,10 @@ export default class Client {
 
   public get rewards(): Rewards {
     return new Rewards(this)
+  }
+
+  public get locations(): Locations {
+    return new Locations(this)
   }
 
   async get(path: string, params: Object = {}) {
