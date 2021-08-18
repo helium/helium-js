@@ -460,3 +460,32 @@ describe('hexes', () => {
     expect(hotspots[2].name).toBe('hotspot-3')
   })
 })
+
+describe('location distance', () => {
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/location/distance')
+    .query({ lat: 37.77, lon: -122.41, distance: 1000 })
+    .reply(200, {
+      data: [hotspotFixture({ name: 'hotspot-1' }), hotspotFixture({ name: 'hotspot-2' })],
+      cursor: 'cursor-1',
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/hotspots/location/distance?cursor=cursor-1')
+    .reply(200, {
+      data: [hotspotFixture({ name: 'hotspot-3' }), hotspotFixture({ name: 'hotspot-4' })],
+    })
+
+  it('lists hotspots within a given distance from a lat/lng coord', async () => {
+    const client = new Client()
+    const list = await client.hotspots.locationDistance({
+      lat: 37.77,
+      lon: -122.41,
+      distance: 1000,
+    })
+    const hotspots = await list.take(3)
+    expect(hotspots[0].name).toBe('hotspot-1')
+    expect(hotspots[1].name).toBe('hotspot-2')
+    expect(hotspots[2].name).toBe('hotspot-3')
+  })
+})

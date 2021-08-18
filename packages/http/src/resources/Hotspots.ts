@@ -86,4 +86,18 @@ export default class Hotspots {
     const fetchMore = (nextParams: ListParams) => this.hex(index, nextParams)
     return new ResourceList(data, fetchMore, cursor)
   }
+
+  async locationDistance(params: {
+    lat?: number
+    lon?: number
+    distance?: number
+    cursor?: string
+  }): Promise<ResourceList<Hotspot>> {
+    const response = await this.client.get('/hotspots/location/distance', params)
+    const {
+      data: { data: hotspots, cursor },
+    } = response
+    const data = hotspots.map((h: HTTPHotspotObject) => new Hotspot(this.client, h))
+    return new ResourceList(data, this.locationDistance.bind(this), cursor)
+  }
 }
