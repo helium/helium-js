@@ -1,5 +1,5 @@
 import camelcaseKeys from 'camelcase-keys'
-import { Counts } from '../models/Stats'
+import { Counts, DcBurns } from '../models/Stats'
 import type Client from '../Client'
 
 type Context = 'validators'
@@ -19,13 +19,25 @@ export default class Stats {
     if (this.context === 'validators') {
       url = '/validators/stats'
     }
-    const { data: { data: stats } } = await this.client.get(url)
+    const {
+      data: { data: stats },
+    } = await this.client.get(url)
     return camelcaseKeys(stats, { deep: true })
   }
 
-  async counts() {
+  async counts(): Promise<Counts> {
     const url = '/stats/counts'
-    const { data: { data: stats } } = await this.client.get(url)
+    const {
+      data: { data: stats },
+    } = await this.client.get(url)
     return camelcaseKeys(stats) as Counts
+  }
+
+  async dcBurns(): Promise<DcBurns> {
+    const url = '/dc_burns/stats'
+    const {
+      data: { data: stats },
+    } = await this.client.get(url)
+    return camelcaseKeys(stats, { deep: true }) as DcBurns
   }
 }
