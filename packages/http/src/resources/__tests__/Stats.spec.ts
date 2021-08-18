@@ -67,6 +67,32 @@ const countsFixture = () => ({
   transactions: 52592071,
 })
 
+const dcBurnsFixture = () => ({
+  last_week: {
+    state_channel: 36154999,
+    oui: 90000000,
+    fee: 3122030000,
+    assert_location: 15787000000,
+    add_gateway: 48407000000,
+    total: 67442184999,
+  },
+  last_month: {
+    state_channel: 118063544,
+    oui: 90000000,
+    fee: 11040155000,
+    assert_location: 53691000000,
+    add_gateway: 160729000000,
+    total: 225668218544,
+  },
+  last_day: {
+    state_channel: 5137275,
+    fee: 489240000,
+    assert_location: 2385000000,
+    add_gateway: 6930000000,
+    total: 9809377275,
+  },
+})
+
 describe('get stats', () => {
   nock('https://api.helium.io').get('/v1/stats').reply(200, {
     data: statsFixture(),
@@ -102,5 +128,19 @@ describe('get counts', () => {
     expect(counts.blocks).toBe(805339)
     expect(counts.consensusGroups).toBe(20778)
     expect(counts.challenges).toBe(19724635)
+  })
+})
+
+describe('get dc burn stats', () => {
+  nock('https://api.helium.io').get('/v1/dc_burns/stats').reply(200, {
+    data: dcBurnsFixture(),
+  })
+
+  it('retrieves dc burns stats', async () => {
+    const client = new Client()
+    const stats = await client.stats.dcBurns()
+    expect(stats.lastWeek.stateChannel).toBe(36154999)
+    expect(stats.lastMonth.assertLocation).toBe(53691000000)
+    expect(stats.lastDay.total).toBe(9809377275)
   })
 })
