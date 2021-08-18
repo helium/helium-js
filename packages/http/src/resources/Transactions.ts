@@ -7,6 +7,7 @@ import PendingTransaction from '../models/PendingTransaction'
 import ResourceList from '../ResourceList'
 import Hotspot from '../models/Hotspot'
 import Validator from '../models/Validator'
+import camelcaseKeys from 'camelcase-keys'
 
 export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
 
@@ -47,6 +48,28 @@ export default class Transactions {
   }
 
   async list(params: ListParams = {}): Promise<ResourceList<AnyTransaction>> {
+    const {
+      data: { data: txns, cursor },
+    } = await this.client.get(this.activityUrl, {
+      cursor: params.cursor,
+      filter_types: params.filterTypes ? params.filterTypes.join() : undefined,
+      min_time: params.minTime instanceof Date ? params.minTime?.toISOString() : params.minTime,
+      max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
+      limit: params.limit,
+    })
+    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
+    return new ResourceList(data, this.list.bind(this), cursor)
+  }
+
+  async count(params?: { filterTypes?: Array<string> }) {
+    const url = `${this.activityUrl}/count`
+    const { data: { data } } = await this.client.get(url, {
+      filter_types: params?.filterTypes ? params.filterTypes.join() : undefined,
+    })
+    return camelcaseKeys(data)
+  }
+
+  private get activityUrl(): string {
     let url
 
     if (this.context instanceof Block) {
@@ -71,16 +94,6 @@ export default class Transactions {
       throw new Error('Must provide a context to list transactions from')
     }
 
-    const {
-      data: { data: txns, cursor },
-    } = await this.client.get(url, {
-      cursor: params.cursor,
-      filter_types: params.filterTypes ? params.filterTypes.join() : undefined,
-      min_time: params.minTime instanceof Date ? params.minTime?.toISOString() : params.minTime,
-      max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
-      limit: params.limit,
-    })
-    const data = txns.map((d: TxnJsonObject) => Transaction.fromJsonObject(d))
-    return new ResourceList(data, this.list.bind(this), cursor)
+    return url
   }
 }
