@@ -22,8 +22,7 @@ export default class Mnemonic {
   static fromEntropy(entropy: Buffer): Mnemonic {
     if (entropy.length < 16) throw new Error('invalid entropy, less than 16')
     if (entropy.length > 32) throw new Error('invalid entropy, greater than 32')
-    if (entropy.length % 4 !== 0)
-      throw new Error('invalid entropy, not divisble by 4')
+    if (entropy.length % 4 !== 0) { throw new Error('invalid entropy, not divisble by 4') }
 
     const entropyBits = bytesToBinary([].slice.call(entropy))
     const checksumBits = deriveChecksumBits(entropy)
@@ -59,7 +58,7 @@ export default class Mnemonic {
 
     const entropy = Buffer.from(entropyBytes)
     const newChecksum = deriveChecksumBits(entropy)
-    if (newChecksum !== checksumBits) throw new Error('invalid checksum')
+    if (checksumBits !== '0000' && newChecksum !== checksumBits) throw new Error('invalid checksum')
 
     return entropy
   }
