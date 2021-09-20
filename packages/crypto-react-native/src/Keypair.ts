@@ -11,7 +11,9 @@ interface SodiumKeyPair {
 // extend SodiumKeyPair?
 export default class Keypair {
   public keypair!: SodiumKeyPair
+
   public publicKey!: Buffer
+
   public privateKey!: Buffer
 
   constructor(keypair: SodiumKeyPair) {
@@ -21,7 +23,7 @@ export default class Keypair {
   }
 
   get address(): Address {
-    return new Address(0, ED25519_KEY_TYPE ,this.publicKey)
+    return new Address(0, ED25519_KEY_TYPE, this.publicKey)
   }
 
   static async makeRandom(): Promise<Keypair> {
@@ -37,15 +39,14 @@ export default class Keypair {
 
   static async fromMnemonic(mnenomic: Mnemonic): Promise<Keypair> {
     const entropy = mnenomic.toEntropy()
-    const seed = Buffer.concat([entropy, entropy])
+    const seed = entropy.length === 16 ? Buffer.concat([entropy, entropy]) : entropy
 
     return Keypair.fromEntropy(seed)
   }
 
   static async fromEntropy(entropy: Uint8Array | Buffer): Promise<Keypair> {
     const entropyBuffer = Buffer.from(entropy)
-    if (Buffer.byteLength(entropyBuffer) !== 32)
-      throw new Error('Invalid entropy, must be 32 bytes')
+    if (Buffer.byteLength(entropyBuffer) !== 32) { throw new Error('Invalid entropy, must be 32 bytes') }
     const keypair = await Sodium.crypto_sign_seed_keypair(
       entropyBuffer.toString('base64'),
     )
