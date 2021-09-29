@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="120" height="120" src="https://github.com/helium/helium-js/blob/master/icon.png">
+  <img width="120" height="120" src="https://raw.githubusercontent.com/helium/helium-js/master/icon.png">
 </p>
 
 # Helium JS SDK
@@ -8,10 +8,10 @@
 [![Coverage Status](https://coveralls.io/repos/github/helium/helium-js/badge.svg?branch=master)](https://coveralls.io/github/helium/helium-js?branch=master)
 [![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com)
 
-> :warning: These libraries are currently in active development and are provided as-is. Helium makes no claims or guarantees about the correctness, reliability or security of this code. PRs welcome, see [CONTRIBUTING](https://github.com/heilum/helium-js/blob/master/CONTRIBUTING.md).
+> ⚠️ These libraries are currently in active development and are provided as-is. Helium makes no claims or guarantees about the correctness, reliability or security of this code. PRs welcome, see [CONTRIBUTING](https://github.com/helium/helium-js/blob/master/CONTRIBUTING.md).
 
 
-This SDK is a collection of TypeScrypt libraries for interacting with the Helium blockchain. For additional documentation about the Helium network, visit the [Developer Site](https://developer.helium.com).
+This SDK is a collection of TypeScrypt libraries for interacting with the Helium blockchain. For additional documentation about the Helium network, visit the [Developer Site](https://docs.helium.com/).
 
 
 | Package | NPM Version | What it's for |
@@ -197,5 +197,5 @@ client.transactions.submit(signedPaymentTxn.toString())
 
 ```
 
-> :warning: Note that oracle prices change over time. It's possible for a transaction to fail if the oracle price changes in between the time the transaction is conrstructed and when it is absorbed by the consensus group. The API exposes what the next oracle price will be at `https://api.helium.io
+> ⚠️ Note that oracle prices change over time. It's possible for a transaction to fail if the oracle price changes in between the time the transaction is conrstructed and when it is absorbed by the consensus group. The API exposes what the next oracle price will be at `https://api.helium.io
 /v1/oracle/predictions`. See https://developer.helium.com/blockchain/api/oracle for more details. To avoid failed transactions, it may be worth querying both the oracle predictions, and the current oracle value, and taking the greater of those values.
