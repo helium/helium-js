@@ -19,6 +19,11 @@ export default class Network {
     version: 1,
   })
 
+  static stakejoy = new Network({
+    baseURL: 'https://helium-api.stakejoy.com',
+    version: 1,
+  })
+
   public baseURL: string
 
   public version: number
