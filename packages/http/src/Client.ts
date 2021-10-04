@@ -44,22 +44,26 @@ interface BlockFromHeightOrHashFn {
 }
 
 interface Options {
-  retry: number
+  name?: string
+  retry?: number
 }
 
 export default class Client {
   public network!: Network
 
+  public name?: string
+
   public retry!: number
 
   private axios!: AxiosInstance
 
-  constructor(network: Network = Network.production, options: Options = { retry: 5 }) {
+  constructor(network: Network = Network.production, options?: Options) {
     this.network = network
     this.axios = axios.create({
       baseURL: this.network.endpoint,
     })
-    this.retry = options.retry
+    this.name = options?.name
+    this.retry = options?.retry === undefined ? 5 : options?.retry
     if (this.retry > 0) {
       this.axios.defaults.raxConfig = {
         instance: this.axios,
@@ -153,10 +157,18 @@ export default class Client {
   async get(path: string, params: Object = {}) {
     const query = qs.stringify(params)
     const url = query.length > 0 ? [path, query].join('?') : path
-    return this.axios.get(url)
+    let opts
+    if (this.name) {
+      opts = { headers: { 'x-client-name': this.name } }
+    }
+    return this.axios.get(url, opts)
   }
 
   async post(path: string, params: Object = {}) {
-    return this.axios.post(path, params)
+    let opts
+    if (this.name) {
+      opts = { headers: { 'x-client-name': this.name } }
+    }
+    return this.axios.post(path, params, opts)
   }
 }
