@@ -74,3 +74,31 @@ describe('retry disabled', () => {
     await expect(makeRequest()).rejects.toThrow('Request failed with status code 503')
   })
 })
+
+describe('name', () => {
+  it('is initialized with a client name', () => {
+    const client = new Client(Network.production, { name: 'Test Client' })
+    expect(client.name).toBe('Test Client')
+  })
+
+  it('adds an x-client-name header to GET requests when name is set', async () => {
+    nock('https://api.helium.io').get('/v1/greeting').reply(200, {
+      greeting: 'hello',
+    })
+
+    const client = new Client(Network.production, { name: 'Test Client' })
+    const { request } = await client.get('/greeting')
+    expect(request.headers['x-client-name']).toBe('Test Client')
+  })
+
+  it('adds an x-client-name header to POST requests when name is set', async () => {
+    nock('https://api.helium.io').post('/v1/greeting', { greeting: 'hello' }).reply(200, {
+      response: 'hey there!',
+    })
+
+    const client = new Client(Network.production, { name: 'Test Client' })
+    const params = { greeting: 'hello' }
+    const { request } = await client.post('/greeting', params)
+    expect(request.headers['x-client-name']).toBe('Test Client')
+  })
+})
