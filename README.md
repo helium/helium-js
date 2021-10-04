@@ -8,6 +8,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/helium/helium-js/badge.svg?branch=master)](https://coveralls.io/github/helium/helium-js?branch=master)
 [![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com)
 
+Please view the [Documentation](https://helium.github.io/helium-js/) for usage and examples.
+
 > ⚠️ These libraries are currently in active development and are provided as-is. Helium makes no claims or guarantees about the correctness, reliability or security of this code. PRs welcome, see [CONTRIBUTING](https://github.com/helium/helium-js/blob/master/CONTRIBUTING.md).
 
 
