@@ -8,7 +8,7 @@
     "packages/transactions/src/index.ts"
   ],
   "exclude": [
-    "**/node_modules/**", "**/*.spec.ts"
+    "**/*.spec.ts"
   ],
   "includes": "packages",
   "name": "Helium JS",
