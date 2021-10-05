@@ -1,0 +1,24 @@
+name: Build and Deploy Docs
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+
+      - name: Install and Build 🔧
+        run: |
+          yarn
+          yarn bootstrap
+          yarn build
+          yarn docs
+
+      - name: Deploy Docs 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: docs
+          folder: docs

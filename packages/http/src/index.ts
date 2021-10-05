@@ -1,3 +1,9 @@
+/**
+ * [[include:http/README.md]]
+ * @packageDocumentation
+ * @module http
+ */
+
 export { default as Client } from './Client'
 export { default } from './Client'
 export { default as Network } from './Network'

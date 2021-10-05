@@ -1,0 +1,17 @@
+{
+  "entryPoints": [
+    "packages/crypto/src/index.ts",
+    "packages/crypto-react-native/src/index.ts",
+    "packages/currency/src/index.ts",
+    "packages/http/src/index.ts",
+    "packages/proto-ble/build/index.d.ts",
+    "packages/transactions/src/index.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  "includes": "packages",
+  "name": "Helium JS",
+  "out": "docs",
+  "readme": "README.md"
+}
