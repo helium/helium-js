@@ -1,14 +1,24 @@
-import {
-  lpad, deriveChecksumBits, binaryToByte, bytesToBinary,
-} from './utils'
+import { lpad, deriveChecksumBits, binaryToByte, bytesToBinary, randomBytes } from './utils'
 import wordlist from './wordlists/english.json'
 
+export type MnemonicLength = 12 | 24
 
 export default class Mnemonic {
   public words!: Array<string>
 
   constructor(words: Array<string>) {
     this.words = words
+  }
+
+  static async create(length: MnemonicLength = 12): Promise<Mnemonic> {
+    if (![12, 24].includes(length)) {
+      throw new Error(`supported mnemonic lengths: 12, 24. received ${length}`)
+    }
+
+    const entropyBytes = (16 / 12) * length
+
+    const entropy = await randomBytes(entropyBytes)
+    return Mnemonic.fromEntropy(entropy)
   }
 
   static fromEntropy(entropy: Buffer): Mnemonic {
