@@ -19,13 +19,6 @@ describe('create', () => {
     const mnemonic = await Mnemonic.create(24)
     expect(mnemonic.words.length).toBe(24)
   })
-
-  it('raises an error if given a value besides 12 or 24', () => {
-    const expectedError = new Error('supported mnemonic lengths: 12, 24. received 36')
-    Mnemonic.create(36).catch((error) => {
-      expect(error).toEqual(expectedError)
-    })
-  })
 })
 
 describe('fromEntropy', () => {
