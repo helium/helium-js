@@ -1,6 +1,6 @@
 import Transaction, {
   PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, StakeValidatorV1,
-  TransferHotspotV1, TransferValidatorStakeV1, UnstakeValidatorV1,
+  TransferHotspotV1, TransferHotspotV2, TransferValidatorStakeV1, UnstakeValidatorV1,
 } from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
@@ -186,6 +186,31 @@ describe('TransferHotspotV1', () => {
     }
     const txn = Transaction.fromJsonObject(json) as TransferHotspotV1
     expect(txn.amountToSeller.integerBalance).toBe(500000000)
+    expect(txn.fee.integerBalance).toBe(55000)
+    expect(txn.data.hash).toBe(txn.hash)
+  })
+})
+
+describe('TransferHotspotV2', () => {
+  it('correctly converts transfer_hotspot_v2', () => {
+    const json = {
+      type: 'transfer_hotspot_v2',
+      time: 1607559551,
+      gateway: '112AMbwEAp4QyZeBQYuTMt8wa5W6ceK1xNjG59duxqB6Dx7fS1c4',
+      owner: '133yVfiCKZKTxHgWY6UQ8uD6CX2j9q5e2BNjZGCdmcUMLSMubn5',
+      owner_signature: 'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      new_owner: '13U1qigMC832L2oJLYqEYEdBH1JBMNqbRYZ6RuduNr6ntsKP7om',
+      height: 625011,
+      hash: 'rHkOU-wR2JpsN5zL5Pr46MFGpUuFiMleZPu1NRiyq1c',
+      fee: 55000,
+      nonce: 2,
+    }
+    const txn = Transaction.fromJsonObject(json) as TransferHotspotV2
+    expect(txn.gateway).toBe(json.gateway)
+    expect(txn.owner).toBe(json.owner)
+    expect(txn.ownerSignature).toBe(json.owner_signature)
+    expect(txn.newOwner).toBe(json.new_owner)
+    expect(txn.nonce).toBe(json.nonce)
     expect(txn.fee.integerBalance).toBe(55000)
     expect(txn.data.hash).toBe(txn.hash)
   })
