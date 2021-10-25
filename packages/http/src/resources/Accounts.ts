@@ -36,9 +36,14 @@ export default class Accounts {
     return new ResourceList(data, this.list.bind(this))
   }
 
-  async get(address: string): Promise<Account> {
-    const url = `/accounts/${address}`
-    const { data: { data: account } } = await this.client.get(url)
+  async get(address: string, params?: { maxBlock?: number }): Promise<Account> {
+    let url = `/accounts/${address}`
+    if (params?.maxBlock) {
+      url += `?max_block=${params?.maxBlock}`
+    }
+    const {
+      data: { data: account },
+    } = await this.client.get(url)
     return new Account(this.client, account)
   }
 

@@ -49,6 +49,22 @@ describe('get', () => {
   })
 })
 
+describe('get at max block', () => {
+  nock('https://api.helium.io')
+    .get('/v1/accounts/my-address?max_block=250000')
+    .reply(200, {
+      data: accountFixture({ balance: 1000000 }),
+    })
+
+  it("retreives a specific account's status at a maximum block height", async () => {
+    const client = new Client()
+    const maxBlock = 250000
+    const account = await client.accounts.get('my-address', { maxBlock })
+
+    expect(account.balance?.integerBalance).toBe(1000000)
+  })
+})
+
 describe('getStats', () => {
   nock('https://api.helium.io').get('/v1/accounts/my-address/stats').reply(200, {
     data: accountStatsFixture(),
