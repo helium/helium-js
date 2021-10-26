@@ -431,8 +431,73 @@ describe('list with min/max natural dates', () => {
   it('lists activity with a custom page limit', async () => {
     const client = new Client()
 
-    const list = await client.hotspot('my-address').activity.list({ minTime: '-30 day', maxTime: '-7 day' })
+    const list = await client
+      .hotspot('my-address')
+      .activity.list({ minTime: '-30 day', maxTime: '-7 day' })
     const [txn] = await list.take(1)
     expect(txn.type).toBe('rewards_v2')
+  })
+})
+
+describe('count', () => {
+  nock('https://api.helium.io')
+    .get('/v1/accounts/my-address/activity/count')
+    .reply(200, {
+      data: {
+        vars_v1: 0,
+        validator_heartbeat_v1: 0,
+        unstake_validator_v1: 0,
+        transfer_validator_stake_v1: 0,
+        transfer_hotspot_v1: 0,
+        token_burn_v1: 24,
+        token_burn_exchange_rate_v1: 0,
+        state_channel_open_v1: 0,
+        state_channel_close_v1: 0,
+        stake_validator_v1: 1,
+        security_exchange_v1: 33,
+        security_coinbase_v1: 1,
+        routing_v1: 0,
+        rewards_v2: 4370,
+        rewards_v1: 20542,
+        redeem_htlc_v1: 0,
+        price_oracle_v1: 0,
+        poc_request_v1: 0,
+        poc_receipts_v1: 0,
+        payment_v2: 31,
+        payment_v1: 1,
+        oui_v1: 0,
+        gen_gateway_v1: 0,
+        dc_coinbase_v1: 0,
+        create_htlc_v1: 0,
+        consensus_group_v1: 0,
+        consensus_group_failure_v1: 0,
+        coinbase_v1: 0,
+        assert_location_v2: 0,
+        assert_location_v1: 0,
+        add_gateway_v1: 0,
+      },
+    })
+
+  nock('https://api.helium.io')
+    .get('/v1/accounts/my-address/activity/count')
+    .query({ filter_types: 'payment_v2' })
+    .reply(200, {
+      data: {
+        payment_v2: 31,
+      },
+    })
+
+  it('displays the count of all transaction types', async () => {
+    const client = new Client()
+    const count = await client.account('my-address').activity.count()
+    expect(count.paymentV2).toBe(31)
+    expect(count.rewardsV1).toBe(20542)
+  })
+
+  it('filters the count by transaction type', async () => {
+    const client = new Client()
+    const count = await client.account('my-address').activity.count({ filterTypes: ['payment_v2'] })
+    expect(count.paymentV2).toBe(31)
+    expect(count.rewardsV1).toBe(undefined)
   })
 })
