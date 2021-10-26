@@ -37,13 +37,10 @@ export default class Accounts {
   }
 
   async get(address: string, params?: { maxBlock?: number }): Promise<Account> {
-    let url = `/accounts/${address}`
-    if (params?.maxBlock) {
-      url += `?max_block=${params?.maxBlock}`
-    }
+    const path = `/accounts/${address}`
     const {
       data: { data: account },
-    } = await this.client.get(url)
+    } = await this.client.get(path, params)
     return new Account(this.client, account)
   }
 
