@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, {AxiosInstance, AxiosRequestConfig} from 'axios'
 import * as rax from 'retry-axios'
 import qs from 'qs'
 import Network from './Network'
@@ -45,6 +45,7 @@ interface BlockFromHeightOrHashFn {
 
 interface Options {
   name?: string
+  userAgent?: string
   retry?: number
 }
 
@@ -52,6 +53,8 @@ export default class Client {
   public network!: Network
 
   public name?: string
+
+  public userAgent?: string
 
   public retry!: number
 
@@ -63,6 +66,7 @@ export default class Client {
       baseURL: this.network.endpoint,
     })
     this.name = options?.name
+    this.userAgent = options?.userAgent
     this.retry = options?.retry === undefined ? 5 : options?.retry
     if (this.retry > 0) {
       this.axios.defaults.raxConfig = {
@@ -154,21 +158,25 @@ export default class Client {
     return new Locations(this)
   }
 
+  private get clientOptions(): AxiosRequestConfig | undefined {
+    const opts = { headers: {} } as AxiosRequestConfig
+    if (this.name) {
+      opts.headers['x-client-name'] = this.name
+    }
+    if (this.userAgent) {
+      opts.headers['User-Agent'] = this.userAgent
+    }
+    const hasHeaders = Object.keys(opts.headers).length > 0
+    return hasHeaders ? opts : undefined
+  }
+
   async get(path: string, params: Object = {}) {
     const query = qs.stringify(params)
     const url = query.length > 0 ? [path, query].join('?') : path
-    let opts
-    if (this.name) {
-      opts = { headers: { 'x-client-name': this.name } }
-    }
-    return this.axios.get(url, opts)
+    return this.axios.get(url, this.clientOptions)
   }
 
   async post(path: string, params: Object = {}) {
-    let opts
-    if (this.name) {
-      opts = { headers: { 'x-client-name': this.name } }
-    }
-    return this.axios.post(path, params, opts)
+    return this.axios.post(path, params, this.clientOptions)
   }
 }

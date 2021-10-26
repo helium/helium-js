@@ -32,6 +32,23 @@ describe('get', () => {
 
     expect(data.greeting).toBe('hello')
   })
+
+  it('client passes headers to GET request', async () => {
+    const nameHeader = 'name-header-test'
+    const userAgentHeader = 'user-agent-test'
+    nock('https://api.helium.io')
+      .get('/v1/greeting')
+      .reply(200, {
+        greeting: 'hello',
+      })
+
+    const client = new Client(Network.production, { name: nameHeader, userAgent: userAgentHeader })
+    const response = await client.get('/greeting')
+
+    expect(response.data.greeting).toBe('hello')
+    expect(response.config.headers['x-client-name']).toBe(nameHeader)
+    expect(response.config.headers['User-Agent']).toBe(userAgentHeader)
+  })
 })
 
 describe('post', () => {
@@ -44,6 +61,21 @@ describe('post', () => {
 
     const { data } = await client.post('/greeting', params)
     expect(data.response).toBe('hey there!')
+  })
+
+  it('client passes headers to POST request', async () => {
+    const nameHeader = 'name-header-test'
+    const userAgentHeader = 'user-agent-test'
+    nock('https://api.helium.io').post('/v1/greeting', { greeting: 'hello' }).reply(200, {
+      response: 'hey there!',
+    })
+    const client = new Client(Network.production, { name: nameHeader, userAgent: userAgentHeader })
+    const params = { greeting: 'hello' }
+    const response = await client.post('/greeting', params)
+
+    expect(response.data.response).toBe('hey there!')
+    expect(response.config.headers['x-client-name']).toBe(nameHeader)
+    expect(response.config.headers['User-Agent']).toBe(userAgentHeader)
   })
 })
 
