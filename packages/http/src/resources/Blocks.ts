@@ -1,4 +1,5 @@
 import camelcaseKeys from 'camelcase-keys'
+import snakecaseKeys from 'snakecase-keys'
 import BlockStats from '../models/BlockStats'
 import type Client from '../Client'
 import Block from '../models/Block'
@@ -61,7 +62,7 @@ export default class Blocks {
 
   async getHeight(params?: {maxTime?: string}): Promise<number> {
     const path = '/blocks/height'
-    const { data: { data: { height } } } = await this.client.get(path, params)
+    const { data: { data: { height } } } = await this.client.get(path, snakecaseKeys(params || {}))
     return height
   }
 

@@ -22,7 +22,6 @@ import Validator from './models/Validator'
 import StateChannels from './resources/StateChannels'
 import Rewards from './resources/Rewards'
 import Locations from './resources/Locations'
-import snakecaseKeys from 'snakecase-keys'
 
 interface AccountFromAddressFn {
   (address: string): Account
@@ -156,7 +155,7 @@ export default class Client {
   }
 
   async get(path: string, params: Object = {}) {
-    const query = qs.stringify(snakecaseKeys(params))
+    const query = qs.stringify(params)
     const url = query.length > 0 ? [path, query].join('?') : path
     let opts
     if (this.name) {

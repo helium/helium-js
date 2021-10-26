@@ -1,3 +1,4 @@
+import snakecaseKeys from 'snakecase-keys'
 import type Client from '../Client'
 import Account, { AccountStats } from '../models/Account'
 import type { HTTPAccountObject } from '../models/Account'
@@ -40,7 +41,7 @@ export default class Accounts {
     const path = `/accounts/${address}`
     const {
       data: { data: account },
-    } = await this.client.get(path, params)
+    } = await this.client.get(path, snakecaseKeys(params || {}))
     return new Account(this.client, account)
   }
 
