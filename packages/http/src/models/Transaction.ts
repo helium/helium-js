@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
-import { Balance, CurrencyType, DataCredits, NetworkTokens } from '@helium/currency'
+import {
+  Balance, CurrencyType, DataCredits, NetworkTokens,
+} from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
 
@@ -428,6 +430,7 @@ export type AnyTransaction =
   | AssertLocationV1
   | PocReceiptsV1
   | TransferHotspotV1
+  | TransferHotspotV2
   | TokenBurnV1
   | StakeValidatorV1
   | UnstakeValidatorV1
@@ -486,6 +489,37 @@ export class TransferHotspotV1 extends DataModel {
   }
 }
 
+export class TransferHotspotV2 extends DataModel {
+  type!: string
+
+  time!: number
+
+  owner!: string
+
+  height!: number
+
+  hash!: string
+
+  gateway!: string
+
+  nonce!: number
+
+  newOwner!: string
+
+  fee!: Balance<DataCredits>
+
+  ownerSignature!: string
+
+  constructor(data: TransferHotspotV2) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): TransferHotspotV2 {
+    return this
+  }
+}
+
 export default class Transaction {
   public static fromJsonObject(json: TxnJsonObject): AnyTransaction {
     switch (json.type) {
@@ -503,6 +537,8 @@ export default class Transaction {
         return this.toPocReceiptsV1(json)
       case 'transfer_hotspot_v1':
         return this.toTransferHotspotV1(json)
+      case 'transfer_hotspot_v2':
+        return this.toTransferHotspotV2(json)
       case 'assert_location_v1':
         return this.toAssertLocationV1(json)
       case 'assert_location_v2':
@@ -580,6 +616,10 @@ export default class Transaction {
 
   static toTransferHotspotV1(json: TxnJsonObject): TransferHotspotV1 {
     return new TransferHotspotV1(prepareTxn(json))
+  }
+
+  static toTransferHotspotV2(json: TxnJsonObject): TransferHotspotV2 {
+    return new TransferHotspotV2(prepareTxn(json))
   }
 
   static toStateChannelCloseV1(json: TxnJsonObject): StateChannelCloseV1 {
