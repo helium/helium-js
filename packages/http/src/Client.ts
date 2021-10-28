@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import * as rax from 'retry-axios'
 import qs from 'qs'
 import Network from './Network'
@@ -47,6 +47,7 @@ interface Options {
   name?: string
   userAgent?: string
   retry?: number
+  headers?: Record<string, string>
 }
 
 export default class Client {
@@ -64,6 +65,7 @@ export default class Client {
     this.network = network
     this.axios = axios.create({
       baseURL: this.network.endpoint,
+      headers: options?.headers,
     })
     this.name = options?.name
     this.userAgent = options?.userAgent
