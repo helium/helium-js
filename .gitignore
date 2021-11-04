@@ -6,3 +6,5 @@ coverage
 .idea
 *.tgz
 docs/
+.yalc
+yalc.lock
