@@ -7,6 +7,7 @@ interface PaymentOptions {
   payer?: Addressable
   payee?: Addressable
   amount?: number
+  fee?: number
   nonce?: number
 }
 
@@ -35,8 +36,12 @@ export default class PaymentV1 extends Transaction {
     this.payee = opts.payee
     this.amount = opts.amount
     this.nonce = opts.nonce
-    this.fee = 0
-    this.fee = this.calculateFee()
+    if (opts.fee !== undefined) {
+      this.fee = opts.fee
+    } else {
+      this.fee = 0
+      this.fee = this.calculateFee()
+    }
   }
 
   serialize(): Uint8Array {

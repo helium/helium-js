@@ -1,10 +1,6 @@
 import proto from '@helium/proto'
 import { PaymentV1, Transaction } from '..'
-import {
-  usersFixture,
-  bobB58,
-  aliceB58,
-} from '../../../../integration_tests/fixtures/users'
+import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
   txnFeeMultiplier: 5000,
@@ -65,5 +61,21 @@ describe('sign', () => {
     if (!signedPayment.signature) throw new Error('null')
 
     expect(Buffer.byteLength(Buffer.from(signedPayment.signature))).toBe(64)
+  })
+})
+
+describe('fees', () => {
+  it('does not calculate fees if a fee is provided in the constructor', async () => {
+    const { bob, alice } = await usersFixture()
+
+    const txn = new PaymentV1({
+      payer: bob.address,
+      payee: alice.address,
+      amount: 10,
+      fee: 70000,
+      nonce: 1,
+    })
+
+    expect(txn.fee).toBe(70000)
   })
 })
