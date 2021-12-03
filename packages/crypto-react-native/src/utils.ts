@@ -1,6 +1,9 @@
+/* eslint-disable no-bitwise */
 import Sodium from 'react-native-sodium'
 import { sha256 } from 'js-sha256'
 import bs58 from 'bs58'
+import { NetType } from './NetType'
+import { KeyType } from './KeyType'
 
 export const randomBytes = async (n: number): Promise<Buffer> => {
   const bytes = await Sodium.randombytes_buf(n)
@@ -68,14 +71,29 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   return payload
 }
 
-export const bs58KeyType = (bs58Address: string): number => {
+export const byteToNetType = (byte: number): NetType => byte & 0xf0
+export const byteToKeyType = (byte: number): KeyType => byte & 0x0f
+
+export const bs58NetType = (bs58Address: string): NetType => {
   const bin = bs58ToBin(bs58Address)
-  const keyType = Buffer.from(bin).slice(0, 1)[0]
-  return keyType
+  const byte = Buffer.from(bin).slice(0, 1)[0]
+  return byteToNetType(byte)
+}
+
+export const bs58KeyType = (bs58Address: string): KeyType => {
+  const bin = bs58ToBin(bs58Address)
+  const byte = Buffer.from(bin).slice(0, 1)[0]
+  return byteToKeyType(byte)
 }
 
 export const bs58Version = (bs58Address: string): number => {
   const bin = bs58.decode(bs58Address)
   const version = bin.slice(0, 1)[0]
   return version
+}
+
+export const bs58PublicKey = (bs58Address: string): Buffer => {
+  const bin = bs58ToBin(bs58Address)
+  const publicKey = Buffer.from(bin).slice(1)
+  return publicKey
 }
