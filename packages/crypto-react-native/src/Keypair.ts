@@ -1,9 +1,11 @@
 import Sodium from 'react-native-sodium'
 import Mnemonic from './Mnemonic'
 import Address from './Address'
-import { ED25519_KEY_TYPE } from './KeyType'
+import { KeyType, ED25519_KEY_TYPE } from './KeyType'
+import { NetType, MAINNET } from './NetType'
 
 interface SodiumKeyPair {
+  keyType?: KeyType
   sk: string
   pk: string
 }
@@ -16,41 +18,47 @@ export default class Keypair {
 
   public privateKey!: Buffer
 
-  constructor(keypair: SodiumKeyPair) {
+  public keyType!: KeyType
+
+  public netType!: NetType
+
+  constructor(keypair: SodiumKeyPair, netType?: NetType) {
     this.keypair = keypair
     this.publicKey = Buffer.from(keypair.pk, 'base64')
     this.privateKey = Buffer.from(keypair.sk, 'base64')
+    this.keyType = keypair.keyType || ED25519_KEY_TYPE
+    this.netType = netType || MAINNET
   }
 
   get address(): Address {
-    return new Address(0, ED25519_KEY_TYPE, this.publicKey)
+    return new Address(0, this.netType, ED25519_KEY_TYPE, this.publicKey)
   }
 
-  static async makeRandom(): Promise<Keypair> {
+  static async makeRandom(netType?: NetType): Promise<Keypair> {
     const keypair = await Sodium.crypto_sign_keypair()
-    return new Keypair(keypair)
+    return new Keypair(keypair, netType)
   }
 
-  static async fromWords(words: Array<string>): Promise<Keypair> {
+  static async fromWords(words: Array<string>, netType?: NetType): Promise<Keypair> {
     const mnenomic = new Mnemonic(words)
-    const keypair = await this.fromMnemonic(mnenomic)
+    const keypair = await this.fromMnemonic(mnenomic, netType)
     return keypair
   }
 
-  static async fromMnemonic(mnenomic: Mnemonic): Promise<Keypair> {
+  static async fromMnemonic(mnenomic: Mnemonic, netType?: NetType): Promise<Keypair> {
     const entropy = mnenomic.toEntropy()
     const seed = entropy.length === 16 ? Buffer.concat([entropy, entropy]) : entropy
 
-    return Keypair.fromEntropy(seed)
+    return Keypair.fromEntropy(seed, netType)
   }
 
-  static async fromEntropy(entropy: Uint8Array | Buffer): Promise<Keypair> {
+  static async fromEntropy(entropy: Uint8Array | Buffer, netType?: NetType): Promise<Keypair> {
     const entropyBuffer = Buffer.from(entropy)
     if (Buffer.byteLength(entropyBuffer) !== 32) { throw new Error('Invalid entropy, must be 32 bytes') }
     const keypair = await Sodium.crypto_sign_seed_keypair(
       entropyBuffer.toString('base64'),
     )
-    return new Keypair(keypair)
+    return new Keypair(keypair, netType)
   }
 
   async sign(message: string | Uint8Array): Promise<Buffer> {
