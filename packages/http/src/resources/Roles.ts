@@ -1,5 +1,5 @@
 import type Client from '../Client'
-import Role, { AnyRole, RoleJsonObject } from '../models/Role'
+import Role, { RoleJsonObject } from '../models/Role'
 import Block from '../models/Block'
 import Account from '../models/Account'
 import ResourceList from '../ResourceList'
@@ -28,7 +28,7 @@ export default class Roles {
     this.context = context
   }
 
-  async list(params: ListParams = {}): Promise<ResourceList<AnyRole>> {
+  async list(params: ListParams = {}): Promise<ResourceList<Role>> {
     const {
       data: { data: roles, cursor },
     } = await this.client.get(this.activityUrl, {
@@ -38,7 +38,7 @@ export default class Roles {
       max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
       limit: params.limit,
     })
-    const data = roles.map((d: RoleJsonObject) => Role.fromJsonObject(d))
+    const data = roles.map((d: RoleJsonObject) => d)
     return new ResourceList(data, this.list.bind(this), cursor)
   }
 

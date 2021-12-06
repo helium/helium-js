@@ -10,7 +10,7 @@ export interface RoleJsonObject {
   hash: string
 }
 
-export class RoleObject extends DataModel {
+export default class Role extends DataModel {
   type!: string
 
   time!: number
@@ -28,17 +28,5 @@ export class RoleObject extends DataModel {
 
   get data(): Role {
     return this
-  }
-}
-
-export type AnyRole = RoleObject
-
-export default class Role {
-  public static fromJsonObject(json: RoleJsonObject): AnyRole {
-    return this.toRole(json)
-  }
-
-  static toRole(json: RoleJsonObject): RoleObject {
-    return new RoleObject(json)
   }
 }
