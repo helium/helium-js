@@ -9,6 +9,7 @@ import {
 } from '@helium/currency'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
+import Roles from '../resources/Roles'
 import PendingTransactions from '../resources/PendingTransactions'
 import Hotspots from '../resources/Hotspots'
 import Challenges from '../resources/Challenges'
@@ -118,6 +119,10 @@ export default class Account extends DataModel {
 
   public get activity(): Transactions {
     return new Transactions(this.client, this)
+  }
+
+  public get roles(): Roles {
+    return new Roles(this.client, this)
   }
 
   public get hotspots(): Hotspots {
