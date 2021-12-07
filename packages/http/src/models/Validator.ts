@@ -3,6 +3,7 @@ import type Client from '../Client'
 import DataModel from './DataModel'
 import Transactions from '../resources/Transactions'
 import Rewards from '../resources/Rewards'
+import Roles from '../resources/Roles'
 
 export type ValidatorData = Omit<Validator, 'client'>
 
@@ -95,6 +96,10 @@ export default class Validator extends DataModel {
 
   public get activity(): Transactions {
     return new Transactions(this.client, this)
+  }
+
+  public get roles(): Roles {
+    return new Roles(this.client, this)
   }
 
   public get rewards(): Rewards {
