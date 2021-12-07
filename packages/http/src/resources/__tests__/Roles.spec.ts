@@ -1,6 +1,6 @@
 import nock from 'nock'
 import Client from '../../Client'
-import { RoleObject } from '../../models/Role'
+import Role from '../../models/Role'
 
 describe('list from account', () => {
   nock('https://api.helium.io')
@@ -27,7 +27,7 @@ describe('list from account', () => {
   it('lists roles of recent activity for an account', async () => {
     const client = new Client()
     const list = await client.account('my-address').roles.list()
-    const roles = (await list.take(2)) as RoleObject[]
+    const roles = (await list.take(2)) as Role[]
     expect(roles[0].hash).toBe('fake-hash-1')
     expect(roles[1].hash).toBe('fake-hash-2')
   })
@@ -93,7 +93,7 @@ describe('list from hotspot', () => {
   it('lists roles of recent activity for a hotspot', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-hotspot-address').roles.list()
-    const roles = (await list.take(7)) as RoleObject[]
+    const roles = (await list.take(7)) as Role[]
     const txn0 = roles[0]
     const txn1 = roles[1]
     const txn2 = roles[2]
@@ -102,13 +102,13 @@ describe('list from hotspot', () => {
     const txn5 = roles[5]
     const txn6 = roles[6]
 
-    expect((txn0 as RoleObject).type).toBe('rewards_v2')
-    expect((txn1 as RoleObject).role).toBe('challenger')
-    expect((txn2 as RoleObject).height).toBe(1127819)
-    expect((txn3 as RoleObject).hash).toBe('fake-hash-4')
-    expect((txn4 as RoleObject).role).toBe('challengee')
-    expect((txn5 as RoleObject).role).toBe('reward_gateway')
-    expect((txn6 as RoleObject).type).toBe('poc_receipts_v1')
+    expect((txn0 as Role).type).toBe('rewards_v2')
+    expect((txn1 as Role).role).toBe('challenger')
+    expect((txn2 as Role).height).toBe(1127819)
+    expect((txn3 as Role).hash).toBe('fake-hash-4')
+    expect((txn4 as Role).role).toBe('challengee')
+    expect((txn5 as Role).role).toBe('reward_gateway')
+    expect((txn6 as Role).type).toBe('poc_receipts_v1')
   })
 })
 
@@ -151,11 +151,11 @@ describe('list from validator', () => {
   it('lists roles of recent activity for a validator', async () => {
     const client = new Client()
     const list = await client.validator('fake-validator-address').roles.list()
-    const [txn0, txn1, txn2, txn3] = (await list.take(4)) as RoleObject[]
+    const [txn0, txn1, txn2, txn3] = (await list.take(4)) as Role[]
 
-    expect((txn0 as RoleObject).time).toBe(1638820953)
-    expect((txn1 as RoleObject).type).toBe('validator_heartbeat_v1')
-    expect((txn2 as RoleObject).hash).toBe('fake-hash-3')
-    expect((txn3 as RoleObject).hash).toBe('fake-hash-4')
+    expect((txn0 as Role).time).toBe(1638820953)
+    expect((txn1 as Role).type).toBe('validator_heartbeat_v1')
+    expect((txn2 as Role).hash).toBe('fake-hash-3')
+    expect((txn3 as Role).hash).toBe('fake-hash-4')
   })
 })
