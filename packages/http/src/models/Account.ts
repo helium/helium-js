@@ -6,6 +6,7 @@ import {
   DataCredits,
   SecurityTokens,
   NetworkTokens,
+  TestNetworkTokens,
 } from '@helium/currency'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
@@ -84,7 +85,7 @@ export default class Account extends DataModel {
 
   public speculativeNonce?: number
 
-  public stakedBalance?: Balance<NetworkTokens>
+  public stakedBalance?: Balance<NetworkTokens | TestNetworkTokens>
 
   public secNonce?: number
 
@@ -98,7 +99,7 @@ export default class Account extends DataModel {
 
   public block?: number
 
-  public balance?: Balance<NetworkTokens>
+  public balance?: Balance<NetworkTokens | TestNetworkTokens>
 
   public address: string
 

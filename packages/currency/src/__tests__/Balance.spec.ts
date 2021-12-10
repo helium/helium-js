@@ -159,6 +159,27 @@ describe('toNetworkTokens', () => {
   })
 })
 
+describe('toTestNetworkTokens', () => {
+  it('converts a dc balance to an tnt balance', () => {
+    const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
+    const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
+    const tntBalance = dcBalance.toTestNetworkTokens(oraclePrice)
+    expect(tntBalance.toString(2)).toBe('22.22 TNT')
+  })
+
+  it('converts a usd balance to an tnt balance', () => {
+    const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
+    const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
+    const tntBalance = usdBalance.toTestNetworkTokens(oraclePrice)
+    expect(tntBalance.toString(2)).toBe('22.22 TNT')
+  })
+
+  it('returns itself if called on an tnt balance', () => {
+    const tntBalance = new Balance(10 * 100000000, CurrencyType.testNetworkToken)
+    expect(tntBalance.toString()).toBe('10 TNT')
+  })
+})
+
 describe('toDataCredits', () => {
   it('converts a usd balance to a dc balance', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)

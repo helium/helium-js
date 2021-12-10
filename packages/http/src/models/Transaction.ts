@@ -6,6 +6,7 @@ import {
 } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
+import {TestNetworkTokens} from "@helium/currency/build/currency_types";
 
 export interface TxnJsonObject {
   type: string
@@ -70,7 +71,7 @@ export class TokenBurnV1 extends DataModel {
 
   fee!: Balance<DataCredits>
 
-  amount!: Balance<NetworkTokens>
+  amount!: Balance<NetworkTokens | TestNetworkTokens>
 
   constructor(data: TokenBurnV1) {
     super()

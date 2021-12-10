@@ -5,6 +5,7 @@ import {
   USDollars,
   DataCredits,
   BaseCurrencyType,
+  TestNetworkTokens,
 } from './currency_types'
 import {
   MixedCurrencyTypeError,
@@ -114,6 +115,18 @@ export default class Balance<T extends BaseCurrencyType> {
         .dividedBy(CurrencyType.networkToken.coefficient)
         .toNumber(),
       CurrencyType.networkToken,
+    )
+  }
+
+  toTestNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<TestNetworkTokens> {
+    if (this.type instanceof TestNetworkTokens) return this
+    if (!oraclePrice) throw OraclePriceRequiredError
+    return new Balance(
+      this.toUsd()
+        .bigBalance.dividedBy(oraclePrice.bigBalance)
+        .dividedBy(CurrencyType.testNetworkToken.coefficient)
+        .toNumber(),
+      CurrencyType.testNetworkToken,
     )
   }
 

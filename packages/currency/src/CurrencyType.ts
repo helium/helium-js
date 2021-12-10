@@ -2,11 +2,12 @@ import {
   NetworkTokens,
   SecurityTokens,
   DataCredits,
-  USDollars,
+  USDollars, TestNetworkTokens,
 } from './currency_types'
 
 export type AnyCurrencyType =
   | NetworkTokens
+  | TestNetworkTokens
   | SecurityTokens
   | DataCredits
   | USDollars
@@ -18,6 +19,10 @@ export default class CurrencyType {
 
   static get networkToken(): NetworkTokens {
     return new NetworkTokens()
+  }
+
+  static get testNetworkToken(): TestNetworkTokens {
+    return new TestNetworkTokens()
   }
 
   static get dataCredit(): DataCredits {
