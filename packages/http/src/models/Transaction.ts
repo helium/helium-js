@@ -2,11 +2,14 @@
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
 import {
-  Balance, CurrencyType, DataCredits, NetworkTokens,
+  Balance,
+  CurrencyType,
+  DataCredits,
+  NetworkTokens,
+  TestNetworkTokens,
 } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
-import {TestNetworkTokens} from "@helium/currency/build/currency_types";
 
 export interface TxnJsonObject {
   type: string

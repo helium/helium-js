@@ -110,9 +110,9 @@ export default class Account extends DataModel {
     super()
     this.client = client
     this.netType = Address.fromB58(account.address).netType
-    const currencyType = this.netType === NetType.MAINNET
-      ? CurrencyType.default
-      : CurrencyType.testNetworkToken
+    const currencyType = this.netType === NetType.TESTNET
+      ? CurrencyType.testNetworkToken
+      : CurrencyType.default
     this.speculativeNonce = account.speculative_nonce
     this.stakedBalance = toBalance(account.staked_balance, currencyType)
     this.secNonce = account.sec_nonce

@@ -2,7 +2,8 @@ import {
   NetworkTokens,
   SecurityTokens,
   DataCredits,
-  USDollars, TestNetworkTokens,
+  USDollars,
+  TestNetworkTokens,
 } from './currency_types'
 
 export type AnyCurrencyType =

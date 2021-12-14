@@ -3,6 +3,9 @@ import { NetType } from '@helium/crypto'
 import Account from '../Account'
 import Client from '../../Client'
 
+const ECC_COMPACT_ADDRESS = '112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE'
+const TESTNET_ADDRESS = '1bijtibPhc16wx4oJbyK8vtkAgdoRoaUvJeo7rXBnBCufEYakfd'
+
 describe('balances', () => {
   it('returns a Balance', () => {
     const client = new Client()
@@ -16,7 +19,7 @@ describe('balances', () => {
       dc_nonce: 1,
       block: 1,
       balance: 1,
-      address: '132M1aKpkzcKiX9rP8bULxZb3uzdiTKtWvvzk9dUYLqDXLNTgp4',
+      address: ECC_COMPACT_ADDRESS,
     })
 
     expect(account.balance?.integerBalance).toBe(1)
@@ -39,7 +42,7 @@ describe('balances', () => {
       dc_nonce: 1,
       block: 1,
       balance: 1,
-      address: '1a7UT3iazovwb5yDUHgFzGSaQpgKuoMMtvBZZfiCV8xa7GwiyC5',
+      address: TESTNET_ADDRESS,
     })
 
     expect(account.balance?.integerBalance).toBe(1)
@@ -62,7 +65,7 @@ describe('balances', () => {
       dc_nonce: 1,
       block: 1,
       balance: 0,
-      address: '132M1aKpkzcKiX9rP8bULxZb3uzdiTKtWvvzk9dUYLqDXLNTgp4',
+      address: ECC_COMPACT_ADDRESS,
     })
 
     expect(account.balance?.integerBalance).toBe(0)
