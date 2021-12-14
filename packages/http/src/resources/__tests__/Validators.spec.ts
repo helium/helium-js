@@ -1,4 +1,5 @@
 import nock from 'nock'
+import { Address, NetType } from '@helium/crypto'
 import Client from '../../Client'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -83,6 +84,8 @@ export const rewardSumListFixture = () => ({
     },
   ],
 })
+
+Address.fromB58 = jest.fn(() => new Address(0, NetType.MAINNET, 0, new Uint8Array()))
 
 describe('get', () => {
   nock('https://api.helium.io').get('/v1/validators/fake-validator-address').reply(200, {

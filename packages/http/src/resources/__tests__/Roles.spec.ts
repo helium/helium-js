@@ -1,4 +1,5 @@
 import nock from 'nock'
+import { Address, NetType } from '@helium/crypto'
 import Client from '../../Client'
 import Role from '../../models/Role'
 
@@ -32,6 +33,8 @@ describe('list from account', () => {
     expect(roles[1].hash).toBe('fake-hash-2')
   })
 })
+
+Address.fromB58 = jest.fn(() => new Address(0, NetType.MAINNET, 0, new Uint8Array()))
 
 describe('list from hotspot', () => {
   nock('https://api.helium.io')
