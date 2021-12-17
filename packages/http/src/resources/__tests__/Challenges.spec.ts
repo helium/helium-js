@@ -1,5 +1,8 @@
 import nock from 'nock'
+import { Address, NetType } from '@helium/crypto'
 import Client from '../../Client'
+
+Address.fromB58 = jest.fn(() => new Address(0, NetType.MAINNET, 0, new Uint8Array()))
 
 export const challengeFixture = (params = {}) => ({
   type: 'poc_receipts_v1',

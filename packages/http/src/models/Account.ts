@@ -6,7 +6,9 @@ import {
   DataCredits,
   SecurityTokens,
   NetworkTokens,
+  TestNetworkTokens,
 } from '@helium/currency'
+import { Address, NetType } from '@helium/crypto'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import Roles from '../resources/Roles'
@@ -84,7 +86,7 @@ export default class Account extends DataModel {
 
   public speculativeNonce?: number
 
-  public stakedBalance?: Balance<NetworkTokens>
+  public stakedBalance?: Balance<NetworkTokens | TestNetworkTokens>
 
   public secNonce?: number
 
@@ -98,22 +100,28 @@ export default class Account extends DataModel {
 
   public block?: number
 
-  public balance?: Balance<NetworkTokens>
+  public balance?: Balance<NetworkTokens | TestNetworkTokens>
 
   public address: string
+
+  public netType: number
 
   constructor(client: Client, account: HTTPAccountObject) {
     super()
     this.client = client
+    this.netType = Address.fromB58(account.address).netType
+    const currencyType = this.netType === NetType.TESTNET
+      ? CurrencyType.testNetworkToken
+      : CurrencyType.default
     this.speculativeNonce = account.speculative_nonce
-    this.stakedBalance = toBalance(account.staked_balance, CurrencyType.default)
+    this.stakedBalance = toBalance(account.staked_balance, currencyType)
     this.secNonce = account.sec_nonce
     this.secBalance = toBalance(account.sec_balance, CurrencyType.security)
     this.nonce = account.nonce
     this.dcNonce = account.dc_nonce
     this.dcBalance = toBalance(account.dc_balance, CurrencyType.dataCredit)
     this.block = account.block
-    this.balance = toBalance(account.balance, CurrencyType.default)
+    this.balance = toBalance(account.balance, currencyType)
     this.address = account.address
   }
 

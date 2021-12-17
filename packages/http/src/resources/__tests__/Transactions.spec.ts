@@ -1,4 +1,5 @@
 import nock from 'nock'
+import { Address, NetType } from '@helium/crypto'
 import Client from '../../Client'
 import {
   UnknownTransaction,
@@ -9,6 +10,8 @@ import {
   AssertLocationV2,
 } from '../../index'
 import { RewardsV2 } from '../../models/Transaction'
+
+Address.fromB58 = jest.fn(() => new Address(0, NetType.MAINNET, 0, new Uint8Array()))
 
 describe('submit', () => {
   it('posts to the pending transactions endpoint', async () => {

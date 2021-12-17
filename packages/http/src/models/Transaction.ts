@@ -2,7 +2,11 @@
 /* eslint-disable max-classes-per-file */
 import camelcaseKeys from 'camelcase-keys'
 import {
-  Balance, CurrencyType, DataCredits, NetworkTokens,
+  Balance,
+  CurrencyType,
+  DataCredits,
+  NetworkTokens,
+  TestNetworkTokens,
 } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
@@ -70,7 +74,7 @@ export class TokenBurnV1 extends DataModel {
 
   fee!: Balance<DataCredits>
 
-  amount!: Balance<NetworkTokens>
+  amount!: Balance<NetworkTokens | TestNetworkTokens>
 
   constructor(data: TokenBurnV1) {
     super()

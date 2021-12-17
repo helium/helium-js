@@ -26,6 +26,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
+    "@helium/crypto": "^3.45.0",
     "@helium/currency": "^3.45.0",
     "axios": "^0.21.1",
     "camelcase-keys": "^6.2.2",
