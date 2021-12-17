@@ -1,6 +1,6 @@
 {
   "name": "@helium/http",
-  "version": "3.51.0",
+  "version": "3.52.0",
   "description": "HTTP library for interacting with the Helium blockchain API",
   "keywords": [
     "helium",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@helium/crypto": "^3.45.0",
-    "@helium/currency": "^3.45.0",
+    "@helium/currency": "^3.52.0",
     "axios": "^0.21.1",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
