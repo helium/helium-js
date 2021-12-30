@@ -167,7 +167,11 @@ export default class Hotspot extends DataModel {
   }
 
   public get witnesses(): Witnesses {
-    return new Witnesses(this.client, this)
+    return new Witnesses(this.client, this, 'witnesses')
+  }
+
+  public get witnessed(): Witnesses {
+    return new Witnesses(this.client, this, 'witnessed')
   }
 
   public get rewards(): Rewards {

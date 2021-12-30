@@ -8,18 +8,23 @@ interface ListParams {
   cursor?: string
 }
 
+type WitnessType = 'witnesses' | 'witnessed'
+
 export default class Witnesses {
   private client!: Client
 
   private hotspot: Hotspot
 
-  constructor(client: Client, hotspot: Hotspot) {
+  private type: WitnessType
+
+  constructor(client: Client, hotspot: Hotspot, type: WitnessType = 'witnesses') {
     this.client = client
     this.hotspot = hotspot
+    this.type = type
   }
 
   async list(params: ListParams = {}): Promise<ResourceList<Witness>> {
-    const url = `/hotspots/${this.hotspot.address}/witnesses`
+    const url = `/hotspots/${this.hotspot.address}/${this.type}`
     const {
       data: { data: witnesses, cursor },
     } = await this.client.get(url, { cursor: params.cursor })
