@@ -99,6 +99,12 @@ describe('list witnesses', () => {
     })
 
   nock('https://api.helium.io')
+    .get('/v1/hotspots/fake-address/witnessed')
+    .reply(200, {
+      data: [witnessFixture({ name: 'hotspot-1' }), witnessFixture({ name: 'hotspot-2' })],
+    })
+
+  nock('https://api.helium.io')
     .get(
       '/v1/hotspots/fake-address/witnesses/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=week',
     )
@@ -111,6 +117,20 @@ describe('list witnesses', () => {
   it('lists hotspots witnesses', async () => {
     const client = new Client()
     const list = await client.hotspot('fake-address').witnesses.list()
+    const witnesses = await list.take(2)
+    expect(witnesses[0].name).toBe('hotspot-1')
+    expect(witnesses[0].name).toBe('hotspot-1')
+    expect(witnesses[1].location).toBe('an-h3-address')
+    expect(witnesses[1].locationHex).toBe('an-h3-address-hex')
+    expect(witnesses[0].witnessFor).toBe('fake-witness-for-address')
+    expect(witnesses[0].witnessInfo?.histogram?.['-92']).toBe(21)
+    expect(witnesses[0].witnessInfo?.recentTime).toBe('1618969231803488000')
+    expect(witnesses[0].witnessInfo?.firstTime).toBe('1618163719840575700')
+  })
+
+  it('lists witnessed hotspots', async () => {
+    const client = new Client()
+    const list = await client.hotspot('fake-address').witnessed.list()
     const witnesses = await list.take(2)
     expect(witnesses[0].name).toBe('hotspot-1')
     expect(witnesses[0].name).toBe('hotspot-1')
