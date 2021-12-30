@@ -5,7 +5,14 @@ export type Counts = {
   consensusGroups: number
   countries: number
   hotspots: number
+  hotspotsOnline: number
   transactions: number
+  validators: number
+  ouis: number
+  hotspotsDataonly:number
+  coingeckoPriceUsd: number
+  coingeckoPriceGbp: number
+  coingeckoPriceEur: number
 }
 
 type DcBurnStats = {

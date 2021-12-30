@@ -64,7 +64,14 @@ const countsFixture = () => ({
   consensus_groups: 20778,
   countries: 66,
   hotspots: 26973,
+  hotspots_online: 24000,
   transactions: 52592071,
+  validators: 2942,
+  ouis: 18,
+  hotspots_dataonly: 893,
+  coingecko_price_usd: 1251,
+  coingecko_price_gbp: 897,
+  coingecko_price_eur: 1054,
 })
 
 const dcBurnsFixture = () => ({
@@ -128,6 +135,14 @@ describe('get counts', () => {
     expect(counts.blocks).toBe(805339)
     expect(counts.consensusGroups).toBe(20778)
     expect(counts.challenges).toBe(19724635)
+    expect(counts.validators).toBe(2942)
+    expect(counts.ouis).toBe(18)
+    expect(counts.coingeckoPriceUsd).toBe(1251)
+    expect(counts.coingeckoPriceGbp).toBe(897)
+    expect(counts.coingeckoPriceEur).toBe(1054)
+    expect(counts.hotspotsDataonly).toBe(893)
+    expect(counts.hotspots).toBe(26973)
+    expect(counts.hotspotsOnline).toBe(24000)
   })
 })
 
