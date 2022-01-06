@@ -1,6 +1,6 @@
 {
   "name": "@helium/transactions",
-  "version": "3.49.1",
+  "version": "3.54.0",
   "description": "Construct and serialize Helium blockchain transaction primatives",
   "keywords": [
     "helium",
