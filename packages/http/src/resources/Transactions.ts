@@ -8,6 +8,7 @@ import ResourceList from '../ResourceList'
 import Hotspot from '../models/Hotspot'
 import Validator from '../models/Validator'
 import camelcaseKeys from 'camelcase-keys'
+import snakecaseKeys from 'snakecase-keys'
 
 export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
 
@@ -39,11 +40,11 @@ export default class Transactions {
     return new PendingTransaction(data)
   }
 
-  async get(hash: string): Promise<AnyTransaction> {
+  async get(hash: string, params?: { actor?: string }): Promise<AnyTransaction> {
     const url = `/transactions/${hash}`
     const {
       data: { data },
-    } = await this.client.get(url)
+    } = await this.client.get(url, snakecaseKeys(params || {}))
     return Transaction.fromJsonObject(data)
   }
 
@@ -63,7 +64,9 @@ export default class Transactions {
 
   async count(params?: { filterTypes?: Array<string> }) {
     const url = `${this.activityUrl}/count`
-    const { data: { data } } = await this.client.get(url, {
+    const {
+      data: { data },
+    } = await this.client.get(url, {
       filter_types: params?.filterTypes ? params.filterTypes.join() : undefined,
     })
     return camelcaseKeys(data)
