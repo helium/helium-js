@@ -55,6 +55,44 @@ describe('get', () => {
   })
 })
 
+describe('gets transaction detail with actor param', () => {
+  nock('https://api.helium.io')
+    .get('/v1/transactions/fake-rewards-hash-1')
+    .query({ actor: 'fake-account-addr' })
+    .reply(200, {
+      data: {
+        type: 'rewards_v2',
+        time: 1641846360,
+        start_epoch: 1175114,
+        rewards: [
+          {
+            type: 'poc_witnesses',
+            gateway: 'fake-gateway-2',
+            amount: 2237068,
+            account: 'fake-account-addr',
+          },
+          {
+            type: 'poc_challengees',
+            gateway: 'fake-gateway-1',
+            amount: 2478094,
+            account: 'fake-account-addr',
+          },
+        ],
+        height: 1175146,
+        hash: 'Tw26EeI4cbC1-zbpUoTOdGtAb1T77ja_bnj9KUvWHV0',
+        end_epoch: 1175145,
+      },
+    })
+
+  it('gets a transaction by hash', async () => {
+    const client = new Client()
+    const txn = (await client.transactions.get('fake-rewards-hash-1', {
+      actor: 'fake-account-addr',
+    })) as RewardsV2
+    expect(txn.rewards[0].account).toBe('fake-account-addr')
+  })
+})
+
 describe('list from account', () => {
   nock('https://api.helium.io')
     .get('/v1/accounts/my-address/activity')
