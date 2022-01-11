@@ -8,3 +8,4 @@ coverage
 docs/
 .yalc
 yalc.lock
+.vscode
