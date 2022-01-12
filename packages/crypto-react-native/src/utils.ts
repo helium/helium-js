@@ -29,9 +29,9 @@ export const binaryToByte = (bin: string) => parseInt(bin, 2)
 export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   const ENT = entropyBuffer.length * 8
   const CS = ENT / 32
-  const hash = sha256(entropyBuffer)
+  const hash = sha256.digest(entropyBuffer)
 
-  return bytesToBinary([].slice.call(hash)).slice(0, CS)
+  return bytesToBinary(Array.from(hash)).slice(0, CS)
 }
 
 export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
