@@ -1,5 +1,5 @@
 import nock from 'nock'
-import Client from '..'
+import OnboardingClient from '..'
 import { DEWI_ONBOARDING_API_BASE_URL } from '../types'
 
 const HELIUM_MAKER = {
@@ -19,7 +19,7 @@ describe('Makers', () => {
         data: [HELIUM_MAKER],
       })
 
-    const client = new Client()
+    const client = new OnboardingClient()
     const makers = await client.getMakers()
     const [helium] = makers.data!
     expect(helium).toBeDefined()
@@ -54,7 +54,7 @@ describe('Hotspots', () => {
           success: true,
         })
 
-    const client = new Client()
+    const client = new OnboardingClient()
     const { data: record } = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record?.publicAddress).toBe(hotspotAddress)
@@ -73,7 +73,7 @@ describe('Hotspots', () => {
         success: false,
       })
 
-    const client = new Client()
+    const client = new OnboardingClient()
     const record = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record.code).toBe(404)
@@ -95,7 +95,7 @@ describe('Payment', () => {
           success: true,
         })
 
-    const client = new Client()
+    const client = new OnboardingClient()
     const onboardingTxn = await client.postPaymentTransaction(hotspotAddress, txn)
     expect(onboardingTxn.data).toBeDefined()
     expect(onboardingTxn.data?.transaction).toBe('asdf1234')
@@ -113,7 +113,7 @@ describe('Payment', () => {
           success: false,
         })
 
-    const client = new Client()
+    const client = new OnboardingClient()
     const record = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record.code).toBe(404)

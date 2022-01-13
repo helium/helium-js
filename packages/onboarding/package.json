@@ -1,5 +1,5 @@
 {
-  "name": "onboarding",
+  "name": "@helium/onboarding",
   "version": "3.55.0",
   "description": "HTTP library for interacting with an onboarding server",
   "keywords": [

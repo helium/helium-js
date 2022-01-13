@@ -4,8 +4,8 @@
  * @module onboarding
  */
 
-import Client from './Client'
+import OnboardingClient from './OnboardingClient'
 
-export default Client
+export default OnboardingClient
 
 export { Maker, OnboardingRecord } from './types'

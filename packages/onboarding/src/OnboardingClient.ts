@@ -10,7 +10,7 @@ type Response<T>={
   errors?: Array<any>
 }
 
-export default class Client {
+export default class OnboardingClient {
   private axios!: AxiosInstance
 
   constructor(baseURL: string = DEWI_ONBOARDING_API_BASE_URL) {
@@ -19,18 +19,12 @@ export default class Client {
     })
   }
 
-  async execute<T>(method:Method, path: string, params: Object = {}) {
-    const query = qs.stringify(params)
-    let url = path
-    if (method === 'GET' && query.length > 0) {
-      url = [path, query].join('?')
-    }
-
+  async execute<T>(method:Method, path: string, params?: Object) {
     try {
       const response: AxiosResponse<Response<T>> = await this.axios({
         method,
-        url,
-        data: method === 'GET' ? undefined : params,
+        url: path,
+        data: params,
       })
       return response.data
     } catch (err) {
@@ -42,7 +36,13 @@ export default class Client {
   }
 
   async get<T>(path: string, params: Object = {}) {
-    return this.execute<T>('GET', path, params)
+    const query = qs.stringify(params)
+    let url = path
+    if (query.length > 0) {
+      url = [path, query].join('?')
+    }
+
+    return this.execute<T>('GET', url)
   }
 
   async post<T>(path: string, params: Object = {}) {

@@ -14,11 +14,11 @@ $ npm install @helium/onboarding
 ## Usage
 
 ```ts
-import { Client } from '@helium/onboarding'
-const client = new Client()
+import OnboardingClient from '@helium/onboarding'
+const client = new OnboardingClient()
 
 // Or pass your own custom base url
-const client = new Client('https://onboarding.you.com/api')
+const client = new OnboardingClient('https://onboarding.you.com/api')
 
 const { data: record } = await client.getOnboardingRecord(hotspotAddress)
 console.log(record?.publicAddress)
