@@ -1,4 +1,6 @@
-import { lpad, deriveChecksumBits, binaryToByte, bytesToBinary, randomBytes } from './utils'
+import {
+  lpad, deriveChecksumBits, binaryToByte, bytesToBinary, randomBytes,
+} from './utils'
 import wordlist from './wordlists/english.json'
 
 export type MnemonicLength = 12 | 24

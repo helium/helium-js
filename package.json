@@ -16,6 +16,7 @@
     "testEnvironment": "node",
     "roots": [
       "packages/crypto/src",
+      "packages/crypto-react-native/src",
       "packages/http/src",
       "packages/transactions/src",
       "packages/currency/src",
