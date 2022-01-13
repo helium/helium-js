@@ -120,3 +120,23 @@ describe('Payment', () => {
     expect(record.errorMessage).toBe('Hotspot not found')
   })
 })
+
+describe('Firmware', () => {
+  const version = '2019.11.06.0'
+  it('Gets the firmware version', async () => {
+    nock(DEWI_ONBOARDING_API_BASE_URL).get('/firmware')
+      .reply(200,
+        {
+          code: 200,
+          data: {
+            version,
+          },
+          success: true,
+        })
+
+    const client = new OnboardingClient()
+    const onboardingTxn = await client.getFirmware()
+    expect(onboardingTxn.data).toBeDefined()
+    expect(onboardingTxn.data?.version).toBe(version)
+  })
+})

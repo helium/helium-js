@@ -57,6 +57,10 @@ export default class OnboardingClient {
     return this.get<Maker[]>('makers')
   }
 
+  async getFirmware() {
+    return this.get<{ version: string }>('firmware')
+  }
+
   async postPaymentTransaction(
     gatewayAddress: string,
     transaction: string,
