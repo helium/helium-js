@@ -1,0 +1,39 @@
+{
+  "name": "@helium/onboarding",
+  "version": "3.55.0",
+  "description": "HTTP library for interacting with an onboarding server",
+  "keywords": [
+    "helium",
+    "onboarding",
+    "api"
+  ],
+  "author": "Matt Reetz <matthewcarlreetz@gmail.com>",
+  "homepage": "https://github.com/helium/helium-js",
+  "license": "Apache-2.0",
+  "main": "lib/onboarding.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helium/helium-js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/helium/helium-js/issues"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "qs": "^6.10.3"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.7",
+    "nock": "^13.2.2"
+  }
+}

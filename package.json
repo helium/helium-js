@@ -17,6 +17,7 @@
     "roots": [
       "packages/crypto/src",
       "packages/http/src",
+      "packages/onboarding/src",
       "packages/transactions/src",
       "packages/currency/src",
       "integration_tests/tests"
