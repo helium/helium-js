@@ -1,4 +1,5 @@
 import * as bs58 from 'bs58'
+import { sha256 } from 'js-sha256'
 import { utils, Address } from '..'
 import { bobB58, usersFixture } from '../../../../integration_tests/fixtures/users'
 import { MAINNET } from '../NetType'
@@ -17,7 +18,7 @@ describe('bs58checkEncode', () => {
     const { bob } = await usersFixture()
     const address = new Address(0, MAINNET, 1, bob.publicKey)
     const vPayload = Buffer.concat([Buffer.from([0]), address.bin])
-    const checksum = utils.sha256(Buffer.from(utils.sha256(vPayload)))
+    const checksum = sha256(Buffer.from(sha256.digest(vPayload)))
     const checksumBytes = Buffer.alloc(4, checksum, 'hex')
     const result = Buffer.concat([vPayload, checksumBytes])
     const encoded = bs58.encode(result)
@@ -32,7 +33,7 @@ describe('bs58ToBin', () => {
     const bin = bs58.decode(address)
     const vPayload = bin.slice(0, -4)
     const checksum = bin.slice(-4)
-    const checksumVerify = utils.sha256(Buffer.from(utils.sha256(vPayload)))
+    const checksumVerify = sha256(Buffer.from(sha256.digest(vPayload)))
     const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
     expect(checksumVerifyBytes).toStrictEqual(checksum)
   })
