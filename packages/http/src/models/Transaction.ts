@@ -7,6 +7,7 @@ import {
   DataCredits,
   NetworkTokens,
   TestNetworkTokens,
+  SecurityTokens,
 } from '@helium/currency'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
@@ -366,6 +367,35 @@ export class StateChannelCloseV1 extends DataModel {
   }
 }
 
+export class SecurityExchangeV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  payer!: string
+
+  payee!: string
+
+  nonce!: number
+
+  height!: number
+
+  hash!: string
+
+  fee!: Balance<DataCredits>
+
+  amount!: Balance<SecurityTokens>
+
+  constructor(data: SecurityExchangeV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): SecurityExchangeV1 {
+    return this
+  }
+}
+
 export class UnknownTransaction extends DataModel {
   type!: string
 
@@ -439,6 +469,7 @@ export type AnyTransaction =
   | StakeValidatorV1
   | UnstakeValidatorV1
   | TransferValidatorStakeV1
+  | SecurityExchangeV1
   | UnknownTransaction
 
 function prepareTxn(txn: any, { deep } = { deep: false }) {
@@ -557,6 +588,8 @@ export default class Transaction {
         return this.toTransferValidatorStakeV1(json)
       case 'state_channel_close_v1':
         return this.toStateChannelCloseV1(json)
+      case 'security_exchange_v1':
+        return this.toSecurityExchangeV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -628,6 +661,10 @@ export default class Transaction {
 
   static toStateChannelCloseV1(json: TxnJsonObject): StateChannelCloseV1 {
     return new StateChannelCloseV1(prepareTxn(json, { deep: true }))
+  }
+
+  static toSecurityExchangeV1(json: TxnJsonObject): SecurityExchangeV1 {
+    return new SecurityExchangeV1(prepareTxn(json))
   }
 
   static toRewardsV1(json: TxnJsonObject): RewardsV1 {

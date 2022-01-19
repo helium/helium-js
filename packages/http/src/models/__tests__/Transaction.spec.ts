@@ -1,6 +1,14 @@
 import Transaction, {
-  PaymentV2, PocReceiptsV1, RewardsV1, RewardsV2, StakeValidatorV1,
-  TransferHotspotV1, TransferHotspotV2, TransferValidatorStakeV1, UnstakeValidatorV1,
+  PaymentV2,
+  PocReceiptsV1,
+  RewardsV1,
+  RewardsV2,
+  SecurityExchangeV1,
+  StakeValidatorV1,
+  TransferHotspotV1,
+  TransferHotspotV2,
+  TransferValidatorStakeV1,
+  UnstakeValidatorV1,
 } from '../Transaction'
 import { HTTPPathObject, HTTPWitnessesObject } from '../Challenge'
 import {
@@ -213,6 +221,31 @@ describe('TransferHotspotV2', () => {
     expect(txn.nonce).toBe(json.nonce)
     expect(txn.fee.integerBalance).toBe(55000)
     expect(txn.data.hash).toBe(txn.hash)
+  })
+})
+
+describe('SecurityExchangeV1', () => {
+  it('correctly converts security_exchange_v1', () => {
+    const json = {
+      type: 'security_exchange_v1',
+      time: 1607559551,
+      payer: '133yVfiCKZKTxHgWY6UQ8uD6CX2j9q5e2BNjZGCdmcUMLSMubn5',
+      payee: '13U1qigMC832L2oJLYqEYEdBH1JBMNqbRYZ6RuduNr6ntsKP7om',
+      nonce: 30,
+      height: 625011,
+      hash: 'rHkOU-wR2JpsN5zL5Pr46MFGpUuFiMleZPu1NRiyq1c',
+      fee: 35000,
+      amount: 1814000000,
+    }
+    const txn = Transaction.fromJsonObject(json) as SecurityExchangeV1
+    expect(txn.type).toBe(json.type)
+    expect(txn.time).toBe(json.time)
+    expect(txn.payer).toBe(json.payer)
+    expect(txn.payee).toBe(json.payee)
+    expect(txn.nonce).toBe(json.nonce)
+    expect(txn.fee.integerBalance).toBe(35000)
+    expect(txn.amount.integerBalance).toBe(1814000000)
+    expect(txn.amount.floatBalance).toBe(18.14)
   })
 })
 
