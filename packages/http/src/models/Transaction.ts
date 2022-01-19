@@ -469,6 +469,7 @@ export type AnyTransaction =
   | StakeValidatorV1
   | UnstakeValidatorV1
   | TransferValidatorStakeV1
+  | SecurityExchangeV1
   | UnknownTransaction
 
 function prepareTxn(txn: any, { deep } = { deep: false }) {
