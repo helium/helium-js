@@ -4,6 +4,7 @@ import bs58 from 'bs58'
 import sodium from 'libsodium-wrappers'
 import { NetType } from './NetType'
 import { KeyType } from './KeyType'
+import Address from './Address'
 
 export const randomBytes = async (n: number): Promise<Buffer> => {
   await sodium.ready
@@ -78,6 +79,18 @@ export const bs58KeyType = (bs58Address: string): KeyType => {
   return byteToKeyType(byte)
 }
 
+export const bs58M = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const M = bin[1]
+  return M
+}
+
+export const bs58N = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const N = bin[2]
+  return N
+}
+
 export const bs58Version = (bs58Address: string): number => {
   const bin = bs58.decode(bs58Address)
   const version = bin.slice(0, 1)[0]
@@ -88,4 +101,15 @@ export const bs58PublicKey = (bs58Address: string): Buffer => {
   const bin = bs58ToBin(bs58Address)
   const publicKey = Buffer.from(bin).slice(1)
   return publicKey
+}
+
+export const sortAddresses = (addresses: Address[]): Address[] => {
+  const addressMap = addresses.map(address => {
+    const charCodeArray = Array.from(address.b58).map((character):number => {
+      return character.charCodeAt(0)
+    })
+    return { address: address, buffer: new Uint8Array(charCodeArray)}
+  })
+
+  return addressMap.sort((a, b) => Buffer.compare(a.buffer, b.buffer)).map(obj => obj.address)
 }

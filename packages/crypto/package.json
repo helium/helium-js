@@ -28,7 +28,8 @@
   "dependencies": {
     "bs58": "^4.0.1",
     "create-hash": "^1.2.0",
-    "libsodium-wrappers": "^0.7.6"
+    "libsodium-wrappers": "^0.7.6",
+    "multiformats": "^9.6.2"
   },
   "devDependencies": {
     "@types/bs58": "4.0.1",
