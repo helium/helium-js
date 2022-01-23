@@ -66,6 +66,9 @@ export default class MultisigAddress extends Address {
 
     let multisigPubKeysBin = new Uint8Array()
     sortAddresses(addresses).forEach((address) => {
+      if (address.keyType === MULTISIG_KEY_TYPE) {
+        throw new Error('cannot craeate multisig with invalid child keytype')
+      }
       multisigPubKeysBin = new Uint8Array([...multisigPubKeysBin, ...address.bin])
     })
 
