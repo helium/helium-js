@@ -103,6 +103,12 @@ export const bs58PublicKey = (bs58Address: string): Buffer => {
   return publicKey
 }
 
+export const bs58MultisigPublicKey = (bs58Address: string): Buffer => {
+  const bin = bs58ToBin(bs58Address)
+  const publicKey = Buffer.from(bin).slice(3)
+  return publicKey
+}
+
 export const sortAddresses = (addresses: Address[]): Address[] => {
   const addressMap = addresses.map(address => {
     const charCodeArray = Array.from(address.b58).map((character):number => {

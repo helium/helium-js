@@ -2,10 +2,12 @@ import {
   bs58M,
   bs58N,
   bs58Version,
-  bs58PublicKey,
+  bs58MultisigPublicKey,
   bs58NetType,
   byteToNetType,
+  byteToKeyType,
   sortAddresses,
+  bs58KeyType,
 } from './utils'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { MULTISIG_KEY_TYPE } from './KeyType'
@@ -18,13 +20,13 @@ export default class MultisigAddress extends Address {
   public N!: number
 
   constructor(version: number, netType: NetType, M: number, N: number, publicKey: Uint8Array) {
-    super(version, netType, MULTISIG_KEY_TYPE, publicKey);
     if (M > 256) {
       throw new Error('required signers cannot exceed 256')
     }
     if (N > 256) {
       throw new Error('total signers cannot exceed 256')
     }
+    super(version, netType, MULTISIG_KEY_TYPE, publicKey);
     this.M = M
     this.N = N
   }
@@ -40,11 +42,15 @@ export default class MultisigAddress extends Address {
   }
 
   static fromB58(b58: string): MultisigAddress {
+    const keyType = bs58KeyType(b58)
+    if (keyType !== MULTISIG_KEY_TYPE) {
+      throw new Error('invalid keytype for multisig address')
+    }
     const version = bs58Version(b58)
     const netType = bs58NetType(b58)
     const M = bs58M(b58)
     const N = bs58N(b58)
-    const publicKey = bs58PublicKey(b58)
+    const publicKey = bs58MultisigPublicKey(b58)
     return new MultisigAddress(version, netType, M, N, publicKey)
   }
 
@@ -52,6 +58,10 @@ export default class MultisigAddress extends Address {
     const version = 0
     const byte = bin[0]
     const netType = byteToNetType(byte)
+    const keyType = byteToKeyType(byte)
+    if (keyType !== MULTISIG_KEY_TYPE) {
+      throw new Error('invalid keytype for multisig address')
+    }
     const M = bin[1]
     const N = bin[2]
     const publicKey = bin.slice(3, bin.length)
@@ -65,12 +75,12 @@ export default class MultisigAddress extends Address {
     }
 
     let multisigPubKeysBin = new Uint8Array()
-    sortAddresses(addresses).forEach((address) => {
+    for (const address of sortAddresses(addresses)) {
       if (address.keyType === MULTISIG_KEY_TYPE) {
-        throw new Error('cannot craeate multisig with invalid child keytype')
+        return Promise.reject(new Error('cannot craeate multisig with invalid child keytype'))
       }
       multisigPubKeysBin = new Uint8Array([...multisigPubKeysBin, ...address.bin])
-    })
+    }
 
     const publicKey = (await sha256.digest(multisigPubKeysBin))
     return new MultisigAddress(version, netType, M, N, publicKey.bytes)
