@@ -30,6 +30,8 @@ export interface HTTPAccountObject {
   block?: number
   balance?: number
   address: string
+  hotspot_count?: number
+  validator_count?: number
 }
 
 function toBalance(
@@ -106,6 +108,10 @@ export default class Account extends DataModel {
 
   public netType: number
 
+  public hotspotCount?: number
+
+  public validatorCount?: number
+
   constructor(client: Client, account: HTTPAccountObject) {
     super()
     this.client = client
@@ -123,6 +129,8 @@ export default class Account extends DataModel {
     this.block = account.block
     this.balance = toBalance(account.balance, currencyType)
     this.address = account.address
+    this.hotspotCount = account.hotspot_count
+    this.validatorCount = account.validator_count
   }
 
   public get activity(): Transactions {
