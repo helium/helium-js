@@ -20,6 +20,8 @@ describe('balances', () => {
       block: 1,
       balance: 1,
       address: ECC_COMPACT_ADDRESS,
+      hotspot_count: 650,
+      validator_count: 10,
     })
 
     expect(account.balance?.integerBalance).toBe(1)
@@ -28,6 +30,8 @@ describe('balances', () => {
     expect(account.secBalance?.integerBalance).toBe(1)
     expect(account.dcBalance?.integerBalance).toBe(1)
     expect(account.stakedBalance?.integerBalance).toBe(100)
+    expect(account.hotspotCount).toBe(650)
+    expect(account.validatorCount).toBe(10)
   })
 
   it('returns a testnet Balance', () => {
