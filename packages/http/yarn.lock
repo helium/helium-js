@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@helium/crypto@^3.45.0":
-  version "3.45.0"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-3.45.0.tgz#2892aaac8f35865cd32a91222fd5ffbe9f973e08"
-  integrity sha512-J89U4GsLLjODPEPTD5m6q6w6zjbtJjYTxrXAF+Sp+Aqq9nPSOTvQ4gx12dfKXfPT/Rq1vrZ5/CIVXYPhQ7PTJQ==
+"@helium/crypto@^3.60.0":
+  version "3.60.0"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-3.60.0.tgz#58be74745d0c7cc3198481dc69f5530393fc7287"
+  integrity sha512-zvDshfSv9wv0PAmmKvZPFP9pnNmR6Q7ZAy+WuGpCD3AxuWv9fiODgKATVuTMhV/QXkkxI+5t8TbGUjTOxsXAmA==
   dependencies:
     bs58 "^4.0.1"
     create-hash "^1.2.0"
     libsodium-wrappers "^0.7.6"
 
-"@helium/currency@^3.45.0":
-  version "3.45.0"
-  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-3.45.0.tgz#326933225047601f447209fb9c77c6d4b114c381"
-  integrity sha512-6hajnB+L5OQgbQJyGzzYrHlcpRnt1j9thjt+zKhLP672VgfqJWaBs5unI+yhqHvF3JPB2/DsLj3/oT4hL0z84A==
+"@helium/currency@^3.52.0":
+  version "3.52.0"
+  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-3.52.0.tgz#68b8ec1c2db73b7c88f54c1b59686a5ade148986"
+  integrity sha512-L91EKuzO+X4v45df8fgr9ihR1WTzThTQIx3Uh2bQwpwkDjxvxdI6xq43VEhz0+y7JN2XGRl3tX4ljQST+Azw4Q==
   dependencies:
     bignumber.js "^9.0.0"
 
@@ -91,9 +91,9 @@ dot-case@^3.0.4:
     tslib "^2.0.3"
 
 follow-redirects@^1.10.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
-  integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==
+  version "1.14.8"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.8.tgz#016996fb9a11a100566398b1c6839337d7bfa8fc"
+  integrity sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==
 
 hash-base@^3.0.0:
   version "3.1.0"
