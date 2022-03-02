@@ -27,6 +27,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
+    "@helium/address": "^3.52.0",
     "bs58": "^4.0.1",
     "buffer": "^6.0.1",
     "js-sha256": "^0.9.0",

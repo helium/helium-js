@@ -5,6 +5,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@helium/address": "^3.52.0",
     "@helium/crypto": "^3.60.0",
     "@helium/http": "^3.63.0",
     "@helium/transactions": "^3.62.0"

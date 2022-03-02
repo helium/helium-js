@@ -1,9 +1,12 @@
 import sodium from 'libsodium-wrappers'
 import type { KeyPair as SodiumKeyPair } from 'libsodium-wrappers'
+import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
-import Address from './Address'
-import { ED25519_KEY_TYPE } from './KeyType'
-import { MAINNET, NetType } from './NetType'
+
+const { ED25519_KEY_TYPE } = KeyTypes
+const { MAINNET } = NetTypes
+
+type NetType = NetTypes.NetType
 
 // extend SodiumKeyPair?
 export default class Keypair {
