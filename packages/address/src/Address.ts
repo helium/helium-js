@@ -7,8 +7,8 @@ import {
   byteToNetType,
   byteToKeyType,
 } from './utils'
-import { KeyType, SUPPORTED_KEY_TYPES } from './KeyType'
-import { NetType, SUPPORTED_NET_TYPES } from './NetType'
+import { KeyType, SUPPORTED_KEY_TYPES } from './KeyTypes'
+import { NetType, SUPPORTED_NET_TYPES } from './NetTypes'
 
 export default class Address {
   public version!: number

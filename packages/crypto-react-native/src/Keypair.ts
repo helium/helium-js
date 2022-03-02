@@ -1,9 +1,9 @@
 import Sodium from 'react-native-sodium'
+import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
-import Address from './Address'
-import { KeyType, ED25519_KEY_TYPE } from './KeyType'
-import { NetType, MAINNET } from './NetType'
 
+type KeyType = KeyTypes.KeyType
+type NetType = NetTypes.NetType
 interface SodiumKeyPair {
   keyType?: KeyType
   sk: string
@@ -26,12 +26,12 @@ export default class Keypair {
     this.keypair = keypair
     this.publicKey = Buffer.from(keypair.pk, 'base64')
     this.privateKey = Buffer.from(keypair.sk, 'base64')
-    this.keyType = keypair.keyType || ED25519_KEY_TYPE
-    this.netType = netType || MAINNET
+    this.keyType = keypair.keyType || KeyTypes.ED25519_KEY_TYPE
+    this.netType = netType || NetTypes.MAINNET
   }
 
   get address(): Address {
-    return new Address(0, this.netType, ED25519_KEY_TYPE, this.publicKey)
+    return new Address(0, this.netType, KeyTypes.ED25519_KEY_TYPE, this.publicKey)
   }
 
   static async makeRandom(netType?: NetType): Promise<Keypair> {

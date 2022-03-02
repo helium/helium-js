@@ -1,11 +1,11 @@
 {
-  "name": "@helium/http",
-  "version": "3.63.0",
-  "description": "HTTP library for interacting with the Helium blockchain API",
+  "name": "@helium/address",
+  "version": "3.52.0",
+  "description": "Helium public key utilities",
   "keywords": [
     "helium",
     "blockchain",
-    "api"
+    "currency"
   ],
   "contributors": [
     "Andrew Allen <allenan@helium.com>"
@@ -25,17 +25,12 @@
     "clean": "rimraf build",
     "build": "yarn run clean && tsc"
   },
+  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4",
   "dependencies": {
-    "@helium/address": "^3.52.0",
-    "@helium/currency": "^3.52.0",
-    "axios": "^0.21.1",
-    "camelcase-keys": "^6.2.2",
-    "qs": "^6.9.3",
-    "retry-axios": "^2.1.2",
-    "snakecase-keys": "^5.1.0"
+    "bs58": "4.0.1",
+    "js-sha256": "^0.9.0"
   },
   "devDependencies": {
-    "@types/qs": "6.9.5"
-  },
-  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
+    "@types/bs58": "4.0.1"
+  }
 }

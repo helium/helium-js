@@ -1,7 +1,7 @@
-import { Address } from '..'
+import Address from '..'
 import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
-import { ED25519_KEY_TYPE } from '../KeyType'
-import { MAINNET, TESTNET } from '../NetType'
+import { ED25519_KEY_TYPE } from '../KeyTypes'
+import { MAINNET, TESTNET } from '../NetTypes'
 
 const ECC_COMPACT_ADDRESS = '112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE'
 const BTC_ADDRESS = '18wxa7qM8C8AXmGwJj13C7sGqn8hyFdcdR'

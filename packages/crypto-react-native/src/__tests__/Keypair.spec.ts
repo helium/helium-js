@@ -1,7 +1,6 @@
+import { NetTypes, utils } from '@helium/address'
 import { Keypair, Mnemonic } from '..'
 import { bobWords, bobBip39Words, bobB58 } from '../../../../integration_tests/fixtures/users'
-import { TESTNET } from '../NetType'
-import { bs58NetType } from '../utils'
 
 describe('makeRandom', () => {
   it('makes a new random keypair', async () => {
@@ -79,8 +78,8 @@ describe('testnet keypairs', () => {
       '1f5b981baca0420259ab53996df7a8ce0e3549c6616854e7dff796304bafb6bf',
       'hex',
     )
-    const keypair = await Keypair.fromEntropy(entropy, TESTNET)
-    expect(keypair.address.netType).toBe(TESTNET)
-    expect(bs58NetType(keypair.address.b58)).toBe(TESTNET)
+    const keypair = await Keypair.fromEntropy(entropy, NetTypes.TESTNET)
+    expect(keypair.address.netType).toBe(NetTypes.TESTNET)
+    expect(utils.bs58NetType(keypair.address.b58)).toBe(NetTypes.TESTNET)
   })
 })

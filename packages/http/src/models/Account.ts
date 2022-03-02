@@ -8,7 +8,7 @@ import {
   NetworkTokens,
   TestNetworkTokens,
 } from '@helium/currency'
-import { Address, NetType } from '@helium/crypto'
+import Address, { NetTypes } from '@helium/address'
 import type Client from '../Client'
 import Transactions from '../resources/Transactions'
 import Roles from '../resources/Roles'
@@ -18,6 +18,8 @@ import Challenges from '../resources/Challenges'
 import DataModel from './DataModel'
 import Rewards from '../resources/Rewards'
 import Validators from '../resources/Validators'
+
+type NetType = NetTypes.NetType
 
 export interface HTTPAccountObject {
   speculative_nonce?: number
@@ -106,7 +108,7 @@ export default class Account extends DataModel {
 
   public address: string
 
-  public netType: number
+  public netType: NetType
 
   public hotspotCount?: number
 
@@ -116,7 +118,7 @@ export default class Account extends DataModel {
     super()
     this.client = client
     this.netType = Address.fromB58(account.address).netType
-    const currencyType = this.netType === NetType.TESTNET
+    const currencyType = this.netType === NetTypes.TESTNET
       ? CurrencyType.testNetworkToken
       : CurrencyType.default
     this.speculativeNonce = account.speculative_nonce
