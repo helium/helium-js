@@ -28,14 +28,9 @@
   },
   "dependencies": {
     "@helium/address": "^3.52.0",
-    "bs58": "^4.0.1",
-    "buffer": "^6.0.1",
     "js-sha256": "^0.9.0",
     "react-native-sodium": "^0.3.8",
     "safe-buffer": "^5.2.1"
-  },
-  "devDependencies": {
-    "@types/bs58": "4.0.1"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
