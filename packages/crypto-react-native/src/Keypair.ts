@@ -1,8 +1,6 @@
 import Sodium from 'react-native-sodium'
 import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
-// import { KeyType, ED25519_KEY_TYPE } from './KeyType'
-// import { NetType, MAINNET } from './NetType'
 
 type KeyType = KeyTypes.KeyType
 type NetType = NetTypes.NetType
