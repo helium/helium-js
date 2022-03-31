@@ -21,6 +21,7 @@
       "packages/onboarding/src",
       "packages/transactions/src",
       "packages/currency/src",
+      "packages/address/src",
       "integration_tests/tests"
     ],
     "collectCoverageFrom": [

@@ -1,5 +1,5 @@
 import nock from 'nock'
-import { Address, NetType } from '@helium/crypto'
+import Address, { NetTypes } from '@helium/address'
 import Client from '../../Client'
 
 const accountFixture = (params = {}) => ({
@@ -36,7 +36,7 @@ const accountStatsFixture = (params = {}) => ({
   ...params,
 })
 
-Address.fromB58 = jest.fn(() => new Address(0, NetType.MAINNET, 0, new Uint8Array()))
+Address.fromB58 = jest.fn(() => new Address(0, NetTypes.MAINNET, 0, new Uint8Array()))
 
 describe('get', () => {
   nock('https://api.helium.io').get('/v1/accounts/my-address').reply(200, {

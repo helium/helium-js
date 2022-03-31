@@ -1,5 +1,5 @@
 import { CurrencyType } from '@helium/currency'
-import { NetType } from '@helium/crypto'
+import { NetTypes } from '@helium/address'
 import Account from '../Account'
 import Client from '../../Client'
 
@@ -26,7 +26,7 @@ describe('balances', () => {
 
     expect(account.balance?.integerBalance).toBe(1)
     expect(account.balance?.type?.ticker).toBe(CurrencyType.networkToken.ticker)
-    expect(account.netType).toBe(NetType.MAINNET)
+    expect(account.netType).toBe(NetTypes.MAINNET)
     expect(account.secBalance?.integerBalance).toBe(1)
     expect(account.dcBalance?.integerBalance).toBe(1)
     expect(account.stakedBalance?.integerBalance).toBe(100)
@@ -51,7 +51,7 @@ describe('balances', () => {
 
     expect(account.balance?.integerBalance).toBe(1)
     expect(account.balance?.type?.ticker).toBe(CurrencyType.testNetworkToken.ticker)
-    expect(account.netType).toBe(NetType.TESTNET)
+    expect(account.netType).toBe(NetTypes.TESTNET)
     expect(account.secBalance?.integerBalance).toBe(1)
     expect(account.dcBalance?.integerBalance).toBe(1)
     expect(account.stakedBalance?.integerBalance).toBe(100)

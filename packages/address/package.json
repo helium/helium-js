@@ -1,12 +1,11 @@
 {
-  "name": "@helium/crypto-react-native",
+  "name": "@helium/address",
   "version": "4.0.0",
-  "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding for React Native",
+  "description": "Helium public key utilities",
   "keywords": [
     "helium",
     "blockchain",
-    "crypto",
-    "react-native"
+    "currency"
   ],
   "contributors": [
     "Andrew Allen <allenan@helium.com>"
@@ -26,11 +25,13 @@
     "clean": "rimraf build",
     "build": "yarn run clean && tsc"
   },
+  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4",
   "dependencies": {
-    "@helium/address": "^4.0.0",
+    "bs58": "^5.0.0",
     "js-sha256": "^0.9.0",
-    "react-native-sodium": "^0.3.8",
-    "safe-buffer": "^5.2.1"
+    "multiformats": "^9.6.4"
   },
-  "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
+  "devDependencies": {
+    "@types/bs58": "4.0.1"
+  }
 }

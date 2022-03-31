@@ -1,4 +1,5 @@
-import { Address, MultisigAddress } from '..'
+import Address from '../Address'
+import MultisigAddress from '../MultisigAddress'
 import {  
   bobB58,
   aliceB58,
@@ -6,7 +7,7 @@ import {
   bobAliceMultisig2of2B58,
   testnetBobAliceMultisig2of2B58,
 } from '../../../../integration_tests/fixtures/users'
-import { TESTNET } from '../NetType'
+import { TESTNET } from '../NetTypes'
 
 
 describe('multisig b58', () => {

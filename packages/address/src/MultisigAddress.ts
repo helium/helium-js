@@ -8,10 +8,10 @@ import {
   byteToKeyType,
   sortAddresses,
   bs58KeyType,
-} from './utils'
+} from '../src/utils'
 import { sha256 } from 'multiformats/hashes/sha2'
-import { MULTISIG_KEY_TYPE } from './KeyType'
-import { NetType, MAINNET} from './NetType'
+import { MULTISIG_KEY_TYPE } from './KeyTypes'
+import { NetType, MAINNET} from './NetTypes'
 import Address from './Address'
 
 export default class MultisigAddress extends Address {
