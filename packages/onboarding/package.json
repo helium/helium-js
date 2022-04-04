@@ -39,8 +39,8 @@
     "qs": "^6.10.3"
   },
   "devDependencies": {
-    "@types/qs": "^6.9.7",
-    "nock": "^13.2.2"
+    "@types/qs": "6.9.7",
+    "nock": "13.2.2"
   },
   "gitHead": "f0b682f99e11ddfae71f08d14b6e622e484bade0"
 }

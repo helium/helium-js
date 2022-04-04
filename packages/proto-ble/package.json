@@ -29,12 +29,12 @@
     "protobufjs": "^6.8.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/preset-typescript": "^7.12.7",
-    "babel-jest": "^26.6.3",
-    "jest": "^25.4.0",
-    "mkdirp": "^1.0.4",
-    "rimraf": "^3.0.2"
+    "@babel/core": "7.12.9",
+    "@babel/preset-env": "7.12.7",
+    "@babel/preset-typescript": "7.12.7",
+    "babel-jest": "26.6.3",
+    "jest": "25.5.4",
+    "mkdirp": "1.0.4",
+    "rimraf": "3.0.2"
   }
 }
