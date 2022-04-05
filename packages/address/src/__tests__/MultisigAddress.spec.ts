@@ -1,5 +1,5 @@
-import Address from '../Address'
-import MultisigAddress from '../MultisigAddress'
+import Address from '..'
+import { MultisigAddress } from '../MultisigAddress'
 import {  
   bobB58,
   aliceB58,

@@ -8,13 +8,13 @@ import {
   byteToKeyType,
   sortAddresses,
   bs58KeyType,
-} from '../src/utils'
+} from './utils'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { MULTISIG_KEY_TYPE } from './KeyTypes'
 import { NetType, MAINNET} from './NetTypes'
 import Address from './Address'
 
-export default class MultisigAddress extends Address {
+export class MultisigAddress extends Address {
   public M!: number
 
   public N!: number
@@ -68,7 +68,7 @@ export default class MultisigAddress extends Address {
     return new MultisigAddress(version, netType, M, N, publicKey)
   }
 
-  static async create(addresses: Address[], M: number, N: number, netType?: NetType): Promise<MultisigAddress> {
+  public static async create(addresses: Address[], M: number, N: number, netType?: NetType): Promise<MultisigAddress> {
     const version = 0
     if (!netType) {
       netType = MAINNET
@@ -95,3 +95,5 @@ export default class MultisigAddress extends Address {
     }
   }
 }
+
+export default MultisigAddress
