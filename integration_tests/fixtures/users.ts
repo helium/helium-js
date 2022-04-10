@@ -38,6 +38,9 @@ export const aliceWords = [
 
 export const bobB58 = '13M8dUbxymE3xtiAXszRkGMmezMhBS8Li7wEsMojLdb4Sdxc4wc'
 export const aliceB58 = '148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3'
+export const bobAliceMultisig2of2B58 = '1SYJnDnV2G1HSzoBF9nwd5apBX3pS7nLeLkjnVXemBZTP8C8F44TBYnr'
+export const bobAliceMultisig1of2B58 = '1SVRdbavwiw4SM6cQFq6DN2nhK4YSqTd7cPhELjshVxzdQvoKbhQWocF'
+export const testnetBobAliceMultisig2of2B58 ='14x4TpdfsLeL9MMcaJp6EVXFnA5tsgqXCr2u8MCL4qMEpKEYPCHZEEGJo'
 
 export const bobBip39Words = bobWords.map(word => word !== 'energy' ? word : 'episode')
 

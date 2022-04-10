@@ -22,7 +22,7 @@ describe('bs58ToBin', () => {
     const address = new Address(0, NetTypes.MAINNET, 1, bob.publicKey).b58
     const bin = bs58.decode(address)
     const vPayload = bin.slice(0, -4)
-    const checksum = bin.slice(-4)
+    const checksum = Buffer.from(bin.slice(-4))
     const checksumVerify = sha256(Buffer.from(sha256.digest(vPayload)))
     const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
     expect(checksumVerifyBytes).toStrictEqual(checksum)
