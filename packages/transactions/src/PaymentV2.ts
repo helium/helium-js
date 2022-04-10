@@ -51,10 +51,9 @@ export default class PaymentV2 extends Transaction {
     this.signature = opts.signature
   }
 
-  serialize(): Uint8Array {
+  serialize(forSigning: boolean = false): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
-
-    const paymentV2 = this.toProto()
+    const paymentV2 = this.toProto(forSigning=forSigning)
     const txn = BlockchainTxn.create({ paymentV2 })
     return BlockchainTxn.encode(txn).finish()
   }
