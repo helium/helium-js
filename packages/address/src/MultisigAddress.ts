@@ -20,7 +20,8 @@ export class MultisigAddress extends Address {
   public N!: number
 
   public constructor(
-    version: number, netType: NetType, M: number, N: number, publicKey: Uint8Array) {
+    version: number, netType: NetType, M: number, N: number, publicKey: Uint8Array,
+  ) {
     if (M > 256) {
       throw new Error('required signers cannot exceed 256')
     }
@@ -73,7 +74,8 @@ export class MultisigAddress extends Address {
   }
 
   public static async create(
-    addresses: Address[], M: number, netType?: NetType): Promise<MultisigAddress> {
+    addresses: Address[], M: number, netType?: NetType,
+  ): Promise<MultisigAddress> {
     const version = 0
     if (!netType) {
       netType = MAINNET
