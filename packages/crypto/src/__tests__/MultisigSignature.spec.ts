@@ -143,7 +143,7 @@ describe('fromBin', () => {
     const multisigAddress = await MultisigAddress.create([bob.address, alice.address], 1)
     const signatures = new Map([[bob.address, await bob.sign(message)]])
     const multisigSig = MultisigSignature.create(
-      mltisigAddress, [bob.address, alice.address], signatures,
+      multisigAddress, [bob.address, alice.address], signatures,
     )
     const multisigSignatureFromBin = MultisigSignature.fromBin(multisigAddress, multisigSig.bin)
     expect(multisigSignatureFromBin.verify(message)).toBe(1)

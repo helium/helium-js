@@ -84,12 +84,10 @@ export const bs58MultisigPublicKey = (bs58Address: string): Buffer => {
 }
 
 export const sortAddresses = (addresses: Address[]): Address[] => {
-  const addressMap = addresses.map(address => {
-    const charCodeArray = Array.from(address.b58).map((character):number => {
-      return character.charCodeAt(0)
-    })
-    return { address: address, buffer: new Uint8Array(charCodeArray)}
+  const addressMap = addresses.map((address) => {
+    const charCodeArray = Array.from(address.b58).map((character):number => character.charCodeAt(0))
+    return { address, buffer: new Uint8Array(charCodeArray) }
   })
 
-  return addressMap.sort((a, b) => Buffer.compare(a.buffer, b.buffer)).map(obj => obj.address)
+  return addressMap.sort((a, b) => Buffer.compare(a.buffer, b.buffer)).map((obj) => obj.address)
 }
