@@ -114,11 +114,11 @@ test('create and sign multisig payment', async () => {
     nonce: 1,
   })
   // Create signature mapping for multisig
-  const serializedTransaction = paymentTxn.serialize(true);
+  const serializedTransaction = paymentTxn.serialize();
   const signatures = new Map([[bob.address, await bob.sign(serializedTransaction)]])
 
   // Construct multisig and verify
-  const multisigSig = MultisigSignature.create(multisigAddress, [bob.address, aliceAddress], signatures)
+  const multisigSig = await MultisigSignature.create(multisigAddress, [bob.address, aliceAddress], signatures)
   expect(await multisigSig.verify(serializedTransaction)).toBe(1)
 
   // Update signature on payment trasnaction

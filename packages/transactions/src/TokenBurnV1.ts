@@ -45,7 +45,6 @@ export default class TokenBurnV1 extends Transaction {
 
   serialize(): Uint8Array {
     const BlockchainTxn = proto.helium.blockchain_txn
-
     const tokenBurn = this.toProto()
     const txn = BlockchainTxn.create({ tokenBurn })
     return BlockchainTxn.encode(txn).finish()

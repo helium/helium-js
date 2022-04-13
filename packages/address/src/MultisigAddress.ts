@@ -1,3 +1,4 @@
+import { sha256 } from 'multiformats/hashes/sha2'
 import {
   bs58M,
   bs58N,
@@ -9,7 +10,6 @@ import {
   sortAddresses,
   bs58KeyType,
 } from './utils'
-import { sha256 } from 'multiformats/hashes/sha2'
 import { MULTISIG_KEY_TYPE } from './KeyTypes'
 import { NetType, MAINNET} from './NetTypes'
 import Address from './Address'
@@ -29,7 +29,7 @@ export class MultisigAddress extends Address {
     if (M > N) {
       throw new Error('required signers cannot exceed total signers')
     }
-    super(version, netType, MULTISIG_KEY_TYPE, publicKey);
+    super(version, netType, MULTISIG_KEY_TYPE, publicKey)
     this.M = M
     this.N = N
   }
