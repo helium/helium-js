@@ -1,6 +1,6 @@
 import Address from '..'
-import { MultisigAddress } from '../MultisigAddress'
-import {  
+import MultisigAddress from '../MultisigAddress'
+import {
   bobB58,
   aliceB58,
   bobAliceMultisig1of2B58,
@@ -9,10 +9,11 @@ import {
 } from '../../../../integration_tests/fixtures/users'
 import { TESTNET } from '../NetTypes'
 
-
 describe('multisig b58', () => {
   it('returns a b58 check encoded representation of a multisig address', async () => {
-    const addressMultisig2of2 = await MultisigAddress.create([Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2)
+    const addressMultisig2of2 = await MultisigAddress.create(
+      [Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2,
+    )
     expect(addressMultisig2of2.b58).toBe(bobAliceMultisig2of2B58)
   })
 
@@ -24,14 +25,18 @@ describe('multisig b58', () => {
 
 describe('bin', () => {
   it('returns a binary representation of the multisig ddress', async () => {
-    const addressMultisig2of2 = await MultisigAddress.create([Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2)
+    const addressMultisig2of2 = await MultisigAddress.create(
+      [Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2,
+    )
     expect(addressMultisig2of2.bin[0]).toBe(2)
   })
 })
 
 describe('fromBin', () => {
-  it('builds a MultisigAddress from a binary representation', async () => {    
-    const multisigAddress = await MultisigAddress.create([Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2)
+  it('builds a MultisigAddress from a binary representation', async () => {
+    const multisigAddress = await MultisigAddress.create(
+      [Address.fromB58(bobB58), Address.fromB58(aliceB58)], 2,
+    )
     const multisigAddressFromBin = MultisigAddress.fromBin(multisigAddress.bin)
     expect(multisigAddressFromBin.b58).toBe(multisigAddress.b58)
   })
@@ -47,7 +52,9 @@ describe('fromB58', () => {
 describe('unsupported child key types', () => {
   it('throws an error if creating address with multisig key type', async () => {
     expect(async () => {
-      await MultisigAddress.create([MultisigAddress.fromB58(bobAliceMultisig2of2B58), Address.fromB58(aliceB58)], 2)
+      await MultisigAddress.create(
+        [MultisigAddress.fromB58(bobAliceMultisig2of2B58), Address.fromB58(aliceB58)], 2,
+      )
     }).rejects.toThrow()
   })
 })
@@ -81,5 +88,5 @@ describe('erlang interop', () => {
     ]
     const address = await MultisigAddress.create(keys, 1)
     expect(address.b58).toBe('1SVRdbaAev7zSpUsMjvQrbRBGFHLXEa63SGntYCqChC4CTpqwftTPGbZ')
-  }) 
+  })
 })

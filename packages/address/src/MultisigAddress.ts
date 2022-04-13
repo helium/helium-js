@@ -14,7 +14,7 @@ import { MULTISIG_KEY_TYPE } from './KeyTypes'
 import { NetType, MAINNET } from './NetTypes'
 import Address from './Address'
 
-export class MultisigAddress extends Address {
+export default class MultisigAddress extends Address {
   public M!: number
 
   public N!: number
@@ -76,21 +76,15 @@ export class MultisigAddress extends Address {
   public static async create(
     addresses: Address[], M: number, netType?: NetType,
   ): Promise<MultisigAddress> {
+    if (addresses.some((addr) => addr.keyType === MULTISIG_KEY_TYPE)) {
+      return Promise.reject(new Error('cannot create multisig with invalid child keytype'))
+    }
     const version = 0
-    if (!netType) {
-      netType = MAINNET
-    }
-
-    let multisigPubKeysBin = new Uint8Array()
-    for (const address of sortAddresses(addresses)) {
-      if (address.keyType === MULTISIG_KEY_TYPE) {
-        return Promise.reject(new Error('cannot craeate multisig with invalid child keytype'))
-      }
-      multisigPubKeysBin = new Uint8Array([...multisigPubKeysBin, ...address.bin])
-    }
-
-    const publicKey = (await sha256.digest(multisigPubKeysBin))
-    return new MultisigAddress(version, netType, M, addresses.length, publicKey.bytes)
+    const multisigPubKeysBin = sortAddresses(addresses).map((address) => address.bin)
+    const publicKey = (await sha256.digest(multisigPubKeysBin.reduce(
+      (acc, curVal) => new Uint8Array([...acc, ...curVal]), new Uint8Array(),
+    )))
+    return new MultisigAddress(version, netType || MAINNET, M, addresses.length, publicKey.bytes)
   }
 
   static isValid(b58: string): boolean {
@@ -102,5 +96,3 @@ export class MultisigAddress extends Address {
     }
   }
 }
-
-export default MultisigAddress
