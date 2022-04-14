@@ -35,12 +35,12 @@
     "url": "https://github.com/helium/helium-js/issues"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^0.26.0",
     "qs": "^6.10.3"
   },
   "devDependencies": {
     "@types/qs": "^6.9.7",
-    "nock": "^13.2.2"
+    "nock": "13.2.4"
   },
   "gitHead": "f0b682f99e11ddfae71f08d14b6e622e484bade0"
 }

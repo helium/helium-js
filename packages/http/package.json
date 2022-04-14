@@ -28,14 +28,14 @@
   "dependencies": {
     "@helium/address": "^4.0.0",
     "@helium/currency": "^4.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.26.0",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
     "retry-axios": "^2.1.2",
     "snakecase-keys": "^5.1.0"
   },
   "devDependencies": {
-    "@types/qs": "6.9.5"
+    "@types/qs": "6.9.7"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
