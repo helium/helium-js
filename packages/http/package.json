@@ -29,7 +29,7 @@
     "@helium/address": "^4.0.0",
     "@helium/currency": "^4.0.0",
     "axios": "^0.21.1",
-    "camelcase-keys": "^6.2.2",
+    "camelcase-keys": "^7.0.0",
     "qs": "^6.9.3",
     "retry-axios": "^2.1.2",
     "snakecase-keys": "^5.1.0"
