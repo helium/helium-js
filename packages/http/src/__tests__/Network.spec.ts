@@ -1,4 +1,4 @@
-import { Network } from '../'
+import { Network } from '..'
 
 describe('production', () => {
   it('returns the production network', () => {

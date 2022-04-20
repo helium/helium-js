@@ -1,5 +1,4 @@
-import Address, { MultisigAddress } from '@helium/address'
-import { sortAddresses } from '@helium/address/build/utils'
+import Address, { MultisigAddress, utils } from '@helium/address'
 import { verifySignature } from './utils'
 import KeySignature from './KeySignature'
 
@@ -24,7 +23,7 @@ export default class MultisigSignature {
     if (multisigAddress.N !== addresses.length) {
       throw new Error('wrong number of addresses')
     }
-    const sortedAddresses = sortAddresses(addresses)
+    const sortedAddresses = utils.sortAddresses(addresses)
     const keySignatures = Array.from(signatures).map(
       (value) => KeySignature.new(sortedAddresses, value[0], value[1]),
     )

@@ -8,6 +8,7 @@
     "semi": [2, "never"],
     "@typescript-eslint/semi": [2, "never"],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }]
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "import/no-cycle": "off"
   }
 }

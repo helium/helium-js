@@ -7,4 +7,3 @@ export default class NetworkTokens extends BaseCurrencyType {
     super(TICKER, 8)
   }
 }
-

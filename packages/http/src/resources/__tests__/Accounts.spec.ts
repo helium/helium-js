@@ -143,6 +143,7 @@ describe('list', () => {
 
       const addresses = []
 
+      // eslint-disable-next-line no-restricted-syntax
       for await (const account of accounts) {
         addresses.push(account.address)
       }

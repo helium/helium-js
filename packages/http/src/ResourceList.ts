@@ -31,7 +31,8 @@ export default class ResourceList<T extends DataModel> {
     return !!this.cursor && !!this.fetchMore
   }
 
-  async *[Symbol.asyncIterator](): AsyncGenerator<any, void, any> {
+  async* [Symbol.asyncIterator](): AsyncGenerator<any, void, any> {
+    // eslint-disable-next-line no-restricted-syntax
     for (const item of this.data) {
       yield item
     }
@@ -45,6 +46,7 @@ export default class ResourceList<T extends DataModel> {
     }
     const values = []
     while (values.length < count) {
+      // eslint-disable-next-line no-await-in-loop
       const { value, done } = await this.takeIterator.next()
       if (value !== undefined) values.push(value)
       if (done) return values

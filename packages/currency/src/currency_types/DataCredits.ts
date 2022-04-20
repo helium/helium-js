@@ -7,4 +7,3 @@ export default class DataCredits extends BaseCurrencyType {
     super(TICKER, 0)
   }
 }
-

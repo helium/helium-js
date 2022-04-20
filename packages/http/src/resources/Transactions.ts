@@ -1,3 +1,5 @@
+import camelcaseKeys from 'camelcase-keys'
+import snakecaseKeys from 'snakecase-keys'
 import type Client from '../Client'
 import type { AnyTransaction, TxnJsonObject } from '../models/Transaction'
 import Block from '../models/Block'
@@ -7,8 +9,6 @@ import PendingTransaction from '../models/PendingTransaction'
 import ResourceList from '../ResourceList'
 import Hotspot from '../models/Hotspot'
 import Validator from '../models/Validator'
-import camelcaseKeys from 'camelcase-keys'
-import snakecaseKeys from 'snakecase-keys'
 
 export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
 

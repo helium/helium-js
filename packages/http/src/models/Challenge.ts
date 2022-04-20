@@ -140,7 +140,8 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     const hasValidWitness = pathObject.witnesses.some(isValidWitness)
     const hasReceiptOrValidWitnesses = hasReceipt || hasValidWitness
     const nextElement = path[i + 1]
-    const nextElementHasReceiptOrValidWitness = nextElement && (nextElement.receipt || nextElement.witnesses.some(isValidWitness))
+    const nextElementHasReceiptOrValidWitness = nextElement
+      && (nextElement.receipt || nextElement.witnesses.some(isValidWitness))
     const isFirstElement = i === 0
     const isValidBeacon = isBeacon && hasValidWitness
     const isValidChallenge = !isBeacon
@@ -157,22 +158,21 @@ const constructPath = (path: HTTPPathObject[]): Path[] => {
     }
     return {
       witnesses: pathObject.witnesses.map(
-        (witness) =>
-          ({
-            timestamp: witness.timestamp,
-            snr: witness.snr,
-            signal: witness.signal,
-            packetHash: witness.packet_hash,
-            owner: witness.owner,
-            location: witness.location,
-            locationHex: witness.location_hex,
-            isValid: isValidWitness(witness),
-            ...(witness.hasOwnProperty('invalid_reason') && { invalidReason: witness.invalid_reason }),
-            gateway: witness.gateway,
-            frequency: witness.frequency,
-            datarate: witness.datarate,
-            channel: witness.channel,
-          } as Witness),
+        (witness) => ({
+          timestamp: witness.timestamp,
+          snr: witness.snr,
+          signal: witness.signal,
+          packetHash: witness.packet_hash,
+          owner: witness.owner,
+          location: witness.location,
+          locationHex: witness.location_hex,
+          isValid: isValidWitness(witness),
+          ...(Object.prototype.hasOwnProperty.call(witness, 'invalid_reason') && { invalidReason: witness.invalid_reason }),
+          gateway: witness.gateway,
+          frequency: witness.frequency,
+          datarate: witness.datarate,
+          channel: witness.channel,
+        } as Witness),
       ) as Witness[],
       receipt: hasReceipt
         ? ({

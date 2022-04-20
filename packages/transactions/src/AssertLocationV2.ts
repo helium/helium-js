@@ -1,6 +1,8 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber } from './utils'
+import {
+  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber,
+} from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface AssertLocationOptions {

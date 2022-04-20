@@ -10,6 +10,7 @@ describe('auto pagination', () => {
     )
     const list = new ResourceList(data)
     const fetchedData = []
+    // eslint-disable-next-line no-restricted-syntax
     for await (const item of list) {
       fetchedData.push(item)
     }
@@ -43,6 +44,7 @@ describe('auto pagination', () => {
     const list = new ResourceList(firstPageData, fetchMore, 'cursor-1')
 
     const fetchedData = []
+    // eslint-disable-next-line no-restricted-syntax
     for await (const item of list) {
       fetchedData.push(item)
     }

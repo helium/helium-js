@@ -1,6 +1,8 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array } from './utils'
+import {
+  EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array,
+} from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface AddGatewayOptions {
