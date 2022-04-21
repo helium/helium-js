@@ -74,6 +74,24 @@ export default class TokenBurnV1 extends Transaction {
     })
   }
 
+  message(signature?: Uint8Array | null): string {
+    const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
+    const memoBuffer = Buffer.from(this.memo, 'base64')
+    const memoLong = JSLong.fromBytes(Array.from(memoBuffer), true, true)
+
+    const tokenBurn = TokenBurnTxn.create({
+      payer: toUint8Array(this.payer.bin),
+      payee: toUint8Array(this.payee.bin),
+      amount: this.amount,
+      nonce: this.nonce,
+      signature,
+      fee: this.fee,
+      memo: !memoLong.isZero() ? memoLong : undefined,
+    })
+    const serialized = TokenBurnTxn.encode(tokenBurn).finish()
+    return Buffer.from(serialized).toString('base64')
+  }
+
   calculateFee(): number {
     this.signature = EMPTY_SIGNATURE
     const payload = this.serialize()
