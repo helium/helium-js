@@ -223,10 +223,10 @@ const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
 // initialize an address from a b58 string
 const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 
-// initialize multisig address
+// initialize multisig address with the full set of addreses and required number of signatures
 const multisigAddress = await MultisigAddress.create([bob.address, alice], 1)
 
-// get the speculative nonce for the keypair
+// get the speculative nonce for the multisig keypair
 const account = await client.accounts.get(multisigAddress.b58)
 
 // construct a PaymentV2 txn to sign
@@ -241,10 +241,10 @@ const paymentTxn = new PaymentV2({
   nonce: account.speculativeNonce + 1,
 })
 
-// Create signatures payload
+// Create signatures payload, a map of address to signature
 const signatures = new Map([[bob.address, await bob.sign(paymentTxn.serialize())]])
 
-// Construct multisig signature
+// Construct multisig signature using the address, the full set of all addresses, and the required signatures
 const multisigSig = await MultisigSignature.create(
   multisigAddress, [bob.address, aliceAddress], signatures,
 )
