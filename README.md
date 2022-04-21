@@ -217,7 +217,7 @@ const client = new Client()
 const vars = await client.vars.get()
 Transaction.config(vars)
 
-// assuming bob has a balance of 100 HNT
+// initialize a keypair available for signing
 const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
 
 // initialize an address from a b58 string
@@ -229,12 +229,15 @@ const multisigAddress = await MultisigAddress.create([bob.address, alice], 1)
 // get the speculative nonce for the multisig keypair
 const account = await client.accounts.get(multisigAddress.b58)
 
+// create random payee address
+const payeeAddress = Address.fromB58('13dSybmfNofup3rBGat2poGfuab4BhYZNKUJFczSi4jcwLmoXvD')
+
 // construct a PaymentV2 txn to sign
 const paymentTxn = new PaymentV2({
   payer: multisigAddress,
   payments: [
     {
-      payee: alice,
+      payee: payeeAddress,
       amount: amountToSend,
     },
   ],
