@@ -28,9 +28,9 @@
   },
   "dependencies": {
     "@helium/address": "^4.0.0",
+    "@helium/crypto": "^4.0.0",
     "@helium/proto": "^1.5.0",
     "@types/libsodium-wrappers": "^0.7.8",
-    "libsodium-wrappers": "^0.7.10",
     "long": "^4.0.0",
     "path": "^0.12.7"
   },

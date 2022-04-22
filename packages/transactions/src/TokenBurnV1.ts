@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 import proto from '@helium/proto'
 import * as JSLong from 'long'
-import sodium from 'libsodium-wrappers'
 import Transaction from './Transaction'
 import {
   EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array, toString,
@@ -58,10 +57,14 @@ export default class TokenBurnV1 extends Transaction {
     return BlockchainTxn.encode(txn).finish()
   }
 
-  async sign({ payer: payerKeypair }: SignOptions): Promise<TokenBurnV1> {
+  message(): Uint8Array {
     const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
     const tokenBurn = this.toProto(true)
-    const serialized = TokenBurnTxn.encode(tokenBurn).finish()
+    return TokenBurnTxn.encode(tokenBurn).finish()
+  }
+
+  async sign({ payer: payerKeypair }: SignOptions): Promise<TokenBurnV1> {
+    const serialized = this.message()
     this.signature = await payerKeypair.sign(serialized)
     return this
   }
@@ -101,23 +104,6 @@ export default class TokenBurnV1 extends Transaction {
     return new TokenBurnV1({
       payer, payee, amount, nonce, memo, fee, signature,
     })
-  }
-
-  async verify(publicKey: Uint8Array): Promise<boolean> {
-    const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
-    const tokenBurn = this.toProto(true)
-    const message = TokenBurnTxn.encode(tokenBurn).finish()
-
-    if (!this.signature) {
-      throw new Error('Signature missing')
-    }
-
-    await sodium.ready
-    return sodium.crypto_sign_verify_detached(
-      this.signature,
-      message,
-      publicKey,
-    )
   }
 
   calculateFee(): number {

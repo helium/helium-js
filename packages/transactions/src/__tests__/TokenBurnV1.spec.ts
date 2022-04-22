@@ -1,3 +1,4 @@
+import { utils } from '@helium/crypto'
 import proto from '@helium/proto'
 import { TokenBurnV1, Transaction } from '..'
 import {
@@ -94,13 +95,17 @@ describe('verify', () => {
 
     await burn.sign({ payer: bob })
     const rawTxn = burn.toString()
-    const tokenBurn = TokenBurnV1.fromString(rawTxn)
 
-    if (!tokenBurn) {
+    const tokenBurn = TokenBurnV1.fromString(rawTxn)
+    const message = tokenBurn?.message()
+    const signature = tokenBurn?.signature
+
+    if (!signature || !message) {
       throw new Error('Token could not be created')
     }
 
-    const valid = await tokenBurn.verify(bob.publicKey)
+    const valid = await utils.verify(signature, message, bob.publicKey)
+    // const valid = await tokenBurn.verify(bob.publicKey)
     expect(valid).toBeTruthy()
   })
 
@@ -117,12 +122,14 @@ describe('verify', () => {
     await burn.sign({ payer: bob })
     const rawTxn = burn.toString()
     const tokenBurn = TokenBurnV1.fromString(rawTxn)
+    const message = tokenBurn?.message()
+    const signature = tokenBurn?.signature
 
-    if (!tokenBurn) {
+    if (!signature || !message) {
       throw new Error('Token could not be created')
     }
 
-    const valid = await tokenBurn.verify(alice.publicKey)
+    const valid = await utils.verify(signature, message, alice.publicKey)
     expect(valid).toBeFalsy()
   })
 })
