@@ -80,3 +80,49 @@ describe('sign', () => {
     expect(base64Signature).toEqual('RQu5O68m7dsfLusCV8/60POwgPxh4/KexWl5DS2OHr3MV/msEo1XJ893RswG/giHFrIuoIQYEaEQ+hSI7LmRBQ==')
   })
 })
+
+describe('verify', () => {
+  it('verifies the transaction with correct wallet address', async () => {
+    const { bob, alice } = await usersFixture()
+    const burn = new TokenBurnV1({
+      payer: bob.address,
+      payee: alice.address,
+      amount: 1,
+      nonce: 1,
+      memo: '',
+    })
+
+    await burn.sign({ payer: bob })
+    const rawTxn = burn.toString()
+    const tokenBurn = TokenBurnV1.fromString(rawTxn)
+
+    if (!tokenBurn) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await tokenBurn.verify(bob.publicKey)
+    expect(valid).toBeTruthy()
+  })
+
+  it('fails to verify the transaction with incorrect wallet address', async () => {
+    const { bob, alice } = await usersFixture()
+    const burn = new TokenBurnV1({
+      payer: bob.address,
+      payee: alice.address,
+      amount: 1,
+      nonce: 1,
+      memo: '',
+    })
+
+    await burn.sign({ payer: bob })
+    const rawTxn = burn.toString()
+    const tokenBurn = TokenBurnV1.fromString(rawTxn)
+
+    if (!tokenBurn) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await tokenBurn.verify(alice.publicKey)
+    expect(valid).toBeFalsy()
+  })
+})

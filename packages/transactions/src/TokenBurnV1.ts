@@ -1,7 +1,11 @@
+/* eslint-disable consistent-return */
 import proto from '@helium/proto'
 import * as JSLong from 'long'
+import sodium from 'libsodium-wrappers'
 import Transaction from './Transaction'
-import { EMPTY_SIGNATURE, toUint8Array } from './utils'
+import {
+  EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array, toString,
+} from './utils'
 import { Addressable, Base64Memo, SignableKeypair } from './types'
 
 interface TokenBurnOptions {
@@ -10,6 +14,8 @@ interface TokenBurnOptions {
   amount: number
   nonce: number
   memo: Base64Memo
+  fee?: number
+  signature?: Uint8Array
 }
 
 interface SignOptions {
@@ -40,7 +46,8 @@ export default class TokenBurnV1 extends Transaction {
     this.amount = opts.amount
     this.nonce = opts.nonce
     this.memo = opts.memo
-    this.fee = this.calculateFee()
+    this.fee = opts.fee === undefined ? this.calculateFee() : opts.fee
+    this.signature = opts.signature
   }
 
   serialize(): Uint8Array {
@@ -74,22 +81,43 @@ export default class TokenBurnV1 extends Transaction {
     })
   }
 
-  message(signature?: Uint8Array | null): string {
-    const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
-    const memoBuffer = Buffer.from(this.memo, 'base64')
-    const memoLong = JSLong.fromBytes(Array.from(memoBuffer), true, true)
+  static fromString(serializedTxnString: string): TokenBurnV1 | undefined {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const { tokenBurn } = proto.helium.blockchain_txn.decode(buf)
 
-    const tokenBurn = TokenBurnTxn.create({
-      payer: toUint8Array(this.payer.bin),
-      payee: toUint8Array(this.payee.bin),
-      amount: this.amount,
-      nonce: this.nonce,
-      signature,
-      fee: this.fee,
-      memo: !memoLong.isZero() ? memoLong : undefined,
+    const payer = toAddressable(tokenBurn?.payer)
+    const payee = toAddressable(tokenBurn?.payee)
+    const amount = toNumber(tokenBurn?.amount) || 0
+    const nonce = toNumber(tokenBurn?.nonce)
+    const memo = toString(tokenBurn?.memo) || ''
+    const fee = toNumber(tokenBurn?.fee)
+
+    const signature = tokenBurn?.signature?.length
+      ? toUint8Array(tokenBurn?.signature)
+      : undefined
+
+    if (!payee || !payer || !amount || nonce === undefined) return
+
+    return new TokenBurnV1({
+      payer, payee, amount, nonce, memo, fee, signature,
     })
-    const serialized = TokenBurnTxn.encode(tokenBurn).finish()
-    return Buffer.from(serialized).toString('base64')
+  }
+
+  async verify(publicKey: Uint8Array): Promise<boolean> {
+    const TokenBurnTxn = proto.helium.blockchain_txn_token_burn_v1
+    const tokenBurn = this.toProto(true)
+    const message = TokenBurnTxn.encode(tokenBurn).finish()
+
+    if (!this.signature) {
+      throw new Error('Signature missing')
+    }
+
+    await sodium.ready
+    return sodium.crypto_sign_verify_detached(
+      this.signature,
+      message,
+      publicKey,
+    )
   }
 
   calculateFee(): number {
