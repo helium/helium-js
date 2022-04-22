@@ -105,7 +105,6 @@ describe('verify', () => {
     }
 
     const valid = await utils.verify(signature, message, bob.publicKey)
-    // const valid = await tokenBurn.verify(bob.publicKey)
     expect(valid).toBeTruthy()
   })
 
