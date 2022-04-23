@@ -30,7 +30,7 @@ export default class MultisigSignature {
     return new MultisigSignature(sortedAddresses, keySignatures)
   }
 
-  public verify(message: Uint8Array): number {
+  public verify(message: string | Uint8Array): number {
     return this.signatures.filter(
       (sig) => verifySignature(sig.signature, message, this.addresses[sig.index].publicKey),
     ).length
@@ -90,5 +90,12 @@ export default class MultisigSignature {
       indexPointer += input[indexPointer + 1] + 2
     } while (indexPointer < input.length)
     return signatures
+  }
+
+  async sign(message: string | Uint8Array): Promise<Uint8Array> {
+    if (this.verify(message) < 1) {
+      throw new Error('no valid signatures for message')
+    }
+    return this.bin
   }
 }

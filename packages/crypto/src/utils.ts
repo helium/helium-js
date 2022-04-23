@@ -29,5 +29,5 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const verifySignature = (sig: Uint8Array, message: Uint8Array,
+export const verifySignature = (sig: Uint8Array, message: string | Uint8Array,
   pubKey: Uint8Array) => sodium.crypto_sign_verify_detached(sig, message, pubKey)

@@ -124,8 +124,8 @@ test('create and sign multisig payment', async () => {
   expect(await multisigSig.verify(serializedTransaction)).toBe(1)
 
   // Update signature on payment trasnaction
-  paymentTxn.signature = multisigSig.bin
-
+  paymentTxn.sign({payer: multisigSig})
+  
   const serializedTxn = paymentTxn.toString()
   expect(serializedTxn).toBe(
     'wgHXAQolAgECEiBqqzKbCO7og1KrG7VnpqrgT+wIowchqqdNAdWDQAa5HRIlCiEBnGWdcjzB6BCnLnj33q9HNqh/EO+Pz8gBALUzJ+fuSaQQCiABKoQBATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkAEBM/Z87aO/LtPU6HNEUyTqdxkP8dG7TenKCfZCaJvdm09dOS/ahsh0quJ7FfQN81trL1pR7fzwuqsLmx/pHBqIO',
