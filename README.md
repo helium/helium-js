@@ -253,7 +253,7 @@ const multisigSig = await MultisigSignature.create(
 )
 
 // Update signature on payment trasnaction
-paymentTxn.signature = multisigSig.bin
+paymentTxn.sign({payer: multisigSig})
 
 // submit the serialized txn to the Blockchain HTTP API
 client.transactions.submit(paymentTxn.toString())
