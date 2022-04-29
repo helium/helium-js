@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios, {AxiosError, AxiosInstance, AxiosRequestConfig} from 'axios'
 import * as rax from 'retry-axios'
 import qs from 'qs'
 import Network from './Network'
@@ -48,6 +48,7 @@ interface Options {
   userAgent?: string
   retry?: number
   headers?: Record<string, string>
+  errorCallback?: (error: AxiosError) => void
 }
 
 export default class Client {
@@ -77,6 +78,17 @@ export default class Client {
         noResponseRetries: this.retry,
       }
       rax.attach(this.axios)
+    }
+    if (options?.errorCallback) {
+      this.axios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+          if (options?.errorCallback) {
+            options.errorCallback(error)
+          }
+          return Promise.reject(error)
+        },
+      )
     }
   }
 
