@@ -1,4 +1,5 @@
 import Address, { KeyTypes } from '@helium/address'
+import { sortAddresses } from '@helium/address/build/utils'
 
 export default class KeySignature {
   public index!: number
@@ -15,7 +16,15 @@ export default class KeySignature {
       throw new Error('invalid keytype for multisig KeySignature')
     }
     return new KeySignature(
-      addresses.findIndex((addr) => addr.publicKey === address.publicKey), signature,
+      sortAddresses(addresses).findIndex((addr) => addr.publicKey === address.publicKey), signature,
+    )
+  }
+
+  public static fromMap(
+    addresses: Address[], signatureMap: Map<Address, Uint8Array>,
+  ): KeySignature[] {
+    return Array.from(signatureMap).map(
+      (value) => KeySignature.new(addresses, value[0], value[1]),
     )
   }
 

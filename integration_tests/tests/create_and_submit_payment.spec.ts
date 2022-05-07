@@ -3,6 +3,7 @@ import { Keypair, MultisigSignature } from '@helium/crypto'
 import Address, { MultisigAddress } from '@helium/address'
 import { Client } from '@helium/http'
 import { PaymentV1, PaymentV2 } from '@helium/transactions'
+import KeySignature from '@helium/crypto/build/KeySignature'
 import { bobWords, bobBip39Words, aliceB58 } from '../fixtures/users'
 
 test('create and submit a payment txn', async () => {
@@ -113,21 +114,23 @@ test('create and sign multisig payment', async () => {
     ],
     nonce: 1,
   })
-  // Create signature mapping for multisig
-  const serializedTransaction = paymentTxn.serialize()
-  const signatures = new Map([[bob.address, await bob.sign(serializedTransaction)]])
+  // Sign with bob keypair and create signature for multisig
+  const bobSignedTransaction = await paymentTxn.sign({ payer: bob })
+  const bobSignature : Uint8Array = bobSignedTransaction.signature || new Uint8Array()
 
-  // Construct multisig and verify
-  const multisigSig = await MultisigSignature.create(
-    multisigAddress, [bob.address, aliceAddress], signatures,
-  )
-  expect(await multisigSig.verify(serializedTransaction)).toBe(1)
+  // Create map of address to signature and convert to KeySignature list
+  const signatureMap = new Map([[bob.address, bobSignature]])
+  const signatures = KeySignature.fromMap([bob.address, aliceAddress], signatureMap)
 
-  // Update signature on payment trasnaction
-  paymentTxn.sign({payer: multisigSig})
-  
+  // Construct multisig signature and verify
+  const multisigSig = new MultisigSignature([bob.address, aliceAddress], signatures)
+  expect(multisigSig.isValid(multisigAddress)).toBeTruthy()
+
+  // Sign payment trasnaction with multisig signature
+  await paymentTxn.sign({ payer: multisigSig })
+
   const serializedTxn = paymentTxn.toString()
   expect(serializedTxn).toBe(
-    'wgHXAQolAgECEiBqqzKbCO7og1KrG7VnpqrgT+wIowchqqdNAdWDQAa5HRIlCiEBnGWdcjzB6BCnLnj33q9HNqh/EO+Pz8gBALUzJ+fuSaQQCiABKoQBATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkAEBM/Z87aO/LtPU6HNEUyTqdxkP8dG7TenKCfZCaJvdm09dOS/ahsh0quJ7FfQN81trL1pR7fzwuqsLmx/pHBqIO',
+    'wgHXAQolAgECEiBqqzKbCO7og1KrG7VnpqrgT+wIowchqqdNAdWDQAa5HRIlCiEBnGWdcjzB6BCnLnj33q9HNqh/EO+Pz8gBALUzJ+fuSaQQCiABKoQBATUaccIv7+wiMZNq0oJrIX7OOdn3f8bEljmSYpnDhpKVAZxlnXI8wegQpy54996vRzaofxDvj8/IAQC1Myfn7kmkAEDfDD6a0GpxsreMPBmr+VACsNHtdEpBnCL1RUzTvqS6N7x9dmSEt8SZeqlTFTmzaLoC8zi4OCNf6zcf+Z347fsH',
   )
 })

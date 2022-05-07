@@ -10,24 +10,22 @@ export default class MultisigSignature {
   public signatures!: KeySignature[]
 
   constructor(addresses: Address[], signatures: KeySignature[]) {
-    this.addresses = addresses
+    this.addresses = utils.sortAddresses(addresses)
     this.signatures = signatures
   }
 
-  public static create(
-    multisigAddress: MultisigAddress, addresses: Address[], signatures: Map<Address, Uint8Array>,
-  ): MultisigSignature {
-    if (multisigAddress.M > signatures.size) {
-      throw new Error('insufficient signatures')
+  public async isValid(address: MultisigAddress): Promise<boolean> {
+    if (address.M > this.signatures.length) {
+      return false
     }
-    if (multisigAddress.N !== addresses.length) {
-      throw new Error('wrong number of addresses')
+    if (address.N !== this.addresses.length) {
+      return false
     }
-    const sortedAddresses = utils.sortAddresses(addresses)
-    const keySignatures = Array.from(signatures).map(
-      (value) => KeySignature.new(sortedAddresses, value[0], value[1]),
-    )
-    return new MultisigSignature(sortedAddresses, keySignatures)
+    const thisAddress = await MultisigAddress.create(this.addresses, address.M, address.netType)
+    if (thisAddress.publicKey !== address.publicKey) {
+      return false
+    }
+    return true
   }
 
   public verify(message: string | Uint8Array): number {
@@ -42,10 +40,8 @@ export default class MultisigSignature {
 
   public static fromBin(multisigAddress: MultisigAddress, input: Uint8Array): MultisigSignature {
     const addresses = this.addressesFromBin(multisigAddress.N, input)
-    const signatures = this.signaturesFromBin(
-      addresses, input.slice(PUBLIC_KEY_LENGTH * multisigAddress.N),
-    )
-    return MultisigSignature.create(multisigAddress, addresses, signatures)
+    const signatures = this.signaturesFromBin(input.slice(PUBLIC_KEY_LENGTH * multisigAddress.N))
+    return new MultisigSignature(addresses, signatures)
   }
 
   static isValid(multisigAddress: MultisigAddress, input: Uint8Array): boolean {
@@ -77,19 +73,17 @@ export default class MultisigSignature {
     )
   }
 
-  private static signaturesFromBin(
-    addresses: Address[], input: Uint8Array,
-  ): Map<Address, Uint8Array> {
-    let indexPointer = 0
-    const signatures = new Map<Address, Uint8Array>()
+  private static signaturesFromBin(input: Uint8Array): KeySignature[] {
+    let index = 0
+    const signatureList : KeySignature[] = []
     do {
-      signatures.set(
-        addresses[input[indexPointer]],
-        input.slice(indexPointer + 2, input[indexPointer + 1] + indexPointer + 2),
-      )
-      indexPointer += input[indexPointer + 1] + 2
-    } while (indexPointer < input.length)
-    return signatures
+      const addressIndex = input[index]
+      const start = index + 2
+      const end = start + input[index + 1]
+      signatureList.push(new KeySignature(addressIndex, input.slice(start, end)))
+      index += input[index + 1] + 2
+    } while (index < input.length)
+    return signatureList
   }
 
   async sign(message: string | Uint8Array): Promise<Uint8Array> {

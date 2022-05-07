@@ -244,16 +244,16 @@ const paymentTxn = new PaymentV2({
   nonce: account.speculativeNonce + 1,
 })
 
-// Create signatures payload, a map of address to signature
-const signatures = new Map([[bob.address, await bob.sign(paymentTxn.serialize())]])
+// Create signatures payload, a map of address to signature, and finally a KeySignature list
+const bobSignature = (await paymentTxn.sign({ payer: bob })).signature || new Uint8Array()
+const signatureMap = new Map([[bob.address, await bob.sign(paymentTxn.serialize())]])
+const signatures = KeySignature.fromMap([bob.address, aliceAddress], signatureMap)
 
 // Construct multisig signature using the address, the full set of all addresses, and the required signatures
-const multisigSig = await MultisigSignature.create(
-  multisigAddress, [bob.address, aliceAddress], signatures,
-)
+const multisigSig = new MultisigSignature([bob.address, aliceAddress], signatures)
 
 // Update signature on payment trasnaction
-paymentTxn.sign({payer: multisigSig})
+await paymentTxn.sign({payer: multisigSig})
 
 // submit the serialized txn to the Blockchain HTTP API
 client.transactions.submit(paymentTxn.toString())
