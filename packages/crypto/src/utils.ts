@@ -32,11 +32,11 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const verify = async (
-  signature: Uint8Array,
-  message: string | Uint8Array,
-  publicKey: Uint8Array,
-) => {
+export const verify = async (signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array) => {
   await sodium.ready
-  return sodium.crypto_sign_verify_detached(signature, message, publicKey)
+  return sodium.crypto_sign_verify_detached(
+    signature,
+    message,
+    publicKey,
+  )
 }
