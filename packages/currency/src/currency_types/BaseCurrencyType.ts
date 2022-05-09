@@ -8,7 +8,9 @@ function makeCoefficient(decimalPlaces: BigNumber): BigNumber {
 
 export default class BaseCurrencyType {
   public ticker: string
+
   public decimalPlaces: BigNumber
+
   public coefficient: BigNumber
 
   constructor(ticker: string, decimalPlaces: number) {

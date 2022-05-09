@@ -7,4 +7,3 @@ export default class SecurityTokens extends BaseCurrencyType {
     super(TICKER, 8)
   }
 }
-

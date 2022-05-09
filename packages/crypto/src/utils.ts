@@ -8,7 +8,8 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
   return Buffer.from(sodium.randombytes_buf(n))
 }
 
-export const sha256 = (buffer: Buffer | string): Buffer => createHash('sha256').update(buffer).digest()
+export const sha256 = (buffer: Buffer | string): Buffer =>
+  createHash('sha256').update(buffer).digest()
 
 export const lpad = (str: string | any[], padString: string, length: number) => {
   let strOut = str
@@ -16,9 +17,10 @@ export const lpad = (str: string | any[], padString: string, length: number) => 
   return strOut
 }
 
-export const bytesToBinary = (bytes: any[]) => bytes
-  .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
-  .join('')
+export const bytesToBinary = (bytes: any[]) =>
+  bytes
+    .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
+    .join('')
 
 export const binaryToByte = (bin: string) => parseInt(bin, 2)
 

@@ -27,7 +27,7 @@ export default class Blocks {
     }
     if (typeof heightOrHash === 'string') {
       if (stringIsInt(heightOrHash)) {
-        return new Block(this.client, { height: parseInt(heightOrHash) })
+        return new Block(this.client, { height: parseInt(heightOrHash, 10) })
       }
       return new Block(this.client, { hash: heightOrHash })
     }
@@ -48,7 +48,7 @@ export default class Blocks {
       url = `/blocks/${heightOrHash}`
     } else if (typeof heightOrHash === 'string') {
       if (stringIsInt(heightOrHash)) {
-        url = `/blocks/${parseInt(heightOrHash)}`
+        url = `/blocks/${parseInt(heightOrHash, 10)}`
       } else {
         url = `/blocks/hash/${heightOrHash}`
       }

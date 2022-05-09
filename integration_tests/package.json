@@ -10,5 +10,8 @@
     "@helium/http": "^4.1.0",
     "@helium/transactions": "^4.1.0"
   },
-  "version": "4.1.0"
+  "version": "4.1.0",
+  "devDependencies": {
+    "nock": "^13.2.4"
+  }
 }

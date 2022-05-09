@@ -201,3 +201,61 @@ client.transactions.submit(signedPaymentTxn.toString())
 
 > ⚠️ Note that oracle prices change over time. It's possible for a transaction to fail if the oracle price changes in between the time the transaction is constructed and when it is absorbed by the consensus group. The API exposes what the next oracle price will be at `https://api.helium.io
 /v1/oracle/predictions`. See https://developer.helium.com/blockchain/api/oracle for more details. To avoid failed transactions, it may be worth querying both the oracle predictions, and the current oracle value, and taking the greatest of those values.
+
+### Sending payment from multi-signature wallet
+Sending a payment from a multi-signature wallet requires collecting the minimum number of required signatures from the addresses associated with the multi-signature address in question. Below is an example of creating and signing a 1 of 2 multi-signature address transaction.
+```js
+import { Keypair, MultisigSignature } from '@helium/crypto'
+import Address, { MultisigAddress } from '@helium/address'
+import { PaymentV2, Transaction } from '@helium/transactions'
+import { Client } from '@helium/http'
+
+const client = new Client()
+
+// the transactions library needs to be configured
+// with the latest chain vars in order to calcluate fees
+const vars = await client.vars.get()
+Transaction.config(vars)
+
+// initialize a keypair available for signing
+const bob = await Keypair.fromWords(['one', 'two', ..., 'twelve'])
+
+// initialize an address from a b58 string
+const alice = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
+
+// initialize multisig address with the full set of addreses and required number of signatures
+const multisigAddress = await MultisigAddress.create([bob.address, alice], 1)
+
+// get the speculative nonce for the multisig keypair
+const account = await client.accounts.get(multisigAddress.b58)
+
+// create random payee address
+const payeeAddress = Address.fromB58('13dSybmfNofup3rBGat2poGfuab4BhYZNKUJFczSi4jcwLmoXvD')
+
+// construct a PaymentV2 txn to sign
+const paymentTxn = new PaymentV2({
+  payer: multisigAddress,
+  payments: [
+    {
+      payee: payeeAddress,
+      amount: amountToSend,
+    },
+  ],
+  nonce: account.speculativeNonce + 1,
+})
+
+// Create signatures payload, a map of address to signature, and finally a KeySignature list
+const bobSignature = (await paymentTxn.sign({ payer: bob })).signature || new Uint8Array()
+const signatureMap = new Map([[bob.address, await bob.sign(paymentTxn.serialize())]])
+const signatures = KeySignature.fromMap([bob.address, aliceAddress], signatureMap)
+
+// Construct multisig signature using the address, the full set of all addresses, and the required signatures
+const multisigSig = new MultisigSignature([bob.address, aliceAddress], signatures)
+
+// Update signature on payment trasnaction
+await paymentTxn.sign({payer: multisigSig})
+
+// submit the serialized txn to the Blockchain HTTP API
+client.transactions.submit(paymentTxn.toString())
+
+```

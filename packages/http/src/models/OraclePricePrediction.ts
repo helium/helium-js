@@ -1,4 +1,3 @@
-
 import Balance, { CurrencyType, USDollars } from '../../../currency/build'
 import type Client from '../Client'
 import DataModel from './DataModel'

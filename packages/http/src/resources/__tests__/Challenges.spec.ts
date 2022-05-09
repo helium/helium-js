@@ -4,6 +4,7 @@ import Client from '../../Client'
 
 Address.fromB58 = jest.fn(() => new Address(0, NetTypes.MAINNET, 0, new Uint8Array()))
 
+// eslint-disable-next-line import/prefer-default-export
 export const challengeFixture = (params = {}) => ({
   type: 'poc_receipts_v1',
   time: 1589918979,

@@ -3,6 +3,7 @@ import { sha256 } from 'js-sha256'
 import bs58 from 'bs58'
 import { KeyType } from './KeyTypes'
 import { NetType } from './NetTypes'
+import Address from './Address'
 
 export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
   const vPayload = Buffer.concat([
@@ -62,4 +63,31 @@ export const bs58PublicKey = (bs58Address: string): Buffer => {
   const bin = bs58ToBin(bs58Address)
   const publicKey = Buffer.from(bin).slice(1)
   return publicKey
+}
+
+export const bs58M = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const M = bin[1]
+  return M
+}
+
+export const bs58N = (bs58Address: string): number => {
+  const bin = bs58ToBin(bs58Address)
+  const N = bin[2]
+  return N
+}
+
+export const bs58MultisigPublicKey = (bs58Address: string): Buffer => {
+  const bin = bs58ToBin(bs58Address)
+  const publicKey = Buffer.from(bin).slice(3)
+  return publicKey
+}
+
+export const sortAddresses = (addresses: Address[]): Address[] => {
+  const addressMap = addresses.map((address) => {
+    const charCodeArray = Array.from(address.b58).map((character):number => character.charCodeAt(0))
+    return { address, buffer: new Uint8Array(charCodeArray) }
+  })
+
+  return addressMap.sort((a, b) => Buffer.compare(a.buffer, b.buffer)).map((obj) => obj.address)
 }
