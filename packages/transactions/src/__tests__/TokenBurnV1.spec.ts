@@ -1,3 +1,4 @@
+import { utils } from '@helium/crypto'
 import proto from '@helium/proto'
 import { TokenBurnV1, Transaction } from '..'
 import {
@@ -78,5 +79,56 @@ describe('sign', () => {
     const decoded = proto.helium.blockchain_txn.decode(Buffer.from(signedPayment.toString(), 'base64'))
     const base64Signature = (decoded.tokenBurn?.signature as Buffer).toString('base64')
     expect(base64Signature).toEqual('RQu5O68m7dsfLusCV8/60POwgPxh4/KexWl5DS2OHr3MV/msEo1XJ893RswG/giHFrIuoIQYEaEQ+hSI7LmRBQ==')
+  })
+})
+
+describe('verify', () => {
+  it('verifies the transaction with correct wallet address', async () => {
+    const { bob, alice } = await usersFixture()
+    const burn = new TokenBurnV1({
+      payer: bob.address,
+      payee: alice.address,
+      amount: 1,
+      nonce: 1,
+      memo: '',
+    })
+
+    await burn.sign({ payer: bob })
+    const rawTxn = burn.toString()
+
+    const tokenBurn = TokenBurnV1.fromString(rawTxn)
+    const message = tokenBurn?.message()
+    const signature = tokenBurn?.signature
+
+    if (!signature || !message) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await utils.verify(signature, message, bob.publicKey)
+    expect(valid).toBeTruthy()
+  })
+
+  it('fails to verify the transaction with incorrect wallet address', async () => {
+    const { bob, alice } = await usersFixture()
+    const burn = new TokenBurnV1({
+      payer: bob.address,
+      payee: alice.address,
+      amount: 1,
+      nonce: 1,
+      memo: '',
+    })
+
+    await burn.sign({ payer: bob })
+    const rawTxn = burn.toString()
+    const tokenBurn = TokenBurnV1.fromString(rawTxn)
+    const message = tokenBurn?.message()
+    const signature = tokenBurn?.signature
+
+    if (!signature || !message) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await utils.verify(signature, message, alice.publicKey)
+    expect(valid).toBeFalsy()
   })
 })

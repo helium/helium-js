@@ -44,7 +44,7 @@ export const testnetBobAliceMultisig2of2B58 = '14x4TpdfsLeL9MMcaJp6EVXFnA5tsgqXC
 
 export const bobBip39Words = bobWords.map((word) => (word !== 'energy' ? word : 'episode'))
 
-export const usersFixture = async () => ({
+export const usersFixture = async (): Promise<{bob: Keypair, alice: Keypair}> => ({
   bob: await Keypair.fromWords(bobWords),
   alice: await Keypair.fromWords(aliceWords),
 })

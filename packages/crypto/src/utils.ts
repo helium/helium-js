@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable no-bitwise */
 import createHash from 'create-hash'
 import sodium from 'libsodium-wrappers'
@@ -7,7 +8,8 @@ export const randomBytes = async (n: number): Promise<Buffer> => {
   return Buffer.from(sodium.randombytes_buf(n))
 }
 
-export const sha256 = (buffer: Buffer | string): Buffer => createHash('sha256').update(buffer).digest()
+export const sha256 = (buffer: Buffer | string): Buffer =>
+  createHash('sha256').update(buffer).digest()
 
 export const lpad = (str: string | any[], padString: string, length: number) => {
   let strOut = str
@@ -15,9 +17,10 @@ export const lpad = (str: string | any[], padString: string, length: number) => 
   return strOut
 }
 
-export const bytesToBinary = (bytes: any[]) => bytes
-  .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
-  .join('')
+export const bytesToBinary = (bytes: any[]) =>
+  bytes
+    .map((x: { toString: (arg0: number) => string | any[] }) => lpad(x.toString(2), '0', 8))
+    .join('')
 
 export const binaryToByte = (bin: string) => parseInt(bin, 2)
 
@@ -29,5 +32,11 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const verifySignature = (sig: Uint8Array, message: string | Uint8Array,
-  pubKey: Uint8Array) => sodium.crypto_sign_verify_detached(sig, message, pubKey)
+export const verify = async (
+  signature: Uint8Array,
+  message: string | Uint8Array,
+  publicKey: Uint8Array,
+) => {
+  await sodium.ready
+  return sodium.crypto_sign_verify_detached(signature, message, publicKey)
+}

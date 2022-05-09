@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import proto from '@helium/proto'
 
 interface ChainVars {
@@ -17,6 +18,10 @@ export default abstract class Transaction {
   static stakingFeeTxnAddGatewayV1: number = 1
 
   abstract serialize(): Uint8Array
+
+  message(): Uint8Array {
+    throw new Error('unimplemented')
+  }
 
   abstract sign(opts: object): Promise<any>
 

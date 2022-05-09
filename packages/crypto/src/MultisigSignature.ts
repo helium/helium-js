@@ -1,5 +1,5 @@
 import Address, { MultisigAddress, utils } from '@helium/address'
-import { verifySignature } from './utils'
+import { verify as verifySignature } from './utils'
 import KeySignature from './KeySignature'
 
 const PUBLIC_KEY_LENGTH = 33
@@ -28,10 +28,13 @@ export default class MultisigSignature {
     return true
   }
 
-  public verify(message: string | Uint8Array): number {
-    return this.signatures.filter(
-      (sig) => verifySignature(sig.signature, message, this.addresses[sig.index].publicKey),
-    ).length
+  public async verify(message: string | Uint8Array): Promise<number> {
+    const verifiedSignatures = await Promise.all(
+      this.signatures.map((sig) =>
+        verifySignature(sig.signature, message, this.addresses[sig.index].publicKey),
+      ),
+    )
+    return verifiedSignatures.filter((isVerified) => isVerified === true).length
   }
 
   public get bin(): Uint8Array {
@@ -55,27 +58,30 @@ export default class MultisigSignature {
 
   private serializedAddresses(): Uint8Array {
     return this.addresses.reduce(
-      (acc, curVal) => new Uint8Array([...acc, ...curVal.bin]), new Uint8Array(),
+      (acc, curVal) => new Uint8Array([...acc, ...curVal.bin]),
+      new Uint8Array(),
     )
   }
 
   private serlializedSignatures() {
-    return this.signatures.sort((a, b) => (a.bin > b.bin ? 1 : -1)).reduce(
-      (acc, curVal) => new Uint8Array([...acc, ...curVal.bin]), new Uint8Array(),
-    )
+    return this.signatures
+      .sort((a, b) => (a.bin > b.bin ? 1 : -1))
+      .reduce((acc, curVal) => new Uint8Array([...acc, ...curVal.bin]), new Uint8Array())
   }
 
   private static addressesFromBin(N: number, input: Uint8Array): Address[] {
-    return Array(N).fill(null).map(
-      (_, i) => Address.fromBin(
-        Buffer.from(input.slice(PUBLIC_KEY_LENGTH * i, PUBLIC_KEY_LENGTH * (i + 1))),
-      ),
-    )
+    return Array(N)
+      .fill(null)
+      .map((_, i) =>
+        Address.fromBin(
+          Buffer.from(input.slice(PUBLIC_KEY_LENGTH * i, PUBLIC_KEY_LENGTH * (i + 1))),
+        ),
+      )
   }
 
   private static signaturesFromBin(input: Uint8Array): KeySignature[] {
     let index = 0
-    const signatureList : KeySignature[] = []
+    const signatureList: KeySignature[] = []
     do {
       const addressIndex = input[index]
       const start = index + 2
@@ -87,7 +93,7 @@ export default class MultisigSignature {
   }
 
   async sign(message: string | Uint8Array): Promise<Uint8Array> {
-    if (this.verify(message) < 1) {
+    if (await this.verify(message) < 1) {
       throw new Error('no valid signatures for message')
     }
     return this.bin

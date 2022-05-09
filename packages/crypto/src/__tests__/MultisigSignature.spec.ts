@@ -56,7 +56,7 @@ describe('verify', () => {
     const signatureMap = new Map([[bob.address, await bob.sign(message)]])
     const signatures = KeySignature.fromMap([bob.address, alice.address], signatureMap)
     const multisigSig = new MultisigSignature([bob.address, alice.address], signatures)
-    expect(multisigSig.verify(message)).toBe(1)
+    expect(await multisigSig.verify(message)).toBe(1)
   })
 
   it('verify fail one of two signature', async () => {
@@ -65,7 +65,7 @@ describe('verify', () => {
     const signatureMap = new Map([[bob.address, await bob.sign(Buffer.from('Oops'))]])
     const signatures = KeySignature.fromMap([bob.address, alice.address], signatureMap)
     const multisigSig = new MultisigSignature([bob.address, alice.address], signatures)
-    expect(multisigSig.verify(message)).toBe(0)
+    expect(await multisigSig.verify(message)).toBe(0)
   })
 
   it('verify two of two signature', async () => {
@@ -76,7 +76,7 @@ describe('verify', () => {
     )
     const signatures = KeySignature.fromMap([bob.address, alice.address], signatureMap)
     const multisigSig = new MultisigSignature([bob.address, alice.address], signatures)
-    expect(multisigSig.verify(message)).toBe(2)
+    expect(await multisigSig.verify(message)).toBe(2)
   })
 
   it('verify fail two of two signature', async () => {
@@ -87,7 +87,7 @@ describe('verify', () => {
     )
     const signatures = KeySignature.fromMap([bob.address, alice.address], signatureMap)
     const multisigSig = new MultisigSignature([bob.address, alice.address], signatures)
-    expect(multisigSig.verify(message)).toBe(1)
+    expect(await multisigSig.verify(message)).toBe(1)
   })
 })
 
@@ -117,7 +117,7 @@ describe('bin', () => {
     expect(multisigSig.signatures[0].index).toBe(1)
 
     const multisigSignatureTest = MultisigSignature.fromBin(multisigAddress, multisigSig.bin)
-    expect(multisigSignatureTest.verify(message)).toBe(2)
+    expect(await multisigSignatureTest.verify(message)).toBe(2)
     expect(multisigSignatureTest.signatures[1].signature).toStrictEqual(await alice.sign(message))
 
     // Signatures sorted
@@ -135,7 +135,7 @@ describe('fromBin', () => {
     const signatures = KeySignature.fromMap([bob.address, alice.address], signatureMap)
     const multisigSig = new MultisigSignature([bob.address, alice.address], signatures)
     const multisigSignatureFromBin = MultisigSignature.fromBin(multisigAddress, multisigSig.bin)
-    expect(multisigSignatureFromBin.verify(message)).toBe(1)
+    expect(await multisigSignatureFromBin.verify(message)).toBe(1)
     expect(multisigSignatureFromBin.signatures[0].signature).toStrictEqual(await bob.sign(message))
   })
 })
