@@ -1,6 +1,6 @@
 import Transaction, {
   PaymentV2,
-  PocReceiptsV1,
+  PocReceiptsV1, PocReceiptsV2,
   RewardsV1,
   RewardsV2,
   SecurityExchangeV1,
@@ -261,6 +261,23 @@ describe('PocReceiptsV1', () => {
         } as HTTPPathObject,
       ] as HTTPPathObject[]),
     ) as PocReceiptsV1
+    expect(txn.challenger).toBe('fake-challenger')
+    expect(txn.data.hash).toBe(txn.hash)
+  })
+})
+
+describe('PocReceiptsV2', () => {
+  it('correctly converts poc_receipts_v2', () => {
+    const txn = Transaction.fromJsonObject(
+      challengeJson([
+        {
+          witnesses: [mockWitness()] as HTTPWitnessesObject[],
+          receipt: mockReceipt,
+          geocode: mockGeocode,
+          ...mockPathData,
+        } as HTTPPathObject,
+      ] as HTTPPathObject[], true),
+    ) as PocReceiptsV2
     expect(txn.challenger).toBe('fake-challenger')
     expect(txn.data.hash).toBe(txn.hash)
   })

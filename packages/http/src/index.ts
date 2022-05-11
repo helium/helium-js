@@ -31,6 +31,7 @@ export {
   AssertLocationV1,
   AssertLocationV2,
   PocReceiptsV1,
+  PocReceiptsV2,
   TransferHotspotV1,
   TransferHotspotV2,
   TokenBurnV1,

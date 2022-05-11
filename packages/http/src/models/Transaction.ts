@@ -455,6 +455,8 @@ export interface Reward {
 
 export interface PocReceiptsV1 extends Challenge {}
 
+export interface PocReceiptsV2 extends Challenge {}
+
 export type AnyTransaction =
   | PaymentV1
   | PaymentV2
@@ -463,6 +465,7 @@ export type AnyTransaction =
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
+  | PocReceiptsV2
   | TransferHotspotV1
   | TransferHotspotV2
   | TokenBurnV1
@@ -570,6 +573,8 @@ export default class Transaction {
         return this.toRewardsV2(json)
       case 'poc_receipts_v1':
         return this.toPocReceiptsV1(json)
+      case 'poc_receipts_v2':
+        return this.toPocReceiptsV2(json)
       case 'transfer_hotspot_v1':
         return this.toTransferHotspotV1(json)
       case 'transfer_hotspot_v2':
@@ -648,6 +653,10 @@ export default class Transaction {
   }
 
   static toPocReceiptsV1(json: TxnJsonObject): PocReceiptsV1 {
+    return new Challenge(json as HTTPChallengeObject)
+  }
+
+  static toPocReceiptsV2(json: TxnJsonObject): PocReceiptsV2 {
     return new Challenge(json as HTTPChallengeObject)
   }
 
