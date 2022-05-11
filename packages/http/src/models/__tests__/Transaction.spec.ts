@@ -1,6 +1,7 @@
 import Transaction, {
   PaymentV2,
-  PocReceiptsV1, PocReceiptsV2,
+  PocReceiptsV1,
+  PocReceiptsV2,
   RewardsV1,
   RewardsV2,
   SecurityExchangeV1,
