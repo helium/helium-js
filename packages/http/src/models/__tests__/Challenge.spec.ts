@@ -65,8 +65,8 @@ export const mockPathData = {
   challengee: 'fake-challengee',
 }
 
-export const challengeJson = (path: HTTPPathObject[]): HTTPChallengeObject => ({
-  type: 'poc_receipts_v1',
+export const challengeJson = (path: HTTPPathObject[], v2?: boolean): HTTPChallengeObject => ({
+  type: v2 ? 'poc_receipts_v2' : 'poc_receipts_v1',
   time: 1589918979,
   secret: 'fake-secret',
   request_block_hash: 'fake-request-block-hash',
