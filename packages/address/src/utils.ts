@@ -31,7 +31,7 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   const checksumVerify = sha256(Buffer.from(sha256(vPayload), 'hex'))
   const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
 
-  if (!checksumVerifyBytes.equals(checksum)) {
+  if (!checksumVerifyBytes.equals(Buffer.from(checksum))) {
     throw new Error('invalid checksum')
   }
 
