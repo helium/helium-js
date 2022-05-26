@@ -125,6 +125,13 @@ describe('toUsd', () => {
     expect(usdBalance.toString(2)).toBe('10 USD')
   })
 
+  it('converts a mobile balance to a usd balance', () => {
+    const mobileBalance = new Balance(10 * 100000000, CurrencyType.mobileToken)
+    const oraclePrice = new Balance(0.33 * 100000000, CurrencyType.usd)
+    const usdBalance = mobileBalance.toUsd(oraclePrice)
+    expect(usdBalance.toString(2)).toBe('3.30 USD')
+  })
+
   it('converts an hnt balance to a usd balance', () => {
     const hntBalance = new Balance(10 * 100000000, CurrencyType.default)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
@@ -146,6 +153,19 @@ describe('toNetworkTokens', () => {
     expect(hntBalance.toString(2)).toBe('22.22 HNT')
   })
 
+  it('converts a mobile balance to an hnt balance', () => {
+    const convert = (opts: { mobile: number, hntOracle: number, mobileOracle: number }) => {
+      const mobileBalance = new Balance(opts.mobile * 100000000, CurrencyType.mobileToken)
+      const hntOraclePrice = new Balance(opts.hntOracle * 100000000, CurrencyType.usd)
+      const mobileOraclePrice = new Balance(opts.mobileOracle * 100000000, CurrencyType.usd)
+      return mobileBalance.toNetworkTokens(hntOraclePrice, mobileOraclePrice)
+    }
+
+    expect(convert({ mobile: 4, hntOracle: 8, mobileOracle: 2 }).toString(2)).toBe('1 HNT')
+    expect(convert({ mobile: 5, hntOracle: 8, mobileOracle: 2 }).toString(2)).toBe('1.25 HNT')
+    expect(convert({ mobile: 4, hntOracle: 7.59, mobileOracle: 0.33 }).toString(2)).toBe('0.17 HNT')
+  })
+
   it('converts a usd balance to an hnt balance', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
@@ -160,6 +180,19 @@ describe('toNetworkTokens', () => {
 })
 
 describe('toTestNetworkTokens', () => {
+  it('converts a mobile balance to a tnt balance', () => {
+    const convert = (opts: { mobile: number, hntOracle: number, mobileOracle: number }) => {
+      const mobileBalance = new Balance(opts.mobile * 100000000, CurrencyType.mobileToken)
+      const hntOraclePrice = new Balance(opts.hntOracle * 100000000, CurrencyType.usd)
+      const mobileOraclePrice = new Balance(opts.mobileOracle * 100000000, CurrencyType.usd)
+      return mobileBalance.toTestNetworkTokens(hntOraclePrice, mobileOraclePrice)
+    }
+
+    expect(convert({ mobile: 4, hntOracle: 8, mobileOracle: 2 }).toString(2)).toBe('1 TNT')
+    expect(convert({ mobile: 5, hntOracle: 8, mobileOracle: 2 }).toString(2)).toBe('1.25 TNT')
+    expect(convert({ mobile: 4, hntOracle: 7.59, mobileOracle: 0.33 }).toString(2)).toBe('0.17 TNT')
+  })
+
   it('converts a dc balance to an tnt balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)

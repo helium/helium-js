@@ -1,4 +1,5 @@
 export { default as NetworkTokens } from './NetworkTokens'
+export { default as MobileTokens } from './MobileTokens'
 export { default as TestNetworkTokens } from './TestNetworkTokens'
 export { default as SecurityTokens } from './SecurityTokens'
 export { default as DataCredits } from './DataCredits'

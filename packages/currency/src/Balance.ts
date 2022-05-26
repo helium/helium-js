@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import CurrencyType, { AnyCurrencyType } from './CurrencyType'
 import {
   NetworkTokens,
+  MobileTokens,
   USDollars,
   DataCredits,
   BaseCurrencyType,
@@ -106,24 +107,42 @@ export default class Balance<T extends BaseCurrencyType> {
     return new Balance(this.bigInteger.dividedBy(n).toNumber(), this.type)
   }
 
-  toNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<NetworkTokens> {
+  toNetworkTokens(hntOraclePrice?: Balance<USDollars>, mobileOraclePrice?: Balance<USDollars>):
+  Balance<NetworkTokens> {
     if (this.type instanceof NetworkTokens) return this
-    if (!oraclePrice) throw OraclePriceRequiredError
+    if (!hntOraclePrice) throw OraclePriceRequiredError
+
+    if (this.type instanceof MobileTokens) {
+      if (!mobileOraclePrice) throw OraclePriceRequiredError
+
+      const usd = this.toUsd(mobileOraclePrice)
+      return usd.toNetworkTokens(hntOraclePrice)
+    }
+
     return new Balance(
       this.toUsd()
-        .bigBalance.dividedBy(oraclePrice.bigBalance)
+        .bigBalance.dividedBy(hntOraclePrice.bigBalance)
         .dividedBy(CurrencyType.networkToken.coefficient)
         .toNumber(),
       CurrencyType.networkToken,
     )
   }
 
-  toTestNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<TestNetworkTokens> {
+  toTestNetworkTokens(tntOraclePrice?: Balance<USDollars>, mobileOraclePrice?: Balance<USDollars>):
+  Balance<TestNetworkTokens> {
     if (this.type instanceof TestNetworkTokens) return this
-    if (!oraclePrice) throw OraclePriceRequiredError
+    if (!tntOraclePrice) throw OraclePriceRequiredError
+
+    if (this.type instanceof MobileTokens) {
+      if (!mobileOraclePrice) throw OraclePriceRequiredError
+
+      const usd = this.toUsd(mobileOraclePrice)
+      return usd.toTestNetworkTokens(tntOraclePrice)
+    }
+
     return new Balance(
       this.toUsd()
-        .bigBalance.dividedBy(oraclePrice.bigBalance)
+        .bigBalance.dividedBy(tntOraclePrice.bigBalance)
         .dividedBy(CurrencyType.testNetworkToken.coefficient)
         .toNumber(),
       CurrencyType.testNetworkToken,
@@ -147,6 +166,17 @@ export default class Balance<T extends BaseCurrencyType> {
         this.bigBalance
           .times(oraclePrice.bigBalance)
           .dividedBy(CurrencyType.usd.coefficient)
+          .toNumber(),
+        CurrencyType.usd,
+      )
+    }
+
+    if (this.type instanceof MobileTokens) {
+      if (!oraclePrice) throw OraclePriceRequiredError
+      return new Balance(
+        this.bigBalance
+          .times(oraclePrice.bigBalance)
+          .dividedBy(CurrencyType.mobileToken.coefficient)
           .toNumber(),
         CurrencyType.usd,
       )
