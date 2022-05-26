@@ -1,4 +1,5 @@
 import { Balance, CurrencyType } from '..'
+import { UnsupportedCurrencyConversionError } from '../Errors'
 
 describe('floatBalance', () => {
   it('returns a float based on the currency type', () => {
@@ -125,6 +126,12 @@ describe('toUsd', () => {
     expect(usdBalance.toString(2)).toBe('10 USD')
   })
 
+  it('throws error when converting a mobile balance to a usd balance', () => {
+    const mobileBalance = new Balance(10 * 100000000, CurrencyType.mobileToken)
+    const oraclePrice = new Balance(0.33 * 100000000, CurrencyType.usd)
+    expect(() => mobileBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
+  })
+
   it('converts an hnt balance to a usd balance', () => {
     const hntBalance = new Balance(10 * 100000000, CurrencyType.default)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
@@ -146,6 +153,17 @@ describe('toNetworkTokens', () => {
     expect(hntBalance.toString(2)).toBe('22.22 HNT')
   })
 
+  it('throws error when converting a mobile balance to an hnt balance', () => {
+    const convert = (opts: { mobile: number, hntOracle: number}) => {
+      const mobileBalance = new Balance(opts.mobile * 100000000, CurrencyType.mobileToken)
+      const hntOraclePrice = new Balance(opts.hntOracle * 100000000, CurrencyType.usd)
+      return mobileBalance.toNetworkTokens(hntOraclePrice)
+    }
+
+    expect(() => convert({ mobile: 4, hntOracle: 8 }))
+      .toThrowError(UnsupportedCurrencyConversionError)
+  })
+
   it('converts a usd balance to an hnt balance', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
@@ -160,6 +178,17 @@ describe('toNetworkTokens', () => {
 })
 
 describe('toTestNetworkTokens', () => {
+  it('throws error when converting a mobile balance to a tnt balance', () => {
+    const convert = (opts: { mobile: number, hntOracle: number, }) => {
+      const mobileBalance = new Balance(opts.mobile * 100000000, CurrencyType.mobileToken)
+      const hntOraclePrice = new Balance(opts.hntOracle * 100000000, CurrencyType.usd)
+      return mobileBalance.toTestNetworkTokens(hntOraclePrice)
+    }
+
+    expect(() => convert({ mobile: 4, hntOracle: 8 }))
+      .toThrowError(UnsupportedCurrencyConversionError)
+  })
+
   it('converts a dc balance to an tnt balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     const oraclePrice = new Balance(0.45 * 100000000, CurrencyType.usd)
@@ -197,6 +226,13 @@ describe('toDataCredits', () => {
   it('returns itself if called on a dc balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     expect(dcBalance.toDataCredits().toString()).toBe('1,000,000 DC')
+  })
+
+  it('throws an error when converting $MOBILE to dc', () => {
+    const mobileBalance = new Balance(100000000, CurrencyType.mobileToken)
+    expect(() => {
+      mobileBalance.toDataCredits()
+    }).toThrowError(UnsupportedCurrencyConversionError)
   })
 })
 

@@ -5,6 +5,7 @@ import {
   USDollars,
   TestNetworkTokens,
 } from './currency_types'
+import MobileTokens from './currency_types/MobileTokens'
 
 export type AnyCurrencyType =
   | NetworkTokens
@@ -20,6 +21,10 @@ export default class CurrencyType {
 
   static get networkToken(): NetworkTokens {
     return new NetworkTokens()
+  }
+
+  static get mobileToken(): MobileTokens {
+    return new MobileTokens()
   }
 
   static get testNetworkToken(): TestNetworkTokens {

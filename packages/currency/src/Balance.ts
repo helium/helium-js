@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import CurrencyType, { AnyCurrencyType } from './CurrencyType'
 import {
   NetworkTokens,
+  MobileTokens,
   USDollars,
   DataCredits,
   BaseCurrencyType,
@@ -108,7 +109,13 @@ export default class Balance<T extends BaseCurrencyType> {
 
   toNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<NetworkTokens> {
     if (this.type instanceof NetworkTokens) return this
+
+    if (this.type instanceof MobileTokens) {
+      throw UnsupportedCurrencyConversionError
+    }
+
     if (!oraclePrice) throw OraclePriceRequiredError
+
     return new Balance(
       this.toUsd()
         .bigBalance.dividedBy(oraclePrice.bigBalance)
@@ -120,7 +127,13 @@ export default class Balance<T extends BaseCurrencyType> {
 
   toTestNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<TestNetworkTokens> {
     if (this.type instanceof TestNetworkTokens) return this
+
+    if (this.type instanceof MobileTokens) {
+      throw UnsupportedCurrencyConversionError
+    }
+
     if (!oraclePrice) throw OraclePriceRequiredError
+
     return new Balance(
       this.toUsd()
         .bigBalance.dividedBy(oraclePrice.bigBalance)
