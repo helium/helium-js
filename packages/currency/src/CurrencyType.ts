@@ -13,6 +13,7 @@ export type AnyCurrencyType =
   | SecurityTokens
   | DataCredits
   | USDollars
+  | MobileTokens
 
 export default class CurrencyType {
   static get default(): NetworkTokens {
