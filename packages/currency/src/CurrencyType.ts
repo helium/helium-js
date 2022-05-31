@@ -4,8 +4,8 @@ import {
   DataCredits,
   USDollars,
   TestNetworkTokens,
+  MobileTokens,
 } from './currency_types'
-import MobileTokens from './currency_types/MobileTokens'
 
 export type AnyCurrencyType =
   | NetworkTokens
