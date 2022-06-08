@@ -19,6 +19,11 @@ export default class Network {
     version: 1,
   })
 
+  static devnet = new Network({
+    baseURL: 'https://devnet-api.helium.wtf',
+    version: 1,
+  })
+
   public baseURL: string
 
   public version: number
