@@ -2,9 +2,11 @@ import proto from '@helium/proto'
 import * as JSLong from 'long'
 import Transaction from './Transaction'
 import {
-  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber, toString,
+  EMPTY_SIGNATURE, toAddressable, toNumber, toString, toUint8Array,
 } from './utils'
-import { Addressable, Base64Memo, SignableKeypair } from './types'
+import {
+  Addressable, Base64Memo, SignableKeypair, TokenType,
+} from './types'
 
 interface PaymentOptions {
   payer?: Addressable
@@ -18,6 +20,7 @@ interface Payment {
   payee: Addressable
   amount: number
   memo?: Base64Memo
+  tokenType?: number
 }
 
 interface SignOptions {
@@ -66,6 +69,7 @@ export default class PaymentV2 extends Transaction {
       payee: toAddressable(p!.payee) as Addressable,
       amount: toNumber(p!.amount) as number,
       memo: toString(p!.memo),
+      tokenType: p!.tokenType === undefined ? TokenType.hnt : toNumber(p!.tokenType) as number,
     }))
     const fee = toNumber(decoded.paymentV2?.fee)
     const nonce = toNumber(decoded.paymentV2?.nonce)
@@ -84,8 +88,7 @@ export default class PaymentV2 extends Transaction {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const payment = this.toProto(true)
     const serialized = PaymentTxn.encode(payment).finish()
-    const signature = await payerKeypair.sign(serialized)
-    this.signature = signature
+    this.signature = await payerKeypair.sign(serialized)
     return this
   }
 
@@ -94,12 +97,15 @@ export default class PaymentV2 extends Transaction {
   ): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
-    const payments = this.payments.map(({ payee, amount, memo }) => {
+    const payments = this.payments.map(({
+      payee, amount, memo, tokenType,
+    }) => {
       const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
       return Payment.create({
         payee: toUint8Array(payee.bin),
         amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
+        tokenType,
       })
     })
 
