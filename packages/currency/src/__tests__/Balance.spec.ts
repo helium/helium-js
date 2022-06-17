@@ -1,3 +1,4 @@
+import { TokenType } from '@helium/transactions'
 import { Balance, CurrencyType } from '..'
 
 describe('floatBalance', () => {
@@ -220,5 +221,14 @@ describe('trying to convert a security token balance', () => {
     expect(() => {
       hstBalance.toDataCredits()
     }).toThrow()
+  })
+})
+
+describe('CurrencyType', () => {
+  it('fromTokenType', () => {
+    expect(CurrencyType.fromTokenType(TokenType.hnt).ticker).toBe('HNT')
+    expect(CurrencyType.fromTokenType(TokenType.hst).ticker).toBe('HST')
+    expect(CurrencyType.fromTokenType(TokenType.mobile).ticker).toBe('MOBILE')
+    expect(CurrencyType.fromTokenType(TokenType.iot).ticker).toBe('IOT')
   })
 })

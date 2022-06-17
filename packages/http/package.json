@@ -28,6 +28,7 @@
   "dependencies": {
     "@helium/address": "^4.3.1",
     "@helium/currency": "^4.2.0",
+    "@helium/transactions": "^4.3.1",
     "axios": "^0.21.1",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
