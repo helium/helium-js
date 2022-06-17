@@ -6,7 +6,9 @@ import Transaction, {
   RewardsV1,
   RewardsV2,
   SecurityExchangeV1,
-  StakeValidatorV1, SubnetworkRewardsV1, TokenConvertV1,
+  StakeValidatorV1,
+  SubnetworkRewardsV1,
+  TokenConvertV1,
   TransferHotspotV1,
   TransferHotspotV2,
   TransferValidatorStakeV1,
@@ -307,6 +309,7 @@ describe('SubnetworkRewardsV1', () => {
       end_epoch: 300195,
     }
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
+    expect(txn.tokenType).toBe(TokenType.mobile)
     expect(txn.rewards.length).toBe(2)
     expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
     expect(txn.rewards[0].amount.type.ticker).toBe('MOBILE')
@@ -333,6 +336,7 @@ describe('SubnetworkRewardsV1', () => {
       end_epoch: 300195,
     }
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
+    expect(txn.tokenType).toBe(TokenType.iot)
     expect(txn.rewards.length).toBe(2)
     expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
     expect(txn.rewards[0].amount.type.ticker).toBe('IOT')
