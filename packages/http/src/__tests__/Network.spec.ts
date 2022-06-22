@@ -23,3 +23,11 @@ describe('testnet', () => {
     expect(network.version).toBe(1)
   })
 })
+
+describe('devnet', () => {
+  it('returns the devnet network', () => {
+    const network = Network.devnet
+    expect(network.endpoint).toBe('https://devnet-api.helium.wtf/v1')
+    expect(network.version).toBe(1)
+  })
+})
