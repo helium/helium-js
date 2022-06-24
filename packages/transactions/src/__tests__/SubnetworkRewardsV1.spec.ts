@@ -1,4 +1,5 @@
 import proto from '@helium/proto'
+import { utils } from '@helium/crypto'
 import { TokenType, Transaction, SubnetworkRewardsV1 } from '..'
 import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
@@ -53,7 +54,7 @@ describe('serialize', () => {
 })
 
 describe('sign', () => {
-  it('adds the payer signature', async () => {
+  it('adds the rewards signature', async () => {
     const { bob } = await usersFixture()
     const txn = await fixture()
 
@@ -62,5 +63,24 @@ describe('sign', () => {
     if (!signedTxn.rewardServerSignature) throw new Error('null')
 
     expect(Buffer.byteLength(Buffer.from(signedTxn.rewardServerSignature))).toBe(64)
+  })
+
+  it('verifies the signature', async () => {
+    const { bob } = await usersFixture()
+    const txn = await fixture()
+
+    const signedTxn = await txn.sign({ keypair: bob })
+    const rawTxn = signedTxn.toString()
+
+    const subnetworkRewards = SubnetworkRewardsV1.fromString(rawTxn)
+    const message = subnetworkRewards?.message()
+    const signature = subnetworkRewards?.rewardServerSignature
+
+    if (!signature || !message) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await utils.verify(signature, message, bob.publicKey)
+    expect(valid).toBeTruthy()
   })
 })

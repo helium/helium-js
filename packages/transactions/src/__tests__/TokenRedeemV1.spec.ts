@@ -1,4 +1,5 @@
 import proto from '@helium/proto'
+import { utils } from '@helium/crypto'
 import { Transaction, TokenRedeemV1, TokenType } from '..'
 import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
 
@@ -55,6 +56,25 @@ describe('sign', () => {
     if (!signedTxn.signature) throw new Error('null')
 
     expect(Buffer.byteLength(Buffer.from(signedTxn.signature))).toBe(64)
+  })
+
+  it('verifies the signature', async () => {
+    const { bob } = await usersFixture()
+    const txn = await fixture()
+
+    const signedTxn = await txn.sign({ keypair: bob })
+    const rawTxn = signedTxn.toString()
+
+    const tokenRedeem = TokenRedeemV1.fromString(rawTxn)
+    const message = tokenRedeem?.message()
+    const signature = tokenRedeem?.signature
+
+    if (!signature || !message) {
+      throw new Error('Token could not be created')
+    }
+
+    const valid = await utils.verify(signature, message, bob.publicKey)
+    expect(valid).toBeTruthy()
   })
 })
 

@@ -20,7 +20,7 @@ interface Payment {
   payee: Addressable
   amount: number
   memo?: Base64Memo
-  tokenType?: number
+  tokenType?: TokenType
 }
 
 interface SignOptions {
@@ -105,7 +105,7 @@ export default class PaymentV2 extends Transaction {
         payee: toUint8Array(payee.bin),
         amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
-        tokenType,
+        tokenType: tokenType as number,
       })
     })
 

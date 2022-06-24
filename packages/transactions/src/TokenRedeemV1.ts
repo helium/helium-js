@@ -1,6 +1,8 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
-import { toUint8Array, EMPTY_SIGNATURE } from './utils'
+import {
+  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber,
+} from './utils'
 import { Addressable, SignableKeypair } from './types'
 
 interface Options {
@@ -9,6 +11,7 @@ interface Options {
   fee?: number
   nonce?: number
   tokenType?: number
+  signature?: Uint8Array
 }
 
 interface SignOptions {
@@ -42,6 +45,7 @@ export default class TokenRedeemV1 extends Transaction {
       this.fee = 0
       this.fee = this.calculateFee()
     }
+    this.signature = opts.signature
   }
 
   serialize(): Uint8Array {
@@ -51,10 +55,14 @@ export default class TokenRedeemV1 extends Transaction {
     return Txn.encode(txn).finish()
   }
 
-  async sign({ keypair }: SignOptions): Promise<TokenRedeemV1> {
+  message(): Uint8Array {
     const TokenRedeem = proto.helium.blockchain_txn_token_redeem_v1
     const tokenRedeem = this.toProto(true)
-    const serialized = TokenRedeem.encode(tokenRedeem).finish()
+    return TokenRedeem.encode(tokenRedeem).finish()
+  }
+
+  async sign({ keypair }: SignOptions): Promise<TokenRedeemV1> {
+    const serialized = this.message()
     this.signature = await keypair.sign(serialized)
     return this
   }
@@ -71,6 +79,24 @@ export default class TokenRedeemV1 extends Transaction {
       tokenType: this.tokenType,
       signature:
         this.signature && !forSigning ? toUint8Array(this.signature) : null,
+    })
+  }
+
+  static fromString(serializedTxnString: string): TokenRedeemV1 {
+    const buf = Buffer.from(serializedTxnString, 'base64')
+    const { tokenRedeem } = proto.helium.blockchain_txn.decode(buf)
+
+    const account = toAddressable(tokenRedeem?.account)
+    const amount = toNumber(tokenRedeem?.amount) || 0
+    const tokenType = toNumber(tokenRedeem?.tokenType)
+    const fee = toNumber(tokenRedeem?.fee)
+    const nonce = toNumber(tokenRedeem?.nonce)
+    const signature = tokenRedeem?.signature?.length
+      ? toUint8Array(tokenRedeem?.signature)
+      : undefined
+
+    return new TokenRedeemV1({
+      account, amount, tokenType, fee, nonce, signature,
     })
   }
 
