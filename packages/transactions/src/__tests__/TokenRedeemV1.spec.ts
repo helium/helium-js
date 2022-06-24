@@ -1,5 +1,5 @@
 import proto from '@helium/proto'
-import { Transaction, TokenConvertV1, TokenType } from '..'
+import { Transaction, TokenRedeemV1, TokenType } from '..'
 import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
@@ -12,7 +12,7 @@ Transaction.config({
 const fixture = async () => {
   const { bob } = await usersFixture()
 
-  return new TokenConvertV1({
+  return new TokenRedeemV1({
     tokenType: TokenType.mobile,
     account: bob.address,
     amount: 10,
@@ -26,7 +26,7 @@ test('create a token convert txn', async () => {
   expect(txn.amount).toBe(10)
   expect(txn.nonce).toBe(1)
   expect(txn.fee).toBe(25000)
-  expect(txn.type).toBe('token_convert_v1')
+  expect(txn.type).toBe('token_redeem_v1')
 })
 
 describe('serialize', () => {
@@ -41,7 +41,7 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.tokenConvert?.amount?.toString()).toBe('10')
+    expect(decoded.tokenRedeem?.amount?.toString()).toBe('10')
   })
 })
 
@@ -62,7 +62,7 @@ describe('fees', () => {
   it('does not calculate fees if a fee is provided in the constructor', async () => {
     const { bob } = await usersFixture()
 
-    const txn = new TokenConvertV1({
+    const txn = new TokenRedeemV1({
       tokenType: TokenType.mobile,
       account: bob.address,
       amount: 10,

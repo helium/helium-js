@@ -15,7 +15,7 @@ interface SignOptions {
   keypair: SignableKeypair
 }
 
-export default class TokenConvertV1 extends Transaction {
+export default class TokenRedeemV1 extends Transaction {
   public account?: Addressable
 
   public amount?: number
@@ -28,7 +28,7 @@ export default class TokenConvertV1 extends Transaction {
 
   public signature?: Uint8Array
 
-  public type: string = 'token_convert_v1'
+  public type: string = 'token_redeem_v1'
 
   constructor(opts: Options) {
     super()
@@ -46,24 +46,24 @@ export default class TokenConvertV1 extends Transaction {
 
   serialize(): Uint8Array {
     const Txn = proto.helium.blockchain_txn
-    const tokenConvert = this.toProto()
-    const txn = Txn.create({ tokenConvert })
+    const tokenRedeem = this.toProto()
+    const txn = Txn.create({ tokenRedeem })
     return Txn.encode(txn).finish()
   }
 
-  async sign({ keypair }: SignOptions): Promise<TokenConvertV1> {
-    const TokenConvert = proto.helium.blockchain_txn_token_convert_v1
-    const tokenConvert = this.toProto(true)
-    const serialized = TokenConvert.encode(tokenConvert).finish()
+  async sign({ keypair }: SignOptions): Promise<TokenRedeemV1> {
+    const TokenRedeem = proto.helium.blockchain_txn_token_redeem_v1
+    const tokenRedeem = this.toProto(true)
+    const serialized = TokenRedeem.encode(tokenRedeem).finish()
     this.signature = await keypair.sign(serialized)
     return this
   }
 
   private toProto(
     forSigning: boolean = false,
-  ): proto.helium.blockchain_txn_token_convert_v1 {
-    const TokenConvert = proto.helium.blockchain_txn_token_convert_v1
-    return TokenConvert.create({
+  ): proto.helium.blockchain_txn_token_redeem_v1 {
+    const TokenRedeem = proto.helium.blockchain_txn_token_redeem_v1
+    return TokenRedeem.create({
       account: this.account ? toUint8Array(this.account.bin) : null,
       amount: this.amount,
       fee: this.fee && this.fee > 0 ? this.fee : null,

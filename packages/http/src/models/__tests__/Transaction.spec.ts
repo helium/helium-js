@@ -8,7 +8,7 @@ import Transaction, {
   SecurityExchangeV1,
   StakeValidatorV1,
   SubnetworkRewardsV1,
-  TokenConvertV1,
+  TokenRedeemV1,
   TransferHotspotV1,
   TransferHotspotV2,
   TransferValidatorStakeV1,
@@ -355,7 +355,7 @@ describe('TokenConvertV1', () => {
       height: 123456,
       hash: 'fake-txn-hash',
     }
-    const txn = Transaction.fromJsonObject(json) as TokenConvertV1
+    const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
     expect(txn.amount.type.ticker).toBe('HNT')
     expect(txn.tokenType).toBe(TokenType.mobile)
   })
@@ -371,7 +371,7 @@ describe('TokenConvertV1', () => {
       height: 123456,
       hash: 'fake-txn-hash',
     }
-    const txn = Transaction.fromJsonObject(json) as TokenConvertV1
+    const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
     expect(txn.amount.type.ticker).toBe('HNT')
     expect(txn.tokenType).toBe(TokenType.iot)
   })

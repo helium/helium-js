@@ -467,7 +467,7 @@ export type AnyTransaction =
   | RewardsV1
   | RewardsV2
   | SubnetworkRewardsV1
-  | TokenConvertV1
+  | TokenRedeemV1
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
@@ -592,7 +592,7 @@ export class SubnetworkRewardsV1 extends DataModel {
   }
 }
 
-export class TokenConvertV1 extends DataModel {
+export class TokenRedeemV1 extends DataModel {
   type!: string
 
   account!: string
@@ -607,12 +607,12 @@ export class TokenConvertV1 extends DataModel {
 
   signature!: string
 
-  constructor(data: TokenConvertV1) {
+  constructor(data: TokenRedeemV1) {
     super()
     Object.assign(this, data)
   }
 
-  get data(): TokenConvertV1 {
+  get data(): TokenRedeemV1 {
     return this
   }
 }
@@ -656,8 +656,8 @@ export default class Transaction {
         return this.toSecurityExchangeV1(json)
       case 'subnetwork_rewards_v1':
         return this.toSubnetworkRewardsV1(json)
-      case 'token_convert_v1':
-        return this.toTokenConvertV1(json)
+      case 'token_redeem_v1':
+        return this.toTokenRedeemV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -773,7 +773,7 @@ export default class Transaction {
     )
   }
 
-  static toTokenConvertV1(json: TxnJsonObject): TokenConvertV1 {
-    return new TokenConvertV1(prepareTxn(json))
+  static toTokenRedeemV1(json: TxnJsonObject): TokenRedeemV1 {
+    return new TokenRedeemV1(prepareTxn(json))
   }
 }
