@@ -343,10 +343,10 @@ describe('SubnetworkRewardsV1', () => {
   })
 })
 
-describe('TokenConvertV1', () => {
+describe('TokenRedeemV1', () => {
   it('correctly converts hnt to mobile txn json', () => {
     const json = {
-      type: 'token_convert_v1',
+      type: 'token_redeem_v1',
       account: 'fake-owner-address',
       amount: 2000,
       token_type: TokenType.mobile,
@@ -362,7 +362,7 @@ describe('TokenConvertV1', () => {
 
   it('correctly converts hnt to iot txn json', () => {
     const json = {
-      type: 'token_convert_v1',
+      type: 'token_redeem_v1',
       account: 'fake-owner-address',
       amount: 2000,
       token_type: TokenType.iot,
