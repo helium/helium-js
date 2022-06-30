@@ -22,6 +22,7 @@
       "packages/transactions/src",
       "packages/currency/src",
       "packages/address/src",
+      "packages/wallet-link/src",
       "integration_tests/tests"
     ],
     "collectCoverageFrom": [
