@@ -1,0 +1,35 @@
+{
+  "name": "@helium/wallet-link",
+  "version": "4.4.0",
+  "description": "Utilities for linking a 3rd party app to the helium wallet.",
+  "keywords": [
+    "helium",
+    "blockchain",
+    "react-native"
+  ],
+  "contributors": [
+    "Matt Reetz <matt@nova-labs.com>"
+  ],
+  "homepage": "https://github.com/helium/helium-js#readme",
+  "license": "Apache-2.0",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "files": [
+    "build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "clean": "rimraf build",
+    "build": "yarn run clean && tsc"
+  },
+  "dependencies": {
+    "@helium/address": "^4.3.1",
+    "@helium/crypto-react-native": "^4.3.1",
+    "date-fns": "^2.28.0",
+    "query-string": "^7.1.1",
+    "react-native-sodium": "^0.4.0"
+  }
+}
