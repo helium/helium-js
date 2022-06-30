@@ -2,8 +2,8 @@
 import Sodium from 'react-native-sodium'
 import Address from '@helium/address'
 import queryString from 'query-string'
+import { SignableKeypair } from '@helium/transactions'
 import { getUnixTime } from 'date-fns'
-import { Keypair } from '@helium/crypto-react-native'
 import {
   DELEGATE_APPS,
   LinkWalletResponse,
@@ -13,7 +13,7 @@ import {
   TokenWithSig,
 } from './types'
 
-export const makeAppLinkAuthToken = async (tokenOpts: Token, keypair: Keypair) => {
+export const makeAppLinkAuthToken = async (tokenOpts: Token, keypair: SignableKeypair) => {
   const ordered = Object.keys(tokenOpts)
     .sort()
     .reduce(

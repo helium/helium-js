@@ -1,7 +1,7 @@
 /**
- * [[include:crypto-react-native/README.md]]
+ * [[include:wallet-link/README.md]]
  * @packageDocumentation
- * @module crypto-react-native
+ * @module @helium/wallet-link
  */
 
 export * from './walletLink'
