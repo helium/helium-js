@@ -62,7 +62,7 @@ export const verifyWalletLinkToken = (
   const { publicKey } = Address.fromB58(token.address)
   return utils.verify(
     Uint8Array.from(Buffer.from(signature)),
-    message,
+    Buffer.from(message).toString('base64'),
     publicKey,
   )
 }
