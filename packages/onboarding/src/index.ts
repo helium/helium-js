@@ -1,5 +1,5 @@
 /**
- * [[include:http/README.md]]
+ * [[include:onboarding/README.md]]
  * @packageDocumentation
  * @module onboarding
  */

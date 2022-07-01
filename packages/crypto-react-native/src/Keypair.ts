@@ -61,12 +61,12 @@ export default class Keypair {
     return new Keypair(keypair, netType)
   }
 
-  async sign(message: string | Uint8Array): Promise<Buffer> {
+  async sign(message: string | Uint8Array): Promise<Uint8Array> {
     const messageBuffer = Buffer.from(message)
     const signature = await Sodium.crypto_sign_detached(
       messageBuffer.toString('base64'),
       this.privateKey.toString('base64'),
     )
-    return Buffer.from(signature, 'base64')
+    return Uint8Array.from(Buffer.from(signature, 'base64'))
   }
 }
