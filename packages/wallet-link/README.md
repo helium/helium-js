@@ -1,6 +1,15 @@
 # `@helium/wallet-link`
 
-> Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location assertion, and ownership transfer transaction signing with the Helium Wallet and Hotspot apps.
+Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location 
+assertion, and ownership transfer transaction signing with the Helium Wallet and Hotspot apps.
+
+
+> This library uses [@helium/crypto](https://helium.github.io/helium-js/modules/crypto.html) which will not work in 
+> React Native by default. If you are using React Native you will need to use something to alias 
+> [@helium/crypto](https://helium.github.io/helium-js/modules/crypto.html) as 
+> [@helium/crypto-react-native](https://helium.github.io/helium-js/modules/crypto_react_native.html). For example, you could use 
+> [typescript path configuration](https://www.typescriptlang.org/tsconfig/#paths) or Babel with a 
+> plugin like [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver).
 
 ## Installation
 

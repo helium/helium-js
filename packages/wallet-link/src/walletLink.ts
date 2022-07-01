@@ -25,11 +25,7 @@ export const makeAppLinkAuthToken = async (tokenOpts: Token, keypair: SignableKe
     )
   const message = JSON.stringify(ordered)
   const signatureResult = await keypair.sign(message)
-
-  // @helium/crypto returns a Uint8Array while @helium/crypto-react-native returns a Buffer
-  const signature = Buffer.isBuffer(signatureResult)
-    ? signatureResult.toString('base64')
-    : Buffer.from(signatureResult).toString('base64')
+  const signature = Buffer.from(signatureResult).toString('base64')
 
   const signedToken = {
     ...tokenOpts,
