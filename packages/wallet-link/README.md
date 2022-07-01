@@ -35,6 +35,14 @@ index 8583f31..43d8b37 100644
  const types_1 = require("./types");
 ```
 
+Then in your package.json add the following script to run the patch.
+
+```diff
+ "scripts": {
++  "postinstall": "patch-package"
+ }
+```
+
 ### Browser or other JS environments
 
 ```shell
