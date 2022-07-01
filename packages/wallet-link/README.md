@@ -16,8 +16,8 @@ $ npm install --save-dev patch-package
 ```
 
 When using this library in React Native you must patch the `@helium/crypto` calls
-with `@helium/crypto-react-native`. The instructions below install [patch-package](https://github.com/ds300/patch-package)
-and you will need to apply this patch by adding it to your React Native root under `./patches/@wallet-link+4.4.0.patch`.
+with `@helium/crypto-react-native`. You can do this using [patch-package](https://github.com/ds300/patch-package)
+by adding the following file to your React Native root at `/patches/@wallet-link+4.4.0.patch`.
 
 ```
 TODO: Add patch
