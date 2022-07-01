@@ -3,20 +3,32 @@
 Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location 
 assertion, and ownership transfer transaction signing with the Helium Wallet and Hotspot apps.
 
-
-> This library uses [@helium/crypto](https://helium.github.io/helium-js/modules/crypto.html) which will not work in 
-> React Native by default. If you are using React Native you will need to use something to alias 
-> [@helium/crypto](https://helium.github.io/helium-js/modules/crypto.html) as 
-> [@helium/crypto-react-native](https://helium.github.io/helium-js/modules/crypto_react_native.html). For example, you could use 
-> [typescript path configuration](https://www.typescriptlang.org/tsconfig/#paths) or Babel with a 
-> plugin like [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver).
-
 ## Installation
 
+### React Native
+
 ```shell
-$ yarn add @helium/wallet-link
+$ yarn add @helium/wallet-link @helium/crypto-react-native
+$ yarn add --dev patch-package postinstall-postinstall
 # or
-$ npm install @helium/wallet-link
+$ npm install @helium/wallet-link @helium/crypto-react-native
+$ npm install --save-dev patch-package
+```
+
+When using this library in React Native you must patch the `@helium/crypto` calls
+with `@helium/crypto-react-native`. The instructions below install [patch-package](https://github.com/ds300/patch-package)
+and you will need to apply this patch by adding it to your React Native root under `./patches/@wallet-link+4.4.0.patch`.
+
+```
+TODO: Add patch
+```
+
+### Browser or other JS environments
+
+```shell
+$ yarn add @helium/wallet-link @helium/crypto
+# or
+$ npm install @helium/wallet-link @helium/crypto
 ```
 
 ## Usage

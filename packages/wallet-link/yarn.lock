@@ -11,16 +11,6 @@
     js-sha256 "^0.9.0"
     multiformats "^9.6.4"
 
-"@helium/crypto-react-native@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@helium/crypto-react-native/-/crypto-react-native-4.3.1.tgz#3d1ef0ddc16b7bdf0126759fd1d2ef6aeff8372d"
-  integrity sha512-7S0Qof6o00ZPlIWZ2VUawwXtmOz/HO+qP+JeR+05fU2S8rOntzYFX0KYb4vVUa+gQlSBQt+eb49DPQkzkB6GRg==
-  dependencies:
-    "@helium/address" "^4.3.1"
-    js-sha256 "^0.9.0"
-    react-native-sodium "^0.3.8"
-    safe-buffer "^5.2.1"
-
 "@helium/proto@^1.5.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-1.6.0.tgz#b97003bbc511afec1abac7cbffc5c088e348022d"
@@ -195,21 +185,6 @@ query-string@^7.1.1:
     filter-obj "^1.1.0"
     split-on-first "^1.0.0"
     strict-uri-encode "^2.0.0"
-
-react-native-sodium@^0.3.8:
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/react-native-sodium/-/react-native-sodium-0.3.9.tgz#cd853b9ef03ee053130d6d731c5d738f65a961db"
-  integrity sha512-eLI2n5Kflvq6OcVHW4estK0EGFlSDk2fHSHst4a2ysO4Hpm5nxf/DCQ7DWcLZYJlE9SX9wk461eF9wKZL/gwfQ==
-
-react-native-sodium@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-sodium/-/react-native-sodium-0.4.0.tgz#9f416aa5d24c020ae252fa4d6ce6b67251c47dc5"
-  integrity sha512-u5ZQGRnoencCJV5PaUcEjJ7+svn8rqBBFgrmI+J5j6YGKebl/cOqapH8OuLCWB8SDOSKftx0KxFoeVZEz8O4lQ==
-
-safe-buffer@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
-  integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
 split-on-first@^1.0.0:
   version "1.1.0"
