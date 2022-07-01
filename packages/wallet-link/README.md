@@ -34,14 +34,15 @@ index 8583f31..43d8b37 100644
  const date_fns_1 = require("date-fns");
  const types_1 = require("./types");
 ```
-
-Then in your package.json add the following script to run the patch.
+In your `package.json` add the following script to run the patch on postinstall:
 
 ```diff
  "scripts": {
 +  "postinstall": "patch-package"
  }
 ```
+
+Lastly run `yarn` or `npm install` and the patch will be installed.
 
 ### Browser or other JS environments
 
