@@ -5,7 +5,7 @@ export interface Addressable {
 }
 
 export interface SignableKeypair {
-  sign(message: string | Uint8Array): Promise<Buffer>
+  sign(message: string | Uint8Array): Promise<Uint8Array | Buffer>
 }
 
 export type Base64Memo = string

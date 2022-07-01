@@ -7,7 +7,8 @@
     "packages/onboarding/src/index.ts",
     "packages/proto-ble/build/index.d.ts",
     "packages/transactions/src/index.ts",
-    "packages/address/src/index.ts"
+    "packages/address/src/index.ts",
+    "packages/wallet-link/src/index.ts"
   ],
   "exclude": ["**/*.spec.ts"],
   "includes": "packages",

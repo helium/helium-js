@@ -1,7 +1,7 @@
 /**
  * [[include:wallet-link/README.md]]
  * @packageDocumentation
- * @module @helium/wallet-link
+ * @module wallet-link
  */
 
 export * from './walletLink'

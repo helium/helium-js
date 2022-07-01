@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
-import Sodium from 'react-native-sodium'
 import Address from '@helium/address'
+import { utils } from '@helium/crypto'
 import queryString from 'query-string'
 import { SignableKeypair } from '@helium/transactions'
 import { getUnixTime } from 'date-fns'
@@ -24,9 +24,12 @@ export const makeAppLinkAuthToken = async (tokenOpts: Token, keypair: SignableKe
       {},
     )
   const message = JSON.stringify(ordered)
-  const buffer = await keypair.sign(message)
+  const signatureResult = await keypair.sign(message)
 
-  const signature = buffer.toString('base64')
+  // @helium/crypto returns a Uint8Array while @helium/crypto-react-native returns a Buffer
+  const signature = Buffer.isBuffer(signatureResult)
+    ? signatureResult.toString('base64')
+    : Buffer.from(signatureResult).toString('base64')
 
   const signedToken = {
     ...tokenOpts,
@@ -57,10 +60,10 @@ export const verifyWalletLinkToken = (
     )
   const message = JSON.stringify(ordered)
   const { publicKey } = Address.fromB58(token.address)
-  return Sodium.crypto_sign_verify_detached(
-    signature,
-    Buffer.from(message).toString('base64'),
-    Buffer.from(publicKey).toString('base64'),
+  return utils.verify(
+    Uint8Array.from(Buffer.from(signature)),
+    message,
+    publicKey,
   )
 }
 

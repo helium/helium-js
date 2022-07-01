@@ -1,6 +1,14 @@
-# `wallet-link`
+# `@helium/wallet-link`
 
 > Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location assertion, and ownership transfer transaction signing with the Helium Wallet and Hotspot apps.
+
+## Installation
+
+```shell
+$ yarn add @helium/wallet-link
+# or
+$ npm install @helium/wallet-link
+```
 
 ## Usage
 
