@@ -572,6 +572,8 @@ export interface SubnetworkReward {
 export class SubnetworkRewardsV1 extends DataModel {
   type!: string
 
+  time!: number
+
   tokenType!: TokenType
 
   startEpoch!: number
@@ -594,6 +596,8 @@ export class SubnetworkRewardsV1 extends DataModel {
 
 export class TokenRedeemV1 extends DataModel {
   type!: string
+
+  time!: number
 
   account!: string
 
