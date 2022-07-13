@@ -138,8 +138,8 @@ export default class Account extends DataModel {
     this.dcBalance = toBalance(account.dc_balance, CurrencyType.dataCredit)
     this.block = account.block
     this.balance = toBalance(account.balance, currencyType)
-    this.mobileBalance = toBalance(account.mobile_balance, CurrencyType.mobileToken)
-    this.iotBalance = toBalance(account.iot_balance, CurrencyType.iotToken)
+    this.mobileBalance = toBalance(account.mobile_balance, CurrencyType.mobile)
+    this.iotBalance = toBalance(account.iot_balance, CurrencyType.iot)
     this.address = account.address
     this.hotspotCount = account.hotspot_count
     this.validatorCount = account.validator_count

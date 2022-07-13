@@ -28,9 +28,9 @@ export default class CurrencyType {
       case TokenType.hst:
         return this.security
       case TokenType.mobile:
-        return this.mobileToken
+        return this.mobile
       case TokenType.iot:
-        return this.iotToken
+        return this.iot
     }
   }
 
@@ -42,11 +42,11 @@ export default class CurrencyType {
     return new NetworkTokens()
   }
 
-  static get mobileToken(): MobileTokens {
+  static get mobile(): MobileTokens {
     return new MobileTokens()
   }
 
-  static get iotToken(): IotTokens {
+  static get iot(): IotTokens {
     return new IotTokens()
   }
 
