@@ -1,5 +1,5 @@
 import proto from '@helium/proto'
-import { PaymentV2, Transaction } from '..'
+import { PaymentV2, TokenType, Transaction } from '..'
 import {
   usersFixture,
   bobB58,
@@ -23,6 +23,7 @@ const paymentFixture = async () => {
         payee: alice.address,
         amount: 10,
         memo: 'bW9ja21lbW8=',
+        tokenType: TokenType.hnt,
       },
     ],
     nonce: 1,
@@ -37,6 +38,7 @@ test('create a PaymentV2', async () => {
   expect((payment.payments || [])[0].payee.b58).toBe(aliceB58)
   expect((payment.payments || [])[0].amount).toBe(10)
   expect((payment.payments || [])[0].memo).toBe('bW9ja21lbW8=')
+  expect((payment.payments || [])[0].tokenType).toBe(TokenType.hnt)
   expect(payment.nonce).toBe(1)
   expect(payment.fee).toBe(35000)
   expect(payment.type).toBe('payment_v2')
@@ -120,6 +122,6 @@ describe('sign', () => {
     const signedPayment = await reserializedTxn.sign({ payer: bob })
     const decoded = proto.helium.blockchain_txn.decode(Buffer.from(signedPayment.toString(), 'base64'))
     const base64Signature = (decoded.paymentV2?.signature as Buffer).toString('base64')
-    expect(base64Signature).toEqual('TKUrksvBBTjgjoPEPhFc79+jPzaVN7VBWgKo4+GvDYZ4BO9HujpEuskMSvzVWq0T/tf2KAKd6d+fT3mYnMRYCA==')
+    expect(base64Signature).toEqual('PiDvVpuSI0PViJi/ItQnqyMPbHFh3mmZSMpBzHuJ6TXlig1hDtdUE8is9FJBbhdJbSz9jCpHHBB2O2d0pYPSCw==')
   })
 })

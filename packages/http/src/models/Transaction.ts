@@ -8,7 +8,10 @@ import {
   NetworkTokens,
   TestNetworkTokens,
   SecurityTokens,
+  IotTokens,
+  MobileTokens,
 } from '@helium/currency'
+import { TokenType } from '@helium/transactions'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
 
@@ -19,6 +22,7 @@ export interface TxnJsonObject {
   rewards?: any[]
   fee?: number
   amount_to_seller?: number
+  token_type?: number
 }
 
 export class AddGatewayV1 extends DataModel {
@@ -462,6 +466,8 @@ export type AnyTransaction =
   | PaymentV2
   | RewardsV1
   | RewardsV2
+  | SubnetworkRewardsV1
+  | TokenRedeemV1
   | AddGatewayV1
   | AssertLocationV1
   | PocReceiptsV1
@@ -558,6 +564,63 @@ export class TransferHotspotV2 extends DataModel {
   }
 }
 
+export interface SubnetworkReward {
+  account: string
+  amount: Balance<MobileTokens | IotTokens>
+}
+
+export class SubnetworkRewardsV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  tokenType!: TokenType
+
+  startEpoch!: number
+
+  endEpoch!: number
+
+  rewardServerSignature!: string
+
+  rewards!: Array<SubnetworkReward>
+
+  constructor(data: SubnetworkRewardsV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): SubnetworkRewardsV1 {
+    return this
+  }
+}
+
+export class TokenRedeemV1 extends DataModel {
+  type!: string
+
+  time!: number
+
+  account!: string
+
+  amount!: Balance<NetworkTokens>
+
+  fee!: number
+
+  nonce!: number
+
+  tokenType!: TokenType
+
+  signature!: string
+
+  constructor(data: TokenRedeemV1) {
+    super()
+    Object.assign(this, data)
+  }
+
+  get data(): TokenRedeemV1 {
+    return this
+  }
+}
+
 export default class Transaction {
   public static fromJsonObject(json: TxnJsonObject): AnyTransaction {
     switch (json.type) {
@@ -595,6 +658,10 @@ export default class Transaction {
         return this.toStateChannelCloseV1(json)
       case 'security_exchange_v1':
         return this.toSecurityExchangeV1(json)
+      case 'subnetwork_rewards_v1':
+        return this.toSubnetworkRewardsV1(json)
+      case 'token_redeem_v1':
+        return this.toTokenRedeemV1(json)
       default:
         return this.toUnknownTransaction(json)
     }
@@ -694,5 +761,23 @@ export default class Transaction {
 
   static toRewardsV2(json: TxnJsonObject): RewardsV2 {
     return this.toRewardsV1(json)
+  }
+
+  static toSubnetworkRewardsV1(json: TxnJsonObject): SubnetworkRewardsV1 {
+    const currencyType = CurrencyType.fromTokenType(json.token_type as TokenType)
+    const rewards = (json.rewards || []).map((r) => ({
+      ...r,
+      amount: new Balance(r.amount, currencyType),
+    })) as SubnetworkReward[]
+    return new SubnetworkRewardsV1(
+      prepareTxn({
+        ...json,
+        rewards,
+      }),
+    )
+  }
+
+  static toTokenRedeemV1(json: TxnJsonObject): TokenRedeemV1 {
+    return new TokenRedeemV1(prepareTxn(json))
   }
 }

@@ -30,9 +30,9 @@ export default class MultisigSignature {
 
   public async verify(message: string | Uint8Array): Promise<number> {
     const verifiedSignatures = await Promise.all(
-      this.signatures.map((sig) =>
-        verifySignature(sig.signature, message, this.addresses[sig.index].publicKey),
-      ),
+      this.signatures.map((sig) => verifySignature(
+        sig.signature, message, this.addresses[sig.index].publicKey,
+      )),
     )
     return verifiedSignatures.filter((isVerified) => isVerified === true).length
   }
@@ -72,11 +72,9 @@ export default class MultisigSignature {
   private static addressesFromBin(N: number, input: Uint8Array): Address[] {
     return Array(N)
       .fill(null)
-      .map((_, i) =>
-        Address.fromBin(
-          Buffer.from(input.slice(PUBLIC_KEY_LENGTH * i, PUBLIC_KEY_LENGTH * (i + 1))),
-        ),
-      )
+      .map((_, i) => Address.fromBin(
+        Buffer.from(input.slice(PUBLIC_KEY_LENGTH * i, PUBLIC_KEY_LENGTH * (i + 1))),
+      ))
   }
 
   private static signaturesFromBin(input: Uint8Array): KeySignature[] {

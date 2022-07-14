@@ -7,6 +7,8 @@ import {
   SecurityTokens,
   NetworkTokens,
   TestNetworkTokens,
+  MobileTokens,
+  IotTokens,
 } from '@helium/currency'
 import Address, { NetTypes } from '@helium/address'
 import type Client from '../Client'
@@ -31,6 +33,8 @@ export interface HTTPAccountObject {
   dc_balance?: number
   block?: number
   balance?: number
+  mobile_balance?: number
+  iot_balance?: number
   address: string
   hotspot_count?: number
   validator_count?: number
@@ -106,6 +110,10 @@ export default class Account extends DataModel {
 
   public balance?: Balance<NetworkTokens | TestNetworkTokens>
 
+  public mobileBalance?: Balance<MobileTokens>
+
+  public iotBalance?: Balance<IotTokens>
+
   public address: string
 
   public netType: NetType
@@ -130,6 +138,8 @@ export default class Account extends DataModel {
     this.dcBalance = toBalance(account.dc_balance, CurrencyType.dataCredit)
     this.block = account.block
     this.balance = toBalance(account.balance, currencyType)
+    this.mobileBalance = toBalance(account.mobile_balance, CurrencyType.mobile)
+    this.iotBalance = toBalance(account.iot_balance, CurrencyType.iot)
     this.address = account.address
     this.hotspotCount = account.hotspot_count
     this.validatorCount = account.validator_count

@@ -1,25 +1,53 @@
+import { TokenType } from '@helium/transactions'
 import {
+  BaseCurrencyType,
+  DataCredits,
+  IotTokens,
+  MobileTokens,
   NetworkTokens,
   SecurityTokens,
-  DataCredits,
-  USDollars,
   TestNetworkTokens,
+  USDollars,
 } from './currency_types'
 
 export type AnyCurrencyType =
   | NetworkTokens
+  | MobileTokens
+  | IotTokens
   | TestNetworkTokens
   | SecurityTokens
   | DataCredits
   | USDollars
 
 export default class CurrencyType {
+  static fromTokenType(type: TokenType): BaseCurrencyType {
+    switch (type) {
+      default:
+      case TokenType.hnt:
+        return this.default
+      case TokenType.hst:
+        return this.security
+      case TokenType.mobile:
+        return this.mobile
+      case TokenType.iot:
+        return this.iot
+    }
+  }
+
   static get default(): NetworkTokens {
     return new NetworkTokens()
   }
 
   static get networkToken(): NetworkTokens {
     return new NetworkTokens()
+  }
+
+  static get mobile(): MobileTokens {
+    return new MobileTokens()
+  }
+
+  static get iot(): IotTokens {
+    return new IotTokens()
   }
 
   static get testNetworkToken(): TestNetworkTokens {

@@ -9,3 +9,10 @@ export interface SignableKeypair {
 }
 
 export type Base64Memo = string
+
+export enum TokenType {
+  hnt = 0,
+  hst = 1,
+  mobile = 2,
+  iot = 3,
+}

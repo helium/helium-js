@@ -1,4 +1,6 @@
+import { TokenType } from '@helium/transactions'
 import { Balance, CurrencyType } from '..'
+import { UnsupportedCurrencyConversionError } from '../Errors'
 
 describe('floatBalance', () => {
   it('returns a float based on the currency type', () => {
@@ -136,6 +138,16 @@ describe('toUsd', () => {
     const usdBalance = new Balance(10 * 100000000, CurrencyType.usd)
     expect(usdBalance.toUsd().toString()).toBe('10 USD')
   })
+
+  it('throws error when converting a mobile balance or iot', () => {
+    const mobileBalance = new Balance(100000000, CurrencyType.mobile)
+    const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const oraclePrice = new Balance(1000000000, CurrencyType.usd)
+    expect(() => mobileBalance.toUsd(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => iotBalance.toUsd(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
+  })
 })
 
 describe('toNetworkTokens', () => {
@@ -157,6 +169,16 @@ describe('toNetworkTokens', () => {
     const hntBalance = new Balance(10 * 100000000, CurrencyType.default)
     expect(hntBalance.toNetworkTokens().toString()).toBe('10 HNT')
   })
+
+  it('throws error when converting a mobile balance or iot', () => {
+    const mobileBalance = new Balance(100000000, CurrencyType.mobile)
+    const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const oraclePrice = new Balance(1000000000, CurrencyType.usd)
+    expect(() => mobileBalance.toNetworkTokens(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => iotBalance.toNetworkTokens(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
+  })
 })
 
 describe('toTestNetworkTokens', () => {
@@ -177,6 +199,16 @@ describe('toTestNetworkTokens', () => {
   it('returns itself if called on an tnt balance', () => {
     const tntBalance = new Balance(10 * 100000000, CurrencyType.testNetworkToken)
     expect(tntBalance.toString()).toBe('10 TNT')
+  })
+
+  it('throws error when converting a mobile balance or iot', () => {
+    const mobileBalance = new Balance(100000000, CurrencyType.mobile)
+    const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const oraclePrice = new Balance(1000000000, CurrencyType.usd)
+    expect(() => mobileBalance.toTestNetworkTokens(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => iotBalance.toTestNetworkTokens(oraclePrice))
+      .toThrowError(UnsupportedCurrencyConversionError)
   })
 })
 
@@ -220,5 +252,14 @@ describe('trying to convert a security token balance', () => {
     expect(() => {
       hstBalance.toDataCredits()
     }).toThrow()
+  })
+})
+
+describe('CurrencyType', () => {
+  it('fromTokenType', () => {
+    expect(CurrencyType.fromTokenType(TokenType.hnt).ticker).toBe('HNT')
+    expect(CurrencyType.fromTokenType(TokenType.hst).ticker).toBe('HST')
+    expect(CurrencyType.fromTokenType(TokenType.mobile).ticker).toBe('MOBILE')
+    expect(CurrencyType.fromTokenType(TokenType.iot).ticker).toBe('IOT')
   })
 })

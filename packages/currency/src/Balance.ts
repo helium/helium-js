@@ -6,6 +6,8 @@ import {
   DataCredits,
   BaseCurrencyType,
   TestNetworkTokens,
+  MobileTokens,
+  IotTokens,
 } from './currency_types'
 import {
   MixedCurrencyTypeError,
@@ -108,6 +110,11 @@ export default class Balance<T extends BaseCurrencyType> {
 
   toNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<NetworkTokens> {
     if (this.type instanceof NetworkTokens) return this
+
+    if (this.type instanceof MobileTokens || this.type instanceof IotTokens) {
+      throw UnsupportedCurrencyConversionError
+    }
+
     if (!oraclePrice) throw OraclePriceRequiredError
     return new Balance(
       this.toUsd()
@@ -120,6 +127,11 @@ export default class Balance<T extends BaseCurrencyType> {
 
   toTestNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<TestNetworkTokens> {
     if (this.type instanceof TestNetworkTokens) return this
+
+    if (this.type instanceof MobileTokens || this.type instanceof IotTokens) {
+      throw UnsupportedCurrencyConversionError
+    }
+
     if (!oraclePrice) throw OraclePriceRequiredError
     return new Balance(
       this.toUsd()

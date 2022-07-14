@@ -1,3 +1,4 @@
+import { TokenType } from '@helium/transactions'
 import Transaction, {
   PaymentV2,
   PocReceiptsV1,
@@ -6,6 +7,8 @@ import Transaction, {
   RewardsV2,
   SecurityExchangeV1,
   StakeValidatorV1,
+  SubnetworkRewardsV1,
+  TokenRedeemV1,
   TransferHotspotV1,
   TransferHotspotV2,
   TransferValidatorStakeV1,
@@ -281,5 +284,95 @@ describe('PocReceiptsV2', () => {
     ) as PocReceiptsV2
     expect(txn.challenger).toBe('fake-challenger')
     expect(txn.data.hash).toBe(txn.hash)
+  })
+})
+
+describe('SubnetworkRewardsV1', () => {
+  it('correctly converts mobile token json', () => {
+    const json = {
+      type: 'subnetwork_rewards_v1',
+      token_type: TokenType.mobile,
+      time: 1587424041,
+      start_epoch: 300165,
+      rewards: [
+        {
+          amount: 2000,
+          account: 'fake-owner-address',
+        },
+        {
+          amount: 1000,
+          account: 'fake-owner-address',
+        },
+      ],
+      height: 123456,
+      hash: 'fake-txn-hash',
+      end_epoch: 300195,
+    }
+    const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
+    expect(txn.tokenType).toBe(TokenType.mobile)
+    expect(txn.rewards.length).toBe(2)
+    expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
+    expect(txn.rewards[0].amount.type.ticker).toBe('MOBILE')
+  })
+
+  it('correctly converts iot token json', () => {
+    const json = {
+      type: 'subnetwork_rewards_v1',
+      token_type: TokenType.iot,
+      time: 1587424041,
+      start_epoch: 300165,
+      rewards: [
+        {
+          amount: 2000,
+          account: 'fake-owner-address',
+        },
+        {
+          amount: 1000,
+          account: 'fake-owner-address',
+        },
+      ],
+      height: 123456,
+      hash: 'fake-txn-hash',
+      end_epoch: 300195,
+    }
+    const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
+    expect(txn.tokenType).toBe(TokenType.iot)
+    expect(txn.rewards.length).toBe(2)
+    expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
+    expect(txn.rewards[0].amount.type.ticker).toBe('IOT')
+  })
+})
+
+describe('TokenRedeemV1', () => {
+  it('correctly converts hnt to mobile txn json', () => {
+    const json = {
+      type: 'token_redeem_v1',
+      account: 'fake-owner-address',
+      amount: 2000,
+      token_type: TokenType.mobile,
+      nonce: 1,
+      time: 1587424041,
+      height: 123456,
+      hash: 'fake-txn-hash',
+    }
+    const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
+    expect(txn.amount.type.ticker).toBe('HNT')
+    expect(txn.tokenType).toBe(TokenType.mobile)
+  })
+
+  it('correctly converts hnt to iot txn json', () => {
+    const json = {
+      type: 'token_redeem_v1',
+      account: 'fake-owner-address',
+      amount: 2000,
+      token_type: TokenType.iot,
+      nonce: 1,
+      time: 1587424041,
+      height: 123456,
+      hash: 'fake-txn-hash',
+    }
+    const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
+    expect(txn.amount.type.ticker).toBe('HNT')
+    expect(txn.tokenType).toBe(TokenType.iot)
   })
 })
