@@ -21,7 +21,7 @@ by adding the following file to your React Native root at `/patches/@helium+wall
 
 ```
 diff --git a/node_modules/@helium/wallet-link/build/walletLink.js b/node_modules/@helium/wallet-link/build/walletLink.js
-index 8583f31..43d8b37 100644
+index 8583f31..18cc4dd 100644
 --- a/node_modules/@helium/wallet-link/build/walletLink.js
 +++ b/node_modules/@helium/wallet-link/build/walletLink.js
 @@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
