@@ -1,6 +1,6 @@
 {
   "name": "@helium/transactions",
-  "version": "4.3.1",
+  "version": "4.6.0",
   "description": "Construct and serialize Helium blockchain transaction primatives",
   "keywords": [
     "helium",
@@ -34,7 +34,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "@helium/crypto": "^4.3.1"
+    "@helium/crypto": "^4.6.0"
   },
   "gitHead": "16442bef09f90dd9a83d4c9e1a347de3e80575e4"
 }
