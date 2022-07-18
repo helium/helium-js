@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding",
   "keywords": [
     "helium",
