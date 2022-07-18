@@ -13,17 +13,13 @@ import {
   TokenWithSig,
 } from './types'
 
+// JSON.stringify is unpredictable, this is the original ordering we had
+const stringifyToken = (token: Token) =>
+  // eslint-disable-next-line no-useless-escape, implicit-arrow-linebreak
+  `{\"time\":${token.time},\"address\":\"${token.address}\",\"requestAppId\":\"${token.requestAppId}\",\"signingAppId\":\"${token.signingAppId}\",\"callbackUrl\":\"${token.callbackUrl}\",\"appName\":\"${token.appName}\"}`
+
 export const makeAppLinkAuthToken = async (tokenOpts: Token, keypair: SignableKeypair) => {
-  const ordered = Object.keys(tokenOpts)
-    .sort()
-    .reduce(
-      (obj, key) => ({
-        [key]: tokenOpts[key as keyof Token],
-        ...obj,
-      }),
-      {},
-    )
-  const message = JSON.stringify(ordered)
+  const message = stringifyToken(tokenOpts)
   const signatureResult = await keypair.sign(message)
   const signature = Buffer.from(signatureResult).toString('base64')
 
@@ -45,16 +41,7 @@ export const verifyWalletLinkToken = (
     if (linkToken.time < expiration) throw new Error('Token is expired')
   }
 
-  const ordered = Object.keys(token)
-    .sort()
-    .reduce(
-      (obj, key) => ({
-        [key]: token[key as keyof Token],
-        ...obj,
-      }),
-      {},
-    )
-  const message = JSON.stringify(ordered)
+  const message = stringifyToken(token)
   const { publicKey } = Address.fromB58(token.address)
   return utils.verify(
     Uint8Array.from(Buffer.from(signature, 'base64')),
