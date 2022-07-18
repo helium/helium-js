@@ -1,6 +1,6 @@
 # `@helium/wallet-link`
 
-Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location 
+Utilities for linking a 3rd party app to the helium wallet. The link token is used for hotspot onboarding, location
 assertion, and ownership transfer transaction signing with the Helium Wallet and Hotspot apps.
 
 ## Installation
@@ -17,11 +17,11 @@ $ npm install --save-dev patch-package
 
 When using this library in React Native you must patch the `@helium/crypto` calls
 with `@helium/crypto-react-native`. You can do this using [patch-package](https://github.com/ds300/patch-package)
-by adding the following file to your React Native root at `/patches/@helium+wallet-link+4.6.0.patch`.
+by adding the following file to your React Native root at `/patches/@helium+wallet-link+4.6.1.patch`.
 
 ```
 diff --git a/node_modules/@helium/wallet-link/build/walletLink.js b/node_modules/@helium/wallet-link/build/walletLink.js
-index 8583f31..18cc4dd 100644
+index 5378554..de9d701 100644
 --- a/node_modules/@helium/wallet-link/build/walletLink.js
 +++ b/node_modules/@helium/wallet-link/build/walletLink.js
 @@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,6 +34,7 @@ index 8583f31..18cc4dd 100644
  const date_fns_1 = require("date-fns");
  const types_1 = require("./types");
 ```
+
 In your `package.json` add the following script to run the patch on postinstall:
 
 ```diff
