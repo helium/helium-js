@@ -5,12 +5,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@helium/address": "^4.3.1",
-    "@helium/crypto": "^4.6.1",
-    "@helium/http": "^4.6.1",
-    "@helium/transactions": "^4.6.1"
+    "@helium/address": "^4.6.2",
+    "@helium/crypto": "^4.6.2",
+    "@helium/http": "^4.6.2",
+    "@helium/transactions": "^4.6.2"
   },
-  "version": "4.6.1",
+  "version": "4.6.2",
   "devDependencies": {
     "nock": "^13.2.4"
   }
