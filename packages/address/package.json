@@ -13,7 +13,7 @@
   "homepage": "https://github.com/helium/helium-js",
   "license": "Apache-2.0",
   "main": "build/index.js",
-  "module": "build/index.es.js",
+  "module": "build/index.js",
   "files": [
     "build"
   ],
