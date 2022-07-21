@@ -131,6 +131,23 @@ describe('PaymentV2', () => {
       hash: 'EZN6c6pZZZxii8vnGN10KxC-O3YvaEXTSEifl0ckUyQ',
       fee: 3,
     }
+    const jsonWithoutTokenType = {
+      type: 'payment_v2',
+      time: 1587132741,
+      signature: 'RSXR9pkn9ZnkZOZ',
+      payments: [
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+        },
+      ],
+      payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
+      nonce: 1,
+      height: 295781,
+      hash: 'EZN6c6pZZZxii8vnGN10KxC-O3YvaEXTSEifl0ckUyQ',
+      fee: 3,
+    }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
     expect(txn.totalAmountHnt.integerBalance).toBe(100)
     expect(txn.totalAmountMobile.integerBalance).toBe(50)
@@ -140,6 +157,16 @@ describe('PaymentV2', () => {
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
     expect(txn.payments[0].amount.integerBalance).toBe(50)
     expect(txn.payments[0].memo).toBe('memo')
+
+    const txnWithoutTokenType = Transaction.fromJsonObject(jsonWithoutTokenType) as PaymentV2
+    expect(txnWithoutTokenType.totalAmountHnt.integerBalance).toBe(50)
+    expect(txnWithoutTokenType.totalAmountMobile.integerBalance).toBe(0)
+    expect(txnWithoutTokenType.totalAmountIot.integerBalance).toBe(0)
+    expect(txnWithoutTokenType.fee.integerBalance).toBe(3)
+    expect(txnWithoutTokenType.data.hash).toBe(txn.hash)
+    expect(txnWithoutTokenType.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
+    expect(txnWithoutTokenType.payments[0].amount.integerBalance).toBe(50)
+    expect(txnWithoutTokenType.payments[0].memo).toBe('memo')
   })
 })
 

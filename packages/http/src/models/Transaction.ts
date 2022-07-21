@@ -687,7 +687,7 @@ export default class Transaction {
           : CurrencyType.fromTokenType(p.token_type)),
     }))
     const sumAmountHnt = (json.payments || [])
-      .filter(((p) => p.token_type === TokenType.hnt))
+      .filter(((p) => p.token_type === undefined || p.token_type === TokenType.hnt))
       .reduce((sum, { amount }) => sum + amount, 0)
     const totalAmountHnt = new Balance(sumAmountHnt, CurrencyType.default)
 
