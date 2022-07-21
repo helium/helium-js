@@ -1,7 +1,9 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import {
-  EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array,
+  toAddressable,
+  toNumber,
+  toUint8Array,
 } from './utils'
 import { Addressable, SignableKeypair, TokenType } from './types'
 
@@ -101,11 +103,5 @@ export default class SubnetworkRewardsV1 extends Transaction {
       rewardServerSignature:
         this.rewardServerSignature && !forSigning ? toUint8Array(this.rewardServerSignature) : null,
     })
-  }
-
-  calculateFee(): number {
-    this.rewardServerSignature = EMPTY_SIGNATURE
-    const payload = this.serialize()
-    return Transaction.calculateFee(payload)
   }
 }

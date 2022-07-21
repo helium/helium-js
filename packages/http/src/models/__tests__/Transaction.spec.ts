@@ -102,8 +102,27 @@ describe('PaymentV2', () => {
       payments: [
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
-          amount: 75,
+          amount: 50,
           memo: 'memo',
+          token_type: TokenType.hnt,
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: TokenType.hnt,
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: TokenType.mobile,
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: TokenType.iot,
         },
       ],
       payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
@@ -113,11 +132,13 @@ describe('PaymentV2', () => {
       fee: 3,
     }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
-    expect(txn.totalAmount.integerBalance).toBe(75)
+    expect(txn.totalAmountHnt.integerBalance).toBe(100)
+    expect(txn.totalAmountMobile.integerBalance).toBe(50)
+    expect(txn.totalAmountIot.integerBalance).toBe(50)
     expect(txn.fee.integerBalance).toBe(3)
     expect(txn.data.hash).toBe(txn.hash)
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
-    expect(txn.payments[0].amount.integerBalance).toBe(75)
+    expect(txn.payments[0].amount.integerBalance).toBe(50)
     expect(txn.payments[0].memo).toBe('memo')
   })
 })
@@ -356,7 +377,7 @@ describe('TokenRedeemV1', () => {
       hash: 'fake-txn-hash',
     }
     const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
-    expect(txn.amount.type.ticker).toBe('HNT')
+    expect(txn.amount.type.ticker).toBe('MOBILE')
     expect(txn.tokenType).toBe(TokenType.mobile)
   })
 
@@ -372,7 +393,7 @@ describe('TokenRedeemV1', () => {
       hash: 'fake-txn-hash',
     }
     const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
-    expect(txn.amount.type.ticker).toBe('HNT')
+    expect(txn.amount.type.ticker).toBe('IOT')
     expect(txn.tokenType).toBe(TokenType.iot)
   })
 })
