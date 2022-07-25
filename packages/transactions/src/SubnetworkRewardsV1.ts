@@ -1,12 +1,17 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import {
-  EMPTY_SIGNATURE, toAddressable, toNumber, toUint8Array,
+  EMPTY_SIGNATURE,
+  toAddressable,
+  toNumber,
+  toTicker,
+  toTokenType,
+  toUint8Array,
 } from './utils'
-import { Addressable, SignableKeypair, TokenType } from './types'
+import { Addressable, SignableKeypair } from './types'
 
 interface Options {
-  tokenType: number
+  tokenType: string
   startEpoch: number
   endEpoch: number
   rewards: Array<SubnetworkReward>
@@ -23,7 +28,7 @@ export interface SubnetworkReward {
 }
 
 export default class SubnetworkRewardsV1 extends Transaction {
-  public tokenType?: number
+  public tokenType?: string
 
   public startEpoch?: number
 
@@ -66,7 +71,7 @@ export default class SubnetworkRewardsV1 extends Transaction {
   static fromString(serializedTxnString: string) {
     const buf = Buffer.from(serializedTxnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    const tokenType = toNumber(decoded.subnetworkRewards?.tokenType) || TokenType.hnt
+    const tokenType = toTicker(toNumber(decoded.subnetworkRewards?.tokenType))
     const startEpoch = toNumber(decoded.subnetworkRewards?.startEpoch) || 0
     const endEpoch = toNumber(decoded.subnetworkRewards?.endEpoch) || 0
     const rewards = (decoded.subnetworkRewards?.rewards || []).map((p) => ({
@@ -94,7 +99,7 @@ export default class SubnetworkRewardsV1 extends Transaction {
     }))
 
     return SubnetworkRewards.create({
-      tokenType: this.tokenType,
+      tokenType: toTokenType(this.tokenType),
       startEpoch: this.startEpoch,
       endEpoch: this.endEpoch,
       rewards,

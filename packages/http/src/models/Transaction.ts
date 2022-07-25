@@ -11,7 +11,6 @@ import {
   IotTokens,
   MobileTokens,
 } from '@helium/currency'
-import { TokenType } from '@helium/transactions'
 import Challenge, { HTTPChallengeObject } from './Challenge'
 import DataModel from './DataModel'
 
@@ -22,7 +21,7 @@ export interface TxnJsonObject {
   rewards?: any[]
   fee?: number
   amount_to_seller?: number
-  token_type?: number
+  token_type?: string
 }
 
 export class AddGatewayV1 extends DataModel {
@@ -495,7 +494,11 @@ function prepareTxn(txn: any, { deep } = { deep: false }) {
 
   balanceConversions.forEach(({ key, currencyType }) => {
     if (txn[key] && typeof txn[key] === 'number') {
-      txn[key] = new Balance(txn[key], currencyType)
+      if (txn.token_type !== undefined) {
+        txn[key] = new Balance(txn[key], CurrencyType.fromTicker(txn.token_type))
+      } else {
+        txn[key] = new Balance(txn[key], currencyType)
+      }
     }
   })
 
@@ -574,7 +577,7 @@ export class SubnetworkRewardsV1 extends DataModel {
 
   time!: number
 
-  tokenType!: TokenType
+  tokenType!: string
 
   startEpoch!: number
 
@@ -601,13 +604,13 @@ export class TokenRedeemV1 extends DataModel {
 
   account!: string
 
-  amount!: Balance<NetworkTokens>
+  amount!: Balance<MobileTokens | IotTokens>
 
   fee!: number
 
   nonce!: number
 
-  tokenType!: TokenType
+  tokenType!: string
 
   signature!: string
 
@@ -764,7 +767,7 @@ export default class Transaction {
   }
 
   static toSubnetworkRewardsV1(json: TxnJsonObject): SubnetworkRewardsV1 {
-    const currencyType = CurrencyType.fromTokenType(json.token_type as TokenType)
+    const currencyType = CurrencyType.fromTicker(json.token_type)
     const rewards = (json.rewards || []).map((r) => ({
       ...r,
       amount: new Balance(r.amount, currencyType),

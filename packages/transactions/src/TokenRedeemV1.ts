@@ -1,7 +1,7 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import {
-  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber,
+  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber, toTokenType, toTicker,
 } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
@@ -10,7 +10,7 @@ interface Options {
   amount?: number
   fee?: number
   nonce?: number
-  tokenType?: number
+  tokenType?: string
   signature?: Uint8Array
 }
 
@@ -27,7 +27,7 @@ export default class TokenRedeemV1 extends Transaction {
 
   public nonce?: number
 
-  public tokenType?: number
+  public tokenType?: string
 
   public signature?: Uint8Array
 
@@ -76,7 +76,7 @@ export default class TokenRedeemV1 extends Transaction {
       amount: this.amount,
       fee: this.fee && this.fee > 0 ? this.fee : null,
       nonce: this.nonce,
-      tokenType: this.tokenType,
+      tokenType: toTokenType(this.tokenType),
       signature:
         this.signature && !forSigning ? toUint8Array(this.signature) : null,
     })
@@ -88,7 +88,7 @@ export default class TokenRedeemV1 extends Transaction {
 
     const account = toAddressable(tokenRedeem?.account)
     const amount = toNumber(tokenRedeem?.amount) || 0
-    const tokenType = toNumber(tokenRedeem?.tokenType)
+    const tokenType = toTicker(toNumber(tokenRedeem?.tokenType))
     const fee = toNumber(tokenRedeem?.fee)
     const nonce = toNumber(tokenRedeem?.nonce)
     const signature = tokenRedeem?.signature?.length
