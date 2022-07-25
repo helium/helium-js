@@ -1,5 +1,5 @@
 import proto from '@helium/proto'
-import { PaymentV2, TokenType, Transaction } from '..'
+import { PaymentV2, Transaction } from '..'
 import {
   usersFixture,
   bobB58,
@@ -23,7 +23,7 @@ const paymentFixture = async () => {
         payee: alice.address,
         amount: 10,
         memo: 'bW9ja21lbW8=',
-        tokenType: TokenType.hnt,
+        tokenType: 'hnt',
       },
     ],
     nonce: 1,
@@ -38,7 +38,7 @@ test('create a PaymentV2', async () => {
   expect((payment.payments || [])[0].payee.b58).toBe(aliceB58)
   expect((payment.payments || [])[0].amount).toBe(10)
   expect((payment.payments || [])[0].memo).toBe('bW9ja21lbW8=')
-  expect((payment.payments || [])[0].tokenType).toBe(TokenType.hnt)
+  expect((payment.payments || [])[0].tokenType).toBe('hnt')
   expect(payment.nonce).toBe(1)
   expect(payment.fee).toBe(35000)
   expect(payment.type).toBe('payment_v2')
@@ -70,6 +70,7 @@ describe('serialize and deserialize', () => {
       payment.payments[0]?.payee.b58,
     )
     expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
+    expect(deserialized.payments[0]?.tokenType).toBe(payment.payments[0]?.tokenType)
     expect(deserialized.fee).toBe(payment.fee)
   })
 })

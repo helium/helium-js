@@ -1,4 +1,3 @@
-import { TokenType } from '@helium/transactions'
 import { Balance, CurrencyType } from '..'
 import { UnsupportedCurrencyConversionError } from '../Errors'
 
@@ -256,10 +255,15 @@ describe('trying to convert a security token balance', () => {
 })
 
 describe('CurrencyType', () => {
-  it('fromTokenType', () => {
-    expect(CurrencyType.fromTokenType(TokenType.hnt).ticker).toBe('HNT')
-    expect(CurrencyType.fromTokenType(TokenType.hst).ticker).toBe('HST')
-    expect(CurrencyType.fromTokenType(TokenType.mobile).ticker).toBe('MOBILE')
-    expect(CurrencyType.fromTokenType(TokenType.iot).ticker).toBe('IOT')
+  it('fromTicker', () => {
+    expect(CurrencyType.fromTicker(undefined).ticker).toBe('HNT')
+    expect(CurrencyType.fromTicker('hnt').ticker).toBe('HNT')
+    expect(CurrencyType.fromTicker('HNT').ticker).toBe('HNT')
+    expect(CurrencyType.fromTicker('hst').ticker).toBe('HST')
+    expect(CurrencyType.fromTicker('HST').ticker).toBe('HST')
+    expect(CurrencyType.fromTicker('mobile').ticker).toBe('MOBILE')
+    expect(CurrencyType.fromTicker('MOBILE').ticker).toBe('MOBILE')
+    expect(CurrencyType.fromTicker('iot').ticker).toBe('IOT')
+    expect(CurrencyType.fromTicker('IOT').ticker).toBe('IOT')
   })
 })

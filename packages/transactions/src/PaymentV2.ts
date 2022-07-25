@@ -2,11 +2,15 @@ import proto from '@helium/proto'
 import * as JSLong from 'long'
 import Transaction from './Transaction'
 import {
-  EMPTY_SIGNATURE, toAddressable, toNumber, toString, toUint8Array,
+  EMPTY_SIGNATURE,
+  toAddressable,
+  toNumber,
+  toString,
+  toTicker,
+  toTokenType,
+  toUint8Array,
 } from './utils'
-import {
-  Addressable, Base64Memo, SignableKeypair, TokenType,
-} from './types'
+import { Addressable, Base64Memo, SignableKeypair } from './types'
 
 interface PaymentOptions {
   payer?: Addressable
@@ -20,7 +24,7 @@ interface Payment {
   payee: Addressable
   amount: number
   memo?: Base64Memo
-  tokenType?: TokenType
+  tokenType?: string
 }
 
 interface SignOptions {
@@ -69,7 +73,7 @@ export default class PaymentV2 extends Transaction {
       payee: toAddressable(p!.payee) as Addressable,
       amount: toNumber(p!.amount) as number,
       memo: toString(p!.memo),
-      tokenType: p!.tokenType === undefined ? TokenType.hnt : toNumber(p!.tokenType) as number,
+      tokenType: toTicker(toNumber(p!.tokenType)),
     }))
     const fee = toNumber(decoded.paymentV2?.fee)
     const nonce = toNumber(decoded.paymentV2?.nonce)
@@ -92,20 +96,16 @@ export default class PaymentV2 extends Transaction {
     return this
   }
 
-  private toProto(
-    forSigning: boolean = false,
-  ): proto.helium.blockchain_txn_payment_v2 {
+  private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
-    const payments = this.payments.map(({
-      payee, amount, memo, tokenType,
-    }) => {
+    const payments = this.payments.map(({ payee, amount, memo, tokenType }) => {
       const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
       return Payment.create({
         payee: toUint8Array(payee.bin),
         amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
-        tokenType: tokenType as number,
+        tokenType: toTokenType(tokenType),
       })
     })
 
@@ -114,8 +114,7 @@ export default class PaymentV2 extends Transaction {
       payments,
       fee: this.fee && this.fee > 0 ? this.fee : null,
       nonce: this.nonce,
-      signature:
-        this.signature && !forSigning ? toUint8Array(this.signature) : null,
+      signature: this.signature && !forSigning ? toUint8Array(this.signature) : null,
     })
   }
 

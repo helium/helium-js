@@ -1,4 +1,3 @@
-import { TokenType } from '@helium/transactions'
 import {
   BaseCurrencyType,
   DataCredits,
@@ -20,16 +19,16 @@ export type AnyCurrencyType =
   | USDollars
 
 export default class CurrencyType {
-  static fromTokenType(type: TokenType): BaseCurrencyType {
-    switch (type) {
+  static fromTicker(ticker?: string): BaseCurrencyType {
+    switch (ticker?.toUpperCase()) {
       default:
-      case TokenType.hnt:
+      case this.default.ticker:
         return this.default
-      case TokenType.hst:
+      case this.security.ticker:
         return this.security
-      case TokenType.mobile:
+      case this.mobile.ticker:
         return this.mobile
-      case TokenType.iot:
+      case this.iot.ticker:
         return this.iot
     }
   }
