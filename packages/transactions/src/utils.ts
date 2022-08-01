@@ -2,9 +2,8 @@ import Address from '@helium/address'
 import Long from 'long'
 import { Addressable, TokenType } from './types'
 
-export const toUint8Array = (
-  str: string | Uint8Array | undefined | null,
-): Uint8Array => Uint8Array.from(Buffer.from(str || ''))
+export const toUint8Array = (str: string | Uint8Array | undefined | null): Uint8Array =>
+  Uint8Array.from(Buffer.from(str || ''))
 
 export const EMPTY_SIGNATURE = Uint8Array.from(Array(64).fill(0))
 
@@ -30,11 +29,17 @@ export const toNumber = (long: Long | number | undefined | null): number | undef
   return long.toNumber()
 }
 
-export const toTokenType = (ticker?: string): number => {
+export const toTokenType = ({
+  ticker,
+  defaultToUndefined,
+}: {
+  ticker?: string
+  defaultToUndefined?: boolean
+}): number | undefined => {
   switch (ticker?.toLowerCase()) {
-    default:
     case 'hnt':
-      return TokenType.hnt
+    default:
+      return defaultToUndefined ? undefined : TokenType.hnt
     case 'hst':
       return TokenType.hst
     case 'mobile':

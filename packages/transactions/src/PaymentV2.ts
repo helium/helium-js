@@ -105,7 +105,7 @@ export default class PaymentV2 extends Transaction {
         payee: toUint8Array(payee.bin),
         amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
-        tokenType: toTokenType(tokenType),
+        tokenType: toTokenType({ ticker: tokenType, defaultToUndefined: true }),
       })
     })
 
