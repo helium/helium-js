@@ -1,10 +1,6 @@
 import proto from '@helium/proto'
 import { PaymentV2, Transaction } from '..'
-import {
-  usersFixture,
-  bobB58,
-  aliceB58,
-} from '../../../../integration_tests/fixtures/users'
+import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
   txnFeeMultiplier: 5000,
@@ -66,9 +62,7 @@ describe('serialize and deserialize', () => {
     expect(deserialized.payer?.b58).toBe(payment.payer?.b58)
     expect(deserialized.nonce).toBe(payment.nonce)
     expect(deserialized.payments[0]?.amount).toBe(payment.payments[0]?.amount)
-    expect(deserialized.payments[0]?.payee.b58).toBe(
-      payment.payments[0]?.payee.b58,
-    )
+    expect(deserialized.payments[0]?.payee.b58).toBe(payment.payments[0]?.payee.b58)
     expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
     expect(deserialized.payments[0]?.tokenType).toBe(payment.payments[0]?.tokenType)
     expect(deserialized.fee).toBe(payment.fee)
@@ -121,8 +115,12 @@ describe('sign', () => {
     const reserializedTxn = PaymentV2.fromString(payment.toString())
     const { bob } = await usersFixture()
     const signedPayment = await reserializedTxn.sign({ payer: bob })
-    const decoded = proto.helium.blockchain_txn.decode(Buffer.from(signedPayment.toString(), 'base64'))
+    const decoded = proto.helium.blockchain_txn.decode(
+      Buffer.from(signedPayment.toString(), 'base64'),
+    )
     const base64Signature = (decoded.paymentV2?.signature as Buffer).toString('base64')
-    expect(base64Signature).toEqual('PiDvVpuSI0PViJi/ItQnqyMPbHFh3mmZSMpBzHuJ6TXlig1hDtdUE8is9FJBbhdJbSz9jCpHHBB2O2d0pYPSCw==')
+    expect(base64Signature).toEqual(
+      'TKUrksvBBTjgjoPEPhFc79+jPzaVN7VBWgKo4+GvDYZ4BO9HujpEuskMSvzVWq0T/tf2KAKd6d+fT3mYnMRYCA==',
+    )
   })
 })
