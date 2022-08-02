@@ -21,6 +21,28 @@ describe('toString', () => {
     expect(balance.toString(2)).toBe('2.99 MOBILE')
   })
 
+  it('removes trailing zeroes', () => {
+    const balance = new Balance(290000000, CurrencyType.mobile)
+    expect(balance.toString(9, { removeTrailingZeroes: true })).toBe('2.9 MOBILE')
+    expect(balance.toString(0, { removeTrailingZeroes: true })).toBe('2 MOBILE')
+
+    const balance2 = new Balance(20099000099, CurrencyType.mobile)
+    expect(balance2.toString(5, { removeTrailingZeroes: true })).toBe('200.99 MOBILE')
+    expect(balance2.toString(3, { removeTrailingZeroes: true })).toBe('200.99 MOBILE')
+    expect(balance2.toString(2, { removeTrailingZeroes: true })).toBe('200.99 MOBILE')
+    expect(balance2.toString(1, { removeTrailingZeroes: true })).toBe('200.9 MOBILE')
+    expect(balance2.toString(0, { removeTrailingZeroes: true })).toBe('200 MOBILE')
+  })
+
+  it('keeps non zero trailing decimals up to max precision', () => {
+    const balance = new Balance(20099999999, CurrencyType.mobile)
+    expect(balance.toString(5, { removeTrailingZeroes: true })).toBe('200.99999 MOBILE')
+    expect(balance.toString(3, { removeTrailingZeroes: true })).toBe('200.999 MOBILE')
+    expect(balance.toString(2, { removeTrailingZeroes: true })).toBe('200.99 MOBILE')
+    expect(balance.toString(1, { removeTrailingZeroes: true })).toBe('200.9 MOBILE')
+    expect(balance.toString(0, { removeTrailingZeroes: true })).toBe('200 MOBILE')
+  })
+
   it('handles numbers with a large amount of decimal places', () => {
     const balance = new Balance(1, CurrencyType.default)
     expect(balance.toString()).toBe('0.00000001 HNT')

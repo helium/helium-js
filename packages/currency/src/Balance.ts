@@ -35,6 +35,7 @@ type StringFormatOptions = {
   groupSeparator?: string
   showTicker?: boolean
   roundingMode?: BigNumber.RoundingMode
+  removeTrailingZeroes?: boolean
 }
 
 const DC_TO_USD_MULTIPLIER = 0.00001
@@ -69,14 +70,18 @@ export default class Balance<T extends BaseCurrencyType> {
     const groupSeparator = options?.groupSeparator || ','
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
     const format = { decimalSeparator, groupSeparator, groupSize: 3 }
+    const roundingMode = options?.roundingMode || BigNumber.ROUND_DOWN
 
     let numberString = ''
     if (maxDecimalPlaces !== undefined && maxDecimalPlaces !== null) {
-      numberString = this.bigBalance.toFormat(
-        maxDecimalPlaces,
-        options?.roundingMode || BigNumber.ROUND_DOWN,
-        format,
-      )
+      let decimalPlaces = maxDecimalPlaces
+      if (options?.removeTrailingZeroes) {
+        decimalPlaces = Math.min(
+          maxDecimalPlaces,
+          this.bigBalance.decimalPlaces(maxDecimalPlaces, roundingMode).decimalPlaces(),
+        )
+      }
+      numberString = this.bigBalance.toFormat(decimalPlaces, roundingMode, format)
     } else {
       numberString = this.bigBalance.toFormat(format)
     }
