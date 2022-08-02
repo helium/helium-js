@@ -7,10 +7,10 @@
   "dependencies": {
     "@helium/address": "^4.6.2",
     "@helium/crypto": "^4.6.2",
-    "@helium/http": "^4.7.0",
+    "@helium/http": "^4.7.2",
     "@helium/transactions": "^4.7.1"
   },
-  "version": "4.7.1",
+  "version": "4.7.2",
   "devDependencies": {
     "nock": "^13.2.4"
   }
