@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import BigNumber from 'bignumber.js'
 import CurrencyType, { AnyCurrencyType } from './CurrencyType'
 import {
@@ -30,9 +31,10 @@ BigNumber.config({
 })
 
 type StringFormatOptions = {
-  decimalSeparator?: string,
-  groupSeparator?: string,
+  decimalSeparator?: string
+  groupSeparator?: string
   showTicker?: boolean
+  roundingMode?: BigNumber.RoundingMode
 }
 
 const DC_TO_USD_MULTIPLIER = 0.00001
@@ -66,16 +68,21 @@ export default class Balance<T extends BaseCurrencyType> {
     const decimalSeparator = options?.decimalSeparator || '.'
     const groupSeparator = options?.groupSeparator || ','
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
+    const format = { decimalSeparator, groupSeparator, groupSize: 3 }
 
-    let numberString = maxDecimalPlaces !== undefined && maxDecimalPlaces !== null
-      ? this.bigBalance.toFormat(
+    let numberString = ''
+    if (maxDecimalPlaces !== undefined && maxDecimalPlaces !== null) {
+      numberString = this.bigBalance.toFormat(
         maxDecimalPlaces,
-        { decimalSeparator, groupSeparator, groupSize: 3 },
+        options?.roundingMode || BigNumber.ROUND_DOWN,
+        format,
       )
-      : this.bigBalance.toFormat({ decimalSeparator, groupSeparator, groupSize: 3 })
+    } else {
+      numberString = this.bigBalance.toFormat(format)
+    }
     // if it's an integer, just show the integer
     if (parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
-      [numberString] = numberString.split(decimalSeparator)
+      numberString = numberString.split(decimalSeparator)[0]
     }
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
@@ -86,18 +93,12 @@ export default class Balance<T extends BaseCurrencyType> {
 
   plus(balance: Balance<T>): Balance<T> {
     if (this.type.ticker !== balance.type.ticker) throw MixedCurrencyTypeError
-    return new Balance(
-      this.bigInteger.plus(balance.bigInteger).toNumber(),
-      this.type,
-    )
+    return new Balance(this.bigInteger.plus(balance.bigInteger).toNumber(), this.type)
   }
 
   minus(balance: Balance<T>): Balance<T> {
     if (this.type.ticker !== balance.type.ticker) throw MixedCurrencyTypeError
-    return new Balance(
-      this.bigInteger.minus(balance.bigInteger).toNumber(),
-      this.type,
-    )
+    return new Balance(this.bigInteger.minus(balance.bigInteger).toNumber(), this.type)
   }
 
   times(n: number): Balance<T> {

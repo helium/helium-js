@@ -16,6 +16,11 @@ describe('integerBalance', () => {
 })
 
 describe('toString', () => {
+  it('rounds down to max decimal place', () => {
+    const balance = new Balance(299999999, CurrencyType.mobile)
+    expect(balance.toString(2)).toBe('2.99 MOBILE')
+  })
+
   it('handles numbers with a large amount of decimal places', () => {
     const balance = new Balance(1, CurrencyType.default)
     expect(balance.toString()).toBe('0.00000001 HNT')
@@ -66,7 +71,9 @@ describe('toString', () => {
 
     it('decimalSeparator and groupSeparator', () => {
       const balance = new Balance(100000000001, CurrencyType.default)
-      expect(balance.toString(8, { decimalSeparator: ',', groupSeparator: '.' })).toBe('1.000,00000001 HNT')
+      expect(balance.toString(8, { decimalSeparator: ',', groupSeparator: '.' })).toBe(
+        '1.000,00000001 HNT',
+      )
     })
   })
 })
@@ -142,10 +149,8 @@ describe('toUsd', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
-    expect(() => mobileBalance.toUsd(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
-    expect(() => iotBalance.toUsd(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => mobileBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => iotBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
   })
 })
 
@@ -173,10 +178,12 @@ describe('toNetworkTokens', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
-    expect(() => mobileBalance.toNetworkTokens(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
-    expect(() => iotBalance.toNetworkTokens(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => mobileBalance.toNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => iotBalance.toNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
   })
 })
 
@@ -204,10 +211,12 @@ describe('toTestNetworkTokens', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
-    expect(() => mobileBalance.toTestNetworkTokens(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
-    expect(() => iotBalance.toTestNetworkTokens(oraclePrice))
-      .toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => mobileBalance.toTestNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => iotBalance.toTestNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
   })
 })
 
