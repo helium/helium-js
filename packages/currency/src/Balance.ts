@@ -35,10 +35,17 @@ type StringFormatOptions = {
   groupSeparator?: string
   showTicker?: boolean
   roundingMode?: BigNumber.RoundingMode
-  removeTrailingZeroes?: boolean
+  showTrailingZeroes?: boolean
 }
 
 const DC_TO_USD_MULTIPLIER = 0.00001
+
+const getVal = <T>(localValue?: T, defaultValue?: T) => {
+  if (localValue !== undefined) {
+    return localValue
+  }
+  return defaultValue
+}
 
 export default class Balance<T extends BaseCurrencyType> {
   public type: T
@@ -71,22 +78,28 @@ export default class Balance<T extends BaseCurrencyType> {
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
     const format = { decimalSeparator, groupSeparator, groupSize: 3 }
     const roundingMode = options?.roundingMode || BigNumber.ROUND_DOWN
+    const decimalPlacesToDisplay = getVal(maxDecimalPlaces, this.type.format?.decimalPlaces)
+    const keepTrailingZeroes = getVal(
+      options?.showTrailingZeroes,
+      this.type.format?.showTrailingZeroes,
+    )
 
     let numberString = ''
-    if (maxDecimalPlaces !== undefined && maxDecimalPlaces !== null) {
-      let decimalPlaces = maxDecimalPlaces
-      if (options?.removeTrailingZeroes) {
+    if (decimalPlacesToDisplay !== undefined && decimalPlacesToDisplay !== null) {
+      let decimalPlaces = decimalPlacesToDisplay
+
+      if (!keepTrailingZeroes) {
         decimalPlaces = Math.min(
-          maxDecimalPlaces,
-          this.bigBalance.decimalPlaces(maxDecimalPlaces, roundingMode).decimalPlaces(),
+          decimalPlacesToDisplay,
+          this.bigBalance.decimalPlaces(decimalPlacesToDisplay, roundingMode).decimalPlaces(),
         )
       }
       numberString = this.bigBalance.toFormat(decimalPlaces, roundingMode, format)
     } else {
       numberString = this.bigBalance.toFormat(format)
     }
-    // if it's an integer, just show the integer
-    if (parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
+    // if it's an integer and keepTrailingZeroes is false, just show the integer
+    if (!keepTrailingZeroes && parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
       numberString = numberString.split(decimalSeparator)[0]
     }
     // if the rounded amount is 0, then show the full amount
