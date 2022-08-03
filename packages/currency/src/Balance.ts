@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import BigNumber from 'bignumber.js'
 import CurrencyType, { AnyCurrencyType } from './CurrencyType'
 import {
@@ -30,9 +31,11 @@ BigNumber.config({
 })
 
 type StringFormatOptions = {
-  decimalSeparator?: string,
-  groupSeparator?: string,
+  decimalSeparator?: string
+  groupSeparator?: string
   showTicker?: boolean
+  roundingMode?: BigNumber.RoundingMode
+  showTrailingZeroes?: boolean
 }
 
 const DC_TO_USD_MULTIPLIER = 0.00001
@@ -66,17 +69,26 @@ export default class Balance<T extends BaseCurrencyType> {
     const decimalSeparator = options?.decimalSeparator || '.'
     const groupSeparator = options?.groupSeparator || ','
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
+    const format = { decimalSeparator, groupSeparator, groupSize: 3 }
+    const roundingMode = options?.roundingMode || BigNumber.ROUND_DOWN
+    const decimalPlacesToDisplay = maxDecimalPlaces ?? this.type.format?.decimalPlaces
+    const keepTrailingZeroes = options?.showTrailingZeroes ?? this.type.format?.showTrailingZeroes
 
-    let numberString = maxDecimalPlaces !== undefined && maxDecimalPlaces !== null
-      ? this.bigBalance.toFormat(
-        maxDecimalPlaces,
-        { decimalSeparator, groupSeparator, groupSize: 3 },
-      )
-      : this.bigBalance.toFormat({ decimalSeparator, groupSeparator, groupSize: 3 })
-    // if it's an integer, just show the integer
-    if (parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
-      [numberString] = numberString.split(decimalSeparator)
+    let numberString = ''
+    if (decimalPlacesToDisplay !== undefined && decimalPlacesToDisplay !== null) {
+      let decimalPlaces = decimalPlacesToDisplay
+
+      if (!keepTrailingZeroes) {
+        decimalPlaces = Math.min(
+          decimalPlacesToDisplay,
+          this.bigBalance.decimalPlaces(decimalPlacesToDisplay, roundingMode).decimalPlaces(),
+        )
+      }
+      numberString = this.bigBalance.toFormat(decimalPlaces, roundingMode, format)
+    } else {
+      numberString = this.bigBalance.toFormat(format)
     }
+
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
       numberString = this.bigBalance.toFormat({ decimalSeparator, groupSeparator })
@@ -86,18 +98,12 @@ export default class Balance<T extends BaseCurrencyType> {
 
   plus(balance: Balance<T>): Balance<T> {
     if (this.type.ticker !== balance.type.ticker) throw MixedCurrencyTypeError
-    return new Balance(
-      this.bigInteger.plus(balance.bigInteger).toNumber(),
-      this.type,
-    )
+    return new Balance(this.bigInteger.plus(balance.bigInteger).toNumber(), this.type)
   }
 
   minus(balance: Balance<T>): Balance<T> {
     if (this.type.ticker !== balance.type.ticker) throw MixedCurrencyTypeError
-    return new Balance(
-      this.bigInteger.minus(balance.bigInteger).toNumber(),
-      this.type,
-    )
+    return new Balance(this.bigInteger.minus(balance.bigInteger).toNumber(), this.type)
   }
 
   times(n: number): Balance<T> {

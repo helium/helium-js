@@ -1,4 +1,3 @@
-import { TokenType } from '@helium/transactions'
 import Transaction, {
   PaymentV2,
   PocReceiptsV1,
@@ -104,25 +103,25 @@ describe('PaymentV2', () => {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 50,
           memo: 'memo',
-          token_type: TokenType.hnt,
+          token_type: 'hnt',
         },
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 50,
           memo: 'memo',
-          token_type: TokenType.hnt,
+          token_type: 'hnt',
         },
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 50,
           memo: 'memo',
-          token_type: TokenType.mobile,
+          token_type: 'mobile',
         },
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 50,
           memo: 'memo',
-          token_type: TokenType.iot,
+          token_type: 'iot',
         },
       ],
       payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
@@ -156,6 +155,7 @@ describe('PaymentV2', () => {
     expect(txn.data.hash).toBe(txn.hash)
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
     expect(txn.payments[0].amount.integerBalance).toBe(50)
+    expect(txn.payments[0].amount.type.ticker).toBe('HNT')
     expect(txn.payments[0].memo).toBe('memo')
 
     const txnWithoutTokenType = Transaction.fromJsonObject(jsonWithoutTokenType) as PaymentV2
@@ -339,7 +339,7 @@ describe('SubnetworkRewardsV1', () => {
   it('correctly converts mobile token json', () => {
     const json = {
       type: 'subnetwork_rewards_v1',
-      token_type: TokenType.mobile,
+      token_type: 'mobile',
       time: 1587424041,
       start_epoch: 300165,
       rewards: [
@@ -357,7 +357,7 @@ describe('SubnetworkRewardsV1', () => {
       end_epoch: 300195,
     }
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
-    expect(txn.tokenType).toBe(TokenType.mobile)
+    expect(txn.tokenType).toBe('mobile')
     expect(txn.rewards.length).toBe(2)
     expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
     expect(txn.rewards[0].amount.type.ticker).toBe('MOBILE')
@@ -366,7 +366,7 @@ describe('SubnetworkRewardsV1', () => {
   it('correctly converts iot token json', () => {
     const json = {
       type: 'subnetwork_rewards_v1',
-      token_type: TokenType.iot,
+      token_type: 'iot',
       time: 1587424041,
       start_epoch: 300165,
       rewards: [
@@ -384,7 +384,7 @@ describe('SubnetworkRewardsV1', () => {
       end_epoch: 300195,
     }
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
-    expect(txn.tokenType).toBe(TokenType.iot)
+    expect(txn.tokenType).toBe('iot')
     expect(txn.rewards.length).toBe(2)
     expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
     expect(txn.rewards[0].amount.type.ticker).toBe('IOT')
@@ -397,7 +397,7 @@ describe('TokenRedeemV1', () => {
       type: 'token_redeem_v1',
       account: 'fake-owner-address',
       amount: 2000,
-      token_type: TokenType.mobile,
+      token_type: 'mobile',
       nonce: 1,
       time: 1587424041,
       height: 123456,
@@ -405,7 +405,7 @@ describe('TokenRedeemV1', () => {
     }
     const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
     expect(txn.amount.type.ticker).toBe('MOBILE')
-    expect(txn.tokenType).toBe(TokenType.mobile)
+    expect(txn.tokenType).toBe('mobile')
   })
 
   it('correctly converts hnt to iot txn json', () => {
@@ -413,7 +413,7 @@ describe('TokenRedeemV1', () => {
       type: 'token_redeem_v1',
       account: 'fake-owner-address',
       amount: 2000,
-      token_type: TokenType.iot,
+      token_type: 'iot',
       nonce: 1,
       time: 1587424041,
       height: 123456,
@@ -421,6 +421,6 @@ describe('TokenRedeemV1', () => {
     }
     const txn = Transaction.fromJsonObject(json) as TokenRedeemV1
     expect(txn.amount.type.ticker).toBe('IOT')
-    expect(txn.tokenType).toBe(TokenType.iot)
+    expect(txn.tokenType).toBe('iot')
   })
 })

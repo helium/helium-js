@@ -1,6 +1,6 @@
 import proto from '@helium/proto'
 import { utils } from '@helium/crypto'
-import { TokenType, Transaction, SubnetworkRewardsV1 } from '..'
+import { Transaction, SubnetworkRewardsV1 } from '..'
 import { usersFixture, bobB58, aliceB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
@@ -14,7 +14,7 @@ const fixture = async () => {
   const { bob, alice } = await usersFixture()
 
   return new SubnetworkRewardsV1({
-    tokenType: TokenType.mobile,
+    tokenType: 'mobile',
     startEpoch: 1000,
     endEpoch: 2000,
     rewards: [
@@ -26,7 +26,7 @@ const fixture = async () => {
 
 test('create a subnetwork rewards txn', async () => {
   const txn = await fixture()
-  expect(txn.tokenType).toBe(TokenType.mobile)
+  expect(txn.tokenType).toBe('mobile')
   expect(txn.startEpoch).toBe(1000)
   expect(txn.endEpoch).toBe(2000)
   expect(txn.rewards.length).toBe(2)
@@ -49,7 +49,24 @@ describe('serialize', () => {
     // verify that we can decode it back from its serialized string
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    expect(decoded.subnetworkRewards?.tokenType).toBe(TokenType.mobile)
+    expect(decoded.subnetworkRewards?.startEpoch?.toString()).toBe('1000')
+  })
+})
+
+describe('fromString', () => {
+  it('deserializes a txn from string', async () => {
+    const txn = await fixture()
+    const txnString = txn.toString()
+    const decoded = SubnetworkRewardsV1.fromString(txnString)
+    expect(decoded.tokenType).toBe('mobile')
+    expect(decoded.startEpoch).toBe(1000)
+    expect(decoded.endEpoch).toBe(2000)
+    expect(decoded.rewards.length).toBe(2)
+    expect(decoded.rewards[0].account.b58).toBe(bobB58)
+    expect(decoded.rewards[0].amount).toBe(1000)
+    expect(decoded.rewards[1].account.b58).toBe(aliceB58)
+    expect(decoded.rewards[1].amount).toBe(2000)
+    expect(decoded.type).toBe('subnetwork_rewards_v1')
   })
 })
 

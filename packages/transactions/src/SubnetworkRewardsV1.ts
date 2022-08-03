@@ -3,12 +3,14 @@ import Transaction from './Transaction'
 import {
   toAddressable,
   toNumber,
+  toTicker,
+  toTokenType,
   toUint8Array,
 } from './utils'
-import { Addressable, SignableKeypair, TokenType } from './types'
+import { Addressable, SignableKeypair } from './types'
 
 interface Options {
-  tokenType: number
+  tokenType: string
   startEpoch: number
   endEpoch: number
   rewards: Array<SubnetworkReward>
@@ -25,7 +27,7 @@ export interface SubnetworkReward {
 }
 
 export default class SubnetworkRewardsV1 extends Transaction {
-  public tokenType?: number
+  public tokenType?: string
 
   public startEpoch?: number
 
@@ -68,7 +70,7 @@ export default class SubnetworkRewardsV1 extends Transaction {
   static fromString(serializedTxnString: string) {
     const buf = Buffer.from(serializedTxnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
-    const tokenType = toNumber(decoded.subnetworkRewards?.tokenType) || TokenType.hnt
+    const tokenType = toTicker(toNumber(decoded.subnetworkRewards?.tokenType))
     const startEpoch = toNumber(decoded.subnetworkRewards?.startEpoch) || 0
     const endEpoch = toNumber(decoded.subnetworkRewards?.endEpoch) || 0
     const rewards = (decoded.subnetworkRewards?.rewards || []).map((p) => ({
@@ -90,13 +92,15 @@ export default class SubnetworkRewardsV1 extends Transaction {
     const SubnetworkRewards = proto.helium.blockchain_txn_subnetwork_rewards_v1
     const SubnetworkReward = proto.helium.blockchain_txn_subnetwork_reward_v1
 
-    const rewards = this.rewards.map(({ account, amount }) => SubnetworkReward.create({
-      account: toUint8Array(account?.bin),
-      amount,
-    }))
+    const rewards = this.rewards.map(({ account, amount }) =>
+      SubnetworkReward.create({
+        account: toUint8Array(account?.bin),
+        amount,
+      }),
+    )
 
     return SubnetworkRewards.create({
-      tokenType: this.tokenType,
+      tokenType: toTokenType({ ticker: this.tokenType }),
       startEpoch: this.startEpoch,
       endEpoch: this.endEpoch,
       rewards,

@@ -1,7 +1,12 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import {
-  toUint8Array, EMPTY_SIGNATURE, toAddressable, toNumber,
+  toUint8Array,
+  EMPTY_SIGNATURE,
+  toAddressable,
+  toNumber,
+  toTokenType,
+  toTicker,
 } from './utils'
 import { Addressable, SignableKeypair } from './types'
 
@@ -10,7 +15,7 @@ interface Options {
   amount?: number
   fee?: number
   nonce?: number
-  tokenType?: number
+  tokenType?: string
   signature?: Uint8Array
 }
 
@@ -27,7 +32,7 @@ export default class TokenRedeemV1 extends Transaction {
 
   public nonce?: number
 
-  public tokenType?: number
+  public tokenType?: string
 
   public signature?: Uint8Array
 
@@ -67,18 +72,15 @@ export default class TokenRedeemV1 extends Transaction {
     return this
   }
 
-  private toProto(
-    forSigning: boolean = false,
-  ): proto.helium.blockchain_txn_token_redeem_v1 {
+  private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_token_redeem_v1 {
     const TokenRedeem = proto.helium.blockchain_txn_token_redeem_v1
     return TokenRedeem.create({
       account: this.account ? toUint8Array(this.account.bin) : null,
       amount: this.amount,
       fee: this.fee && this.fee > 0 ? this.fee : null,
       nonce: this.nonce,
-      tokenType: this.tokenType,
-      signature:
-        this.signature && !forSigning ? toUint8Array(this.signature) : null,
+      tokenType: toTokenType({ ticker: this.tokenType }),
+      signature: this.signature && !forSigning ? toUint8Array(this.signature) : null,
     })
   }
 
@@ -88,7 +90,7 @@ export default class TokenRedeemV1 extends Transaction {
 
     const account = toAddressable(tokenRedeem?.account)
     const amount = toNumber(tokenRedeem?.amount) || 0
-    const tokenType = toNumber(tokenRedeem?.tokenType)
+    const tokenType = toTicker(toNumber(tokenRedeem?.tokenType))
     const fee = toNumber(tokenRedeem?.fee)
     const nonce = toNumber(tokenRedeem?.nonce)
     const signature = tokenRedeem?.signature?.length
@@ -96,7 +98,12 @@ export default class TokenRedeemV1 extends Transaction {
       : undefined
 
     return new TokenRedeemV1({
-      account, amount, tokenType, fee, nonce, signature,
+      account,
+      amount,
+      tokenType,
+      fee,
+      nonce,
+      signature,
     })
   }
 

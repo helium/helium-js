@@ -1,6 +1,6 @@
 import proto from '@helium/proto'
 import { utils } from '@helium/crypto'
-import { Transaction, TokenRedeemV1, TokenType } from '..'
+import { Transaction, TokenRedeemV1 } from '..'
 import { usersFixture, bobB58 } from '../../../../integration_tests/fixtures/users'
 
 Transaction.config({
@@ -14,7 +14,7 @@ const fixture = async () => {
   const { bob } = await usersFixture()
 
   return new TokenRedeemV1({
-    tokenType: TokenType.mobile,
+    tokenType: 'mobile',
     account: bob.address,
     amount: 10,
     nonce: 1,
@@ -28,6 +28,7 @@ test('create a token convert txn', async () => {
   expect(txn.nonce).toBe(1)
   expect(txn.fee).toBe(25000)
   expect(txn.type).toBe('token_redeem_v1')
+  expect(txn.tokenType).toBe('mobile')
 })
 
 describe('serialize', () => {
@@ -43,6 +44,20 @@ describe('serialize', () => {
     const buf = Buffer.from(txnString, 'base64')
     const decoded = proto.helium.blockchain_txn.decode(buf)
     expect(decoded.tokenRedeem?.amount?.toString()).toBe('10')
+  })
+})
+
+describe('fromString', () => {
+  it('deserializes a txn from string', async () => {
+    const txn = await fixture()
+    const txnString = txn.toString()
+    const decoded = TokenRedeemV1.fromString(txnString)
+    expect(decoded.account?.b58).toBe(bobB58)
+    expect(decoded.amount).toBe(10)
+    expect(decoded.nonce).toBe(1)
+    expect(decoded.fee).toBe(25000)
+    expect(decoded.type).toBe('token_redeem_v1')
+    expect(decoded.tokenType).toBe('mobile')
   })
 })
 
@@ -83,7 +98,7 @@ describe('fees', () => {
     const { bob } = await usersFixture()
 
     const txn = new TokenRedeemV1({
-      tokenType: TokenType.mobile,
+      tokenType: 'mobile',
       account: bob.address,
       amount: 10,
       nonce: 1,
