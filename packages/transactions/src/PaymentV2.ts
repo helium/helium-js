@@ -20,11 +20,12 @@ interface PaymentOptions {
   signature?: Uint8Array
 }
 
-interface Payment {
+export interface Payment {
   payee: Addressable
   amount: number
   memo?: Base64Memo
   tokenType?: string
+  max?: boolean | null
 }
 
 interface SignOptions {
@@ -74,6 +75,7 @@ export default class PaymentV2 extends Transaction {
       amount: toNumber(p!.amount) as number,
       memo: toString(p!.memo),
       tokenType: toTicker(toNumber(p!.tokenType)),
+      max: p.max,
     }))
     const fee = toNumber(decoded.paymentV2?.fee)
     const nonce = toNumber(decoded.paymentV2?.nonce)
@@ -99,14 +101,19 @@ export default class PaymentV2 extends Transaction {
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
-    const payments = this.payments.map(({ payee, amount, memo, tokenType }) => {
+    const payments = this.payments.map(({ payee, amount, memo, tokenType, max }) => {
       const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
-      return Payment.create({
+      const payment: proto.helium.Ipayment = {
         payee: toUint8Array(payee.bin),
         amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
         tokenType: toTokenType({ ticker: tokenType, defaultToUndefined: true }),
-      })
+      }
+      if (max) {
+        payment.max = true
+      }
+
+      return Payment.create(payment)
     })
 
     return PaymentTxn.create({

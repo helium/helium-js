@@ -9,7 +9,7 @@ Transaction.config({
   stakingFeeTxnAssertLocationV1: 10 * 100000,
 })
 
-const paymentFixture = async () => {
+const paymentFixture = async (opts?: { maxPay?: boolean }) => {
   const { bob, alice } = await usersFixture()
 
   return new PaymentV2({
@@ -20,6 +20,7 @@ const paymentFixture = async () => {
         amount: 10,
         memo: 'bW9ja21lbW8=',
         tokenType: 'hnt',
+        max: opts?.maxPay,
       },
     ],
     nonce: 1,
@@ -71,8 +72,7 @@ describe('serialize and deserialize', () => {
     const decoded = proto.helium.blockchain_txn.decode(buf)
     expect(decoded.paymentV2?.nonce?.toString()).toBe('1')
   })
-
-  it('deserializes from a base64 string', async () => {
+  it('deserializes from a base64 string without max pay', async () => {
     const payment = await paymentFixture()
     const paymentString = payment.toString()
     const deserialized = PaymentV2.fromString(paymentString)
@@ -82,6 +82,21 @@ describe('serialize and deserialize', () => {
     expect(deserialized.payments[0]?.payee.b58).toBe(payment.payments[0]?.payee.b58)
     expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
     expect(deserialized.payments[0]?.tokenType).toBe('hnt')
+    expect(deserialized.payments[0]?.max).toBeFalsy()
+    expect(deserialized.fee).toBe(payment.fee)
+  })
+
+  it('deserializes from a base64 string with max pay', async () => {
+    const payment = await paymentFixture({ maxPay: true })
+    const paymentString = payment.toString()
+    const deserialized = PaymentV2.fromString(paymentString)
+    expect(deserialized.payer?.b58).toBe(payment.payer?.b58)
+    expect(deserialized.nonce).toBe(payment.nonce)
+    expect(deserialized.payments[0]?.amount).toBe(payment.payments[0]?.amount)
+    expect(deserialized.payments[0]?.payee.b58).toBe(payment.payments[0]?.payee.b58)
+    expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
+    expect(deserialized.payments[0]?.tokenType).toBe('hnt')
+    expect(deserialized.payments[0]?.max).toBeTruthy()
     expect(deserialized.fee).toBe(payment.fee)
   })
 })
