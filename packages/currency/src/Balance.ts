@@ -40,13 +40,6 @@ type StringFormatOptions = {
 
 const DC_TO_USD_MULTIPLIER = 0.00001
 
-const getVal = <T>(localValue?: T, defaultValue?: T) => {
-  if (localValue !== undefined) {
-    return localValue
-  }
-  return defaultValue
-}
-
 export default class Balance<T extends BaseCurrencyType> {
   public type: T
 
@@ -78,11 +71,8 @@ export default class Balance<T extends BaseCurrencyType> {
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
     const format = { decimalSeparator, groupSeparator, groupSize: 3 }
     const roundingMode = options?.roundingMode || BigNumber.ROUND_DOWN
-    const decimalPlacesToDisplay = getVal(maxDecimalPlaces, this.type.format?.decimalPlaces)
-    const keepTrailingZeroes = getVal(
-      options?.showTrailingZeroes,
-      this.type.format?.showTrailingZeroes,
-    )
+    const decimalPlacesToDisplay = maxDecimalPlaces ?? this.type.format?.decimalPlaces
+    const keepTrailingZeroes = options?.showTrailingZeroes ?? this.type.format?.showTrailingZeroes
 
     let numberString = ''
     if (decimalPlacesToDisplay !== undefined && decimalPlacesToDisplay !== null) {
@@ -98,10 +88,7 @@ export default class Balance<T extends BaseCurrencyType> {
     } else {
       numberString = this.bigBalance.toFormat(format)
     }
-    // if it's an integer and keepTrailingZeroes is false, just show the integer
-    if (!keepTrailingZeroes && parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
-      numberString = numberString.split(decimalSeparator)[0]
-    }
+
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
       numberString = this.bigBalance.toFormat({ decimalSeparator, groupSeparator })
