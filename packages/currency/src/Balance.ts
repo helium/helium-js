@@ -35,6 +35,7 @@ type StringFormatOptions = {
   groupSeparator?: string
   showTicker?: boolean
   roundingMode?: BigNumber.RoundingMode
+  showTrailingZeroes?: boolean
 }
 
 const DC_TO_USD_MULTIPLIER = 0.00001
@@ -69,21 +70,25 @@ export default class Balance<T extends BaseCurrencyType> {
     const groupSeparator = options?.groupSeparator || ','
     const showTicker = options?.showTicker === undefined ? true : options.showTicker
     const format = { decimalSeparator, groupSeparator, groupSize: 3 }
+    const roundingMode = options?.roundingMode || BigNumber.ROUND_DOWN
+    const decimalPlacesToDisplay = maxDecimalPlaces ?? this.type.format?.decimalPlaces
+    const keepTrailingZeroes = options?.showTrailingZeroes ?? this.type.format?.showTrailingZeroes
 
     let numberString = ''
-    if (maxDecimalPlaces !== undefined && maxDecimalPlaces !== null) {
-      numberString = this.bigBalance.toFormat(
-        maxDecimalPlaces,
-        options?.roundingMode || BigNumber.ROUND_DOWN,
-        format,
-      )
+    if (decimalPlacesToDisplay !== undefined && decimalPlacesToDisplay !== null) {
+      let decimalPlaces = decimalPlacesToDisplay
+
+      if (!keepTrailingZeroes) {
+        decimalPlaces = Math.min(
+          decimalPlacesToDisplay,
+          this.bigBalance.decimalPlaces(decimalPlacesToDisplay, roundingMode).decimalPlaces(),
+        )
+      }
+      numberString = this.bigBalance.toFormat(decimalPlaces, roundingMode, format)
     } else {
       numberString = this.bigBalance.toFormat(format)
     }
-    // if it's an integer, just show the integer
-    if (parseInt(numberString.split(decimalSeparator)[1], 10) === 0) {
-      numberString = numberString.split(decimalSeparator)[0]
-    }
+
     // if the rounded amount is 0, then show the full amount
     if (numberString === '0') {
       numberString = this.bigBalance.toFormat({ decimalSeparator, groupSeparator })
