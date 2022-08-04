@@ -106,7 +106,43 @@ describe('PaymentV2', () => {
       payments: [
         {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
-          amount: 75,
+          amount: 50,
+          memo: 'memo',
+          token_type: 'hnt',
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: 'hnt',
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: 'mobile',
+        },
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
+          memo: 'memo',
+          token_type: 'iot',
+        },
+      ],
+      payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
+      nonce: 1,
+      height: 295781,
+      hash: 'EZN6c6pZZZxii8vnGN10KxC-O3YvaEXTSEifl0ckUyQ',
+      fee: 3,
+    }
+    const jsonWithoutTokenType = {
+      type: 'payment_v2',
+      time: 1587132741,
+      signature: 'RSXR9pkn9ZnkZOZ',
+      payments: [
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 50,
           memo: 'memo',
           max: false,
         },
@@ -118,14 +154,26 @@ describe('PaymentV2', () => {
       fee: 3,
     }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
-    expect(txn.totalAmount.integerBalance).toBe(75)
+    expect(txn.totalAmountHnt.integerBalance).toBe(100)
+    expect(txn.totalAmountMobile.integerBalance).toBe(50)
+    expect(txn.totalAmountIot.integerBalance).toBe(50)
     expect(txn.fee.integerBalance).toBe(3)
     expect(txn.data.hash).toBe(txn.hash)
     expect(txn.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
-    expect(txn.payments[0].amount.integerBalance).toBe(75)
+    expect(txn.payments[0].amount.integerBalance).toBe(50)
     expect(txn.payments[0].amount.type.ticker).toBe('HNT')
     expect(txn.payments[0].memo).toBe('memo')
     expect(txn.payments[0].max).toBeFalsy()
+
+    const txnWithoutTokenType = Transaction.fromJsonObject(jsonWithoutTokenType) as PaymentV2
+    expect(txnWithoutTokenType.totalAmountHnt.integerBalance).toBe(50)
+    expect(txnWithoutTokenType.totalAmountMobile.integerBalance).toBe(0)
+    expect(txnWithoutTokenType.totalAmountIot.integerBalance).toBe(0)
+    expect(txnWithoutTokenType.fee.integerBalance).toBe(3)
+    expect(txnWithoutTokenType.data.hash).toBe(txn.hash)
+    expect(txnWithoutTokenType.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
+    expect(txnWithoutTokenType.payments[0].amount.integerBalance).toBe(50)
+    expect(txnWithoutTokenType.payments[0].memo).toBe('memo')
   })
 
   it('exposes max for currency fields', () => {
@@ -148,7 +196,7 @@ describe('PaymentV2', () => {
       fee: 3,
     }
     const txn = Transaction.fromJsonObject(json) as PaymentV2
-    expect(txn.totalAmount.integerBalance).toBe(0)
+    expect(txn.totalAmountHnt.integerBalance).toBe(0)
     expect(txn.payments[0].max).toBeTruthy()
   })
 })

@@ -1,7 +1,6 @@
 import proto from '@helium/proto'
 import Transaction from './Transaction'
 import {
-  EMPTY_SIGNATURE,
   toAddressable,
   toNumber,
   toTicker,
@@ -93,12 +92,10 @@ export default class SubnetworkRewardsV1 extends Transaction {
     const SubnetworkRewards = proto.helium.blockchain_txn_subnetwork_rewards_v1
     const SubnetworkReward = proto.helium.blockchain_txn_subnetwork_reward_v1
 
-    const rewards = this.rewards.map(({ account, amount }) =>
-      SubnetworkReward.create({
-        account: toUint8Array(account?.bin),
-        amount,
-      }),
-    )
+    const rewards = this.rewards.map(({ account, amount }) => SubnetworkReward.create({
+      account: toUint8Array(account?.bin),
+      amount,
+    }))
 
     return SubnetworkRewards.create({
       tokenType: toTokenType({ ticker: this.tokenType }),
@@ -108,11 +105,5 @@ export default class SubnetworkRewardsV1 extends Transaction {
       rewardServerSignature:
         this.rewardServerSignature && !forSigning ? toUint8Array(this.rewardServerSignature) : null,
     })
-  }
-
-  calculateFee(): number {
-    this.rewardServerSignature = EMPTY_SIGNATURE
-    const payload = this.serialize()
-    return Transaction.calculateFee(payload)
   }
 }

@@ -228,7 +228,11 @@ export class PaymentV2 extends DataModel {
 
   fee!: Balance<DataCredits>
 
-  totalAmount!: Balance<NetworkTokens>
+  totalAmountHnt!: Balance<NetworkTokens>
+
+  totalAmountMobile!: Balance<MobileTokens>
+
+  totalAmountIot!: Balance<IotTokens>
 
   constructor(data: PaymentV2) {
     super()
@@ -416,9 +420,10 @@ export class UnknownTransaction extends DataModel {
 
 export interface Payment {
   payee: string
-  amount: Balance<NetworkTokens>
+  amount: Balance<NetworkTokens | MobileTokens | IotTokens>
   memo?: string
   max?: boolean
+  tokenType: string
 }
 
 export class RewardsV1 extends DataModel {
@@ -678,15 +683,33 @@ export default class Transaction {
   static toPaymentV2(json: TxnJsonObject): PaymentV2 {
     const payments = (json.payments || []).map((p) => ({
       ...p,
-      amount: new Balance(p.amount, CurrencyType.default),
+      amount: new Balance(p.amount,
+        p.token_type === undefined || p.token_type === null
+          ? CurrencyType.default
+          : CurrencyType.fromTicker(p.token_type)),
     }))
-    const sumAmount = (json.payments || []).reduce((sum, { amount }) => sum + amount, 0)
-    const totalAmount = new Balance(sumAmount, CurrencyType.default)
+    const sumAmountHnt = (json.payments || [])
+      .filter(((p) => p.token_type === undefined || p.token_type === 'hnt'))
+      .reduce((sum, { amount }) => sum + amount, 0)
+    const totalAmountHnt = new Balance(sumAmountHnt, CurrencyType.default)
+
+    const sumAmountMobile = (json.payments || [])
+      .filter(((p) => p.token_type === 'mobile'))
+      .reduce((sum, { amount }) => sum + amount, 0)
+    const totalAmountMobile = new Balance(sumAmountMobile, CurrencyType.mobile)
+
+    const sumAmountIot = (json.payments || [])
+      .filter(((p) => p.token_type === 'iot'))
+      .reduce((sum, { amount }) => sum + amount, 0)
+    const totalAmountIot = new Balance(sumAmountIot, CurrencyType.iot)
+
     return new PaymentV2(
       prepareTxn({
         ...json,
         payments,
-        totalAmount,
+        totalAmountHnt,
+        totalAmountMobile,
+        totalAmountIot,
       }),
     )
   }
