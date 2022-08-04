@@ -22,7 +22,7 @@ interface PaymentOptions {
 
 export interface Payment {
   payee: Addressable
-  amount: number
+  amount?: number
   memo?: Base64Memo
   tokenType?: string
   max?: boolean | null
@@ -72,7 +72,7 @@ export default class PaymentV2 extends Transaction {
     const payer = toAddressable(decoded.paymentV2?.payer)
     const payments = (decoded.paymentV2?.payments || []).map((p) => ({
       payee: toAddressable(p!.payee) as Addressable,
-      amount: toNumber(p!.amount) as number,
+      amount: p.amount === undefined ? undefined : (toNumber(p!.amount) as number),
       memo: toString(p!.memo),
       tokenType: toTicker(toNumber(p!.tokenType)),
       max: p.max,
