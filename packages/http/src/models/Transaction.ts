@@ -418,6 +418,7 @@ export interface Payment {
   payee: string
   amount: Balance<NetworkTokens>
   memo?: string
+  max?: boolean
 }
 
 export class RewardsV1 extends DataModel {
