@@ -422,6 +422,7 @@ export interface Payment {
   payee: string
   amount: Balance<NetworkTokens | MobileTokens | IotTokens>
   memo?: string
+  max?: boolean
   tokenType: string
 }
 

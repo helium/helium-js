@@ -49,7 +49,8 @@ describe('UnstakeValidatorV1', () => {
       type: 'unstake_validator_v1',
       stake_release_height: 34981,
       stake_amount: 1000000000000,
-      owner_signature: 'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      owner_signature:
+        'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
       owner: '1aMxwNDpFqPtxt85Eco7HCJdaRJL2ogdd3kaHCHkLyoJ7Kfi6xH',
       hash: 'Yf8i7KpE9beoLPfprU4Yty4387KgNST-GrhfkoUkxcE',
       fee: 35000,
@@ -60,7 +61,9 @@ describe('UnstakeValidatorV1', () => {
     expect(txn.time).toBe(1587132741)
     expect(txn.stakeReleaseHeight).toBe(34981)
     expect(txn.stakeAmount.integerBalance).toBe(1000000000000)
-    expect(txn.ownerSignature).toBe('AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA')
+    expect(txn.ownerSignature).toBe(
+      'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+    )
     expect(txn.owner).toBe('1aMxwNDpFqPtxt85Eco7HCJdaRJL2ogdd3kaHCHkLyoJ7Kfi6xH')
     expect(txn.hash).toBe('Yf8i7KpE9beoLPfprU4Yty4387KgNST-GrhfkoUkxcE')
     expect(txn.fee.integerBalance).toBe(35000)
@@ -77,8 +80,10 @@ describe('TransferValidatorStakeV1', () => {
       new_address: '1aMxwNDpFqPtxt85EkdksuJdaRJL28diswZ8HCHkLyoJ7Kfi6xH',
       old_owner: '1aMxwNDpFqPtxtddkco7HCJdaRJL28diswZ8HCHkLyoJ7Kfi6xH',
       new_owner: '1aMxwNDpFqPtxadekco7HCJdaRJL28diswZ8HCHkLyoJ7Kfi6xH',
-      old_owner_signature: 'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
-      new_owner_signature: 'AP0mjpyq3Z487dtasJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      old_owner_signature:
+        'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      new_owner_signature:
+        'AP0mjpyq3Z487dtasJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
       fee: 35000,
       stake_amount: 1000000000000,
       payment_amount: 100000,
@@ -139,6 +144,7 @@ describe('PaymentV2', () => {
           payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
           amount: 50,
           memo: 'memo',
+          max: false,
         },
       ],
       payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
@@ -157,6 +163,7 @@ describe('PaymentV2', () => {
     expect(txn.payments[0].amount.integerBalance).toBe(50)
     expect(txn.payments[0].amount.type.ticker).toBe('HNT')
     expect(txn.payments[0].memo).toBe('memo')
+    expect(txn.payments[0].max).toBeFalsy()
 
     const txnWithoutTokenType = Transaction.fromJsonObject(jsonWithoutTokenType) as PaymentV2
     expect(txnWithoutTokenType.totalAmountHnt.integerBalance).toBe(50)
@@ -167,6 +174,30 @@ describe('PaymentV2', () => {
     expect(txnWithoutTokenType.payments[0].payee).toBe('13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ')
     expect(txnWithoutTokenType.payments[0].amount.integerBalance).toBe(50)
     expect(txnWithoutTokenType.payments[0].memo).toBe('memo')
+  })
+
+  it('exposes max for currency fields', () => {
+    const json = {
+      type: 'payment_v2',
+      time: 1587132741,
+      signature: 'RSXR9pkn9ZnkZOZ',
+      payments: [
+        {
+          payee: '13DKymsEaCSpNTithKUbyn7zDEYV3xfoAsA2iFM6bsw8YtPaoCZ',
+          amount: 0,
+          memo: 'memo',
+          max: true,
+        },
+      ],
+      payer: '13sSQT9ZAvcDm7U6GizvUWZbHyT24NpNUdkeq8io7XJ9sggf4Yu',
+      nonce: 1,
+      height: 295781,
+      hash: 'EZN6c6pZZZxii8vnGN10KxC-O3YvaEXTSEifl0ckUyQ',
+      fee: 3,
+    }
+    const txn = Transaction.fromJsonObject(json) as PaymentV2
+    expect(txn.totalAmountHnt.integerBalance).toBe(0)
+    expect(txn.payments[0].max).toBeTruthy()
   })
 })
 
@@ -258,7 +289,8 @@ describe('TransferHotspotV2', () => {
       time: 1607559551,
       gateway: '112AMbwEAp4QyZeBQYuTMt8wa5W6ceK1xNjG59duxqB6Dx7fS1c4',
       owner: '133yVfiCKZKTxHgWY6UQ8uD6CX2j9q5e2BNjZGCdmcUMLSMubn5',
-      owner_signature: 'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
+      owner_signature:
+        'AP0mjpyq3Z4Fa7v_XJn9ezvFgJdbkuL6JNXxQejdVPNNR5BGPn6Aai4CZ7_343rn2ykluEKq1Y714Q9DB72OCA',
       new_owner: '13U1qigMC832L2oJLYqEYEdBH1JBMNqbRYZ6RuduNr6ntsKP7om',
       height: 625011,
       hash: 'rHkOU-wR2JpsN5zL5Pr46MFGpUuFiMleZPu1NRiyq1c',
@@ -321,14 +353,17 @@ describe('PocReceiptsV1', () => {
 describe('PocReceiptsV2', () => {
   it('correctly converts poc_receipts_v2', () => {
     const txn = Transaction.fromJsonObject(
-      challengeJson([
-        {
-          witnesses: [mockWitness()] as HTTPWitnessesObject[],
-          receipt: mockReceipt,
-          geocode: mockGeocode,
-          ...mockPathData,
-        } as HTTPPathObject,
-      ] as HTTPPathObject[], true),
+      challengeJson(
+        [
+          {
+            witnesses: [mockWitness()] as HTTPWitnessesObject[],
+            receipt: mockReceipt,
+            geocode: mockGeocode,
+            ...mockPathData,
+          } as HTTPPathObject,
+        ] as HTTPPathObject[],
+        true,
+      ),
     ) as PocReceiptsV2
     expect(txn.challenger).toBe('fake-challenger')
     expect(txn.data.hash).toBe(txn.hash)
