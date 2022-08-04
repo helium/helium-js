@@ -92,7 +92,7 @@ describe('serialize and deserialize', () => {
     const deserialized = PaymentV2.fromString(paymentString)
     expect(deserialized.payer?.b58).toBe(payment.payer?.b58)
     expect(deserialized.nonce).toBe(payment.nonce)
-    expect(deserialized.payments[0]?.amount).toBe(payment.payments[0]?.amount)
+    expect(deserialized.payments[0]?.amount).toBe(0)
     expect(deserialized.payments[0]?.payee.b58).toBe(payment.payments[0]?.payee.b58)
     expect(deserialized.payments[0]?.memo).toBe(payment.payments[0]?.memo)
     expect(deserialized.payments[0]?.tokenType).toBe('hnt')

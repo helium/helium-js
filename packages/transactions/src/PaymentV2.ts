@@ -72,7 +72,7 @@ export default class PaymentV2 extends Transaction {
     const payer = toAddressable(decoded.paymentV2?.payer)
     const payments = (decoded.paymentV2?.payments || []).map((p) => ({
       payee: toAddressable(p!.payee) as Addressable,
-      amount: p.amount === undefined ? undefined : (toNumber(p!.amount) as number),
+      amount: toNumber(p.amount),
       memo: toString(p!.memo),
       tokenType: toTicker(toNumber(p!.tokenType)),
       max: p.max,
@@ -103,14 +103,17 @@ export default class PaymentV2 extends Transaction {
     const Payment = proto.helium.payment
     const payments = this.payments.map(({ payee, amount, memo, tokenType, max }) => {
       const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
+
       const payment: proto.helium.Ipayment = {
         payee: toUint8Array(payee.bin),
-        amount,
         memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
         tokenType: toTokenType({ ticker: tokenType, defaultToUndefined: true }),
       }
+
       if (max) {
         payment.max = true
+      } else {
+        payment.amount = amount
       }
 
       return Payment.create(payment)
