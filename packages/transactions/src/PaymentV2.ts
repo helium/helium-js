@@ -25,7 +25,7 @@ export interface Payment {
   amount?: number
   memo?: Base64Memo
   tokenType?: string
-  max?: boolean | null
+  max?: boolean
 }
 
 interface SignOptions {
@@ -75,7 +75,7 @@ export default class PaymentV2 extends Transaction {
       amount: toNumber(p.amount),
       memo: toString(p!.memo),
       tokenType: toTicker(toNumber(p!.tokenType)),
-      max: p.max,
+      max: p.max ?? undefined,
     }))
     const fee = toNumber(decoded.paymentV2?.fee)
     const nonce = toNumber(decoded.paymentV2?.nonce)
