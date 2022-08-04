@@ -2,8 +2,7 @@ import Address from '@helium/address'
 import Long from 'long'
 import { Addressable, TokenType } from './types'
 
-export const toUint8Array = (str: string | Uint8Array | undefined | null): Uint8Array =>
-  Uint8Array.from(Buffer.from(str || ''))
+export const toUint8Array = (str: string | Uint8Array | undefined | null): Uint8Array => Uint8Array.from(Buffer.from(str || ''))
 
 export const EMPTY_SIGNATURE = Uint8Array.from(Array(64).fill(0))
 

@@ -92,12 +92,10 @@ export default class SubnetworkRewardsV1 extends Transaction {
     const SubnetworkRewards = proto.helium.blockchain_txn_subnetwork_rewards_v1
     const SubnetworkReward = proto.helium.blockchain_txn_subnetwork_reward_v1
 
-    const rewards = this.rewards.map(({ account, amount }) =>
-      SubnetworkReward.create({
-        account: toUint8Array(account?.bin),
-        amount,
-      }),
-    )
+    const rewards = this.rewards.map(({ account, amount }) => SubnetworkReward.create({
+      account: toUint8Array(account?.bin),
+      amount,
+    }))
 
     return SubnetworkRewards.create({
       tokenType: toTokenType({ ticker: this.tokenType }),
