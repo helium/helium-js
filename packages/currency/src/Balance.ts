@@ -8,6 +8,7 @@ import {
   BaseCurrencyType,
   TestNetworkTokens,
   MobileTokens,
+  SolTokens,
   IotTokens,
 } from './currency_types'
 import {
@@ -117,7 +118,11 @@ export default class Balance<T extends BaseCurrencyType> {
   toNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<NetworkTokens> {
     if (this.type instanceof NetworkTokens) return this
 
-    if (this.type instanceof MobileTokens || this.type instanceof IotTokens) {
+    if (
+      this.type instanceof MobileTokens ||
+      this.type instanceof IotTokens ||
+      this.type instanceof SolTokens
+    ) {
       throw UnsupportedCurrencyConversionError
     }
 
@@ -134,7 +139,11 @@ export default class Balance<T extends BaseCurrencyType> {
   toTestNetworkTokens(oraclePrice?: Balance<USDollars>): Balance<TestNetworkTokens> {
     if (this.type instanceof TestNetworkTokens) return this
 
-    if (this.type instanceof MobileTokens || this.type instanceof IotTokens) {
+    if (
+      this.type instanceof MobileTokens ||
+      this.type instanceof IotTokens ||
+      this.type instanceof SolTokens
+    ) {
       throw UnsupportedCurrencyConversionError
     }
 
