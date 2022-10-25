@@ -1,6 +1,6 @@
 {
   "name": "@helium/address",
-  "version": "4.6.2",
+  "version": "4.8.0",
   "description": "Helium public key utilities",
   "keywords": [
     "helium",
