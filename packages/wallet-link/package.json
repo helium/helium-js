@@ -36,5 +36,6 @@
   },
   "devDependencies": {
     "@helium/crypto": "^4.8.0"
-  }
+  },
+  "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
 }
