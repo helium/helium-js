@@ -32,6 +32,8 @@ export default class CurrencyType {
         return this.mobile
       case this.iot.ticker:
         return this.iot
+      case this.solTokens.ticker:
+        return this.solTokens
     }
   }
 

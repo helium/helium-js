@@ -6,6 +6,11 @@ describe('floatBalance', () => {
     const balance = new Balance(123456789012, CurrencyType.default)
     expect(balance.floatBalance).toBe(1234.56789012)
   })
+
+  it('solTokens returns a float', () => {
+    const balance = new Balance(123456789012, CurrencyType.solTokens)
+    expect(balance.floatBalance).toBe(1234.56789012)
+  })
 })
 
 describe('integerBalance', () => {
@@ -13,12 +18,20 @@ describe('integerBalance', () => {
     const balance = new Balance(123456789012, CurrencyType.default)
     expect(balance.integerBalance).toBe(123456789012)
   })
+
+  it('solTokens returns an integer balance', () => {
+    const balance = new Balance(123456789012, CurrencyType.default)
+    expect(balance.integerBalance).toBe(123456789012)
+  })
 })
 
 describe('toString', () => {
   it('rounds down to max decimal place', () => {
-    const balance = new Balance(299999999, CurrencyType.mobile)
-    expect(balance.toString(2)).toBe('2.99 MOBILE')
+    const mobileBalance = new Balance(299999999, CurrencyType.mobile)
+    expect(mobileBalance.toString(2)).toBe('2.99 MOBILE')
+
+    const solBalance = new Balance(299999999, CurrencyType.solTokens)
+    expect(solBalance.toString(2)).toBe('2.99 SOL')
   })
 
   it('removes trailing zeroes', () => {
@@ -129,9 +142,14 @@ describe('plus', () => {
   it('throws an error if currency types are mixed', () => {
     const balanceA = new Balance(100000000, CurrencyType.default)
     const balanceB = new Balance(200000000, CurrencyType.dataCredit)
+    const balanceC = new Balance(200000000, CurrencyType.solTokens)
 
     expect(() => {
       balanceA.plus(balanceB)
+    }).toThrow()
+
+    expect(() => {
+      balanceA.plus(balanceC)
     }).toThrow()
   })
 })
@@ -146,9 +164,14 @@ describe('minus', () => {
   it('throws an error if currency types are mixed', () => {
     const balanceA = new Balance(100000000, CurrencyType.default)
     const balanceB = new Balance(200000000, CurrencyType.dataCredit)
+    const balanceC = new Balance(200000000, CurrencyType.solTokens)
 
     expect(() => {
       balanceA.minus(balanceB)
+    }).toThrow()
+
+    expect(() => {
+      balanceA.minus(balanceC)
     }).toThrow()
   })
 })
@@ -186,12 +209,14 @@ describe('toUsd', () => {
     expect(usdBalance.toUsd().toString()).toBe('10.00 USD')
   })
 
-  it('throws error when converting a mobile balance or iot', () => {
+  it('throws error when converting mobile, iot, or sol balances', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const solBalance = new Balance(100000000, CurrencyType.solTokens)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
     expect(() => mobileBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
     expect(() => iotBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
+    expect(() => solBalance.toUsd(oraclePrice)).toThrowError(UnsupportedCurrencyConversionError)
   })
 })
 
@@ -215,14 +240,18 @@ describe('toNetworkTokens', () => {
     expect(hntBalance.toNetworkTokens().toString()).toBe('10 HNT')
   })
 
-  it('throws error when converting a mobile balance or iot', () => {
+  it('throws error when converting a mobile, iot, or sol balance', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const solBalance = new Balance(100000000, CurrencyType.solTokens)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
     expect(() => mobileBalance.toNetworkTokens(oraclePrice)).toThrowError(
       UnsupportedCurrencyConversionError,
     )
     expect(() => iotBalance.toNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => solBalance.toNetworkTokens(oraclePrice)).toThrowError(
       UnsupportedCurrencyConversionError,
     )
   })
@@ -248,14 +277,18 @@ describe('toTestNetworkTokens', () => {
     expect(tntBalance.toString()).toBe('10 TNT')
   })
 
-  it('throws error when converting a mobile balance or iot', () => {
+  it('throws error when converting a mobile, iot, or sol balance', () => {
     const mobileBalance = new Balance(100000000, CurrencyType.mobile)
     const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const solBalance = new Balance(100000000, CurrencyType.solTokens)
     const oraclePrice = new Balance(1000000000, CurrencyType.usd)
     expect(() => mobileBalance.toTestNetworkTokens(oraclePrice)).toThrowError(
       UnsupportedCurrencyConversionError,
     )
     expect(() => iotBalance.toTestNetworkTokens(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => solBalance.toTestNetworkTokens(oraclePrice)).toThrowError(
       UnsupportedCurrencyConversionError,
     )
   })
@@ -278,6 +311,22 @@ describe('toDataCredits', () => {
   it('returns itself if called on a dc balance', () => {
     const dcBalance = new Balance(10 * 100000, CurrencyType.dataCredit)
     expect(dcBalance.toDataCredits().toString()).toBe('1,000,000 DC')
+  })
+
+  it('throws error when converting a mobile, iot, or sol balance', () => {
+    const mobileBalance = new Balance(100000000, CurrencyType.mobile)
+    const iotBalance = new Balance(100000000, CurrencyType.iot)
+    const solBalance = new Balance(100000000, CurrencyType.solTokens)
+    const oraclePrice = new Balance(1000000000, CurrencyType.usd)
+    expect(() => mobileBalance.toDataCredits(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => iotBalance.toDataCredits(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
+    expect(() => solBalance.toDataCredits(oraclePrice)).toThrowError(
+      UnsupportedCurrencyConversionError,
+    )
   })
 })
 
@@ -315,5 +364,7 @@ describe('CurrencyType', () => {
     expect(CurrencyType.fromTicker('MOBILE').ticker).toBe('MOBILE')
     expect(CurrencyType.fromTicker('iot').ticker).toBe('IOT')
     expect(CurrencyType.fromTicker('IOT').ticker).toBe('IOT')
+    expect(CurrencyType.fromTicker('sol').ticker).toBe('SOL')
+    expect(CurrencyType.fromTicker('SOL').ticker).toBe('SOL')
   })
 })
