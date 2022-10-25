@@ -3,6 +3,7 @@ import {
   DataCredits,
   IotTokens,
   MobileTokens,
+  SolTokens,
   NetworkTokens,
   SecurityTokens,
   TestNetworkTokens,
@@ -12,6 +13,7 @@ import {
 export type AnyCurrencyType =
   | NetworkTokens
   | MobileTokens
+  | SolTokens
   | IotTokens
   | TestNetworkTokens
   | SecurityTokens
@@ -43,6 +45,10 @@ export default class CurrencyType {
 
   static get mobile(): MobileTokens {
     return new MobileTokens()
+  }
+
+  static get solTokens(): SolTokens {
+    return new SolTokens()
   }
 
   static get iot(): IotTokens {
