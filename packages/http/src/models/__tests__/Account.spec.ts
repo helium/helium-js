@@ -25,6 +25,7 @@ describe('balances', () => {
     })
 
     expect(account.balance?.integerBalance).toBe(1)
+    expect(account.balance?.toString()).toBe("0.00000001 HNT")
     expect(account.balance?.type?.ticker).toBe(CurrencyType.networkToken.ticker)
     expect(account.netType).toBe(NetTypes.MAINNET)
     expect(account.secBalance?.integerBalance).toBe(1)
