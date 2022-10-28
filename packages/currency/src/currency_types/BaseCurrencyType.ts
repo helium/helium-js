@@ -11,8 +11,10 @@ type CurrencyFormat = {
   decimalPlaces?: number
 }
 
+export type Ticker = 'SOL' | 'MOBILE' | 'HNT' | 'IOT' | 'DC' | 'TNT' | 'USD' | 'HST'
+
 export default class BaseCurrencyType {
-  public ticker: string
+  public ticker: Ticker
 
   public decimalPlaces: BigNumber
 
@@ -20,7 +22,7 @@ export default class BaseCurrencyType {
 
   public format?: CurrencyFormat
 
-  constructor(ticker: string, decimalPlaces: number, format?: CurrencyFormat) {
+  constructor(ticker: Ticker, decimalPlaces: number, format?: CurrencyFormat) {
     this.ticker = ticker
     this.decimalPlaces = new BigNumber(decimalPlaces)
     this.coefficient = makeCoefficient(this.decimalPlaces)

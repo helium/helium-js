@@ -15,5 +15,6 @@ export {
   MobileTokens,
   SolTokens,
   IotTokens,
+  Ticker,
 } from './currency_types'
 export { default } from './Balance'
