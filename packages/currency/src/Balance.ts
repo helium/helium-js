@@ -10,6 +10,7 @@ import {
   MobileTokens,
   SolTokens,
   IotTokens,
+  Ticker,
 } from './currency_types'
 import {
   MixedCurrencyTypeError,
@@ -64,6 +65,16 @@ export default class Balance<T extends BaseCurrencyType> {
     const bigFloat = new BigNumber(float)
     const integerBalance = bigFloat.dividedBy(currencyType.coefficient).toNumber()
     return new Balance(integerBalance, currencyType)
+  }
+
+  static fromIntAndTicker(integerBalance: number, ticker?: Ticker) {
+    const currencyType = CurrencyType.fromTicker(ticker)
+    return new Balance(integerBalance, currencyType)
+  }
+
+  static fromFloatAndTicker(float: number, ticker: Ticker) {
+    const currencyType = CurrencyType.fromTicker(ticker)
+    return this.fromFloat(float, currencyType)
   }
 
   toString(maxDecimalPlaces?: number, options?: StringFormatOptions): string {

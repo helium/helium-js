@@ -21,9 +21,8 @@ export type AnyCurrencyType =
   | USDollars
 
 export default class CurrencyType {
-  static fromTicker(ticker?: string): BaseCurrencyType {
+  static fromTicker(ticker: string = 'HNT'): BaseCurrencyType {
     switch (ticker?.toUpperCase()) {
-      default:
       case this.default.ticker:
         return this.default
       case this.security.ticker:
@@ -34,6 +33,8 @@ export default class CurrencyType {
         return this.iot
       case this.solTokens.ticker:
         return this.solTokens
+      default:
+        throw new Error(`Unsupported Ticker - ${ticker}`)
     }
   }
 
