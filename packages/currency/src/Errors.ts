@@ -6,6 +6,9 @@ export const UnsupportedCurrencyConversionError = new Error(
   'This currency does not support this type of conversion',
 )
 
+export const UnsupportedTickerError = (ticker: string) =>
+  new Error(`Ticker ${ticker} is not supported`)
+
 export const OraclePriceRequiredError = new Error(
   'This conversion requires an oracle price to compute.',
 )

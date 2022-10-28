@@ -9,6 +9,7 @@ import {
   TestNetworkTokens,
   USDollars,
 } from './currency_types'
+import { UnsupportedTickerError } from './Errors'
 
 export type AnyCurrencyType =
   | NetworkTokens
@@ -34,7 +35,7 @@ export default class CurrencyType {
       case this.solTokens.ticker:
         return this.solTokens
       default:
-        throw new Error(`Unsupported Ticker - ${ticker}`)
+        throw UnsupportedTickerError(ticker)
     }
   }
 

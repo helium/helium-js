@@ -1,5 +1,5 @@
-import { Balance, CurrencyType } from '..'
-import { UnsupportedCurrencyConversionError } from '../Errors'
+import { Balance, CurrencyType, Ticker } from '..'
+import { UnsupportedCurrencyConversionError, UnsupportedTickerError } from '../Errors'
 
 describe('floatBalance', () => {
   it('returns a float based on the currency type', () => {
@@ -366,5 +366,29 @@ describe('CurrencyType', () => {
     expect(CurrencyType.fromTicker('IOT').ticker).toBe('IOT')
     expect(CurrencyType.fromTicker('sol').ticker).toBe('SOL')
     expect(CurrencyType.fromTicker('SOL').ticker).toBe('SOL')
+
+    expect(() => CurrencyType.fromTicker('BTC').ticker).toThrowError(UnsupportedTickerError('BTC'))
+  })
+
+  describe('Balance convenience methods', () => {
+    it('fromIntAndTicker', () => {
+      const solBalance = Balance.fromIntAndTicker(100_000_000, 'SOL')
+      expect(solBalance.type.ticker).toBe('SOL')
+      expect(solBalance.integerBalance).toBe(100_000_000)
+
+      expect(() => Balance.fromIntAndTicker(100_000_000, 'BTC' as Ticker)).toThrowError(
+        UnsupportedTickerError('BTC'),
+      )
+    })
+
+    it('fromFloatAndTicker', () => {
+      const solBalance = Balance.fromFloatAndTicker(1, 'SOL')
+      expect(solBalance.type.ticker).toBe('SOL')
+      expect(solBalance.integerBalance).toBe(100_000_000)
+
+      expect(() => Balance.fromFloatAndTicker(1, 'BTC' as Ticker)).toThrowError(
+        UnsupportedTickerError('BTC'),
+      )
+    })
   })
 })
