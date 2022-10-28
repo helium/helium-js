@@ -7,5 +7,4 @@ export { default as BaseCurrencyType } from './BaseCurrencyType'
 export { default as MobileTokens } from './MobileTokens'
 export { default as SolTokens } from './SolTokens'
 export { default as IotTokens } from './IotTokens'
-import { Ticker } from './BaseCurrencyType'
-export { Ticker }
+export { Ticker } from './BaseCurrencyType'
