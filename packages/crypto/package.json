@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding",
   "keywords": [
     "helium",
@@ -26,7 +26,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^4.8.0",
+    "@helium/address": "^4.8.1",
     "create-hash": "^1.2.0",
     "libsodium-wrappers": "^0.7.6"
   },
