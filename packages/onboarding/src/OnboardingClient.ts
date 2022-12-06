@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import qs from 'qs'
 import { OnboardingRecord, Maker, DEWI_ONBOARDING_API_BASE_URL } from './types'
 
-type Response<T>={
+type Response<T> = {
   code: number
   data: T | null
   success: boolean
@@ -19,7 +19,7 @@ export default class OnboardingClient {
     })
   }
 
-  async execute<T>(method:Method, path: string, params?: Object) {
+  private async execute<T>(method: Method, path: string, params?: Object) {
     try {
       const response: AxiosResponse<Response<T>> = await this.axios({
         method,
@@ -35,7 +35,7 @@ export default class OnboardingClient {
     }
   }
 
-  async get<T>(path: string, params: Object = {}) {
+  private async get<T>(path: string, params: Object = {}) {
     const query = qs.stringify(params)
     let url = path
     if (query.length > 0) {
@@ -45,7 +45,7 @@ export default class OnboardingClient {
     return this.execute<T>('GET', url)
   }
 
-  async post<T>(path: string, params: Object = {}) {
+  private async post<T>(path: string, params: Object = {}) {
     return this.execute<T>('POST', path, params)
   }
 
@@ -61,10 +61,10 @@ export default class OnboardingClient {
     return this.get<{ version: string }>('firmware')
   }
 
-  async postPaymentTransaction(
-    gatewayAddress: string,
-    transaction: string,
-  ) {
-    return this.post<{ transaction: string }>(`transactions/pay/${gatewayAddress}`, { transaction })
+  async postPaymentTransaction(gatewayAddress: string, transaction: string) {
+    return this.post<{ transaction: string; solanaTransactions?: string[] }>(
+      `transactions/pay/${gatewayAddress}`,
+      { transaction },
+    )
   }
 }
