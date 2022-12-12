@@ -48,15 +48,15 @@ test('import bip39 mnemonic to solana', async () => {
   expect(solPubkey).toEqual(hntPubkey)
 })
 
-// test('convert helium address to solana address', async () => {
-//   const bob = await Keypair.fromWords(bobWords)
-//   const bobAddress = bob.address
+test('convert helium address to solana address', async () => {
+  const bob = await Keypair.fromWords(bobWords)
+  const bobAddress = bob.address
 
-//   const solKey = solanaWeb3.Keypair.fromSecretKey(bob.privateKey)
-//   const solPubkey = solKey.publicKey.toBase58()
+  const solKey = solanaWeb3.Keypair.fromSecretKey(bob.privateKey)
+  const solPubkey = solKey.publicKey.toBase58()
 
-//   expect(bs58.encode(bobAddress.publicKey)).toBe(solPubkey)
-// })
+  expect(bs58.encode(bobAddress.publicKey)).toBe(solPubkey)
+})
 
 test('convert helium address to solana address', async () => {
   const bob = await Keypair.fromWords(bobWords)
