@@ -9,6 +9,7 @@ export type SignHotspotResponse = {
   gatewayTxn?: string
   transferTxn?: string
   gatewayAddress?: string
+  solanaTransactions?: string
 }
 
 export type LinkWalletRequest = {
@@ -22,6 +23,7 @@ export type SignHotspotRequest = {
   addGatewayTxn?: string
   assertLocationTxn?: string
   transferHotspotTxn?: string
+  solanaTransactions?: string
   platform: string
 }
 
