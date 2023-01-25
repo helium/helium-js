@@ -1,6 +1,6 @@
 {
   "name": "@helium/wallet-link",
-  "version": "4.8.1",
+  "version": "4.8.3",
   "description": "Utilities for linking a 3rd party app to the helium wallet.",
   "keywords": [
     "helium",
