@@ -26,7 +26,6 @@ export type Maker = {
   updatedAt: string
 }
 
-export type Response = { data: { solanaTransactions: number[][] } }
 export type Metadata = {
   location: string
   elevation: number

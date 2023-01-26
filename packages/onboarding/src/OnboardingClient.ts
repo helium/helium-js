@@ -91,7 +91,7 @@ export default class OnboardingClient {
       type: HotspotType
     } & Partial<Metadata>,
   ) {
-    return this.post(`transactions/${opts.type}/onboard`, {
+    return this.post<{ solanaTransactions: number[][] }>(`transactions/${opts.type}/onboard`, {
       entityKey: opts.hotspotAddress,
       location: opts.location,
       elevation: opts.elevation,
@@ -126,7 +126,10 @@ export default class OnboardingClient {
       gain,
       wallet: solanaAddress,
     }
-    return this.post(`transactions/${type}/update-metadata`, body)
+    return this.post<{ solanaTransactions: number[][] }>(
+      `transactions/${type}/update-metadata`,
+      body,
+    )
   }
 
   async updateIotMetadata(

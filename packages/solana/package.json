@@ -43,6 +43,7 @@
     "bs58": "^5.0.0"
   },
   "devDependencies": {
-    "@types/bn.js": "^5.1.1"
+    "@types/bn.js": "^5.1.1",
+    "@types/node-fetch": "^2.6.2"
   }
 }
