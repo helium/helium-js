@@ -12,15 +12,11 @@ import {
   PROGRAM_ID as BUBBLEGUM_PROGRAM_ID,
   createTransferInstruction,
 } from '@metaplex-foundation/mpl-bubblegum'
-// import { AnchorProvider, Wallet, Program } from '@project-serum/anchor'
-// import {
-// hotspotConfigKey,
-// init,
-// iotInfoKey,
-// } from '@helium/helium-entity-manager-sdk'
+import { AnchorProvider, Wallet, Program } from '@project-serum/anchor'
+import { rewardableEntityConfigKey, init, iotInfoKey } from '@helium/helium-entity-manager-sdk'
 import Address from '@helium/address'
-// import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-// import { HeliumEntityManager } from '@helium/idls/lib/types/helium_entity_manager'
+import { subDaoKey } from '@helium/helium-sub-daos-sdk'
+import { HeliumEntityManager } from '@helium/idls/lib/types/helium_entity_manager'
 import { sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { getPythProgramKeyForCluster, PriceStatus, PythHttpClient } from '@pythnetwork/client'
 import {
@@ -33,28 +29,28 @@ import bs58 from 'bs58'
 export default class Solana {
   public cluster!: web3.Cluster
   public connection!: WrappedConnection
-  // private solPubKey?: web3.PublicKey
-  // private _hemProgram: Program<HeliumEntityManager> | undefined
+  private solPubKey?: web3.PublicKey
+  private _hemProgram: Program<HeliumEntityManager> | undefined
 
-  // private getHemProgram = async (publicKey: web3.PublicKey) => {
-  //   if (this._hemProgram && this.solPubKey && publicKey.equals(this.solPubKey)) {
-  //     return this._hemProgram
-  //   }
+  private getHemProgram = async (publicKey: web3.PublicKey) => {
+    if (this._hemProgram && this.solPubKey && publicKey.equals(this.solPubKey)) {
+      return this._hemProgram
+    }
 
-  //   const provider = new AnchorProvider(
-  //     this.connection,
-  //     {
-  //       publicKey,
-  //     } as Wallet,
-  //     {},
-  //   )
-  //   const nextHemProgram = await init(provider)
+    const provider = new AnchorProvider(
+      this.connection,
+      {
+        publicKey,
+      } as Wallet,
+      {},
+    )
+    const nextHemProgram = await init(provider)
 
-  //   this.solPubKey = publicKey
-  //   this._hemProgram = nextHemProgram
+    this.solPubKey = publicKey
+    this._hemProgram = nextHemProgram
 
-  //   return nextHemProgram
-  // }
+    return nextHemProgram
+  }
 
   constructor(cluster: web3.Cluster) {
     this.cluster = cluster
@@ -166,34 +162,30 @@ export default class Solana {
     return this.connection.getBalance(pubKey)
   }
 
-  getSolHotspotInfo = async (
-    // {
-    // mint,
-    // hotspotAddress,
-    // pubKey,
-    // symbol: type,
-    // }
-    _opts: {
-      mint: string
-      hotspotAddress: string
-      pubKey: web3.PublicKey
-      symbol: 'IOT' | 'MOBILE'
-    },
-  ) => {
-    // const sdkey = subDaoKey(new web3.PublicKey(mint))[0]
-    // const hckey = hotspotConfigKey(sdkey, type)[0]
-    // const infoKey = iotInfoKey(hckey, hotspotAddress)[0]
-    // const program = await this.getHemProgram(pubKey)
+  getSolHotspotInfo = async ({
+    mint,
+    hotspotAddress,
+    pubKey,
+    symbol: type,
+  }: {
+    mint: string
+    hotspotAddress: string
+    pubKey: web3.PublicKey
+    symbol: 'IOT' | 'MOBILE'
+  }) => {
+    const sdkey = subDaoKey(new web3.PublicKey(mint))[0]
+    const hckey = rewardableEntityConfigKey(sdkey, type)[0]
+    const infoKey = iotInfoKey(hckey, hotspotAddress)[0]
+    const program = await this.getHemProgram(pubKey)
 
-    // switch (type) {
-    //   case 'IOT': {
-    //     return program.account.iotHotspotInfoV0.fetchNullable(infoKey)
-    //   }
-    //   case 'MOBILE': {
-    //     return await program.account.mobileHotspotInfoV0.fetchNullable(infoKey)
-    //   }
-    // }
-    return null
+    switch (type) {
+      case 'IOT': {
+        return await program.account.iotHotspotInfoV0.fetchNullable(infoKey)
+      }
+      case 'MOBILE': {
+        return await program.account.mobileHotspotInfoV0.fetchNullable(infoKey)
+      }
+    }
   }
 
   submitSolana = async ({ txn }: { txn: Buffer }) => {

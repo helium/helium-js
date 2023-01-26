@@ -8,4 +8,4 @@ import Solana from './Solana'
 
 export default Solana
 
-export { SolHotspot, SolanaConnection, Asset, CompressedNFT } from './types'
+export { SolanaConnection, Asset, CompressedNFT } from './types'

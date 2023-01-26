@@ -9,17 +9,6 @@ export const SolanaConnection = {
   'mainnet-beta': new WrappedConnection(web3.clusterApiUrl('mainnet-beta')),
 } as const
 
-export type SolHotspot = {
-  asset: PublicKey
-  bumpSeed: number
-  elevation: number
-  gain: number
-  hotspotKey: string
-  isFullHotspot: boolean
-  location: BN | null
-  numLocationAsserts: number
-}
-
 export interface Asset {
   jsonrpc: string
   result: Result
