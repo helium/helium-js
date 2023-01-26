@@ -1,4 +1,4 @@
-export const DEWI_ONBOARDING_API_BASE_URL = 'https://onboarding.dewi.org/api/v2'
+export const DEWI_ONBOARDING_API_BASE_URL = 'https://onboarding.dewi.org/api/v3'
 
 export type OnboardingRecord = {
   id: number
@@ -25,3 +25,11 @@ export type Maker = {
   createdAt: string
   updatedAt: string
 }
+
+export type Response = { data: { solanaTransactions: number[][] } }
+export type Metadata = {
+  location: string
+  elevation: number
+  gain: number
+}
+export type HotspotType = 'iot' | 'mobile'
