@@ -13,9 +13,8 @@ import {
   createTransferInstruction,
 } from '@metaplex-foundation/mpl-bubblegum'
 import { AnchorProvider, Wallet, Program } from '@project-serum/anchor'
-import { rewardableEntityConfigKey, init, iotInfoKey } from '@helium/helium-entity-manager-sdk'
+import { init } from '@helium/helium-entity-manager-sdk'
 import Address from '@helium/address'
-import { subDaoKey } from '@helium/helium-sub-daos-sdk'
 import { HeliumEntityManager } from '@helium/idls/lib/types/helium_entity_manager'
 import { sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { getPythProgramKeyForCluster, PriceStatus, PythHttpClient } from '@pythnetwork/client'
@@ -25,6 +24,7 @@ import {
   SPL_NOOP_PROGRAM_ID,
 } from '@solana/spl-account-compression'
 import bs58 from 'bs58'
+import * as solUtils from './utils'
 
 export default class Solana {
   public cluster!: web3.Cluster
@@ -166,26 +166,15 @@ export default class Solana {
     mint,
     hotspotAddress,
     pubKey,
-    symbol: type,
+    symbol,
   }: {
     mint: string
     hotspotAddress: string
     pubKey: web3.PublicKey
     symbol: 'IOT' | 'MOBILE'
   }) => {
-    const sdkey = subDaoKey(new web3.PublicKey(mint))[0]
-    const hckey = rewardableEntityConfigKey(sdkey, type)[0]
-    const infoKey = iotInfoKey(hckey, hotspotAddress)[0]
     const program = await this.getHemProgram(pubKey)
-
-    switch (type) {
-      case 'IOT': {
-        return await program.account.iotHotspotInfoV0.fetchNullable(infoKey)
-      }
-      case 'MOBILE': {
-        return await program.account.mobileHotspotInfoV0.fetchNullable(infoKey)
-      }
-    }
+    return solUtils.getSolHotspotInfo({ mint, hotspotAddress, symbol, program })
   }
 
   submitSolana = async ({ txn }: { txn: Buffer }) => {

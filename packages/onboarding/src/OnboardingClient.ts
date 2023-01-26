@@ -82,7 +82,7 @@ export default class OnboardingClient {
   }
 
   async createHotspot(opts: { transaction: string }) {
-    return this.post('transactions/create-hotspot', opts)
+    return this.post<{ solanaTransactions: number[][] }>('transactions/create-hotspot', opts)
   }
 
   async onboard(

@@ -1,7 +1,9 @@
-import { PublicKey } from '@solana/web3.js'
-import BN from 'bn.js'
 import * as web3 from '@solana/web3.js'
 import { WrappedConnection } from './WrappedConnection'
+import { getSolHotspotInfo } from './utils'
+
+type Await<T> = T extends PromiseLike<infer U> ? U : T
+export type SolHotspot = Await<ReturnType<typeof getSolHotspotInfo>>
 
 export const SolanaConnection = {
   devnet: new WrappedConnection('https://rpc-devnet.aws.metaplex.com/'),
