@@ -1,13 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import {
-  OnboardingRecord,
-  Maker,
-  DEWI_ONBOARDING_API_BASE_URL,
-  Metadata,
-  HotspotType,
-} from './types'
+import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
 
 type Response<T> = {
   code: number
@@ -20,7 +14,7 @@ type Response<T> = {
 export default class OnboardingClient {
   private axios!: AxiosInstance
 
-  constructor(baseURL: string = DEWI_ONBOARDING_API_BASE_URL) {
+  constructor(baseURL: string) {
     this.axios = axios.create({
       baseURL,
     })
