@@ -4,6 +4,6 @@ const TICKER = 'SOL'
 
 export default class SolTokens extends BaseCurrencyType {
   constructor() {
-    super(TICKER, 8)
+    super(TICKER, 9)
   }
 }
