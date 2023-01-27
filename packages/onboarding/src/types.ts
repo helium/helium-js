@@ -1,5 +1,6 @@
-export const DEWI_ONBOARDING_API_BASE_URL_V2 = 'https://onboarding.dewi.org/api/v2'
-export const DEWI_ONBOARDING_API_BASE_URL_V3 = 'https://onboarding.dewi.org/api/v3'
+export const DEWI_ONBOARDING_API_BASE_URL = 'https://onboarding.dewi.org/api'
+export const DEWI_ONBOARDING_API_BASE_URL_V2 = `${DEWI_ONBOARDING_API_BASE_URL}/v2`
+export const DEWI_ONBOARDING_API_BASE_URL_V3 = `${DEWI_ONBOARDING_API_BASE_URL}/v3`
 
 export type OnboardingRecord = {
   id: number

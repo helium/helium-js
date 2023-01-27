@@ -23,7 +23,6 @@
       "packages/currency/src",
       "packages/address/src",
       "packages/wallet-link/src",
-      "packages/solana/src",
       "integration_tests/tests"
     ],
     "collectCoverageFrom": [
