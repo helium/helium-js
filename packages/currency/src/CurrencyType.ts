@@ -34,6 +34,8 @@ export default class CurrencyType {
         return this.iot
       case this.solTokens.ticker:
         return this.solTokens
+      case this.usd.ticker:
+        return this.usd
       default:
         throw UnsupportedTickerError(ticker)
     }
