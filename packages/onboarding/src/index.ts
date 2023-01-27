@@ -8,4 +8,4 @@ import OnboardingClient from './OnboardingClient'
 
 export default OnboardingClient
 
-export { Maker, OnboardingRecord } from './types'
+export { Maker, OnboardingRecord, HotspotType } from './types'

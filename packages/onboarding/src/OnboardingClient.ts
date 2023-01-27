@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
+import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import { OnboardingRecord, Maker, DEWI_ONBOARDING_API_BASE_URL } from './types'
+import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
 
 type Response<T> = {
   code: number
@@ -13,9 +14,15 @@ type Response<T> = {
 export default class OnboardingClient {
   private axios!: AxiosInstance
 
-  constructor(baseURL: string = DEWI_ONBOARDING_API_BASE_URL) {
+  constructor(baseURL: string) {
     this.axios = axios.create({
       baseURL,
+    })
+
+    axiosRetry(this.axios, {
+      retries: 10,
+      retryDelay: axiosRetry.exponentialDelay,
+      retryCondition: (error) => error.response?.status === 404,
     })
   }
 
@@ -66,5 +73,74 @@ export default class OnboardingClient {
       `transactions/pay/${gatewayAddress}`,
       { transaction },
     )
+  }
+
+  async createHotspot(opts: { transaction: string }) {
+    return this.post<{ solanaTransactions: number[][] }>('transactions/create-hotspot', opts)
+  }
+
+  async onboard(
+    opts: {
+      hotspotAddress: string
+      type: HotspotType
+    } & Partial<Metadata>,
+  ) {
+    return this.post<{ solanaTransactions: number[][] }>(`transactions/${opts.type}/onboard`, {
+      entityKey: opts.hotspotAddress,
+      location: opts.location,
+      elevation: opts.elevation,
+      gain: opts.gain,
+    })
+  }
+
+  async onboardIot(opts: { hotspotAddress: string } & Partial<Metadata>) {
+    return this.onboard({ ...opts, type: 'iot' })
+  }
+
+  async onboardMobile(opts: { hotspotAddress: string } & Partial<Metadata>) {
+    return this.onboard({ ...opts, type: 'mobile' })
+  }
+
+  async updateMetadata({
+    solanaAddress,
+    location,
+    elevation,
+    gain,
+    hotspotAddress,
+    type,
+  }: Metadata & {
+    type: HotspotType
+    hotspotAddress: string
+    solanaAddress: string
+  }) {
+    const body = {
+      entityKey: hotspotAddress,
+      location,
+      elevation,
+      gain,
+      wallet: solanaAddress,
+    }
+    return this.post<{ solanaTransactions: number[][] }>(
+      `transactions/${type}/update-metadata`,
+      body,
+    )
+  }
+
+  async updateIotMetadata(
+    opts: Metadata & {
+      hotspotAddress: string
+      solanaAddress: string
+    },
+  ) {
+    return this.updateMetadata({ ...opts, type: 'iot' })
+  }
+
+  async updateMobileMetadata(
+    opts: Metadata & {
+      hotspotAddress: string
+      solanaAddress: string
+    },
+  ) {
+    return this.updateMetadata({ ...opts, type: 'mobile' })
   }
 }
