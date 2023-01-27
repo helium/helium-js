@@ -19,7 +19,7 @@ describe('Makers', () => {
         data: [HELIUM_MAKER],
       })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const makers = await client.getMakers()
     const [helium] = makers.data!
     expect(helium).toBeDefined()
@@ -54,7 +54,7 @@ describe('Hotspots', () => {
           success: true,
         })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const { data: record } = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record?.publicAddress).toBe(hotspotAddress)
@@ -65,7 +65,7 @@ describe('Hotspots', () => {
   it('Returns 404 when hotspot is not found', async () => {
     const hotspotAddress = '11xJMpks5xrSQjnvkAn9bP9kMk1rioTm63pNbacjvMXUksEqz69b'
     nock(DEWI_ONBOARDING_API_BASE_URL).get(`/hotspots/${hotspotAddress}`)
-      .reply(404, {
+      .reply(200, {
         code: 404,
         errorMessage: 'Unable to find hotspot',
         errors: [],
@@ -73,7 +73,7 @@ describe('Hotspots', () => {
         success: false,
       })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const record = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record.code).toBe(404)
@@ -95,7 +95,7 @@ describe('Payment', () => {
           success: true,
         })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const onboardingTxn = await client.postPaymentTransaction(hotspotAddress, txn)
     expect(onboardingTxn.data).toBeDefined()
     expect(onboardingTxn.data?.transaction).toBe('asdf1234')
@@ -104,7 +104,7 @@ describe('Payment', () => {
   it('Returns 404 when hotspot is not found', async () => {
     const hotspotAddress = '11xJMpks5xrSQjnvkAn9bP9kMk1rioTm63pNbacjvMXUksEqz69b'
     nock(DEWI_ONBOARDING_API_BASE_URL).get(`/hotspots/${hotspotAddress}`)
-      .reply(404,
+      .reply(200,
         {
           code: 404,
           errorMessage: 'Hotspot not found',
@@ -113,7 +113,7 @@ describe('Payment', () => {
           success: false,
         })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const record = await client.getOnboardingRecord(hotspotAddress)
     expect(record).toBeDefined()
     expect(record.code).toBe(404)
@@ -134,7 +134,7 @@ describe('Firmware', () => {
           success: true,
         })
 
-    const client = new OnboardingClient()
+    const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL)
     const onboardingTxn = await client.getFirmware()
     expect(onboardingTxn.data).toBeDefined()
     expect(onboardingTxn.data?.version).toBe(version)
