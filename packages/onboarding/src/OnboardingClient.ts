@@ -14,16 +14,21 @@ type Response<T> = {
 export default class OnboardingClient {
   private axios!: AxiosInstance
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, opts?: { retryOn404?: boolean; retryCount?: number }) {
     this.axios = axios.create({
       baseURL,
     })
 
-    axiosRetry(this.axios, {
-      retries: 10,
-      retryDelay: axiosRetry.exponentialDelay,
-      retryCondition: (error) => error.response?.status === 404,
-    })
+    const retryOn404 = opts?.retryOn404 ?? true
+    const retries = opts?.retryCount ?? 5
+
+    if (retryOn404) {
+      axiosRetry(this.axios, {
+        retries,
+        retryDelay: axiosRetry.exponentialDelay,
+        retryCondition: (error) => error.response?.status === 404,
+      })
+    }
   }
 
   private async execute<T>(method: Method, path: string, params?: Object) {
