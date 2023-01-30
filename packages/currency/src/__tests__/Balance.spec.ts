@@ -9,7 +9,7 @@ describe('floatBalance', () => {
 
   it('solTokens returns a float', () => {
     const balance = new Balance(123456789012, CurrencyType.solTokens)
-    expect(balance.floatBalance).toBe(1234.56789012)
+    expect(balance.floatBalance).toBe(123.456789012)
   })
 })
 
@@ -31,7 +31,7 @@ describe('toString', () => {
     expect(mobileBalance.toString(2)).toBe('2.99 MOBILE')
 
     const solBalance = new Balance(299999999, CurrencyType.solTokens)
-    expect(solBalance.toString(2)).toBe('2.99 SOL')
+    expect(solBalance.toString(2)).toBe('0.29 SOL')
   })
 
   it('removes trailing zeroes', () => {
@@ -384,7 +384,7 @@ describe('CurrencyType', () => {
     it('fromFloatAndTicker', () => {
       const solBalance = Balance.fromFloatAndTicker(1, 'SOL')
       expect(solBalance.type.ticker).toBe('SOL')
-      expect(solBalance.integerBalance).toBe(100_000_000)
+      expect(solBalance.integerBalance).toBe(1_000_000_000)
 
       expect(() => Balance.fromFloatAndTicker(1, 'BTC' as Ticker)).toThrowError(
         UnsupportedTickerError('BTC'),
