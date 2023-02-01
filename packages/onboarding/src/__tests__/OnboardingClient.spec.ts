@@ -224,28 +224,5 @@ describe('Onboard', () => {
       expect(onboardingTxn.data).toBeDefined()
       expect(onboardingTxn.data?.solanaTransactions[0][0]).toBe(0)
     })
-
-    it('Creates an update metadata transaction for mobile hotspots', async () => {
-      nock(DEWI_ONBOARDING_API_BASE_URL_V3)
-        .post('/transactions/mobile/update-metadata')
-        .reply(200, {
-          code: 200,
-          data: {
-            solanaTransactions: [[0, 1, 2, 3, 4, 5]],
-          },
-          success: true,
-        })
-
-      const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
-      const onboardingTxn = await client.updateMobileMetadata({
-        solanaAddress: 'asfd',
-        location: 'asdf',
-        elevation: 1,
-        gain: 1,
-        hotspotAddress: 'asdf',
-      })
-      expect(onboardingTxn.data).toBeDefined()
-      expect(onboardingTxn.data?.solanaTransactions[0][0]).toBe(0)
-    })
   })
 })

@@ -106,15 +106,13 @@ export default class OnboardingClient {
     return this.onboard({ ...opts, type: 'mobile' })
   }
 
-  async updateMetadata({
+  async updateIotMetadata({
     solanaAddress,
     location,
     elevation,
     gain,
     hotspotAddress,
-    type,
   }: Metadata & {
-    type: HotspotType
     hotspotAddress: string
     solanaAddress: string
   }) {
@@ -125,27 +123,6 @@ export default class OnboardingClient {
       gain,
       wallet: solanaAddress,
     }
-    return this.post<{ solanaTransactions: number[][] }>(
-      `transactions/${type}/update-metadata`,
-      body,
-    )
-  }
-
-  async updateIotMetadata(
-    opts: Metadata & {
-      hotspotAddress: string
-      solanaAddress: string
-    },
-  ) {
-    return this.updateMetadata({ ...opts, type: 'iot' })
-  }
-
-  async updateMobileMetadata(
-    opts: Metadata & {
-      hotspotAddress: string
-      solanaAddress: string
-    },
-  ) {
-    return this.updateMetadata({ ...opts, type: 'mobile' })
+    return this.post<{ solanaTransactions: number[][] }>('transactions/iot/update-metadata', body)
   }
 }
