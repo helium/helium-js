@@ -4,6 +4,6 @@ const TICKER = 'MOBILE'
 
 export default class MobileTokens extends BaseCurrencyType {
   constructor() {
-    super(TICKER, 8)
+    super(TICKER, 6)
   }
 }
