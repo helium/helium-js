@@ -33,4 +33,4 @@ export type Metadata = {
   elevation: number
   gain: number
 }
-export type HotspotType = 'iot' | 'mobile'
+export type HotspotType = 'IOT' | 'MOBILE'
