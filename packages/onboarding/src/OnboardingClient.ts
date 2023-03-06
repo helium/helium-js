@@ -38,6 +38,12 @@ export default class OnboardingClient {
         url: path,
         data: params,
       })
+      if (response.data.errorMessage) {
+        throw new Error(response.data.errorMessage)
+      }
+      if (response.data.success === false) {
+        throw new Error(`Failed with code ${response.data.code}}`)
+      }
       return response.data
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -90,20 +96,23 @@ export default class OnboardingClient {
       type: HotspotType
     } & Partial<Metadata>,
   ) {
-    return this.post<{ solanaTransactions: number[][] }>(`transactions/${opts.type}/onboard`, {
-      entityKey: opts.hotspotAddress,
-      location: opts.location,
-      elevation: opts.elevation,
-      gain: opts.gain,
-    })
+    return this.post<{ solanaTransactions: number[][] }>(
+      `transactions/${opts.type.toLowerCase()}/onboard`,
+      {
+        entityKey: opts.hotspotAddress,
+        location: opts.location,
+        elevation: opts.elevation,
+        gain: opts.gain,
+      },
+    )
   }
 
   async onboardIot(opts: { hotspotAddress: string } & Partial<Metadata>) {
-    return this.onboard({ ...opts, type: 'iot' })
+    return this.onboard({ ...opts, type: 'IOT' })
   }
 
   async onboardMobile(opts: { hotspotAddress: string } & Partial<Metadata>) {
-    return this.onboard({ ...opts, type: 'mobile' })
+    return this.onboard({ ...opts, type: 'MOBILE' })
   }
 
   async updateMetadata({
@@ -126,7 +135,7 @@ export default class OnboardingClient {
       wallet: solanaAddress,
     }
     return this.post<{ solanaTransactions: number[][] }>(
-      `transactions/${type}/update-metadata`,
+      `transactions/${type.toLowerCase()}/update-metadata`,
       body,
     )
   }
@@ -137,7 +146,7 @@ export default class OnboardingClient {
       solanaAddress: string
     },
   ) {
-    return this.updateMetadata({ ...opts, type: 'iot' })
+    return this.updateMetadata({ ...opts, type: 'IOT' })
   }
 
   async updateMobileMetadata(
@@ -146,6 +155,6 @@ export default class OnboardingClient {
       solanaAddress: string
     },
   ) {
-    return this.updateMetadata({ ...opts, type: 'mobile' })
+    return this.updateMetadata({ ...opts, type: 'MOBILE' })
   }
 }
