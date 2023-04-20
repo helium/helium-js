@@ -394,7 +394,7 @@ describe('SubnetworkRewardsV1', () => {
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
     expect(txn.tokenType).toBe('mobile')
     expect(txn.rewards.length).toBe(2)
-    expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
+    expect(txn.rewards[0].amount.floatBalance).toBe(0.002)
     expect(txn.rewards[0].amount.type.ticker).toBe('MOBILE')
   })
 
@@ -421,7 +421,7 @@ describe('SubnetworkRewardsV1', () => {
     const txn = Transaction.fromJsonObject(json) as SubnetworkRewardsV1
     expect(txn.tokenType).toBe('iot')
     expect(txn.rewards.length).toBe(2)
-    expect(txn.rewards[0].amount.floatBalance).toBe(0.00002)
+    expect(txn.rewards[0].amount.floatBalance).toBe(0.002)
     expect(txn.rewards[0].amount.type.ticker).toBe('IOT')
   })
 })
