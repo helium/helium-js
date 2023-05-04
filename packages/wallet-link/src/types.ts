@@ -24,7 +24,6 @@ export type SignHotspotRequest = {
   assertLocationTxn?: string
   transferHotspotTxn?: string
   solanaTransactions?: string
-  platform: string
 }
 
 export type Token = LinkWalletRequest & {
@@ -52,7 +51,7 @@ export type DelegateApp = {
   appStoreId: number
 }
 
-const HELIUM_WALLET_APP: DelegateApp = {
+export const HELIUM_WALLET_APP: DelegateApp = {
   universalLink: 'https://wallet.helium.com/',
   name: 'helium-hnt-wallet',
   androidPackage: 'com.helium.wallet.app',
@@ -60,12 +59,10 @@ const HELIUM_WALLET_APP: DelegateApp = {
   appStoreId: 1609525848,
 }
 
-const HELIUM_HOTSPOT_APP: DelegateApp = {
+export const HELIUM_HOTSPOT_APP: DelegateApp = {
   universalLink: 'https://helium.com/',
   name: 'helium-hotspot',
   androidPackage: 'com.helium.wallet',
   iosBundleId: 'com.helium.mobile.wallet',
   appStoreId: 1450463605,
 }
-
-export const DELEGATE_APPS = [HELIUM_WALLET_APP, HELIUM_HOTSPOT_APP]
