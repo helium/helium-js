@@ -5,7 +5,7 @@ import queryString from 'query-string'
 import { SignableKeypair } from '@helium/transactions'
 import { getUnixTime } from 'date-fns'
 import {
-  DELEGATE_APPS,
+  HELIUM_WALLET_APP,
   LinkWalletResponse,
   SignHotspotRequest,
   SignHotspotResponse,
@@ -60,13 +60,12 @@ export const createWalletLinkUrl = (opts: {
   requestAppId: string
   callbackUrl: string
   appName: string
-  universalLink?: string
   path?: string
 }) => {
-  const { universalLink, path, ...params } = opts
+  const { path, ...params } = opts
   const query = queryString.stringify(params)
 
-  return `${universalLink || 'https://wallet.helium.com/'}${path || 'link_wallet'}?${query}`
+  return `${HELIUM_WALLET_APP.universalLink}${path || 'link_wallet'}?${query}`
 }
 
 export const createLinkWalletCallbackUrl = (
@@ -81,20 +80,6 @@ export const createSignHotspotCallbackUrl = (
 ) => `${protocol}sign_hotspot?${queryString.stringify(responseParams)}`
 
 export const createUpdateHotspotUrl = (opts: SignHotspotRequest) => {
-  if (!(opts.platform === 'android' || opts.platform === 'ios')) {
-    throw new Error(`Platform '${opts.platform}' is not supported`)
-  }
-
-  const { signingAppId } = parseWalletLinkToken(opts.token) || {
-    signingAppId: '',
-  }
-  const requestApp = DELEGATE_APPS.find(({ androidPackage, iosBundleId }) => {
-    const id = opts.platform === 'android' ? androidPackage : iosBundleId
-    return id === signingAppId
-  })
-  const universalLink = requestApp?.universalLink
-  if (!universalLink) throw new Error('Could not find delegate app')
-
   const query = queryString.stringify(opts)
-  return `${universalLink}sign_hotspot?${query}`
+  return `${HELIUM_WALLET_APP.universalLink}sign_hotspot?${query}`
 }
