@@ -16,7 +16,7 @@ import {
 const createToken = async ({
   time,
   signingAppId,
-} : { time?: number, signingAppId?: string } = {}) => {
+}: { time?: number; signingAppId?: string } = {}) => {
   const keypair = await Keypair.makeRandom()
   const opts = {
     address: keypair.address.b58,
@@ -59,7 +59,9 @@ describe('wallet-link', () => {
 
     it('invalidates expired token', async () => {
       const { token } = await createToken({ time: getUnixTime(new Date()) - 60 })
-      expect(() => verifyWalletLinkToken(token, { maxAgeInSeconds: 30 })).toThrow('Token is expired')
+      expect(() => verifyWalletLinkToken(token, { maxAgeInSeconds: 30 })).toThrow(
+        'Token is expired',
+      )
     })
   })
 
@@ -72,9 +74,10 @@ describe('wallet-link', () => {
         universalLink: 'testUniversalLink',
         path: 'testPath',
       }
-      const callbackUrl = createWalletLinkUrl(params)
-      expect(callbackUrl).toBe('testUniversalLinktestPath?appName=testAppName&callbackUrl=testCallbackUrl'
-        + '&requestAppId=testRequestAppId')
+      const url = createWalletLinkUrl(params)
+      expect(url).toBe(
+        'https://wallet.helium.com/testPath?appName=testAppName&callbackUrl=testCallbackUrl&requestAppId=testRequestAppId&universalLink=testUniversalLink',
+      )
     })
 
     it('creates callback url', async () => {
@@ -95,62 +98,26 @@ describe('wallet-link', () => {
         gatewayAddress: 'testGatewayAddress',
       }
       const callbackUrl = createSignHotspotCallbackUrl('test://', params)
-      expect(callbackUrl).toBe('test://sign_hotspot?assertTxn=testAssertTxn&gatewayAddress=testGatewayAddress'
-        + '&gatewayTxn=testGatewayTxn&status=success&transferTxn=testTransferTxn')
+      expect(callbackUrl).toBe(
+        'test://sign_hotspot?assertTxn=testAssertTxn&gatewayAddress=testGatewayAddress' +
+          '&gatewayTxn=testGatewayTxn&status=success&transferTxn=testTransferTxn',
+      )
     })
 
-    it('creates ios update hotspot url', async () => {
+    it('creates update hotspot url', async () => {
       const { tokenString } = await createToken({ signingAppId: 'com.helium.wallet.app' })
       const params: SignHotspotRequest = {
         token: tokenString,
         addGatewayTxn: 'testAddGatewayTxn',
         assertLocationTxn: 'testAssertLocationTxn',
         transferHotspotTxn: 'testTransferHotspotTxn',
-        platform: 'ios',
       }
       const callbackUrl = createUpdateHotspotUrl(params)
-      expect(callbackUrl).toBe('https://wallet.helium.com/sign_hotspot?addGatewayTxn=testAddGatewayTxn'
-        + `&assertLocationTxn=testAssertLocationTxn&platform=ios&token=${encodeURIComponent(tokenString)}`
-        + '&transferHotspotTxn=testTransferHotspotTxn')
-    })
-
-    it('creates android update hotspot url', async () => {
-      const { tokenString } = await createToken({ signingAppId: 'com.helium.wallet.app' })
-      const params: SignHotspotRequest = {
-        token: tokenString,
-        addGatewayTxn: 'testAddGatewayTxn',
-        assertLocationTxn: 'testAssertLocationTxn',
-        transferHotspotTxn: 'testTransferHotspotTxn',
-        platform: 'android',
-      }
-      const callbackUrl = createUpdateHotspotUrl(params)
-      expect(callbackUrl).toBe('https://wallet.helium.com/sign_hotspot?addGatewayTxn=testAddGatewayTxn'
-        + `&assertLocationTxn=testAssertLocationTxn&platform=android&token=${encodeURIComponent(tokenString)}`
-        + '&transferHotspotTxn=testTransferHotspotTxn')
-    })
-
-    it('fails for invalid platform', async () => {
-      const { tokenString } = await createToken({ signingAppId: 'com.helium.wallet.app' })
-      const params: SignHotspotRequest = {
-        token: tokenString,
-        addGatewayTxn: 'testAddGatewayTxn',
-        assertLocationTxn: 'testAssertLocationTxn',
-        transferHotspotTxn: 'testTransferHotspotTxn',
-        platform: 'test',
-      }
-      expect(() => createUpdateHotspotUrl(params)).toThrow("Platform 'test' is not supported")
-    })
-
-    it('fails for invalid signing app id', async () => {
-      const { tokenString } = await createToken()
-      const params: SignHotspotRequest = {
-        token: tokenString,
-        addGatewayTxn: 'testAddGatewayTxn',
-        assertLocationTxn: 'testAssertLocationTxn',
-        transferHotspotTxn: 'testTransferHotspotTxn',
-        platform: 'android',
-      }
-      expect(() => createUpdateHotspotUrl(params)).toThrow('Could not find delegate app')
+      expect(callbackUrl).toBe(
+        'https://wallet.helium.com/sign_hotspot?addGatewayTxn=testAddGatewayTxn' +
+          `&assertLocationTxn=testAssertLocationTxn&token=${encodeURIComponent(tokenString)}` +
+          '&transferHotspotTxn=testTransferHotspotTxn',
+      )
     })
   })
 })
