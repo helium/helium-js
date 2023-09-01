@@ -1,0 +1,36 @@
+{
+  "name": "@helium/mobile-wifi-onboarding",
+  "version": "4.10.2",
+  "description": "Library for onboarding mobile wifi access points",
+  "keywords": [
+    "helium",
+    "onboarding",
+    "mobile",
+    "wifi"
+  ],
+  "contributors": [
+    "Matt Reetz <matt@nova-labs.com>"
+  ],
+  "homepage": "https://github.com/helium/helium-js",
+  "license": "Apache-2.0",
+  "main": "build/index.js",
+  "module": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "clean": "rimraf build",
+    "build": "yarn run clean && tsc"
+  },
+  "dependencies": {
+    "@helium/address": "^4.10.2",
+    "@helium/transactions": "^4.10.2",
+    "axios": "^1.5.0",
+    "axios-mock-adapter": "^1.21.5",
+    "axios-retry": "^3.7.0"
+  }
+}
