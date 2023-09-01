@@ -20,7 +20,6 @@ export default class HmhHttpClient {
     baseURL: string
     mockRequests?: boolean
   }) {
-    console.log({ baseURL, ownerHeliumAddress, payerHeliumAddress, mockRequests })
     this.axios = axios.create({
       baseURL,
     })
@@ -45,10 +44,6 @@ export default class HmhHttpClient {
         gateway: GATEWAY,
       })
 
-      console.log({
-        gatewayAddress: GATEWAY.b58,
-        signedAddGwTx: addGateway.toString(),
-      })
       mock.onPost('/sign_gw_add_tx').reply(200, {
         gatewayAddress: GATEWAY.b58,
         signedAddGwTx: addGateway.toString(),

@@ -1,7 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
 import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
+import MockAdapter from 'axios-mock-adapter'
 
 type Response<T> = {
   code: number
@@ -14,13 +16,17 @@ type Response<T> = {
 export default class OnboardingClient {
   private axios!: AxiosInstance
 
-  constructor(baseURL: string, opts?: { retryOn404?: boolean; retryCount?: number }) {
+  constructor(
+    baseURL: string,
+    opts?: { retryOn404?: boolean; retryCount?: number; mockRequests?: boolean },
+  ) {
     this.axios = axios.create({
       baseURL: baseURL.endsWith('/') ? baseURL : `${baseURL}/`,
     })
 
     const retryOn404 = opts?.retryOn404 ?? true
     const retries = opts?.retryCount ?? 5
+    const mockRequests = opts?.mockRequests ?? false
 
     if (retryOn404) {
       axiosRetry(this.axios, {
@@ -28,6 +34,30 @@ export default class OnboardingClient {
         retryDelay: axiosRetry.exponentialDelay,
         retryCondition: (error) => error.response?.status === 404,
       })
+    }
+
+    if (mockRequests) {
+      const mock = new MockAdapter(this.axios, { delayResponse: 1000 })
+
+      mock.onPost('/transactions/create-hotspot').reply(200, {
+        data: {
+          solanaTransactions: ['asdf1234'],
+        },
+      })
+
+      mock.onPost('transactions/MOBILE/onboard').reply(200, {
+        data: {
+          solanaTransactions: ['asdf1234'],
+        },
+      })
+
+      mock.onPost('transactions/MOBILE/update-metadata').reply(200, {
+        data: {
+          solanaTransactions: ['asdf1234'],
+        },
+      })
+
+      mock.onPost('hotspots').reply(200, {})
     }
   }
 
@@ -163,5 +193,30 @@ export default class OnboardingClient {
     },
   ) {
     return this.updateMetadata({ ...opts, type: 'MOBILE' })
+  }
+
+  async addToOnboardingServer({
+    onboardingKey,
+    authToken,
+  }: {
+    onboardingKey: string
+    authToken: string
+  }) {
+    return this.axios.post(
+      'hotspots',
+      {
+        onboardingKey,
+        macWlan0: uuidv4(),
+        macEth0: uuidv4(),
+        rpiSerial: uuidv4(),
+        heliumSerial: uuidv4(),
+        batch: 'example-batch',
+      },
+      {
+        headers: {
+          authorization: authToken,
+        },
+      },
+    )
   }
 }

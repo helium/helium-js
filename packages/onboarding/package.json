@@ -5,7 +5,11 @@
   "keywords": [
     "helium",
     "onboarding",
-    "api"
+    "api",
+    "mobile",
+    "wifi",
+    "access point",
+    "HMH"
   ],
   "author": "Matt Reetz <matthewcarlreetz@gmail.com>",
   "homepage": "https://github.com/helium/helium-js",
@@ -35,12 +39,27 @@
     "url": "https://github.com/helium/helium-js/issues"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "axios-retry": "^3.4.0",
-    "qs": "^6.10.3"
+    "@coral-xyz/anchor": "^0.28.1-beta.2",
+    "@helium/address": "^4.10.2",
+    "@helium/currency": "^4.10.2",
+    "@helium/currency-utils": "^0.2.21",
+    "@helium/data-credits-sdk": "^0.2.21",
+    "@helium/helium-entity-manager-sdk": "^0.2.21",
+    "@helium/onboarding": "^4.10.2",
+    "@helium/spl-utils": "^0.2.21",
+    "@helium/transactions": "^4.10.2",
+    "@solana/web3.js": "^1.78.4",
+    "axios": "^1.5.0",
+    "axios-mock-adapter": "^1.21.5",
+    "axios-retry": "^3.7.0",
+    "bn.js": "^5.2.1",
+    "qs": "^6.10.3",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/qs": "^6.9.7"
+    "@types/bn.js": "^5.1.1",
+    "@types/qs": "^6.9.7",
+    "@types/uuid": "^9.0.3"
   },
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
 }
