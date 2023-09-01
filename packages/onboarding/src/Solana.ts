@@ -5,13 +5,16 @@ import getSolanaAssertData, {
   HemProgram,
   TXN_FEE_IN_LAMPORTS,
 } from './getAssertData'
-import OnboardingClient, { HotspotType } from '@helium/onboarding'
+import OnboardingClient from './OnboardingClient'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
+import { HNT_MINT, heliumAddressToSolPublicKey, sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
-import { init as initHem } from '@helium/helium-entity-manager-sdk'
+import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
 import Balance, { CurrencyType } from '@helium/currency'
+import { HotspotType } from './types'
+import { daoKey } from '@helium/helium-sub-daos-sdk'
 
+const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
 export default class Solana {
   private shouldMock: boolean
   private connection!: Connection
@@ -59,14 +62,14 @@ export default class Solana {
     )
   }
 
-  getHemProgram = async () => {
+  getHemProgram = async (): Promise<HemProgram> => {
     if (!this.hemProgram) {
       this.hemProgram = await initHem(this.provider)
     }
     return this.hemProgram!
   }
 
-  getDcProgram = async () => {
+  getDcProgram = async (): Promise<DcProgram> => {
     if (!this.dcProgram) {
       this.dcProgram = await initDc(this.provider)
     }
@@ -129,5 +132,56 @@ export default class Solana {
       nextLocation: location,
       hotspotTypes,
     })
+  }
+
+  keyToAsset = async (hotspotAddress: string) => {
+    if (!this.shouldMock) {
+      const [dao] = daoKey(HNT_MINT)
+      const [keyToAssetK] = keyToAssetKey(dao, hotspotAddress)
+      const keyToAssetAcc = await this.hemProgram?.account.keyToAssetV0.fetchNullable(keyToAssetK)
+
+      return keyToAssetAcc?.asset
+    }
+
+    return PublicKey.default
+  }
+
+  submit = async ({
+    txn,
+    timeout,
+    skipPreflight,
+  }: {
+    txn: Buffer
+    timeout?: number
+    skipPreflight?: boolean
+  }) => {
+    if (this.shouldMock) {
+      return 'some-txn-id'
+    }
+
+    const { txid } = await sendAndConfirmWithRetry(
+      this.connection,
+      txn,
+      { skipPreflight: skipPreflight || true },
+      'confirmed',
+      timeout || DEFAULT_TIMEOUT,
+    )
+    return txid
+  }
+
+  submitAll = async ({
+    txns,
+    timeout,
+    skipPreflight,
+  }: {
+    txns: Buffer[]
+    timeout?: number
+    skipPreflight?: boolean
+  }) => {
+    const results = [] as string[]
+    for (const txn of txns) {
+      results.push(await this.submit({ txn, timeout, skipPreflight }))
+    }
+    return results
   }
 }

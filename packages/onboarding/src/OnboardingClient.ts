@@ -4,6 +4,7 @@ import axiosRetry from 'axios-retry'
 import qs from 'qs'
 import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
 import MockAdapter from 'axios-mock-adapter'
+import updateTxn from './updateTxn'
 
 type Response<T> = {
   code: number
@@ -37,21 +38,33 @@ export default class OnboardingClient {
     }
 
     if (mockRequests) {
-      const mock = new MockAdapter(this.axios, { delayResponse: 1000 })
+      const mock = new MockAdapter(this.axios, { delayResponse: 300 })
 
       mock.onPost('/transactions/create-hotspot').reply(200, {
         data: {
-          solanaTransactions: ['asdf1234'],
+          solanaTransactions: [updateTxn],
         },
       })
 
-      mock.onPost('transactions/MOBILE/onboard').reply(200, {
+      mock.onPost('transactions/mobile/onboard').reply(200, {
         data: {
-          solanaTransactions: ['asdf1234'],
+          solanaTransactions: [updateTxn],
         },
       })
 
-      mock.onPost('transactions/MOBILE/update-metadata').reply(200, {
+      mock.onPost('transactions/mobile/update-metadata').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/iot/onboard').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/iot/update-metadata').reply(200, {
         data: {
           solanaTransactions: ['asdf1234'],
         },

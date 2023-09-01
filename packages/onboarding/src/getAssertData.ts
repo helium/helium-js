@@ -1,5 +1,5 @@
 import Balance, { CurrencyType, DataCredits } from '@helium/currency'
-import OnboardingClient, { HotspotType } from '@helium/onboarding'
+import OnboardingClient from './OnboardingClient'
 import BN from 'bn.js'
 import { DC_MINT, IOT_MINT, MOBILE_MINT, toBN, HNT_MINT } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
@@ -21,6 +21,7 @@ import {
 } from '@helium/helium-entity-manager-sdk'
 import { init as initHem } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
+import { HotspotType } from './types'
 
 export const clusterByUrl = (url?: string): Cluster => {
   if (!url) return 'mainnet-beta'
