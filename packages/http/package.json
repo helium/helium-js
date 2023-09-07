@@ -32,7 +32,7 @@
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
     "retry-axios": "^2.1.2",
-    "snakecase-keys": "^5.1.0"
+    "snakecase-keys": "^5.4.6"
   },
   "devDependencies": {
     "@types/qs": "6.9.5",

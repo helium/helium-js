@@ -125,6 +125,7 @@ export default class Witness extends DataModel {
   get data(): WitnessData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

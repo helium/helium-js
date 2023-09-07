@@ -42,6 +42,7 @@ export default class Block extends DataModel {
   get data(): BlockData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }
