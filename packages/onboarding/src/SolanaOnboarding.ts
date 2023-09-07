@@ -15,13 +15,12 @@ import { HotspotType } from './types'
 import { daoKey } from '@helium/helium-sub-daos-sdk'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
-export default class Solana {
+export default class SolanaOnboarding {
   private shouldMock: boolean
   private connection!: Connection
   private hemProgram?: HemProgram
   private dcProgram?: DcProgram
   private wallet!: PublicKey
-  private makerWallet!: PublicKey
   private onboardingClient!: OnboardingClient
   private provider!: AnchorProvider
 
@@ -29,13 +28,11 @@ export default class Solana {
     shouldMock,
     onboardingClient,
     heliumWalletAddress,
-    makerHeliumWalletAddress,
     connection,
   }: {
     shouldMock?: boolean
     onboardingClient: OnboardingClient
     heliumWalletAddress: string
-    makerHeliumWalletAddress: string
     connection: Connection
   }) {
     this.shouldMock = !!shouldMock
@@ -44,9 +41,6 @@ export default class Solana {
 
     const solanaPubKey = heliumAddressToSolPublicKey(heliumWalletAddress)
     this.wallet = solanaPubKey
-
-    const payerSolanaPubKey = heliumAddressToSolPublicKey(makerHeliumWalletAddress)
-    this.makerWallet = payerSolanaPubKey
 
     this.provider = new AnchorProvider(
       connection,
@@ -62,14 +56,14 @@ export default class Solana {
     )
   }
 
-  getHemProgram = async (): Promise<HemProgram> => {
+  private getHemProgram = async (): Promise<HemProgram> => {
     if (!this.hemProgram) {
       this.hemProgram = await initHem(this.provider)
     }
     return this.hemProgram!
   }
 
-  getDcProgram = async (): Promise<DcProgram> => {
+  private getDcProgram = async (): Promise<DcProgram> => {
     if (!this.dcProgram) {
       this.dcProgram = await initDc(this.provider)
     }
@@ -82,11 +76,13 @@ export default class Solana {
     elevation,
     location,
     hotspotTypes,
+    maker,
   }: {
     gateway: string
     decimalGain?: number
     elevation?: number
     location: string
+    maker: PublicKey
     hotspotTypes: HotspotType[]
   }): Promise<AssertData> => {
     if (this.shouldMock) {
@@ -128,7 +124,7 @@ export default class Solana {
       decimalGain,
       gateway,
       elevation,
-      maker: this.makerWallet,
+      maker,
       nextLocation: location,
       hotspotTypes,
     })

@@ -1,7 +1,7 @@
 import { AddGatewayV1 } from '@helium/transactions'
 import WifiHttpClient from './WifiHttpClient'
 import OnboardingClient from './OnboardingClient'
-import Solana from './Solana'
+import SolanaOnboarding from './SolanaOnboarding'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { HotspotType } from './types'
 import sleep from './sleep'
@@ -13,7 +13,7 @@ const ONBOARDING_STEPS = MAX_ASSET_LOOKUP_COUNT + EXTRA_ASSET_CREATION_TIME_IN_S
 export default class MobileWifiOnboarding {
   private wifiClient!: WifiHttpClient
   private onboardingClient!: OnboardingClient
-  private solana!: Solana
+  private solanaOnboarding!: SolanaOnboarding
   private currentStep = 0
   private progressCallback?: (progress: number) => void
   private errorCallback?: (e: unknown) => void
@@ -24,13 +24,11 @@ export default class MobileWifiOnboarding {
     onboardingClientUrl: string
     shouldMock?: boolean
     ownerHeliumAddress: string
-    makerHeliumAddress: string
     rpcEndpoint: string
     errorCallback?: (e: unknown) => void
     logCallback?: (message: string, data?: unknown) => void
   }) {
     this.wifiClient = new WifiHttpClient({
-      payerHeliumAddress: opts.makerHeliumAddress,
       ownerHeliumAddress: opts.ownerHeliumAddress,
       baseURL: opts.wifiBaseUrl,
       mockRequests: opts.shouldMock,
@@ -38,11 +36,10 @@ export default class MobileWifiOnboarding {
     this.onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
       mockRequests: opts.shouldMock,
     })
-    this.solana = new Solana({
+    this.solanaOnboarding = new SolanaOnboarding({
       onboardingClient: this.onboardingClient,
       shouldMock: opts.shouldMock,
       heliumWalletAddress: opts.ownerHeliumAddress,
-      makerHeliumWalletAddress: opts.makerHeliumAddress,
       connection: new Connection(opts.rpcEndpoint),
     })
 
@@ -58,7 +55,7 @@ export default class MobileWifiOnboarding {
     this.logCallback?.(message, data)
   }
 
-  updateProgress = (opts?: { newValue?: number; amountToIncrement?: number }) => {
+  private updateProgress = (opts?: { newValue?: number; amountToIncrement?: number }) => {
     const { newValue, amountToIncrement } = opts || {}
     if (newValue !== undefined) {
       this.currentStep = newValue
@@ -73,8 +70,8 @@ export default class MobileWifiOnboarding {
     }
   }
 
-  getAddGatewayTxn = async () => {
-    const txnStr = await this.wifiClient.getTxnFromGateway()
+  getAddGatewayTxn = async (payerHeliumAddress: string) => {
+    const txnStr = await this.wifiClient.getTxnFromGateway(payerHeliumAddress)
 
     return AddGatewayV1.fromString(txnStr)
   }
@@ -85,14 +82,23 @@ export default class MobileWifiOnboarding {
     elevation,
     location,
     hotspotTypes,
+    maker,
   }: {
     gateway: string
     decimalGain?: number
     elevation?: number
     location: string
     hotspotTypes: HotspotType[]
+    maker: PublicKey
   }) => {
-    return this.solana.getAssertData({ gateway, decimalGain, elevation, location, hotspotTypes })
+    return this.solanaOnboarding.getAssertData({
+      gateway,
+      decimalGain,
+      elevation,
+      location,
+      hotspotTypes,
+      maker,
+    })
   }
 
   getOnboardHotspotTxns = async ({
@@ -146,7 +152,7 @@ export default class MobileWifiOnboarding {
     try {
       if (createTxns?.data?.solanaTransactions.length) {
         this.writeLog('Submitting hotspot to solana')
-        const txnids = await this.solana.submitAll({
+        const txnids = await this.solanaOnboarding.submitAll({
           txns: createTxns.data.solanaTransactions.map((t) => Buffer.from(t)),
         })
         this.writeLog('Hotspot has successfully been submitted to solana', { data: txnids })
@@ -190,7 +196,7 @@ export default class MobileWifiOnboarding {
 
     let hotspotPubKey: PublicKey | undefined
     try {
-      hotspotPubKey = await this.solana.keyToAsset(hotspotAddress)
+      hotspotPubKey = await this.solanaOnboarding.keyToAsset(hotspotAddress)
     } catch (e) {
       this.writeError(e)
     }
@@ -214,7 +220,7 @@ export default class MobileWifiOnboarding {
           // waiting for the asset to be created on solana
           await sleep(3000)
           try {
-            hotspotPubKey = await this.solana.keyToAsset(hotspotAddress)
+            hotspotPubKey = await this.solanaOnboarding.keyToAsset(hotspotAddress)
           } catch (e) {
             this.writeError(e)
           }
@@ -242,7 +248,7 @@ export default class MobileWifiOnboarding {
     hotspotAddress: string
     signedTxns: Buffer[]
   }) => {
-    const txnIds = await this.solana.submitAll({ txns: signedTxns })
+    const txnIds = await this.solanaOnboarding.submitAll({ txns: signedTxns })
 
     let asset: PublicKey | undefined = undefined
     let attempts = 0
@@ -250,7 +256,7 @@ export default class MobileWifiOnboarding {
     while (!asset && attempts < MAX_ASSET_LOOKUP_COUNT) {
       this.writeLog(`Hotspot onboarded, try to get asset key. Attempt: ${attempts + 1}`)
       await sleep(1000)
-      asset = await this.solana.keyToAsset(hotspotAddress)
+      asset = await this.solanaOnboarding.keyToAsset(hotspotAddress)
       attempts = attempts + 1
       this.updateProgress()
     }

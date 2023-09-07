@@ -4,18 +4,18 @@ import MockAdapter from 'axios-mock-adapter'
 import { AddGatewayV1 } from '@helium/transactions'
 import Address from '@helium/address'
 
+const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
+
 export default class HmhHttpClient {
   private axios!: AxiosInstance
   private ownerHeliumAddress!: Address
-  private payerHeliumAddress!: Address
+  private mockAdapater?: MockAdapter
 
   constructor({
     baseURL,
     ownerHeliumAddress,
-    payerHeliumAddress,
     mockRequests,
   }: {
-    payerHeliumAddress: string
     ownerHeliumAddress: string
     baseURL: string
     mockRequests?: boolean
@@ -24,7 +24,6 @@ export default class HmhHttpClient {
       baseURL,
     })
     this.ownerHeliumAddress = Address.fromB58(ownerHeliumAddress)
-    this.payerHeliumAddress = Address.fromB58(payerHeliumAddress)
 
     axiosRetry(this.axios, {
       retries: 4, // number of retries
@@ -34,30 +33,29 @@ export default class HmhHttpClient {
     })
 
     if (mockRequests) {
-      const mock = new MockAdapter(this.axios, { delayResponse: 1000 })
-
-      const GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
-
-      const addGateway = new AddGatewayV1({
-        owner: this.ownerHeliumAddress,
-        payer: this.payerHeliumAddress,
-        gateway: GATEWAY,
-      })
-
-      mock.onPost('/sign_gw_add_tx').reply(200, {
-        gatewayAddress: GATEWAY.b58,
-        signedAddGwTx: addGateway.toString(),
-      })
-
-      mock.onPost('/on_hotspot_nft_created').reply(200, {})
+      this.mockAdapater = new MockAdapter(this.axios, { delayResponse: 1000 })
+      this.mockAdapater.onPost('/on_hotspot_nft_created').reply(200, {})
     }
   }
 
-  getTxnFromGateway = async () => {
+  getTxnFromGateway = async (payerHeliumAddress: string) => {
     const body = {
       ownerAddress: this.ownerHeliumAddress.b58,
-      payerAddress: this.payerHeliumAddress.b58,
+      payerAddress: payerHeliumAddress,
     }
+    if (this.mockAdapater) {
+      const addGateway = new AddGatewayV1({
+        owner: this.ownerHeliumAddress,
+        payer: Address.fromB58(payerHeliumAddress),
+        gateway: MOCK_GATEWAY,
+      })
+
+      this.mockAdapater.onPost('/sign_gw_add_tx').reply(200, {
+        gatewayAddress: MOCK_GATEWAY.b58,
+        signedAddGwTx: addGateway.toString(),
+      })
+    }
+
     const url = '/sign_gw_add_tx'
     const response = await this.axios.post<
       { ownerAddress: string; payerAddress: string },

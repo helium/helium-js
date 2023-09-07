@@ -1,5 +1,6 @@
 import MobileWifiOnboarding from '../MobileWifiOnboarding'
 import Address from '@helium/address'
+import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
 import { Transaction } from '@solana/web3.js'
 import h3 from 'h3-js'
 
@@ -20,12 +21,11 @@ describe('Wifi Onboarding', () => {
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       ownerHeliumAddress: ALICE.b58,
-      makerHeliumAddress: TEST_MAKER.address,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
     })
 
-    const txn = await client.getAddGatewayTxn()
+    const txn = await client.getAddGatewayTxn(TEST_MAKER.address)
     expect(txn).toBeDefined()
     expect(txn.payer?.b58).toBe(TEST_MAKER.address)
     expect(txn.owner?.b58).toBe(ALICE.b58)
@@ -36,15 +36,16 @@ describe('Wifi Onboarding', () => {
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       ownerHeliumAddress: ALICE.b58,
-      makerHeliumAddress: TEST_MAKER.address,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
     })
 
+    const makerPubKey = heliumAddressToSolPublicKey(TEST_MAKER.address)
     const assertData = await client.getAssertData({
       gateway: 'asdf',
       location: 'asdf123',
       hotspotTypes: ['MOBILE'],
+      maker: makerPubKey,
     })
 
     expect(assertData).toBeDefined()
@@ -56,7 +57,6 @@ describe('Wifi Onboarding', () => {
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       ownerHeliumAddress: ALICE.b58,
-      makerHeliumAddress: TEST_MAKER.address,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
       logCallback: (message, data) => {
@@ -70,7 +70,7 @@ describe('Wifi Onboarding', () => {
       },
     })
 
-    const txn = await client.getAddGatewayTxn()
+    const txn = await client.getAddGatewayTxn(TEST_MAKER.address)
     let lat = 44.501341
     let lng = -88.062208
 
