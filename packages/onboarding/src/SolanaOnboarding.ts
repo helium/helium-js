@@ -10,9 +10,9 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import { HNT_MINT, heliumAddressToSolPublicKey, sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
-import Balance, { CurrencyType } from '@helium/currency'
 import { HotspotType } from './types'
 import { daoKey } from '@helium/helium-sub-daos-sdk'
+import BN from 'bn.js'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
 export default class SolanaOnboarding {
@@ -92,27 +92,26 @@ export default class SolanaOnboarding {
     if (this.shouldMock) {
       return {
         balances: {
-          hnt: Balance.fromFloat(1000, CurrencyType.networkToken),
-          dc: Balance.fromFloat(1000, CurrencyType.dataCredit),
-          sol: Balance.fromFloat(1000, CurrencyType.solTokens),
-          mobile: Balance.fromFloat(1000, CurrencyType.mobile),
+          hnt: new BN(100000000000),
+          dc: new BN(1000000000),
+          sol: new BN(1000000000000),
+          mobile: new BN(1000000000),
         },
         isFree: false,
         makerFees: {
-          sol: new Balance(TXN_FEE_IN_LAMPORTS, CurrencyType.solTokens),
-          dc: new Balance(1000000, CurrencyType.dataCredit),
+          sol: new BN(TXN_FEE_IN_LAMPORTS),
+          dc: new BN(1000000),
         },
         ownerFees: {
-          sol: new Balance(0, CurrencyType.solTokens),
-          dc: new Balance(0, CurrencyType.dataCredit),
+          sol: new BN(0),
+          dc: new BN(0),
         },
         solanaTransactions: [],
         hasSufficientBalance: true,
         hasSufficientDc: true,
         hasSufficientHnt: true,
         hasSufficientSol: true,
-        dcNeeded: Balance.fromFloat(0, CurrencyType.dataCredit),
-        oraclePrice: Balance.fromFloat(2, CurrencyType.usd),
+        dcNeeded: new BN(0),
       }
     }
 

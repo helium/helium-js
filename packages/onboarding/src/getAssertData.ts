@@ -1,4 +1,3 @@
-import Balance, { CurrencyType, DataCredits } from '@helium/currency'
 import OnboardingClient from './OnboardingClient'
 import BN from 'bn.js'
 import {
@@ -13,7 +12,6 @@ import { subDaoKey } from '@helium/helium-sub-daos-sdk'
 import { Connection, PublicKey, AccountInfo, LAMPORTS_PER_SOL, Cluster } from '@solana/web3.js'
 import { init as initDc } from '@helium/data-credits-sdk'
 import axios from 'axios'
-import { getBalance } from '@helium/currency-utils'
 import {
   AccountLayout,
   getAssociatedTokenAddress,
@@ -33,6 +31,7 @@ import { HotspotType } from './types'
 export const TXN_FEE_IN_LAMPORTS = 5000
 export const TXN_FEE_IN_SOL = TXN_FEE_IN_LAMPORTS / LAMPORTS_PER_SOL
 export const FULL_LOCATION_STAKING_FEE = 1000000 // $10 - does this need to be updated to $5? It's used as a fallback when something fails
+export const DC_TO_USD_MULTIPLIER = 0.00001
 
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
 export type DcProgram = Awaited<ReturnType<typeof initDc>>
@@ -45,49 +44,25 @@ const getOraclePriceFromSolana = async (opts: { connection: Connection; cluster:
     throw new Error('Failed to fetch oracle price')
   }
 
-  return Balance.fromFloat(price?.aggregate.price, CurrencyType.usd)
+  return new BN(price.aggregate.price)
 }
 
-const getHntBalance = async (wallet: PublicKey, connection: Connection) => {
-  return Currency.getBalance({
+const getBalance = async (wallet: PublicKey, connection: Connection, mint: PublicKey) => {
+  const balance = await Currency.getBalance({
     pubKey: wallet,
     connection,
-    mint: new PublicKey(HNT_MINT),
+    mint: new PublicKey(mint),
   })
-}
-
-const getMobileBalance = async (wallet: PublicKey, connection: Connection) => {
-  return Currency.getBalance({
-    pubKey: wallet,
-    connection,
-    mint: new PublicKey(MOBILE_MINT),
-  })
-}
-
-const getDcBalance = async (wallet: PublicKey, connection: Connection) => {
-  return Currency.getBalance({
-    pubKey: wallet,
-    connection,
-    mint: new PublicKey(DC_MINT),
-  })
-}
-
-const getSolBalance = async (wallet: PublicKey, connection: Connection) => {
-  return connection.getBalance(wallet)
+  return new BN(balance.toString())
 }
 
 const getBalances = async (wallet: PublicKey, connection: Connection) => {
-  const solBalance = await getSolBalance(wallet, connection)
-  const hntBalance = await getHntBalance(wallet, connection)
-  const mobileBalance = await getMobileBalance(wallet, connection)
-  const dcBalance = await getDcBalance(wallet, connection)
+  const sol = await connection.getBalance(wallet)
+  const hnt = await getBalance(wallet, connection, HNT_MINT)
+  const mobile = await getBalance(wallet, connection, MOBILE_MINT)
+  const dc = await getBalance(wallet, connection, DC_MINT)
 
-  return {
-    hnt: Balance.fromIntAndTicker(Number(hntBalance), 'HNT'),
-    mobile: Balance.fromIntAndTicker(Number(mobileBalance), 'MOBILE'),
-    dc: new Balance(Number(dcBalance || 0), CurrencyType.dataCredit),
-    sol: new Balance(solBalance, CurrencyType.solTokens),
-  }
+  return { hnt, mobile, dc, sol: new BN(sol) }
 }
 
 const burnHNTForDataCredits = async ({
@@ -96,7 +71,7 @@ const burnHNTForDataCredits = async ({
   connection,
   dcProgram,
 }: {
-  dcAmount: number
+  dcAmount: BN
   wallet: PublicKey
   connection: Connection
   dcProgram: DcProgram
@@ -104,7 +79,7 @@ const burnHNTForDataCredits = async ({
   const txn = await dcProgram.methods
     .mintDataCreditsV0({
       hntAmount: null,
-      dcAmount: toBN(dcAmount, 0),
+      dcAmount,
     })
     .preInstructions([
       createAssociatedTokenAccountIdempotentInstruction(
@@ -134,9 +109,9 @@ const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Co
 
   try {
     await getAccount(connection, ataAddress)
-    return new Balance(0, CurrencyType.solTokens)
+    return new BN(0)
   } catch {
-    return Balance.fromFloat(0.00203928, CurrencyType.solTokens)
+    return new BN(0.00203928)
   }
 }
 
@@ -155,9 +130,9 @@ const getStakingFeeForType = async (type: HotspotType, hemProgram: HemProgram) =
   // @ts-ignore
   const configFee = config?.fullLocationStakingFee as BN
   if (configFee) {
-    return toBN(configFee, 0).toNumber()
+    return toBN(configFee, 0)
   }
-  return FULL_LOCATION_STAKING_FEE
+  return new BN(FULL_LOCATION_STAKING_FEE)
 }
 
 export const fetchSimulatedTxn = async ({
@@ -210,20 +185,20 @@ export const getAccountFees = async ({
   connection: Connection
   dcMint: PublicKey
 }) => {
-  const lamportsBefore = await connection.getBalance(key)
-  const dcBefore = Number(await getBalance({ pubKey: key, mint: dcMint, connection }))
+  const lamportsBefore = new BN(await connection.getBalance(key))
+  const dcBefore = await getBalance(key, connection, dcMint)
 
-  let lamportsAfter = 0
-  let dcAfter = 0
+  let lamportsAfter = new BN(0)
+  let dcAfter = new BN(0)
 
   if (account) {
-    lamportsAfter = new BN(account.lamports.toString()).toNumber()
+    lamportsAfter = new BN(account.lamports.toString())
   } else {
     lamportsAfter = lamportsBefore
   }
 
-  const lamportFee = lamportsBefore - lamportsAfter
-  let dcFee = 0
+  const lamportFee = lamportsBefore.sub(lamportsAfter)
+  let dcFee = new BN(0)
 
   if (dcAccount && dcAccount.lamports > 0) {
     const tokenAccount = AccountLayout.decode(
@@ -231,8 +206,8 @@ export const getAccountFees = async ({
     )
 
     const dcBalance = new BN(tokenAccount.amount.toString())
-    dcAfter = dcBalance.toNumber()
-    dcFee = dcBefore - dcAfter
+    dcAfter = dcBalance
+    dcFee = dcBefore.sub(dcAfter)
   }
 
   return { lamports: lamportFee, dc: dcFee }
@@ -255,7 +230,7 @@ const estimateFees = async ({
   return {
     makerFees,
     ownerFees,
-    isFree: ownerFees.lamports === 0 && ownerFees.dc === 0,
+    isFree: ownerFees.lamports.eq(new BN(0)) && ownerFees.dc.eq(new BN(0)),
   }
 }
 
@@ -363,12 +338,12 @@ const getAssertData = async ({
   let simulatedFees: (
     | {
         makerFees: {
-          lamports: number
-          dc: number
+          lamports: BN
+          dc: BN
         }
         ownerFees: {
-          lamports: number
-          dc: number
+          lamports: BN
+          dc: BN
         }
         isFree: boolean
       }
@@ -412,18 +387,18 @@ const getAssertData = async ({
           locationChanged = !prevLocation.eq(new BN(nextLocation, 'hex'))
         }
 
-        let dcFee = 0
+        let dcFee = new BN(0)
         if (locationChanged) {
           dcFee = await getStakingFeeForType(type, hemProgram)
         }
 
         return {
           makerFees: {
-            lamports: 0,
-            dc: 0,
+            lamports: new BN(0),
+            dc: new BN(0),
           },
           ownerFees: {
-            lamports: TXN_FEE_IN_LAMPORTS,
+            lamports: new BN(TXN_FEE_IN_LAMPORTS),
             dc: dcFee,
           },
           isFree: false,
@@ -436,67 +411,67 @@ const getAssertData = async ({
     (acc, current) => {
       if (!current) return acc
 
-      const makerSolFee = Balance.fromIntAndTicker(current.makerFees.lamports, 'SOL')
-      const ownerSolFee = Balance.fromIntAndTicker(current.ownerFees.lamports, 'SOL')
+      const makerSolFee = current.makerFees.lamports
+      const ownerSolFee = current.ownerFees.lamports
 
-      const makerDcFee = new Balance(current.makerFees.dc, CurrencyType.dataCredit)
-      const ownerDcFee = new Balance(current.ownerFees.dc, CurrencyType.dataCredit)
+      const makerDcFee = current.makerFees.dc
+      const ownerDcFee = current.ownerFees.dc
 
       return {
         makerFees: {
-          sol: acc.makerFees.sol.plus(makerSolFee),
-          dc: acc.makerFees.dc.plus(makerDcFee),
+          sol: acc.makerFees.sol.add(makerSolFee),
+          dc: acc.makerFees.dc.add(makerDcFee),
         },
         ownerFees: {
-          sol: acc.ownerFees.sol.plus(ownerSolFee),
-          dc: acc.ownerFees.dc.plus(ownerDcFee),
+          sol: acc.ownerFees.sol.add(ownerSolFee),
+          dc: acc.ownerFees.dc.add(ownerDcFee),
         },
       }
     },
     {
       makerFees: {
-        sol: new Balance(0, CurrencyType.solTokens),
-        dc: new Balance(0, CurrencyType.dataCredit),
+        sol: new BN(0),
+        dc: new BN(0),
       },
       ownerFees: {
-        sol: new Balance(0, CurrencyType.solTokens),
-        dc: new Balance(0, CurrencyType.dataCredit),
+        sol: new BN(0),
+        dc: new BN(0),
       },
     },
   )
-  const isFree = fees.ownerFees.dc.integerBalance <= 0 && fees.ownerFees.sol.integerBalance <= 0
+  const isFree = fees.ownerFees.dc.lte(new BN(0)) && fees.ownerFees.sol.lte(new BN(0))
 
   if (!isFree) {
     const ataFee = await getAtaAccountCreationFee(owner, connection)
-    fees.ownerFees.sol = fees.ownerFees.sol.plus(ataFee)
+    fees.ownerFees.sol = fees.ownerFees.sol.add(ataFee)
   }
 
-  let hasSufficientSol = balances.sol.integerBalance >= fees.ownerFees.sol.integerBalance
-  const hasSufficientDc = (balances.dc?.integerBalance || 0) >= fees.ownerFees.dc.integerBalance
+  let hasSufficientSol = balances.sol.gte(fees.ownerFees.sol)
+  const hasSufficientDc = balances.dc.gte(fees.ownerFees.dc)
 
-  let dcNeeded: Balance<DataCredits> | undefined
+  let dcNeeded: BN | undefined
   let hasSufficientHnt = true
   if (!hasSufficientDc) {
     const dcFee = fees.ownerFees.dc
-    const dcBalance = balances.dc || new Balance(0, CurrencyType.dataCredit)
-    dcNeeded = dcFee.minus(dcBalance)
-    const hntNeeded = dcNeeded.toNetworkTokens(oraclePrice)
-    hasSufficientHnt = (balances.hnt?.integerBalance || 0) >= hntNeeded.integerBalance
+    const dcBalance = balances.dc || new BN(0)
+    dcNeeded = dcFee.sub(dcBalance)
+
+    const dcInDollars = dcNeeded.mul(new BN(DC_TO_USD_MULTIPLIER))
+    const hntNeeded = dcInDollars.div(oraclePrice)
+    hasSufficientHnt = balances.hnt.gte(hntNeeded)
 
     if (hasSufficientHnt) {
       const txn = await burnHNTForDataCredits({
-        dcAmount: dcNeeded.integerBalance,
+        dcAmount: dcNeeded,
         dcProgram,
         wallet: owner,
         connection,
       })
       if (txn) {
         solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
-        fees.ownerFees.sol = fees.ownerFees.sol.plus(
-          Balance.fromIntAndTicker(TXN_FEE_IN_LAMPORTS, 'SOL'),
-        )
+        fees.ownerFees.sol = fees.ownerFees.sol.add(new BN(TXN_FEE_IN_LAMPORTS))
 
-        hasSufficientSol = balances.sol.integerBalance >= fees.ownerFees.sol.integerBalance
+        hasSufficientSol = balances.sol.gte(fees.ownerFees.sol)
       }
     }
   }
@@ -512,7 +487,6 @@ const getAssertData = async ({
     ...fees,
     isFree,
     solanaTransactions: solanaTransactions.map((tx) => tx.toString('base64')),
-    oraclePrice,
   }
 }
 

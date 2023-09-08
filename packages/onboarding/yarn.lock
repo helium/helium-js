@@ -125,13 +125,6 @@
     "@solana/spl-token" "^0.3.7"
     "@solana/web3.js" "^1.73.0"
 
-"@helium/currency@^4.10.2":
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-4.10.2.tgz#f71190a5a249d069a5e77e6c28ea8b0f94303ede"
-  integrity sha512-Cw63efK7se58YQXcsXR1yAoAbO4OdQ3Ts3int6T1GhwYufHg6avDblSUJThkacmRsaGWqOD+oLE/StD6Dou8Ew==
-  dependencies:
-    bignumber.js "^9.0.0"
-
 "@helium/data-credits-sdk@^0.2.21":
   version "0.2.21"
   resolved "https://registry.yarnpkg.com/@helium/data-credits-sdk/-/data-credits-sdk-0.2.21.tgz#315d1eaa6fbccfba7f9582e8cc6f4d65d375a6f3"
