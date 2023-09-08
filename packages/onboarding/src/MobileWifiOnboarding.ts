@@ -2,7 +2,7 @@ import { AddGatewayV1 } from '@helium/transactions'
 import WifiHttpClient from './WifiHttpClient'
 import OnboardingClient from './OnboardingClient'
 import SolanaOnboarding from './SolanaOnboarding'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import { HotspotType } from './types'
 import sleep from './sleep'
 
@@ -25,6 +25,7 @@ export default class MobileWifiOnboarding {
     shouldMock?: boolean
     ownerHeliumAddress: string
     rpcEndpoint: string
+    cluster: Cluster
     errorCallback?: (e: unknown) => void
     logCallback?: (message: string, data?: unknown) => void
   }) {
@@ -41,6 +42,7 @@ export default class MobileWifiOnboarding {
       shouldMock: opts.shouldMock,
       heliumWalletAddress: opts.ownerHeliumAddress,
       connection: new Connection(opts.rpcEndpoint),
+      cluster: opts.cluster,
     })
 
     this.logCallback = opts.logCallback

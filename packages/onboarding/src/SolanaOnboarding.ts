@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import getSolanaAssertData, {
   AssertData,
   DcProgram,
@@ -18,6 +18,7 @@ const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
 export default class SolanaOnboarding {
   private shouldMock: boolean
   private connection!: Connection
+  private cluster!: Cluster
   private hemProgram?: HemProgram
   private dcProgram?: DcProgram
   private wallet!: PublicKey
@@ -29,15 +30,18 @@ export default class SolanaOnboarding {
     onboardingClient,
     heliumWalletAddress,
     connection,
+    cluster,
   }: {
     shouldMock?: boolean
     onboardingClient: OnboardingClient
     heliumWalletAddress: string
     connection: Connection
+    cluster: Cluster
   }) {
     this.shouldMock = !!shouldMock
     this.onboardingClient = onboardingClient
     this.connection = connection
+    this.cluster = cluster
 
     const solanaPubKey = heliumAddressToSolPublicKey(heliumWalletAddress)
     this.wallet = solanaPubKey
@@ -82,7 +86,7 @@ export default class SolanaOnboarding {
     decimalGain?: number
     elevation?: number
     location: string
-    maker: PublicKey
+    maker?: PublicKey
     hotspotTypes: HotspotType[]
   }): Promise<AssertData> => {
     if (this.shouldMock) {
@@ -127,6 +131,7 @@ export default class SolanaOnboarding {
       maker,
       nextLocation: location,
       hotspotTypes,
+      cluster: this.cluster,
     })
   }
 

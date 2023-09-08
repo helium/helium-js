@@ -23,6 +23,7 @@ describe('Wifi Onboarding', () => {
       ownerHeliumAddress: ALICE.b58,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
+      cluster: 'devnet',
     })
 
     const txn = await client.getAddGatewayTxn(TEST_MAKER.address)
@@ -38,6 +39,7 @@ describe('Wifi Onboarding', () => {
       ownerHeliumAddress: ALICE.b58,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
+      cluster: 'devnet',
     })
 
     const makerPubKey = heliumAddressToSolPublicKey(TEST_MAKER.address)
@@ -58,6 +60,7 @@ describe('Wifi Onboarding', () => {
       wifiBaseUrl: 'http://192.168.68.1:3333',
       ownerHeliumAddress: ALICE.b58,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
+      cluster: 'devnet',
       rpcEndpoint: 'https://api.devnet.solana.com',
       logCallback: (message, data) => {
         console.log(message)

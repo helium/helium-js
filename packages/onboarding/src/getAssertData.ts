@@ -1,7 +1,14 @@
 import Balance, { CurrencyType, DataCredits } from '@helium/currency'
 import OnboardingClient from './OnboardingClient'
 import BN from 'bn.js'
-import { DC_MINT, IOT_MINT, MOBILE_MINT, toBN, HNT_MINT } from '@helium/spl-utils'
+import {
+  DC_MINT,
+  IOT_MINT,
+  MOBILE_MINT,
+  toBN,
+  HNT_MINT,
+  heliumAddressToSolPublicKey,
+} from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
 import { Connection, PublicKey, AccountInfo, LAMPORTS_PER_SOL, Cluster } from '@solana/web3.js'
 import { init as initDc } from '@helium/data-credits-sdk'
@@ -23,14 +30,6 @@ import { init as initHem } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
 import { HotspotType } from './types'
 
-export const clusterByUrl = (url?: string): Cluster => {
-  if (!url) return 'mainnet-beta'
-  if (url.includes('mainnet' || 'https://rpc.helius.xyz')) return 'mainnet-beta'
-  if (url.includes('testnet')) return 'testnet'
-  if (url.includes('devnet')) return 'devnet'
-  return 'mainnet-beta'
-}
-
 export const TXN_FEE_IN_LAMPORTS = 5000
 export const TXN_FEE_IN_SOL = TXN_FEE_IN_LAMPORTS / LAMPORTS_PER_SOL
 export const FULL_LOCATION_STAKING_FEE = 1000000 // $10 - does this need to be updated to $5? It's used as a fallback when something fails
@@ -40,12 +39,8 @@ export type DcProgram = Awaited<ReturnType<typeof initDc>>
 export type AssertData = Awaited<ReturnType<typeof getAssertData>>
 type Account = AccountInfo<string[]>
 
-const getOraclePriceFromSolana = async (connection: Connection) => {
-  const price = await Currency.getOraclePrice({
-    tokenType: 'HNT',
-    cluster: clusterByUrl(connection.rpcEndpoint),
-    connection,
-  })
+const getOraclePriceFromSolana = async (opts: { connection: Connection; cluster: Cluster }) => {
+  const price = await Currency.getOraclePrice({ tokenType: 'HNT', ...opts })
   if (!price?.aggregate.price) {
     throw new Error('Failed to fetch oracle price')
   }
@@ -301,13 +296,14 @@ const getAssertData = async ({
   decimalGain,
   gateway,
   nextLocation,
-  maker,
+  maker: propsMaker,
   owner,
   hotspotTypes,
   onboardingClient,
   connection,
   hemProgram,
   dcProgram,
+  cluster,
 }: {
   hemProgram: HemProgram
   connection: Connection
@@ -315,14 +311,15 @@ const getAssertData = async ({
   owner: PublicKey
   decimalGain?: number
   elevation?: number
-  maker: PublicKey
+  maker?: PublicKey
   nextLocation: string
   hotspotTypes: HotspotType[]
   onboardingClient: OnboardingClient
   dcProgram: DcProgram
+  cluster: Cluster
 }) => {
   const rpcEndpoint = connection.rpcEndpoint
-  const oraclePrice = await getOraclePriceFromSolana(connection)
+  const oraclePrice = await getOraclePriceFromSolana({ connection, cluster })
   let solanaTransactions: Buffer[] | undefined
   const gain = Math.round((decimalGain || 0) * 10.0)
   const elevation = propsElevation || 0
@@ -331,6 +328,20 @@ const getAssertData = async ({
   const balances = await getBalances(owner, connection)
 
   const location = new BN(nextLocation, 'hex').toString()
+
+  let foundMaker = propsMaker
+  if (!foundMaker) {
+    const onboardingRecord = await onboardingClient.getOnboardingRecord(gateway)
+
+    if (onboardingRecord.data?.maker.address) {
+      foundMaker = heliumAddressToSolPublicKey(onboardingRecord.data?.maker.address)
+    }
+  }
+  if (!foundMaker) {
+    throw new Error('Could not determine hotspot maker')
+  }
+
+  const maker = foundMaker
 
   const solResponses = await Promise.all(
     hotspotTypes.map((type) =>
