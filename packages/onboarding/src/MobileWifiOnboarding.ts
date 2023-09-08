@@ -23,14 +23,14 @@ export default class MobileWifiOnboarding {
     wifiBaseUrl: string
     onboardingClientUrl: string
     shouldMock?: boolean
-    ownerHeliumAddress: string
+    wallet: PublicKey
     rpcEndpoint: string
     cluster: Cluster
     errorCallback?: (e: unknown) => void
     logCallback?: (message: string, data?: unknown) => void
   }) {
     this.wifiClient = new WifiHttpClient({
-      ownerHeliumAddress: opts.ownerHeliumAddress,
+      owner: opts.wallet,
       baseURL: opts.wifiBaseUrl,
       mockRequests: opts.shouldMock,
     })
@@ -40,7 +40,7 @@ export default class MobileWifiOnboarding {
     this.solanaOnboarding = new SolanaOnboarding({
       onboardingClient: this.onboardingClient,
       shouldMock: opts.shouldMock,
-      heliumWalletAddress: opts.ownerHeliumAddress,
+      wallet: opts.wallet,
       connection: new Connection(opts.rpcEndpoint),
       cluster: opts.cluster,
     })
@@ -72,9 +72,8 @@ export default class MobileWifiOnboarding {
     }
   }
 
-  getAddGatewayTxn = async (payerHeliumAddress: string) => {
-    const txnStr = await this.wifiClient.getTxnFromGateway(payerHeliumAddress)
-
+  getAddGatewayTxn = async (payer: PublicKey) => {
+    const txnStr = await this.wifiClient.getTxnFromGateway(payer)
     return AddGatewayV1.fromString(txnStr)
   }
 

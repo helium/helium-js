@@ -3,27 +3,30 @@ import axiosRetry from 'axios-retry'
 import MockAdapter from 'axios-mock-adapter'
 import { AddGatewayV1 } from '@helium/transactions'
 import Address from '@helium/address'
+import { PublicKey } from '@solana/web3.js'
+import { heliumAddressFromSolKey } from '@helium/spl-utils'
 
 const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
 
 export default class HmhHttpClient {
   private axios!: AxiosInstance
-  private ownerHeliumAddress!: Address
+  private owner!: PublicKey
   private mockAdapater?: MockAdapter
 
   constructor({
     baseURL,
-    ownerHeliumAddress,
+    owner,
     mockRequests,
   }: {
-    ownerHeliumAddress: string
+    owner: PublicKey
     baseURL: string
     mockRequests?: boolean
   }) {
     this.axios = axios.create({
       baseURL,
     })
-    this.ownerHeliumAddress = Address.fromB58(ownerHeliumAddress)
+
+    this.owner = owner
 
     axiosRetry(this.axios, {
       retries: 4, // number of retries
@@ -38,14 +41,16 @@ export default class HmhHttpClient {
     }
   }
 
-  getTxnFromGateway = async (payerHeliumAddress: string) => {
+  getTxnFromGateway = async (payer: PublicKey) => {
+    const ownerHeliumAddress = heliumAddressFromSolKey(this.owner)
+    const payerHeliumAddress = heliumAddressFromSolKey(payer)
     const body = {
-      ownerAddress: this.ownerHeliumAddress.b58,
+      ownerAddress: ownerHeliumAddress,
       payerAddress: payerHeliumAddress,
     }
     if (this.mockAdapater) {
       const addGateway = new AddGatewayV1({
-        owner: this.ownerHeliumAddress,
+        owner: Address.fromB58(ownerHeliumAddress),
         payer: Address.fromB58(payerHeliumAddress),
         gateway: MOCK_GATEWAY,
       })

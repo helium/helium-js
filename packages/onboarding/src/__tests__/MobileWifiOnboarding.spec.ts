@@ -5,6 +5,7 @@ import { Transaction } from '@solana/web3.js'
 import h3 from 'h3-js'
 
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
+const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
 
 const TEST_MAKER = {
   id: 1,
@@ -15,18 +16,20 @@ const TEST_MAKER = {
   updatedAt: '2021-01-13T01:57:01.662Z',
 }
 
+const TEST_MAKER_PUBKEY = heliumAddressToSolPublicKey(TEST_MAKER.address)
+
 describe('Wifi Onboarding', () => {
   it('Fetches the add gateway txn from the wifi access point', async () => {
     const client = new MobileWifiOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
-      ownerHeliumAddress: ALICE.b58,
+      wallet: ALICE_PUBKEY,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
       cluster: 'devnet',
     })
 
-    const txn = await client.getAddGatewayTxn(TEST_MAKER.address)
+    const txn = await client.getAddGatewayTxn(TEST_MAKER_PUBKEY)
     expect(txn).toBeDefined()
     expect(txn.payer?.b58).toBe(TEST_MAKER.address)
     expect(txn.owner?.b58).toBe(ALICE.b58)
@@ -36,18 +39,17 @@ describe('Wifi Onboarding', () => {
     const client = new MobileWifiOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
-      ownerHeliumAddress: ALICE.b58,
+      wallet: ALICE_PUBKEY,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       rpcEndpoint: 'https://api.devnet.solana.com',
       cluster: 'devnet',
     })
 
-    const makerPubKey = heliumAddressToSolPublicKey(TEST_MAKER.address)
     const assertData = await client.getAssertData({
       gateway: 'asdf',
       location: 'asdf123',
       hotspotTypes: ['MOBILE'],
-      maker: makerPubKey,
+      maker: TEST_MAKER_PUBKEY,
     })
 
     expect(assertData).toBeDefined()
@@ -58,7 +60,7 @@ describe('Wifi Onboarding', () => {
     const client = new MobileWifiOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
-      ownerHeliumAddress: ALICE.b58,
+      wallet: ALICE_PUBKEY,
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       cluster: 'devnet',
       rpcEndpoint: 'https://api.devnet.solana.com',
@@ -73,7 +75,7 @@ describe('Wifi Onboarding', () => {
       },
     })
 
-    const txn = await client.getAddGatewayTxn(TEST_MAKER.address)
+    const txn = await client.getAddGatewayTxn(TEST_MAKER_PUBKEY)
     let lat = 44.501341
     let lng = -88.062208
 

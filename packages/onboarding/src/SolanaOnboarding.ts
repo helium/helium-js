@@ -7,7 +7,7 @@ import getSolanaAssertData, {
 } from './getAssertData'
 import OnboardingClient from './OnboardingClient'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { HNT_MINT, heliumAddressToSolPublicKey, sendAndConfirmWithRetry } from '@helium/spl-utils'
+import { HNT_MINT, sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
 import { HotspotType } from './types'
@@ -28,13 +28,13 @@ export default class SolanaOnboarding {
   constructor({
     shouldMock,
     onboardingClient,
-    heliumWalletAddress,
+    wallet,
     connection,
     cluster,
   }: {
     shouldMock?: boolean
     onboardingClient: OnboardingClient
-    heliumWalletAddress: string
+    wallet: PublicKey
     connection: Connection
     cluster: Cluster
   }) {
@@ -43,15 +43,14 @@ export default class SolanaOnboarding {
     this.connection = connection
     this.cluster = cluster
 
-    const solanaPubKey = heliumAddressToSolPublicKey(heliumWalletAddress)
-    this.wallet = solanaPubKey
+    this.wallet = wallet
 
     this.provider = new AnchorProvider(
       connection,
       // @ts-ignore
       {
         get publicKey() {
-          return solanaPubKey
+          return wallet
         },
       },
       {
