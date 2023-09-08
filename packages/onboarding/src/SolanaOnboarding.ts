@@ -134,15 +134,15 @@ export default class SolanaOnboarding {
   }
 
   keyToAsset = async (hotspotAddress: string) => {
-    if (!this.shouldMock) {
-      const [dao] = daoKey(HNT_MINT)
-      const [keyToAssetK] = keyToAssetKey(dao, hotspotAddress)
-      const keyToAssetAcc = await this.hemProgram?.account.keyToAssetV0.fetchNullable(keyToAssetK)
-
-      return keyToAssetAcc?.asset
+    if (this.shouldMock) {
+      return PublicKey.default
     }
 
-    return PublicKey.default
+    const [dao] = daoKey(HNT_MINT)
+    const [keyToAssetK] = keyToAssetKey(dao, hotspotAddress)
+    const keyToAssetAcc = await this.hemProgram?.account.keyToAssetV0.fetchNullable(keyToAssetK)
+
+    return keyToAssetAcc?.asset
   }
 
   submit = async ({
