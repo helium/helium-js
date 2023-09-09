@@ -197,7 +197,7 @@ export default class MobileWifiOnboarding {
 
     let hotspotPubKey: PublicKey | undefined
     try {
-      hotspotPubKey = await this.solanaOnboarding.keyToAsset(hotspotAddress)
+      hotspotPubKey = await this.solanaOnboarding.hotspotKeyToAssetId(hotspotAddress)
     } catch (e) {
       this.writeError(e)
     }
@@ -221,7 +221,7 @@ export default class MobileWifiOnboarding {
           // waiting for the asset to be created on solana
           await sleep(3000)
           try {
-            hotspotPubKey = await this.solanaOnboarding.keyToAsset(hotspotAddress)
+            hotspotPubKey = await this.solanaOnboarding.hotspotKeyToAssetId(hotspotAddress)
           } catch (e) {
             this.writeError(e)
           }
@@ -257,7 +257,7 @@ export default class MobileWifiOnboarding {
     while (!asset && attempts < MAX_ASSET_LOOKUP_COUNT) {
       this.writeLog(`Hotspot onboarded, try to get asset key. Attempt: ${attempts + 1}`)
       await sleep(1000)
-      asset = await this.solanaOnboarding.keyToAsset(hotspotAddress)
+      asset = await this.solanaOnboarding.hotspotKeyToAssetId(hotspotAddress)
       attempts = attempts + 1
       this.updateProgress()
     }

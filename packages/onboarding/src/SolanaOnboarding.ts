@@ -1,18 +1,13 @@
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
-import getSolanaAssertData, {
-  AssertData,
-  DcProgram,
-  HemProgram,
-  TXN_FEE_IN_LAMPORTS,
-} from './getAssertData'
+import * as AssertUtil from './AssertUtil'
 import OnboardingClient from './OnboardingClient'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import { HNT_MINT, sendAndConfirmWithRetry } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
-import { HotspotType } from './types'
+import { AssertData, DcProgram, HemProgram, HotspotType } from './types'
 import { daoKey } from '@helium/helium-sub-daos-sdk'
-import BN from 'bn.js'
+import * as AssertMock from './__mocks__/AssertMock'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
 export default class SolanaOnboarding {
@@ -89,35 +84,13 @@ export default class SolanaOnboarding {
     hotspotTypes: HotspotType[]
   }): Promise<AssertData> => {
     if (this.shouldMock) {
-      return {
-        balances: {
-          hnt: new BN(100000000000),
-          dc: new BN(1000000000),
-          sol: new BN(1000000000000),
-          mobile: new BN(1000000000),
-        },
-        isFree: false,
-        makerFees: {
-          sol: new BN(TXN_FEE_IN_LAMPORTS),
-          dc: new BN(1000000),
-        },
-        ownerFees: {
-          sol: new BN(0),
-          dc: new BN(0),
-        },
-        solanaTransactions: [],
-        hasSufficientBalance: true,
-        hasSufficientDc: true,
-        hasSufficientHnt: true,
-        hasSufficientSol: true,
-        dcNeeded: new BN(0),
-      }
+      return AssertMock.getAssertData()
     }
 
     const dcProgram = await this.getDcProgram()
     const hemProgram = await this.getHemProgram()
 
-    return getSolanaAssertData({
+    return AssertUtil.getAssertData({
       onboardingClient: this.onboardingClient,
       connection: this.connection,
       owner: this.wallet,
@@ -133,15 +106,14 @@ export default class SolanaOnboarding {
     })
   }
 
-  keyToAsset = async (hotspotAddress: string) => {
+  hotspotKeyToAssetId = async (hotspotAddress: string) => {
     if (this.shouldMock) {
-      return PublicKey.default
+      return AssertMock.hotspotKeyToAssetId()
     }
 
     const [dao] = daoKey(HNT_MINT)
     const [keyToAssetK] = keyToAssetKey(dao, hotspotAddress)
     const keyToAssetAcc = await this.hemProgram?.account.keyToAssetV0.fetchNullable(keyToAssetK)
-
     return keyToAssetAcc?.asset
   }
 
@@ -155,7 +127,7 @@ export default class SolanaOnboarding {
     skipPreflight?: boolean
   }) => {
     if (this.shouldMock) {
-      return 'some-txn-id'
+      return AssertMock.submit()
     }
 
     const { txid } = await sendAndConfirmWithRetry(

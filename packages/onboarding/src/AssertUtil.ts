@@ -9,12 +9,10 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, AccountInfo, LAMPORTS_PER_SOL, Cluster } from '@solana/web3.js'
-import { init as initDc } from '@helium/data-credits-sdk'
+import { Connection, PublicKey, AccountInfo, Cluster } from '@solana/web3.js'
 import axios from 'axios'
 import {
   AccountLayout,
-  getAssociatedTokenAddress,
   createAssociatedTokenAccountIdempotentInstruction,
   getAccount,
   getAssociatedTokenAddressSync,
@@ -24,18 +22,16 @@ import {
   mobileInfoKey,
   rewardableEntityConfigKey,
 } from '@helium/helium-entity-manager-sdk'
-import { init as initHem } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
-import { HotspotType } from './types'
+import {
+  DC_TO_USD_MULTIPLIER,
+  DcProgram,
+  FULL_LOCATION_STAKING_FEE,
+  HemProgram,
+  HotspotType,
+  TXN_FEE_IN_LAMPORTS,
+} from './types'
 
-export const TXN_FEE_IN_LAMPORTS = 5000
-export const TXN_FEE_IN_SOL = TXN_FEE_IN_LAMPORTS / LAMPORTS_PER_SOL
-export const FULL_LOCATION_STAKING_FEE = 1000000 // $10 - does this need to be updated to $5? It's used as a fallback when something fails
-export const DC_TO_USD_MULTIPLIER = 0.00001
-
-export type HemProgram = Awaited<ReturnType<typeof initHem>>
-export type DcProgram = Awaited<ReturnType<typeof initDc>>
-export type AssertData = Awaited<ReturnType<typeof getAssertData>>
 type Account = AccountInfo<string[]>
 
 const getOraclePriceFromSolana = async (opts: { connection: Connection; cluster: Cluster }) => {
@@ -243,9 +239,8 @@ const estimateMetaTxnFees = async (
     rpcEndpoint,
   }: { maker: PublicKey; connection: Connection; owner: PublicKey; rpcEndpoint: string },
 ) => {
-  const walletDC = await getAssociatedTokenAddress(new PublicKey(DC_MINT), owner)
-
-  const makerDC = await getAssociatedTokenAddress(new PublicKey(DC_MINT), maker)
+  const walletDC = getAssociatedTokenAddressSync(new PublicKey(DC_MINT), owner)
+  const makerDC = getAssociatedTokenAddressSync(new PublicKey(DC_MINT), maker)
 
   const [makerAccount, makerDcAccount, ownerAccount, ownerDcAccount] = await fetchSimulatedTxn({
     apiUrl: rpcEndpoint,
@@ -266,7 +261,7 @@ const estimateMetaTxnFees = async (
   return fees
 }
 
-const getAssertData = async ({
+export const getAssertData = async ({
   elevation: propsElevation,
   decimalGain,
   gateway,
@@ -489,5 +484,3 @@ const getAssertData = async ({
     solanaTransactions: solanaTransactions.map((tx) => tx.toString('base64')),
   }
 }
-
-export default getAssertData

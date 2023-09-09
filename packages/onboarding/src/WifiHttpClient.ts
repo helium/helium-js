@@ -11,7 +11,7 @@ const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJz
 export default class HmhHttpClient {
   private axios!: AxiosInstance
   private owner!: PublicKey
-  private mockAdapater?: MockAdapter
+  private mockAdapter?: MockAdapter
 
   constructor({
     baseURL,
@@ -36,8 +36,8 @@ export default class HmhHttpClient {
     })
 
     if (mockRequests) {
-      this.mockAdapater = new MockAdapter(this.axios, { delayResponse: 1000 })
-      this.mockAdapater.onPost('/on_hotspot_nft_created').reply(200, {})
+      this.mockAdapter = new MockAdapter(this.axios, { delayResponse: 1000 })
+      this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
     }
   }
 
@@ -48,14 +48,14 @@ export default class HmhHttpClient {
       ownerAddress: ownerHeliumAddress,
       payerAddress: payerHeliumAddress,
     }
-    if (this.mockAdapater) {
+    if (this.mockAdapter) {
       const addGateway = new AddGatewayV1({
         owner: Address.fromB58(ownerHeliumAddress),
         payer: Address.fromB58(payerHeliumAddress),
         gateway: MOCK_GATEWAY,
       })
 
-      this.mockAdapater.onPost('/sign_gw_add_tx').reply(200, {
+      this.mockAdapter.onPost('/sign_gw_add_tx').reply(200, {
         gatewayAddress: MOCK_GATEWAY.b58,
         signedAddGwTx: addGateway.toString(),
       })
@@ -79,7 +79,7 @@ export default class HmhHttpClient {
         },
       )
 
-      return response.data
+      return response.status === 200
     } catch (e) {
       const err = e as AxiosError
       if (err.request.response) {
