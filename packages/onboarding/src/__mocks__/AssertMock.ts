@@ -30,4 +30,4 @@ export const getAssertData = async (): Promise<AssertData> => {
 
 export const submit = () => 'some-txn-id'
 
-export const hotspotKeyToAssetId = () => PublicKey.default
+export const hotspotToAssetKey = () => PublicKey.default

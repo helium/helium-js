@@ -147,7 +147,7 @@ export default class OnboardingClient {
         location: opts.location,
         elevation: opts.elevation,
         gain: opts.gain,
-        payer: opts.payer
+        payer: opts.payer,
       },
     )
   }
@@ -168,7 +168,7 @@ export default class OnboardingClient {
     hotspotAddress,
     type,
     payer,
-  }: Metadata & {
+  }: Partial<Metadata> & {
     type: HotspotType
     hotspotAddress: string
     solanaAddress: string
@@ -189,7 +189,7 @@ export default class OnboardingClient {
   }
 
   async updateIotMetadata(
-    opts: Metadata & {
+    opts: Partial<Metadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
@@ -199,7 +199,7 @@ export default class OnboardingClient {
   }
 
   async updateMobileMetadata(
-    opts: Metadata & {
+    opts: Partial<Metadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string

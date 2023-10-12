@@ -41,17 +41,14 @@ export default class HmhHttpClient {
     }
   }
 
-  getTxnFromGateway = async (payer: PublicKey) => {
+  getTxnFromGateway = async () => {
     const ownerHeliumAddress = heliumAddressFromSolKey(this.owner)
-    const payerHeliumAddress = heliumAddressFromSolKey(payer)
     const body = {
       ownerAddress: ownerHeliumAddress,
-      payerAddress: payerHeliumAddress,
     }
     if (this.mockAdapter) {
       const addGateway = new AddGatewayV1({
         owner: Address.fromB58(ownerHeliumAddress),
-        payer: Address.fromB58(payerHeliumAddress),
         gateway: MOCK_GATEWAY,
       })
 
@@ -68,6 +65,21 @@ export default class HmhHttpClient {
     >(url, body)
 
     return response.data.signedAddGwTx
+  }
+
+  checkFwValid = async () => {
+    try {
+      const url = '/fw/version'
+      const response = await this.axios.get<{ fw_ver: string }>(url)
+      return {
+        status: response.status,
+        firmwareVersion: response.data.fw_ver.replace('v', ''),
+      }
+    } catch (e) {
+      const err = e as AxiosError
+
+      return { status: err.status || 404 }
+    }
   }
 
   onHotspotCreated = async (assetId: string) => {

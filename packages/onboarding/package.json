@@ -52,6 +52,7 @@
     "axios-mock-adapter": "^1.21.5",
     "axios-retry": "^3.7.0",
     "bn.js": "^5.2.1",
+    "compare-versions": "^6.1.0",
     "h3-js": "^4.1.0",
     "qs": "^6.10.3",
     "uuid": "^9.0.0"

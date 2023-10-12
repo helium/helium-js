@@ -29,9 +29,8 @@ describe('Wifi Onboarding', () => {
       cluster: 'devnet',
     })
 
-    const txn = await client.getAddGatewayTxn(TEST_MAKER_PUBKEY)
+    const txn = await client.getAddGatewayTxn()
     expect(txn).toBeDefined()
-    expect(txn.payer?.b58).toBe(TEST_MAKER.address)
     expect(txn.owner?.b58).toBe(ALICE.b58)
   })
 
@@ -75,7 +74,7 @@ describe('Wifi Onboarding', () => {
       },
     })
 
-    const txn = await client.getAddGatewayTxn(TEST_MAKER_PUBKEY)
+    const txn = await client.getAddGatewayTxn()
     let lat = 44.501341
     let lng = -88.062208
 
@@ -88,7 +87,7 @@ describe('Wifi Onboarding', () => {
     expect(txns).toBeDefined()
 
     const signed = txns.map((txn) => {
-      const t = Transaction.from(Buffer.from(txn))
+      const t = Transaction.from(Buffer.from(txn, 'base64'))
       return t.serialize({ verifySignatures: false })
     })
 
@@ -99,4 +98,6 @@ describe('Wifi Onboarding', () => {
 
     expect(txnIds).toBeDefined()
   })
+
+  // TODO: Add test for firmware check...................
 })

@@ -106,14 +106,15 @@ export default class SolanaOnboarding {
     })
   }
 
-  hotspotKeyToAssetId = async (hotspotAddress: string) => {
+  hotspotToAssetKey = async (hotspotAddress: string) => {
+    const hemProgram = await this.getHemProgram()
     if (this.shouldMock) {
-      return AssertMock.hotspotKeyToAssetId()
+      return AssertMock.hotspotToAssetKey()
     }
 
     const [dao] = daoKey(HNT_MINT)
     const [keyToAssetK] = keyToAssetKey(dao, hotspotAddress)
-    const keyToAssetAcc = await this.hemProgram?.account.keyToAssetV0.fetchNullable(keyToAssetK)
+    const keyToAssetAcc = await hemProgram.account.keyToAssetV0.fetchNullable(keyToAssetK)
     return keyToAssetAcc?.asset
   }
 
