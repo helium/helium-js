@@ -38,6 +38,7 @@ export default class HmhHttpClient {
     if (mockRequests) {
       this.mockAdapter = new MockAdapter(this.axios, { delayResponse: 1000 })
       this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
+      this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
     }
   }
 

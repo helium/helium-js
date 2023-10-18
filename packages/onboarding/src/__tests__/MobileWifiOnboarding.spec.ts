@@ -72,6 +72,9 @@ describe('Wifi Onboarding', () => {
       errorCallback: (error) => {
         console.log(error)
       },
+      progressCallback: (progress, step) => {
+        console.log(progress, step)
+      },
     })
 
     const txn = await client.getAddGatewayTxn()

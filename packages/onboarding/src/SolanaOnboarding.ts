@@ -1,12 +1,18 @@
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import * as AssertUtil from './AssertUtil'
 import OnboardingClient from './OnboardingClient'
-import { AnchorProvider } from '@coral-xyz/anchor'
-import { HNT_MINT, sendAndConfirmWithRetry } from '@helium/spl-utils'
+import { AnchorProvider, BN } from '@coral-xyz/anchor'
+import { HNT_MINT, sendAndConfirmWithRetry, IOT_MINT, MOBILE_MINT } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
-import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
+import {
+  init as initHem,
+  iotInfoKey,
+  keyToAssetKey,
+  mobileInfoKey,
+  rewardableEntityConfigKey,
+} from '@helium/helium-entity-manager-sdk'
 import { AssertData, DcProgram, HemProgram, HotspotType } from './types'
-import { daoKey } from '@helium/helium-sub-daos-sdk'
+import { daoKey, subDaoKey } from '@helium/helium-sub-daos-sdk'
 import * as AssertMock from './__mocks__/AssertMock'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
@@ -155,5 +161,68 @@ export default class SolanaOnboarding {
       results.push(await this.submit({ txn, timeout, skipPreflight }))
     }
     return results
+  }
+
+  hotspotInfoToDetails = (value: {
+    asset: PublicKey
+    bumpSeed: number
+    isFullHotspot?: boolean
+    location: BN | null
+    numLocationAsserts?: number
+    elevation: number | null
+    gain: number | null
+  }) => {
+    const location = value.location?.toString('hex')
+    return {
+      elevation: value.elevation || undefined,
+      gain: value.gain || undefined,
+      location,
+      isFullHotspot: value.isFullHotspot,
+      numLocationAsserts: value.numLocationAsserts,
+    }
+  }
+
+  getHotspotDetails = async ({ type, address }: { address: string; type: 'MOBILE' | 'IOT' }) => {
+    if (this.shouldMock) {
+      return {
+        elevation: 1,
+        gain: 1,
+        location: '8c28d55251b55ff',
+        isFullHotspot: true,
+        numLocationAsserts: 1,
+      }
+    }
+
+    try {
+      const hemProgram = await this.getHemProgram()
+
+      const mint = type === 'IOT' ? IOT_MINT : MOBILE_MINT
+      const subDao = subDaoKey(mint)[0]
+
+      const configKey = rewardableEntityConfigKey(subDao, type)
+
+      const entityConfig = await hemProgram.account.rewardableEntityConfigV0.fetchNullable(
+        configKey[0],
+      )
+      if (!entityConfig) return
+
+      if (type === 'IOT') {
+        const [info] = iotInfoKey(configKey[0], address)
+        const iotInfo = await hemProgram.account.iotHotspotInfoV0.fetch(info)
+        return this.hotspotInfoToDetails(iotInfo)
+      }
+
+      const [info] = mobileInfoKey(configKey[0], address)
+      const mobileInfo = await hemProgram.account.mobileHotspotInfoV0.fetch(info)
+      return this.hotspotInfoToDetails(mobileInfo)
+    } catch (e) {
+      const error = String(e)
+      if (error.startsWith('Error: Account does not exist or has no data')) {
+        // This is an expected error. It has not been onboarded to this network
+        return
+      }
+
+      throw e
+    }
   }
 }
