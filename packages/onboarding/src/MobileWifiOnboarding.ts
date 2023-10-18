@@ -155,7 +155,7 @@ export default class MobileWifiOnboarding {
     hotspotAddress: string
     location?: string
   }) => {
-    this.writeLog('Onboarding hotspot to MOBILE network')
+    this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
 
     const onboardTxns = await this.onboardingClient.onboard({
@@ -271,7 +271,8 @@ export default class MobileWifiOnboarding {
           type: 'MOBILE',
           address: hotspotAddress,
         })
-        this.writeLog(`Hotspot ${hotspotAddress} asset found?: ${!!hotspotInfo}`)
+
+        this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
         if (hotspotInfo) return hotspotInfo
       } catch (e) {
         this.writeError(e)
@@ -331,6 +332,25 @@ export default class MobileWifiOnboarding {
       throw err
     }
 
+    // Check if this hotspot has already been onboarded to MOBILE
+    let needsOnboarding = true
+    try {
+      const hotspotInfo = await this.solanaOnboarding.getHotspotDetails({
+        type: 'MOBILE',
+        address: hotspotAddress,
+      })
+      if (hotspotInfo) {
+        needsOnboarding = false
+      }
+      this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
+    } catch (e) {
+      this.writeError(e)
+    }
+
+    if (!needsOnboarding) {
+      return []
+    }
+
     const txns = await this.getMobileOnboardTxns({
       location,
       hotspotAddress,
@@ -372,11 +392,13 @@ export default class MobileWifiOnboarding {
     }
 
     let txnIds: string[] = []
-    try {
-      txnIds = await this.solanaOnboarding.submitAll({ txns: signedTxns })
-    } catch (e) {
-      this.writeError(e)
-      throw e
+    if (signedTxns.length) {
+      try {
+        txnIds = await this.solanaOnboarding.submitAll({ txns: signedTxns })
+      } catch (e) {
+        this.writeError(e)
+        throw e
+      }
     }
 
     this.writeLog('Finished submitting onboarding txns to solana', {
@@ -394,7 +416,18 @@ export default class MobileWifiOnboarding {
       throw err
     }
     this.setProgressToStep('shutdown_wifi')
-    await this.wifiClient.onHotspotCreated(asset.toBase58())
+
+    this.writeLog('Calling onHotspotCreated', { data: { asset: asset.toBase58() } })
+
+    let shutdownSuccess = false
+    try {
+      shutdownSuccess = await this.wifiClient.onHotspotCreated(asset.toBase58())
+    } catch (e) {
+      this.writeError(e)
+      throw e
+    }
+    this.writeLog(`Shutdown wifi success: ${shutdownSuccess}`)
+
     this.setProgressToStep('complete')
     return { txnIds }
   }
