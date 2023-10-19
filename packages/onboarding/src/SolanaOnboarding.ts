@@ -2,7 +2,13 @@ import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import * as AssertUtil from './AssertUtil'
 import OnboardingClient from './OnboardingClient'
 import { AnchorProvider, BN } from '@coral-xyz/anchor'
-import { HNT_MINT, sendAndConfirmWithRetry, IOT_MINT, MOBILE_MINT } from '@helium/spl-utils'
+import {
+  HNT_MINT,
+  sendAndConfirmWithRetry,
+  IOT_MINT,
+  MOBILE_MINT,
+  getAsset,
+} from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import {
   init as initHem,
@@ -14,6 +20,10 @@ import {
 import { AssertData, DcProgram, HemProgram, HotspotType } from './types'
 import { daoKey, subDaoKey } from '@helium/helium-sub-daos-sdk'
 import * as AssertMock from './__mocks__/AssertMock'
+import {
+  createTransferInstructions,
+  createTransferCompressedCollectableTxn,
+} from '@helium/hotspot-utils'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
 export default class SolanaOnboarding {
@@ -224,5 +234,59 @@ export default class SolanaOnboarding {
 
       throw e
     }
+  }
+
+  createTransferCompressedCollectableTxn = async ({
+    newOwner,
+    hotspotAddress,
+  }: {
+    newOwner: string
+    hotspotAddress: string
+  }) => {
+    const hotspotPubKey = await this.hotspotToAssetKey(hotspotAddress)
+    if (!hotspotPubKey) throw new Error('Hotspot key not found')
+
+    const rpcEndpoint = this.connection.rpcEndpoint
+
+    const asset = await getAsset(rpcEndpoint, hotspotPubKey)
+
+    if (!asset) {
+      throw new Error('Hotspot not found')
+    }
+
+    return createTransferCompressedCollectableTxn({
+      collectable: asset,
+      owner: this.wallet,
+      recipient: new PublicKey(newOwner),
+      connection: this.connection,
+      url: rpcEndpoint,
+    })
+  }
+
+  createTransferInstructions = async ({
+    newOwner,
+    hotspotAddress,
+  }: {
+    newOwner: string
+    hotspotAddress: string
+  }) => {
+    const hotspotPubKey = await this.hotspotToAssetKey(hotspotAddress)
+    if (!hotspotPubKey) throw new Error('Hotspot key not found')
+
+    const rpcEndpoint = this.connection.rpcEndpoint
+
+    const asset = await getAsset(rpcEndpoint, hotspotPubKey)
+
+    if (!asset) {
+      throw new Error('Hotspot not found')
+    }
+
+    return createTransferInstructions({
+      collectable: asset,
+      owner: this.wallet,
+      recipient: new PublicKey(newOwner),
+      connection: this.connection,
+      url: rpcEndpoint,
+    })
   }
 }

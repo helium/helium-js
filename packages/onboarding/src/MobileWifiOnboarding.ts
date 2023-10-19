@@ -431,4 +431,30 @@ export default class MobileWifiOnboarding {
     this.setProgressToStep('complete')
     return { txnIds }
   }
+
+  createTransferCompressedCollectableTxn = async ({
+    newOwner,
+    hotspotAddress,
+  }: {
+    newOwner: string
+    hotspotAddress: string
+  }) => {
+    return this.solanaOnboarding.createTransferCompressedCollectableTxn({
+      newOwner,
+      hotspotAddress,
+    })
+  }
+
+  createTransferInstructions = async ({
+    newOwner,
+    hotspotAddress,
+  }: {
+    newOwner: string
+    hotspotAddress: string
+  }) => {
+    return this.solanaOnboarding.createTransferInstructions({
+      newOwner,
+      hotspotAddress,
+    })
+  }
 }
