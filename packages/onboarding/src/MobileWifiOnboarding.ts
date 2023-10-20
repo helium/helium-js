@@ -3,7 +3,6 @@ import WifiHttpClient from './WifiHttpClient'
 import OnboardingClient from './OnboardingClient'
 import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
-import { HotspotType } from './types'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
 
@@ -123,19 +122,17 @@ export default class MobileWifiOnboarding {
     return compareVersions(firmwareVersion, minFirmwareVersion) >= 0
   }
 
-  getAssertData = async ({
+  getMobileAssertData = async ({
     gateway,
     decimalGain,
     elevation,
     location,
-    hotspotTypes,
     maker,
   }: {
     gateway: string
     decimalGain?: number
     elevation?: number
     location: string
-    hotspotTypes: HotspotType[]
     maker: PublicKey
   }) => {
     return this.solanaOnboarding.getAssertData({
@@ -143,7 +140,7 @@ export default class MobileWifiOnboarding {
       decimalGain,
       elevation,
       location,
-      hotspotTypes,
+      hotspotTypes: ['MOBILE'],
       maker,
     })
   }

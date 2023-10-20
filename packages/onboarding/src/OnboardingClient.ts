@@ -5,6 +5,7 @@ import qs from 'qs'
 import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
 import MockAdapter from 'axios-mock-adapter'
 import updateTxn from './updateTxn'
+import BN from 'bn.js'
 
 type Response<T> = {
   code: number
@@ -140,11 +141,16 @@ export default class OnboardingClient {
       payer?: string
     } & Partial<Metadata>,
   ) {
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
     return this.post<{ solanaTransactions: number[][] }>(
       `transactions/${opts.type.toLowerCase()}/onboard`,
       {
         entityKey: opts.hotspotAddress,
-        location: opts.location,
+        location,
         elevation: opts.elevation,
         gain: opts.gain,
         payer: opts.payer,

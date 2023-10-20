@@ -8,15 +8,14 @@ export const getAssertData = async (): Promise<AssertData> => {
       hnt: new BN(100000000000),
       dc: new BN(1000000000),
       sol: new BN(1000000000000),
-      mobile: new BN(1000000000),
     },
     isFree: false,
     makerFees: {
-      sol: new BN(TXN_FEE_IN_LAMPORTS),
+      lamports: TXN_FEE_IN_LAMPORTS,
       dc: new BN(1000000),
     },
     ownerFees: {
-      sol: new BN(0),
+      lamports: new BN(0),
       dc: new BN(0),
     },
     solanaTransactions: [],

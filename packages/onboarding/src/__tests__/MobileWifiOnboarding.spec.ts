@@ -44,10 +44,9 @@ describe('Wifi Onboarding', () => {
       cluster: 'devnet',
     })
 
-    const assertData = await client.getAssertData({
+    const assertData = await client.getMobileAssertData({
       gateway: 'asdf',
       location: 'asdf123',
-      hotspotTypes: ['MOBILE'],
       maker: TEST_MAKER_PUBKEY,
     })
 

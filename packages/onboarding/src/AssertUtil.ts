@@ -9,7 +9,7 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, AccountInfo, Cluster } from '@solana/web3.js'
+import { Connection, PublicKey, AccountInfo, Cluster, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import axios from 'axios'
 import {
   AccountLayout,
@@ -24,7 +24,7 @@ import {
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
 import {
-  DC_TO_USD_MULTIPLIER,
+  BONES_IN_HNT,
   DcProgram,
   FULL_LOCATION_STAKING_FEE,
   HemProgram,
@@ -54,11 +54,10 @@ const getBalance = async (wallet: PublicKey, connection: Connection, mint: Publi
 
 const getBalances = async (wallet: PublicKey, connection: Connection) => {
   const sol = await connection.getBalance(wallet)
-  const hnt = await getBalance(wallet, connection, HNT_MINT)
-  const mobile = await getBalance(wallet, connection, MOBILE_MINT)
+  const hnt = (await getBalance(wallet, connection, HNT_MINT)).div(BONES_IN_HNT)
   const dc = await getBalance(wallet, connection, DC_MINT)
 
-  return { hnt, mobile, dc, sol: new BN(sol) }
+  return { hnt, dc, sol: new BN(sol) }
 }
 
 const burnHNTForDataCredits = async ({
@@ -107,7 +106,7 @@ const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Co
     await getAccount(connection, ataAddress)
     return new BN(0)
   } catch {
-    return new BN(0.00203928)
+    return new BN(2039280)
   }
 }
 
@@ -162,7 +161,7 @@ export const fetchSimulatedTxn = async ({
   }>(apiUrl, body)
 
   if (response.data.result.value.err) {
-    console.error(response.data.result.value.logs.join('\n'))
+    console.error(response.data.result.value.logs.join('\n') + 'Transaction would fail')
     throw new Error('Transaction would fail')
   }
   return response.data.result.value.accounts
@@ -326,6 +325,11 @@ export const getAssertData = async ({
     ),
   )
 
+  const errFound = solResponses.find((r) => !r.success)
+  if (errFound) {
+    throw errFound.errorMessage
+  }
+
   solanaTransactions = solResponses
     .flatMap((r) => r.data?.solanaTransactions || [])
     .map((txn) => Buffer.from(txn))
@@ -393,7 +397,7 @@ export const getAssertData = async ({
             dc: new BN(0),
           },
           ownerFees: {
-            lamports: new BN(TXN_FEE_IN_LAMPORTS),
+            lamports: TXN_FEE_IN_LAMPORTS,
             dc: dcFee,
           },
           isFree: false,
@@ -406,42 +410,43 @@ export const getAssertData = async ({
     (acc, current) => {
       if (!current) return acc
 
-      const makerSolFee = current.makerFees.lamports
-      const ownerSolFee = current.ownerFees.lamports
+      const makerLamportsFee = current.makerFees.lamports
+      const ownerLamportsFee = current.ownerFees.lamports
 
       const makerDcFee = current.makerFees.dc
       const ownerDcFee = current.ownerFees.dc
 
       return {
         makerFees: {
-          sol: acc.makerFees.sol.add(makerSolFee),
+          lamports: acc.makerFees.lamports.add(makerLamportsFee),
           dc: acc.makerFees.dc.add(makerDcFee),
         },
         ownerFees: {
-          sol: acc.ownerFees.sol.add(ownerSolFee),
+          lamports: acc.ownerFees.lamports.add(ownerLamportsFee),
           dc: acc.ownerFees.dc.add(ownerDcFee),
         },
       }
     },
     {
       makerFees: {
-        sol: new BN(0),
+        lamports: new BN(0),
         dc: new BN(0),
       },
       ownerFees: {
-        sol: new BN(0),
+        lamports: new BN(0),
         dc: new BN(0),
       },
     },
   )
-  const isFree = fees.ownerFees.dc.lte(new BN(0)) && fees.ownerFees.sol.lte(new BN(0))
+  const isFree = fees.ownerFees.dc.lte(new BN(0)) && fees.ownerFees.lamports.lte(new BN(0))
+  const lamportBalance = balances.sol.mul(new BN(LAMPORTS_PER_SOL))
 
   if (!isFree) {
     const ataFee = await getAtaAccountCreationFee(owner, connection)
-    fees.ownerFees.sol = fees.ownerFees.sol.add(ataFee)
+    fees.ownerFees.lamports = fees.ownerFees.lamports.add(ataFee)
   }
 
-  let hasSufficientSol = balances.sol.gte(fees.ownerFees.sol)
+  let hasSufficientSol = lamportBalance.gte(fees.ownerFees.lamports)
   const hasSufficientDc = balances.dc.gte(fees.ownerFees.dc)
 
   let dcNeeded: BN | undefined
@@ -451,7 +456,7 @@ export const getAssertData = async ({
     const dcBalance = balances.dc || new BN(0)
     dcNeeded = dcFee.sub(dcBalance)
 
-    const dcInDollars = dcNeeded.mul(new BN(DC_TO_USD_MULTIPLIER))
+    const dcInDollars = dcNeeded.div(new BN(100000))
     const hntNeeded = dcInDollars.div(oraclePrice)
     hasSufficientHnt = balances.hnt.gte(hntNeeded)
 
@@ -464,9 +469,8 @@ export const getAssertData = async ({
       })
       if (txn) {
         solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
-        fees.ownerFees.sol = fees.ownerFees.sol.add(new BN(TXN_FEE_IN_LAMPORTS))
-
-        hasSufficientSol = balances.sol.gte(fees.ownerFees.sol)
+        fees.ownerFees.lamports = fees.ownerFees.lamports.add(TXN_FEE_IN_LAMPORTS)
+        hasSufficientSol = lamportBalance.gte(fees.ownerFees.lamports)
       }
     }
   }
