@@ -192,7 +192,7 @@ export default class MobileWifiOnboarding {
       })
       solanaTransactions = createTxns.data?.solanaTransactions
     } catch (e) {
-      this.writeError(encodeURI)
+      this.writeError(e)
     }
 
     if (solanaTransactions?.length) {

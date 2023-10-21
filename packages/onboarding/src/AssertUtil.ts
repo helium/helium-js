@@ -296,8 +296,6 @@ export const getAssertData = async ({
   const solanaAddress = owner.toBase58()
   const balances = await getBalances(owner, connection)
 
-  const location = new BN(nextLocation, 'hex').toString()
-
   let foundMaker = propsMaker
   if (!foundMaker) {
     const onboardingRecord = await onboardingClient.getOnboardingRecord(gateway)
@@ -318,7 +316,7 @@ export const getAssertData = async ({
         type,
         solanaAddress,
         hotspotAddress: gateway,
-        location,
+        location: nextLocation,
         elevation,
         gain,
       }),

@@ -166,20 +166,21 @@ export default class OnboardingClient {
     return this.onboard({ ...opts, type: 'MOBILE' })
   }
 
-  async updateMetadata({
-    solanaAddress,
-    location,
-    elevation,
-    gain,
-    hotspotAddress,
-    type,
-    payer,
-  }: Partial<Metadata> & {
-    type: HotspotType
-    hotspotAddress: string
-    solanaAddress: string
-    payer?: string
-  }) {
+  async updateMetadata(
+    opts: Partial<Metadata> & {
+      type: HotspotType
+      hotspotAddress: string
+      solanaAddress: string
+      payer?: string
+    },
+  ) {
+    const { solanaAddress, elevation, gain, hotspotAddress, type, payer } = opts
+
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
     const body = {
       entityKey: hotspotAddress,
       location,
