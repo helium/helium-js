@@ -196,7 +196,7 @@ export default class MobileWifiOnboarding {
     }
 
     if (solanaTransactions?.length) {
-      this.writeLog('Created hotspot onboard txns', solanaTransactions)
+      this.writeLog('Created hotspot onboard txns')
     } else {
       this.writeLog('Could not create hotspot onboard txns')
     }
@@ -377,6 +377,11 @@ export default class MobileWifiOnboarding {
       this.writeError(e)
       throw e
     }
+
+    if (!shutdownSuccess) {
+      throw new Error('Failed to shutdown wifi')
+    }
+
     this.writeLog(`Shutdown wifi success: ${shutdownSuccess}`)
 
     this.setProgressToStep('complete')
@@ -391,9 +396,7 @@ export default class MobileWifiOnboarding {
     hotspotAddress: string
     signedTxns: Buffer[]
   }) => {
-    this.writeLog('Submitting MOBILE onboard txns to solana', {
-      signedTxns,
-    })
+    this.writeLog('Submitting MOBILE onboard txns to solana')
     this.setProgressToStep('submit_mobile')
 
     const asset = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
