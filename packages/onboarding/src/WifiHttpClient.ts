@@ -92,7 +92,7 @@ export default class HmhHttpClient {
         },
       )
 
-      return response.status === 200
+      return response.status >= 200 && response.status < 300
     } catch (e) {
       const err = e as AxiosError
       if (err.request.response) {

@@ -361,12 +361,27 @@ export default class MobileWifiOnboarding {
   }
 
   onHotspotCreated = async (hotspotAddress: string) => {
+    this.setProgressToStep('shutdown_wifi')
     const asset = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     if (!asset) {
       this.writeLog('Hotspot asset not found')
       throw new Error('Hotspot Asset not found')
     }
-    return this.wifiClient.onHotspotCreated(asset.toBase58())
+
+    this.writeLog('Calling onHotspotCreated', { data: { asset: asset.toBase58() } })
+
+    let shutdownSuccess = false
+    try {
+      shutdownSuccess = await this.wifiClient.onHotspotCreated(asset.toBase58())
+    } catch (e) {
+      this.writeError(e)
+      throw e
+    }
+    this.writeLog(`Shutdown wifi success: ${shutdownSuccess}`)
+
+    this.setProgressToStep('complete')
+
+    return shutdownSuccess
   }
 
   submitAndCompleteOnboarding = async ({
