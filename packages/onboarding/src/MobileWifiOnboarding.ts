@@ -372,7 +372,10 @@ export default class MobileWifiOnboarding {
 
     let shutdownSuccess = false
     try {
-      shutdownSuccess = await this.wifiClient.onHotspotCreated(asset.toBase58())
+      shutdownSuccess = await this.wifiClient.onHotspotCreated({
+        assetId: asset.toBase58(),
+        cluster: this.cluster,
+      })
     } catch (e) {
       this.writeError(e)
       throw e
@@ -436,7 +439,10 @@ export default class MobileWifiOnboarding {
 
     let shutdownSuccess = false
     try {
-      shutdownSuccess = await this.wifiClient.onHotspotCreated(asset.toBase58())
+      shutdownSuccess = await this.wifiClient.onHotspotCreated({
+        assetId: asset.toBase58(),
+        cluster: this.cluster,
+      })
     } catch (e) {
       this.writeError(e)
       throw e

@@ -3,7 +3,7 @@ import axiosRetry from 'axios-retry'
 import MockAdapter from 'axios-mock-adapter'
 import { AddGatewayV1 } from '@helium/transactions'
 import Address from '@helium/address'
-import { PublicKey } from '@solana/web3.js'
+import { Cluster, PublicKey } from '@solana/web3.js'
 import { heliumAddressFromSolKey } from '@helium/spl-utils'
 
 const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
@@ -83,13 +83,11 @@ export default class HmhHttpClient {
     }
   }
 
-  onHotspotCreated = async (assetId: string) => {
+  onHotspotCreated = async (opts: { assetId: string; cluster: Cluster }) => {
     try {
       const response = await this.axios.post<{ assetId: string }, AxiosResponse>(
         '/on_hotspot_nft_created',
-        {
-          assetId,
-        },
+        opts,
       )
 
       return response.status >= 200 && response.status < 300
