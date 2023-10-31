@@ -72,9 +72,11 @@ export default class HmhHttpClient {
     try {
       const url = '/fw/version'
       const response = await this.axios.get<{ fw_ver: string }>(url)
+      const firmwareVersion = response.data.fw_ver
+
       return {
         status: response.status,
-        firmwareVersion: response.data.fw_ver.replace('v', ''),
+        firmwareVersion,
       }
     } catch (e) {
       const err = e as AxiosError

@@ -119,7 +119,9 @@ export default class MobileWifiOnboarding {
 
     if (!isSuccessful || !firmwareVersion) return false
 
-    return compareVersions(firmwareVersion, minFirmwareVersion) >= 0
+    if (firmwareVersion.startsWith('dev')) return true
+
+    return compareVersions(firmwareVersion.replace('v', ''), minFirmwareVersion) >= 0
   }
 
   getMobileAssertData = async ({

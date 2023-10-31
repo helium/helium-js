@@ -19,6 +19,20 @@ const TEST_MAKER = {
 const TEST_MAKER_PUBKEY = heliumAddressToSolPublicKey(TEST_MAKER.address)
 
 describe('Wifi Onboarding', () => {
+  it('Checks for valid firmware', async () => {
+    const client = new MobileWifiOnboarding({
+      shouldMock: true,
+      wifiBaseUrl: 'http://192.168.68.1:3333',
+      wallet: ALICE_PUBKEY,
+      onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
+      rpcEndpoint: 'https://api.devnet.solana.com',
+      cluster: 'devnet',
+    })
+
+    const isValid = await client.checkFwValid()
+    expect(isValid).toBeTruthy()
+  })
+
   it('Fetches the add gateway txn from the wifi access point', async () => {
     const client = new MobileWifiOnboarding({
       shouldMock: true,
