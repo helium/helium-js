@@ -1,6 +1,6 @@
 import { AddGatewayV1 } from '@helium/transactions'
 import WifiHttpClient from './WifiHttpClient'
-import OnboardingClient from './OnboardingClient'
+import OnboardingClient, { DeviceType } from './OnboardingClient'
 import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
@@ -304,10 +304,12 @@ export default class MobileWifiOnboarding {
     addGatewayTxn,
     authToken,
     location,
+    deviceType,
   }: {
     addGatewayTxn: string
     authToken?: string
     location?: string
+    deviceType: DeviceType
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -319,6 +321,7 @@ export default class MobileWifiOnboarding {
       // If onboarding to devnet, we create the hotspot on the onboarding server
       try {
         await this._onboardingClient.addToOnboardingServer({
+          deviceType,
           onboardingKey: hotspotAddress,
           authToken,
         })

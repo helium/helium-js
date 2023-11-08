@@ -15,6 +15,8 @@ type Response<T> = {
   errors?: Array<any>
 }
 
+export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
+
 export default class OnboardingClient {
   private axios!: AxiosInstance
 
@@ -218,19 +220,22 @@ export default class OnboardingClient {
   async addToOnboardingServer({
     onboardingKey,
     authToken,
+    deviceType,
   }: {
     onboardingKey: string
     authToken: string
+    deviceType: DeviceType
   }) {
     return this.axios.post(
       'hotspots',
       {
-        onboardingKey,
-        macWlan0: uuidv4(),
-        macEth0: uuidv4(),
-        rpiSerial: uuidv4(),
-        heliumSerial: uuidv4(),
         batch: 'example-batch',
+        deviceType,
+        heliumSerial: uuidv4(),
+        macEth0: uuidv4(),
+        macWlan0: uuidv4(),
+        onboardingKey,
+        rpiSerial: uuidv4(),
       },
       {
         headers: {
