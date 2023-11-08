@@ -22,20 +22,40 @@ const ProgressKeys = [
 type ProgressStep = (typeof ProgressKeys)[number]
 
 export default class MobileWifiOnboarding {
-  private wifiClient!: WifiHttpClient
-  private onboardingClient!: OnboardingClient
-  private solanaOnboarding!: SolanaOnboarding
-  private progressCallback?: (progress: number, step?: ProgressStep) => void
-  private progressStep?: ProgressStep
-  private progress = 0
-  private errorCallback?: (e: unknown) => void
-  private logCallback?: (message: string, data?: { [key: string]: any }) => void
-  public wifiBaseUrl: string
-  public onboardingClientUrl: string
-  public shouldMock: boolean
-  public wallet: PublicKey
-  public rpcEndpoint: string
-  public cluster: Cluster
+  private _wifiClient!: WifiHttpClient
+  private _onboardingClient!: OnboardingClient
+  private _solanaOnboarding!: SolanaOnboarding
+  private _progressCallback?: (progress: number, step?: ProgressStep) => void
+  private _progressStep?: ProgressStep
+  private _progress = 0
+  private _errorCallback?: (e: unknown) => void
+  private _logCallback?: (message: string, data?: { [key: string]: any }) => void
+  private _shouldMock: boolean
+
+  private _cluster: Cluster
+  public get cluster(): Cluster {
+    return this._cluster
+  }
+
+  private _wifiBaseUrl!: string
+  public get wifiBaseUrl(): string {
+    return this._wifiBaseUrl
+  }
+
+  private _onboardingClientUrl!: string
+  public get onboardingClientUrl(): string {
+    return this._onboardingClientUrl
+  }
+
+  private _wallet!: PublicKey
+  public get wallet(): PublicKey {
+    return this._wallet
+  }
+
+  private _rpcEndpoint!: string
+  public get rpcEndpoint(): string {
+    return this._rpcEndpoint
+  }
 
   constructor(opts: {
     wifiBaseUrl: string
@@ -48,57 +68,57 @@ export default class MobileWifiOnboarding {
     logCallback?: (message: string, data?: { [key: string]: any }) => void
     progressCallback?: (progress: number, step?: ProgressStep) => void
   }) {
-    this.wallet = opts.wallet
-    this.cluster = opts.cluster
-    this.rpcEndpoint = opts.rpcEndpoint
-    this.wifiBaseUrl = opts.wifiBaseUrl
-    this.onboardingClientUrl = opts.onboardingClientUrl
-    this.shouldMock = opts.shouldMock || false
-    this.progressCallback = opts.progressCallback
+    this._wifiBaseUrl = opts.wifiBaseUrl
+    this._onboardingClientUrl = opts.onboardingClientUrl
+    this._shouldMock = opts.shouldMock || false
+    this._wallet = opts.wallet
+    this._rpcEndpoint = opts.rpcEndpoint
+    this._cluster = opts.cluster
+    this._progressCallback = opts.progressCallback
 
-    this.wifiClient = new WifiHttpClient({
+    this._wifiClient = new WifiHttpClient({
       owner: opts.wallet,
       baseURL: opts.wifiBaseUrl,
       mockRequests: opts.shouldMock,
     })
-    this.onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
+    this._onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
       mockRequests: opts.shouldMock,
     })
 
-    this.solanaOnboarding = new SolanaOnboarding({
-      onboardingClient: this.onboardingClient,
+    this._solanaOnboarding = new SolanaOnboarding({
+      onboardingClient: this._onboardingClient,
       shouldMock: opts.shouldMock,
       wallet: opts.wallet,
       connection: new Connection(opts.rpcEndpoint),
       cluster: opts.cluster,
     })
 
-    this.logCallback = opts.logCallback
-    this.errorCallback = opts.errorCallback
+    this._logCallback = opts.logCallback
+    this._errorCallback = opts.errorCallback
 
-    this.logCallback?.('Initialized MobileWifiOnboarding', opts)
+    this._logCallback?.('Initialized MobileWifiOnboarding', opts)
   }
 
   writeError = (error: unknown) => {
-    this.errorCallback?.(error)
+    this._errorCallback?.(error)
   }
 
   writeLog = (message: string, data?: { [key: string]: any }) => {
-    this.logCallback?.(message, data)
+    this._logCallback?.(message, data)
   }
 
   private setProgressToStep = (step: ProgressStep) => {
-    this.progressStep = step
-    this.progress = (ProgressKeys.indexOf(step) + 1) / ProgressKeys.length
+    this._progressStep = step
+    this._progress = (ProgressKeys.indexOf(step) + 1) / ProgressKeys.length
 
-    if (this.progressCallback) {
-      this.progressCallback(this.progress, this.progressStep)
+    if (this._progressCallback) {
+      this._progressCallback(this._progress, this._progressStep)
     }
   }
 
   getAddGatewayTxn = async () => {
     this.setProgressToStep('get_add_gateway')
-    const txnStr = await this.wifiClient.getTxnFromGateway()
+    const txnStr = await this._wifiClient.getTxnFromGateway()
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
     return txn
@@ -106,7 +126,7 @@ export default class MobileWifiOnboarding {
 
   checkFwValid = async () => {
     this.writeLog('Checking firmware version')
-    const fwInfo = await this.wifiClient.checkFwValid()
+    const fwInfo = await this._wifiClient.checkFwValid()
     const minFirmwareVersion = '0.10.0'
 
     this.writeLog('Firmware version is', {
@@ -137,7 +157,7 @@ export default class MobileWifiOnboarding {
     location: string
     maker: PublicKey
   }) => {
-    return this.solanaOnboarding.getAssertData({
+    return this._solanaOnboarding.getAssertData({
       gateway,
       decimalGain,
       elevation,
@@ -157,7 +177,7 @@ export default class MobileWifiOnboarding {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
 
-    const onboardTxns = await this.onboardingClient.onboard({
+    const onboardTxns = await this._onboardingClient.onboard({
       hotspotAddress,
       location,
       type: 'MOBILE',
@@ -184,12 +204,12 @@ export default class MobileWifiOnboarding {
   }
 
   createHotspot = async ({ transaction }: { transaction: string }) => {
-    this.logCallback?.('Creating hotspot on Solana', { transaction })
+    this._logCallback?.('Creating hotspot on Solana', { transaction })
     this.setProgressToStep('fetch_create')
 
     let solanaTransactions: number[][] | undefined = undefined
     try {
-      const createTxns = await this.onboardingClient.createHotspot({
+      const createTxns = await this._onboardingClient.createHotspot({
         transaction,
       })
       solanaTransactions = createTxns.data?.solanaTransactions
@@ -210,7 +230,7 @@ export default class MobileWifiOnboarding {
 
       this.writeLog('Submitting hotspot to solana')
       this.setProgressToStep('submit_create')
-      const txnids = await this.solanaOnboarding.submitAll({
+      const txnids = await this._solanaOnboarding.submitAll({
         txns: solanaTransactions.map((t) => Buffer.from(t)),
       })
       this.writeLog('Hotspot has successfully been submitted to solana', { data: txnids })
@@ -224,8 +244,8 @@ export default class MobileWifiOnboarding {
   verifyHotspotCreated = async (hotspotAddress: string) => {
     this.setProgressToStep('verify_create')
 
-    if (this.shouldMock) {
-      return this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+    if (this._shouldMock) {
+      return this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     }
 
     // sometimes create hotspot takes a really long time and solana can't
@@ -239,7 +259,7 @@ export default class MobileWifiOnboarding {
       await sleep(3000)
 
       try {
-        const hotspotPubKey = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+        const hotspotPubKey = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
         this.writeLog(`Hotspot asset found?: ${hotspotPubKey?.toBase58()} ${hotspotAddress}`)
         if (hotspotPubKey) return hotspotPubKey
       } catch (e) {
@@ -252,8 +272,8 @@ export default class MobileWifiOnboarding {
   verifyMobileInfo = async (hotspotAddress: string) => {
     this.setProgressToStep('verify_mobile')
 
-    if (this.shouldMock) {
-      return this.solanaOnboarding.getHotspotDetails({
+    if (this._shouldMock) {
+      return this._solanaOnboarding.getHotspotDetails({
         type: 'MOBILE',
         address: hotspotAddress,
       })
@@ -266,7 +286,7 @@ export default class MobileWifiOnboarding {
       await sleep(3000)
 
       try {
-        const hotspotInfo = await this.solanaOnboarding.getHotspotDetails({
+        const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
           type: 'MOBILE',
           address: hotspotAddress,
         })
@@ -295,10 +315,10 @@ export default class MobileWifiOnboarding {
     }
     const hotspotAddress = addGatewayV1.gateway.b58
 
-    if (authToken && this.cluster === 'devnet') {
+    if (authToken && this._cluster === 'devnet') {
       // If onboarding to devnet, we create the hotspot on the onboarding server
       try {
-        await this.onboardingClient.addToOnboardingServer({
+        await this._onboardingClient.addToOnboardingServer({
           onboardingKey: hotspotAddress,
           authToken,
         })
@@ -310,7 +330,7 @@ export default class MobileWifiOnboarding {
 
     let hotspotPubKey: PublicKey | undefined
     try {
-      hotspotPubKey = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+      hotspotPubKey = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     } catch (e) {
       this.writeError(e)
     }
@@ -334,7 +354,7 @@ export default class MobileWifiOnboarding {
     // Check if this hotspot has already been onboarded to MOBILE
     let needsOnboarding = true
     try {
-      const hotspotInfo = await this.solanaOnboarding.getHotspotDetails({
+      const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
         type: 'MOBILE',
         address: hotspotAddress,
       })
@@ -359,12 +379,12 @@ export default class MobileWifiOnboarding {
   }
 
   getHotspotAssetKey = async (hotspotAddress: string) => {
-    return this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+    return this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
   }
 
   onHotspotCreated = async (hotspotAddress: string) => {
     this.setProgressToStep('shutdown_wifi')
-    const asset = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+    const asset = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     if (!asset) {
       this.writeLog('Hotspot asset not found')
       throw new Error('Hotspot Asset not found')
@@ -374,9 +394,9 @@ export default class MobileWifiOnboarding {
 
     let shutdownSuccess = false
     try {
-      shutdownSuccess = await this.wifiClient.onHotspotCreated({
+      shutdownSuccess = await this._wifiClient.onHotspotCreated({
         assetId: asset.toBase58(),
-        cluster: this.cluster,
+        cluster: this._cluster,
       })
     } catch (e) {
       this.writeError(e)
@@ -404,7 +424,7 @@ export default class MobileWifiOnboarding {
     this.writeLog('Submitting MOBILE onboard txns to solana')
     this.setProgressToStep('submit_mobile')
 
-    const asset = await this.solanaOnboarding.hotspotToAssetKey(hotspotAddress)
+    const asset = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     if (!asset) {
       const err = new Error('Hotspot Asset not found')
       this.writeError(err)
@@ -414,7 +434,7 @@ export default class MobileWifiOnboarding {
     let txnIds: string[] = []
     if (signedTxns.length) {
       try {
-        txnIds = await this.solanaOnboarding.submitAll({ txns: signedTxns })
+        txnIds = await this._solanaOnboarding.submitAll({ txns: signedTxns })
       } catch (e) {
         this.writeError(e)
         throw e
@@ -441,9 +461,9 @@ export default class MobileWifiOnboarding {
 
     let shutdownSuccess = false
     try {
-      shutdownSuccess = await this.wifiClient.onHotspotCreated({
+      shutdownSuccess = await this._wifiClient.onHotspotCreated({
         assetId: asset.toBase58(),
-        cluster: this.cluster,
+        cluster: this._cluster,
       })
     } catch (e) {
       this.writeError(e)
@@ -462,7 +482,7 @@ export default class MobileWifiOnboarding {
     newOwner: string
     hotspotAddress: string
   }) => {
-    return this.solanaOnboarding.createTransferCompressedCollectableTxn({
+    return this._solanaOnboarding.createTransferCompressedCollectableTxn({
       newOwner,
       hotspotAddress,
     })
@@ -475,7 +495,7 @@ export default class MobileWifiOnboarding {
     newOwner: string
     hotspotAddress: string
   }) => {
-    return this.solanaOnboarding.createTransferInstructions({
+    return this._solanaOnboarding.createTransferInstructions({
       newOwner,
       hotspotAddress,
     })
