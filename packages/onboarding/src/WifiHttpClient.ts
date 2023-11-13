@@ -12,20 +12,24 @@ export default class HmhHttpClient {
   private axios!: AxiosInstance
   private owner!: PublicKey
   private mockAdapter?: MockAdapter
+  private apiVersion?: 'v2' | 'v1'
 
   constructor({
     baseURL,
     owner,
     mockRequests,
+    apiVersion,
   }: {
     owner: PublicKey
     baseURL: string
     mockRequests?: boolean
+    apiVersion?: 'v2' | 'v1'
   }) {
     this.axios = axios.create({
       baseURL,
     })
 
+    this.apiVersion = apiVersion
     this.owner = owner
 
     axiosRetry(this.axios, {
@@ -37,29 +41,44 @@ export default class HmhHttpClient {
 
     if (mockRequests) {
       this.mockAdapter = new MockAdapter(this.axios, { delayResponse: 1000 })
-      this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
-      this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
+
+      if (apiVersion === 'v1') {
+        this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
+        this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
+      } else {
+        this.mockAdapter.onGet('/v2/fw/version').reply(200, { fw_ver: 'v2.0.0' })
+      }
     }
   }
 
-  getTxnFromGateway = async () => {
+  validateApiVersion = async () => {
+    if (this.apiVersion) return
+
+    const { apiVersion } = await this.getVersionDetails()
+    this.apiVersion = apiVersion
+  }
+
+  signGatewayAddTransaction = async () => {
     const ownerHeliumAddress = heliumAddressFromSolKey(this.owner)
     const body = {
       ownerAddress: ownerHeliumAddress,
     }
+    const url = this.apiVersion === 'v1' ? '/sign_gw_add_tx' : '/v2/signGatewayAddTransaction'
+
     if (this.mockAdapter) {
       const addGateway = new AddGatewayV1({
         owner: Address.fromB58(ownerHeliumAddress),
         gateway: MOCK_GATEWAY,
       })
 
-      this.mockAdapter.onPost('/sign_gw_add_tx').reply(200, {
+      this.mockAdapter.onPost(url).reply(200, {
         gatewayAddress: MOCK_GATEWAY.b58,
         signedAddGwTx: addGateway.toString(),
       })
     }
 
-    const url = '/sign_gw_add_tx'
+    await this.validateApiVersion()
+
     const response = await this.axios.post<
       { ownerAddress: string; payerAddress: string },
       AxiosResponse<{ signedAddGwTx: string; gatewayAddress: string }>
@@ -68,15 +87,34 @@ export default class HmhHttpClient {
     return response.data.signedAddGwTx
   }
 
-  checkFwValid = async () => {
+  getVersionDetails = async (): Promise<{
+    status: number
+    firmwareVersion?: string
+    apiVersion?: 'v2' | 'v1'
+  }> => {
     try {
-      const url = '/fw/version'
-      const response = await this.axios.get<{ fw_ver: string }>(url)
-      const firmwareVersion = response.data.fw_ver
+      const v2Response = await this.axios.get<{ fw_ver: string }>('/v2/fw/version')
+      if (v2Response.status === 200) {
+        const firmwareVersion = v2Response.data.fw_ver
+        this.apiVersion = 'v2'
+
+        return {
+          status: v2Response.status,
+          firmwareVersion,
+          apiVersion: 'v2',
+        }
+      }
+    } catch {}
+
+    try {
+      const v1Response = await this.axios.get<{ fw_ver: string }>('/fw/version')
+      const firmwareVersion = v1Response.data.fw_ver
+      this.apiVersion = 'v1'
 
       return {
-        status: response.status,
+        status: v1Response.status,
         firmwareVersion,
+        apiVersion: 'v1',
       }
     } catch (e) {
       const err = e as AxiosError
@@ -87,6 +125,13 @@ export default class HmhHttpClient {
 
   onHotspotCreated = async (opts: { assetId: string; cluster: Cluster }) => {
     try {
+      await this.validateApiVersion()
+
+      if (this.apiVersion === 'v2') {
+        // this call is no longer supported or necessary on api version v2
+        return true
+      }
+
       const response = await this.axios.post<{ assetId: string }, AxiosResponse>(
         '/on_hotspot_nft_created',
         opts,

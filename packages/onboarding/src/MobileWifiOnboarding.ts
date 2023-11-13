@@ -59,6 +59,7 @@ export default class MobileWifiOnboarding {
 
   constructor(opts: {
     wifiBaseUrl: string
+    wifiApiVersion?: 'v2' | 'v1'
     onboardingClientUrl: string
     shouldMock?: boolean
     wallet: PublicKey
@@ -79,6 +80,7 @@ export default class MobileWifiOnboarding {
     this._wifiClient = new WifiHttpClient({
       owner: opts.wallet,
       baseURL: opts.wifiBaseUrl,
+      apiVersion: opts.wifiApiVersion,
       mockRequests: opts.shouldMock,
     })
     this._onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
@@ -116,9 +118,9 @@ export default class MobileWifiOnboarding {
     }
   }
 
-  getAddGatewayTxn = async () => {
+  signGatewayAddTransaction = async () => {
     this.setProgressToStep('get_add_gateway')
-    const txnStr = await this._wifiClient.getTxnFromGateway()
+    const txnStr = await this._wifiClient.signGatewayAddTransaction()
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
     return txn
@@ -126,7 +128,7 @@ export default class MobileWifiOnboarding {
 
   checkFwValid = async () => {
     this.writeLog('Checking firmware version')
-    const fwInfo = await this._wifiClient.checkFwValid()
+    const fwInfo = await this._wifiClient.getVersionDetails()
     const minFirmwareVersion = '0.10.0'
 
     this.writeLog('Firmware version is', {
