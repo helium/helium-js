@@ -82,6 +82,8 @@ export default class MobileWifiOnboarding {
       baseURL: opts.wifiBaseUrl,
       apiVersion: opts.wifiApiVersion,
       mockRequests: opts.shouldMock,
+      errorCallback: opts.errorCallback,
+      logCallback: opts.logCallback,
     })
     this._onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
       mockRequests: opts.shouldMock,
@@ -120,7 +122,7 @@ export default class MobileWifiOnboarding {
 
   signGatewayAddTransaction = async () => {
     this.setProgressToStep('get_add_gateway')
-    const txnStr = await this._wifiClient.signGatewayAddTransaction()
+    const txnStr = await this._wifiClient.signGatewayAddTransaction(this._cluster)
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
     return txn

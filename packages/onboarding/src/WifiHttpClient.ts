@@ -13,17 +13,23 @@ export default class HmhHttpClient {
   private owner!: PublicKey
   private mockAdapter?: MockAdapter
   private apiVersion?: 'v2' | 'v1'
+  private errorCallback?: (e: unknown) => void
+  private logCallback?: (message: string, data?: { [key: string]: any }) => void
 
   constructor({
     baseURL,
     owner,
     mockRequests,
     apiVersion,
+    errorCallback,
+    logCallback,
   }: {
     owner: PublicKey
     baseURL: string
     mockRequests?: boolean
     apiVersion?: 'v2' | 'v1'
+    errorCallback?: (e: unknown) => void
+    logCallback?: (message: string, data?: { [key: string]: any }) => void
   }) {
     this.axios = axios.create({
       baseURL,
@@ -31,6 +37,8 @@ export default class HmhHttpClient {
 
     this.apiVersion = apiVersion
     this.owner = owner
+    this.errorCallback = errorCallback
+    this.logCallback = logCallback
 
     axiosRetry(this.axios, {
       retries: 4, // number of retries
@@ -52,18 +60,34 @@ export default class HmhHttpClient {
   }
 
   validateApiVersion = async () => {
-    if (this.apiVersion) return
+    if (this.apiVersion) {
+      this.logCallback?.(`Api Version ${this.apiVersion}`)
+      return
+    }
 
     const { apiVersion } = await this.getVersionDetails()
+    this.logCallback?.(`Api Version ${this.apiVersion}`)
     this.apiVersion = apiVersion
   }
 
-  signGatewayAddTransaction = async () => {
+  signGatewayAddTransaction = async (cluster: Cluster) => {
     const ownerHeliumAddress = heliumAddressFromSolKey(this.owner)
-    const body = {
-      ownerAddress: ownerHeliumAddress,
-    }
+
+    let body = {} as Record<string, string>
+
     const url = this.apiVersion === 'v1' ? '/sign_gw_add_tx' : '/v2/signGatewayAddTransaction'
+    if (this.apiVersion === 'v1') {
+      body = {
+        ownerAddress: ownerHeliumAddress,
+      } as Record<string, string>
+    } else {
+      body = {
+        ownerAddress: this.owner.toBase58(),
+        cluster: cluster,
+      } as Record<string, string>
+    }
+
+    this.logCallback?.('signGatewayAddTransaction', { body, url })
 
     if (this.mockAdapter) {
       const addGateway = new AddGatewayV1({
@@ -104,7 +128,9 @@ export default class HmhHttpClient {
           apiVersion: 'v2',
         }
       }
-    } catch {}
+    } catch (e) {
+      this.errorCallback?.(e)
+    }
 
     try {
       const v1Response = await this.axios.get<{ fw_ver: string }>('/fw/version')
@@ -117,8 +143,9 @@ export default class HmhHttpClient {
         apiVersion: 'v1',
       }
     } catch (e) {
-      const err = e as AxiosError
+      this.errorCallback?.(e)
 
+      const err = e as AxiosError
       return { status: err.status || 404 }
     }
   }
@@ -129,6 +156,9 @@ export default class HmhHttpClient {
 
       if (this.apiVersion === 'v2') {
         // this call is no longer supported or necessary on api version v2
+        this.logCallback?.(
+          'onHotspotCreated - returning true as this call is no longer supported or necessary on api version v2',
+        )
         return true
       }
 
@@ -137,8 +167,12 @@ export default class HmhHttpClient {
         opts,
       )
 
-      return response.status >= 200 && response.status < 300
+      const isSuccessful = response.status >= 200 && response.status < 300
+      this.logCallback?.(`onHotspotCreated - returning ${isSuccessful}`)
+      return isSuccessful
     } catch (e) {
+      this.errorCallback?.(e)
+
       const err = e as AxiosError
       if (err.request.response) {
         throw new Error(`${err.request.response}\nStatus Code: ${err.response?.status}`)
