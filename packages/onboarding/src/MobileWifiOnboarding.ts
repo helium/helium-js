@@ -122,10 +122,12 @@ export default class MobileWifiOnboarding {
 
   signGatewayAddTransaction = async () => {
     this.setProgressToStep('get_add_gateway')
-    const txnStr = await this._wifiClient.signGatewayAddTransaction(this._cluster)
+    const { txn: txnStr, apiVersion } = await this._wifiClient.signGatewayAddTransaction(
+      this._cluster,
+    )
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
-    return txn
+    return { txn, apiVersion }
   }
 
   checkFwValid = async () => {

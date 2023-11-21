@@ -108,7 +108,7 @@ export default class HmhHttpClient {
       AxiosResponse<{ signedAddGwTx: string; gatewayAddress: string }>
     >(url, body)
 
-    return response.data.signedAddGwTx
+    return { txn: response.data.signedAddGwTx, apiVersion: this.apiVersion }
   }
 
   getVersionDetails = async (): Promise<{
