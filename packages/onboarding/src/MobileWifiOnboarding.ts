@@ -1,10 +1,11 @@
 import { AddGatewayV1 } from '@helium/transactions'
 import WifiHttpClient from './WifiHttpClient'
-import OnboardingClient, { DeviceType } from './OnboardingClient'
+import OnboardingClient from './OnboardingClient'
 import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
+import { DeviceType } from './types'
 
 const ProgressKeys = [
   'get_add_gateway',

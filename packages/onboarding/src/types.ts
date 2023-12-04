@@ -39,6 +39,7 @@ export type Metadata = {
   gain: number
 }
 export type HotspotType = 'IOT' | 'MOBILE'
+export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
 
 export const BONES_IN_HNT = new BN(100000000)
 export const TXN_FEE_IN_LAMPORTS = new BN(5000)

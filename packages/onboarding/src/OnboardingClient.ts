@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
+import { OnboardingRecord, Maker, Metadata, HotspotType, DeviceType } from './types'
 import MockAdapter from 'axios-mock-adapter'
 import updateTxn from './updateTxn'
 import BN from 'bn.js'
@@ -14,8 +14,6 @@ type Response<T> = {
   errorMessage?: string
   errors?: Array<any>
 }
-
-export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
 
 export default class OnboardingClient {
   private axios!: AxiosInstance
