@@ -5,6 +5,7 @@ import { AddGatewayV1 } from '@helium/transactions'
 import Address from '@helium/address'
 import { Cluster, PublicKey } from '@solana/web3.js'
 import { heliumAddressFromSolKey } from '@helium/spl-utils'
+import { ManufacturedDeviceType, ManufacturedDeviceTypes } from './types'
 
 const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
 
@@ -70,7 +71,11 @@ export default class HmhHttpClient {
     this.apiVersion = apiVersion
   }
 
-  signGatewayAddTransaction = async (cluster: Cluster) => {
+  signGatewayAddTransaction = async (cluster: Cluster, deviceType: ManufacturedDeviceType) => {
+    if (!ManufacturedDeviceTypes.includes(deviceType)) {
+      throw new Error(`Invalid device type ${deviceType}`)
+    }
+
     const ownerHeliumAddress = heliumAddressFromSolKey(this.owner)
 
     let body = {} as Record<string, string>
@@ -84,6 +89,7 @@ export default class HmhHttpClient {
       body = {
         ownerAddress: this.owner.toBase58(),
         cluster: cluster,
+        deviceType,
       } as Record<string, string>
     }
 

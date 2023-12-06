@@ -5,7 +5,7 @@ import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
-import { DeviceType } from './types'
+import { DeviceType, ManufacturedDeviceType } from './types'
 
 const ProgressKeys = [
   'get_add_gateway',
@@ -121,10 +121,11 @@ export default class MobileWifiOnboarding {
     }
   }
 
-  signGatewayAddTransaction = async () => {
+  signGatewayAddTransaction = async (deviceType: ManufacturedDeviceType) => {
     this.setProgressToStep('get_add_gateway')
     const { txn: txnStr, apiVersion } = await this._wifiClient.signGatewayAddTransaction(
       this._cluster,
+      deviceType,
     )
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')

@@ -38,6 +38,8 @@ export type Metadata = {
   elevation: number
   gain: number
 }
+export const ManufacturedDeviceTypes = ['HeliumMobileIndoor', 'HeliumMobileOutdoor'] as const
+export type ManufacturedDeviceType = (typeof ManufacturedDeviceTypes)[number]
 export type HotspotType = 'IOT' | 'MOBILE'
 export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
 

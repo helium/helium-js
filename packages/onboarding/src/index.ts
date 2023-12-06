@@ -11,4 +11,4 @@ export { default as SolanaOnboarding } from './SolanaOnboarding'
 
 export default OnboardingClient
 
-export { Maker, OnboardingRecord, HotspotType, DeviceType } from './types'
+export { Maker, OnboardingRecord, HotspotType, DeviceType, ManufacturedDeviceType } from './types'

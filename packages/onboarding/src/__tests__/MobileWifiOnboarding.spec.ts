@@ -43,7 +43,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       cluster: 'devnet',
     })
 
-    const { txn } = await client.signGatewayAddTransaction()
+    const { txn } = await client.signGatewayAddTransaction('HeliumMobileIndoor')
     expect(txn).toBeDefined()
     expect(txn.owner?.b58).toBe(ALICE.b58)
   })
@@ -90,7 +90,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       },
     })
 
-    const { txn } = await client.signGatewayAddTransaction()
+    const { txn } = await client.signGatewayAddTransaction('HeliumMobileIndoor')
     let lat = 44.501341
     let lng = -88.062208
 
@@ -144,7 +144,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
       cluster: 'devnet',
     })
 
-    const { txn } = await client.signGatewayAddTransaction()
+    const { txn } = await client.signGatewayAddTransaction('HeliumMobileIndoor')
     expect(txn).toBeDefined()
     expect(txn.owner?.b58).toBe(ALICE.b58)
   })
@@ -193,7 +193,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
       },
     })
 
-    const { txn } = await client.signGatewayAddTransaction()
+    const { txn } = await client.signGatewayAddTransaction('HeliumMobileOutdoor')
     let lat = 44.501341
     let lng = -88.062208
 
