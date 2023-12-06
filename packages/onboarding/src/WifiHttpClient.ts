@@ -5,9 +5,24 @@ import { AddGatewayV1 } from '@helium/transactions'
 import Address from '@helium/address'
 import { Cluster, PublicKey } from '@solana/web3.js'
 import { heliumAddressFromSolKey } from '@helium/spl-utils'
-import { ManufacturedDeviceType, ManufacturedDeviceTypes } from './types'
+import {
+  ManufacturedDeviceType,
+  ManufacturedDeviceTypes,
+  OutdoorManufacturedDeviceType,
+  OutdoorManufacturedDeviceTypes,
+} from './types'
 
 const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
+
+type GPSLocation = {
+  latitude: number
+  longitude: number
+  accuracy: number
+  provider_type: string
+  timestamp: number
+  altitude: number
+}
+type GPSLocationResponse = { success: boolean; error?: string; data?: GPSLocation; code: number }
 
 export default class HmhHttpClient {
   private axios!: AxiosInstance
@@ -56,6 +71,18 @@ export default class HmhHttpClient {
         this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
       } else {
         this.mockAdapter.onGet('/v2/fw/version').reply(200, { fw_ver: 'v2.0.0' })
+        this.mockAdapter
+          .onGet('/v2/location/gps')
+          .replyOnce(406) // the real api will return 406 if no location data available yet
+          .onGet('/v2/location/gps')
+          .reply(200, {
+            latitude: 44.501528048963436,
+            longitude: -88.06224585415643,
+            accuracy: 43.210987,
+            provider_type: 'GPS',
+            timestamp: 1701189953,
+            altitude: 567.8,
+          })
       }
     }
   }
@@ -156,6 +183,49 @@ export default class HmhHttpClient {
     }
   }
 
+  getGpsLocation = async (
+    deviceType: OutdoorManufacturedDeviceType,
+  ): Promise<GPSLocationResponse> => {
+    try {
+      this.logCallback?.('getGpsLocation')
+      if (!OutdoorManufacturedDeviceTypes.includes(deviceType)) {
+        throw new Error(`Invalid device type ${deviceType}. Only outdoor devices have GPS.`)
+      }
+
+      if (this.apiVersion === 'v1') {
+        throw new Error('GPS location is not supported on api version v1')
+      }
+
+      const apiResponse = await this.axios.get<GPSLocation>('/v2/location/gps')
+      this.logCallback?.('getGpsLocation response', apiResponse.data)
+
+      return { success: true, data: apiResponse.data, code: apiResponse.status }
+    } catch (e) {
+      const err = e as AxiosError
+      console.log({ err })
+
+      if (err.response?.status) {
+        switch (err.response.status) {
+          case 406:
+            return {
+              success: false,
+              code: err.response.status,
+              error: 'No location data available yet.',
+            }
+          case 501: // this shouldn't happen as we prevent it, but just in case
+            return {
+              success: false,
+              code: err.response.status,
+              error: 'GPS is not available on this device.',
+            }
+        }
+      }
+
+      this.errorCallback?.('getGpsLocation failed')
+      throw e
+    }
+  }
+
   onHotspotCreated = async (opts: { assetId: string; cluster: Cluster }) => {
     try {
       await this.validateApiVersion()
@@ -180,7 +250,7 @@ export default class HmhHttpClient {
       this.errorCallback?.(e)
 
       const err = e as AxiosError
-      if (err.request.response) {
+      if (err.request?.response) {
         throw new Error(`${err.request.response}\nStatus Code: ${err.response?.status}`)
       }
       throw e

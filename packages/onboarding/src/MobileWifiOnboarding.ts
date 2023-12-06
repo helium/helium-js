@@ -5,7 +5,7 @@ import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
-import { DeviceType, ManufacturedDeviceType } from './types'
+import { DeviceType, ManufacturedDeviceType, OutdoorManufacturedDeviceType } from './types'
 
 const ProgressKeys = [
   'get_add_gateway',
@@ -150,6 +150,10 @@ export default class MobileWifiOnboarding {
     if (firmwareVersion.startsWith('dev')) return true
 
     return compareVersions(firmwareVersion.replace('v', ''), minFirmwareVersion) >= 0
+  }
+
+  getGpsLocation = async (deviceType: OutdoorManufacturedDeviceType) => {
+    return this._wifiClient.getGpsLocation(deviceType)
   }
 
   getMobileAssertData = async ({

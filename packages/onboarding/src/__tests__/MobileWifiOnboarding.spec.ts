@@ -218,4 +218,33 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
 
     expect(txnIds).toBeDefined()
   })
+
+  it('Gets the gps data from an outdoor hotspot', async () => {
+    const client = new MobileWifiOnboarding({
+      wifiApiVersion: 'v2',
+      shouldMock: true,
+      wifiBaseUrl: 'http://192.168.68.1:3333',
+      wallet: ALICE_PUBKEY,
+      onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
+      cluster: 'devnet',
+      rpcEndpoint: 'https://api.devnet.solana.com',
+      logCallback: (message, data) => {
+        console.log(message)
+        if (data) {
+          console.log(data)
+        }
+      },
+      errorCallback: (error) => {
+        console.log(error)
+      },
+      progressCallback: (progress, step) => {
+        console.log(progress, step)
+      },
+    })
+
+    const response = await client.getGpsLocation('HeliumMobileOutdoor')
+    expect(response.success).toBe(false)
+    const response2 = await client.getGpsLocation('HeliumMobileOutdoor')
+    expect(response2.success).toBe(true)
+  })
 })
