@@ -16,7 +16,7 @@ export default class OnboardingClient {
 
   constructor(baseURL: string, opts?: { retryOn404?: boolean; retryCount?: number }) {
     this.axios = axios.create({
-      baseURL,
+      baseURL: baseURL.endsWith('/') ? baseURL : `${baseURL}/`,
     })
 
     const retryOn404 = opts?.retryOn404 ?? true
@@ -86,7 +86,7 @@ export default class OnboardingClient {
     )
   }
 
-  async createHotspot(opts: { transaction: string }) {
+  async createHotspot(opts: { transaction: string; payer?: string }) {
     return this.post<{ solanaTransactions: number[][] }>('transactions/create-hotspot', opts)
   }
 
@@ -94,6 +94,7 @@ export default class OnboardingClient {
     opts: {
       hotspotAddress: string
       type: HotspotType
+      payer?: string
     } & Partial<Metadata>,
   ) {
     return this.post<{ solanaTransactions: number[][] }>(
@@ -103,15 +104,16 @@ export default class OnboardingClient {
         location: opts.location,
         elevation: opts.elevation,
         gain: opts.gain,
+        payer: opts.payer
       },
     )
   }
 
-  async onboardIot(opts: { hotspotAddress: string } & Partial<Metadata>) {
+  async onboardIot(opts: { hotspotAddress: string; payer?: string } & Partial<Metadata>) {
     return this.onboard({ ...opts, type: 'IOT' })
   }
 
-  async onboardMobile(opts: { hotspotAddress: string } & Partial<Metadata>) {
+  async onboardMobile(opts: { hotspotAddress: string; payer?: string } & Partial<Metadata>) {
     return this.onboard({ ...opts, type: 'MOBILE' })
   }
 
@@ -122,10 +124,12 @@ export default class OnboardingClient {
     gain,
     hotspotAddress,
     type,
+    payer,
   }: Metadata & {
     type: HotspotType
     hotspotAddress: string
     solanaAddress: string
+    payer?: string
   }) {
     const body = {
       entityKey: hotspotAddress,
@@ -133,6 +137,7 @@ export default class OnboardingClient {
       elevation,
       gain,
       wallet: solanaAddress,
+      payer,
     }
     return this.post<{ solanaTransactions: number[][] }>(
       `transactions/${type.toLowerCase()}/update-metadata`,
@@ -144,6 +149,7 @@ export default class OnboardingClient {
     opts: Metadata & {
       hotspotAddress: string
       solanaAddress: string
+      payer?: string
     },
   ) {
     return this.updateMetadata({ ...opts, type: 'IOT' })
@@ -153,6 +159,7 @@ export default class OnboardingClient {
     opts: Metadata & {
       hotspotAddress: string
       solanaAddress: string
+      payer?: string
     },
   ) {
     return this.updateMetadata({ ...opts, type: 'MOBILE' })
