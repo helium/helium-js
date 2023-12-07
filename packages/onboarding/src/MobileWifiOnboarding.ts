@@ -6,6 +6,7 @@ import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
 import { DeviceType, ManufacturedDeviceType, OutdoorManufacturedDeviceType } from './types'
+import ConfigurationClient from './ConfigurationClient'
 
 const ProgressKeys = [
   'get_add_gateway',
@@ -15,7 +16,7 @@ const ProgressKeys = [
   'verify_create',
   'fetch_mobile',
   'got_mobile',
-  'submit_mobile',
+  'submit_signed_messages',
   'verify_mobile',
   'shutdown_wifi',
   'complete',
@@ -23,6 +24,7 @@ const ProgressKeys = [
 type ProgressStep = (typeof ProgressKeys)[number]
 
 export default class MobileWifiOnboarding {
+  private _configurationClient!: ConfigurationClient
   private _wifiClient!: WifiHttpClient
   private _onboardingClient!: OnboardingClient
   private _solanaOnboarding!: SolanaOnboarding
@@ -77,6 +79,12 @@ export default class MobileWifiOnboarding {
     this._rpcEndpoint = opts.rpcEndpoint
     this._cluster = opts.cluster
     this._progressCallback = opts.progressCallback
+
+    this._configurationClient = new ConfigurationClient({
+      cluster: opts.cluster,
+      mockRequests: opts.shouldMock,
+      wallet: opts.wallet,
+    })
 
     this._wifiClient = new WifiHttpClient({
       owner: opts.wallet,
@@ -329,7 +337,7 @@ export default class MobileWifiOnboarding {
     }
     const hotspotAddress = addGatewayV1.gateway.b58
 
-    if (authToken && this._cluster === 'devnet') {
+    if (!this._shouldMock && authToken && this._cluster === 'devnet') {
       // If onboarding to devnet, we create the hotspot on the onboarding server
       try {
         await this._onboardingClient.addToOnboardingServer({
@@ -381,7 +389,7 @@ export default class MobileWifiOnboarding {
       this.writeError(e)
     }
 
-    if (!needsOnboarding) {
+    if (!this._shouldMock && !needsOnboarding) {
       return []
     }
 
@@ -437,7 +445,7 @@ export default class MobileWifiOnboarding {
     signedTxns: Buffer[]
   }) => {
     this.writeLog('Submitting MOBILE onboard txns to solana')
-    this.setProgressToStep('submit_mobile')
+    this.setProgressToStep('submit_signed_messages')
 
     const asset = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     if (!asset) {
@@ -514,5 +522,23 @@ export default class MobileWifiOnboarding {
       newOwner,
       hotspotAddress,
     })
+  }
+
+  async createConfigurationMessage(opts: {
+    lat: number
+    lng: number
+    height: number
+    azimuth: number
+  }) {
+    return this._configurationClient.createConfigurationMessage(opts)
+  }
+
+  async sendConfigurationMessage(opts: {
+    hmhPubKey: string
+    originalMessage: Uint8Array
+    signedMessage: Uint8Array
+    token: string
+  }) {
+    return this._configurationClient.sendConfigurationMessage(opts)
   }
 }

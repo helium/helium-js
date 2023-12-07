@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+message Message {
+  bytes wallet_pub_key = 1;
+  bytes hmh_pub_key = 2;
+  string cluster = 3;
+
+  double lat = 4;
+  double long = 5;
+  uint32 antenna = 6;
+  double height = 7;
+  double azimuth = 8;
+  double mechanical_down_tilt = 9;
+  double electrical_down_tilt = 10;
+  uint64 timestamp = 11;
+
+  bytes signature = 12;
+}

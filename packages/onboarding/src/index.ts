@@ -12,3 +12,5 @@ export { default as SolanaOnboarding } from './SolanaOnboarding'
 export default OnboardingClient
 
 export { Maker, OnboardingRecord, HotspotType, DeviceType, ManufacturedDeviceType } from './types'
+
+export { Message } from './OutdoorConfig'
