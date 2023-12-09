@@ -202,26 +202,34 @@ export default class HmhHttpClient {
       return { success: true, data: apiResponse.data, code: apiResponse.status }
     } catch (e) {
       const err = e as AxiosError
-      console.log({ err })
+
+      let error = typeof err.response?.data === 'string' ? err.response.data : ''
 
       if (err.response?.status) {
         switch (err.response.status) {
           case 406:
+            this.logCallback?.('getGpsLocation - no location data available yet')
             return {
               success: false,
               code: err.response.status,
-              error: 'No location data available yet.',
+              error: error || 'No location data available yet.',
             }
           case 501: // this shouldn't happen as we prevent it, but just in case
+            this.errorCallback?.(`getGpsLocation failed: Status: ${err.response.status}`)
             return {
               success: false,
               code: err.response.status,
-              error: 'GPS is not available on this device.',
+              error: error || 'GPS is not available on this device.',
+            }
+          default:
+            this.errorCallback?.(`getGpsLocation failed: Status: ${err.response.status}`)
+            return {
+              success: false,
+              code: err.response.status,
+              error: error || 'Unknown error getting GPS location.',
             }
         }
       }
-
-      this.errorCallback?.('getGpsLocation failed')
       throw e
     }
   }
