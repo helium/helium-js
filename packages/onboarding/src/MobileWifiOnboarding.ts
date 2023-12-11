@@ -5,7 +5,12 @@ import SolanaOnboarding from './SolanaOnboarding'
 import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import sleep from './sleep'
 import { compareVersions } from 'compare-versions'
-import { DeviceType, ManufacturedDeviceType, OutdoorManufacturedDeviceType } from './types'
+import {
+  DeviceType,
+  HeightType,
+  ManufacturedDeviceType,
+  OutdoorManufacturedDeviceType,
+} from './types'
 import ConfigurationClient from './ConfigurationClient'
 
 const ProgressKeys = [
@@ -228,19 +233,19 @@ export default class MobileWifiOnboarding {
     this.setProgressToStep('fetch_create')
 
     let solanaTransactions: number[][] | undefined = undefined
+
     try {
       const createTxns = await this._onboardingClient.createHotspot({
         transaction,
       })
       solanaTransactions = createTxns.data?.solanaTransactions
+      if (solanaTransactions?.length) {
+        this.writeLog('Created hotspot onboard txns')
+      } else {
+        this.writeLog('Could not create hotspot onboard txns', createTxns)
+      }
     } catch (e) {
       this.writeError(e)
-    }
-
-    if (solanaTransactions?.length) {
-      this.writeLog('Created hotspot onboard txns')
-    } else {
-      this.writeLog('Could not create hotspot onboard txns')
     }
 
     try {
@@ -529,6 +534,7 @@ export default class MobileWifiOnboarding {
     lng: number
     height: number
     azimuth: number
+    heightType: HeightType
   }) {
     return this._configurationClient.createConfigurationMessage(opts)
   }

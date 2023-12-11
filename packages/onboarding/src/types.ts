@@ -51,6 +51,7 @@ export const ManufacturedDeviceTypes = [
 ] as const
 export type ManufacturedDeviceType = (typeof ManufacturedDeviceTypes)[number]
 
+export type HeightType = 'MSL' | 'AGL' | 'NONE' | 'UNRECOGNIZED'
 export type HotspotType = 'IOT' | 'MOBILE'
 export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
 

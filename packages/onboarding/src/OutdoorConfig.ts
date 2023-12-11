@@ -4,6 +4,45 @@ import Long = require("long");
 
 export const protobufPackage = "";
 
+export enum heightType {
+  NONE = 0,
+  AGL = 1,
+  MSL = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function heightTypeFromJSON(object: any): heightType {
+  switch (object) {
+    case 0:
+    case "NONE":
+      return heightType.NONE;
+    case 1:
+    case "AGL":
+      return heightType.AGL;
+    case 2:
+    case "MSL":
+      return heightType.MSL;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return heightType.UNRECOGNIZED;
+  }
+}
+
+export function heightTypeToJSON(object: heightType): string {
+  switch (object) {
+    case heightType.NONE:
+      return "NONE";
+    case heightType.AGL:
+      return "AGL";
+    case heightType.MSL:
+      return "MSL";
+    case heightType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Message {
   walletPubKey: Uint8Array;
   hmhPubKey: Uint8Array;
@@ -12,6 +51,7 @@ export interface Message {
   long: number;
   antenna: number;
   height: number;
+  heightType: heightType;
   azimuth: number;
   mechanicalDownTilt: number;
   electricalDownTilt: number;
@@ -28,6 +68,7 @@ function createBaseMessage(): Message {
     long: 0,
     antenna: 0,
     height: 0,
+    heightType: 0,
     azimuth: 0,
     mechanicalDownTilt: 0,
     electricalDownTilt: 0,
@@ -59,20 +100,23 @@ export const Message = {
     if (message.height !== 0) {
       writer.uint32(57).double(message.height);
     }
+    if (message.heightType !== 0) {
+      writer.uint32(64).int32(message.heightType);
+    }
     if (message.azimuth !== 0) {
-      writer.uint32(65).double(message.azimuth);
+      writer.uint32(73).double(message.azimuth);
     }
     if (message.mechanicalDownTilt !== 0) {
-      writer.uint32(73).double(message.mechanicalDownTilt);
+      writer.uint32(81).double(message.mechanicalDownTilt);
     }
     if (message.electricalDownTilt !== 0) {
-      writer.uint32(81).double(message.electricalDownTilt);
+      writer.uint32(89).double(message.electricalDownTilt);
     }
     if (message.timestamp !== 0) {
-      writer.uint32(88).uint64(message.timestamp);
+      writer.uint32(96).uint64(message.timestamp);
     }
     if (message.signature.length !== 0) {
-      writer.uint32(98).bytes(message.signature);
+      writer.uint32(106).bytes(message.signature);
     }
     return writer;
   },
@@ -134,35 +178,42 @@ export const Message = {
           message.height = reader.double();
           continue;
         case 8:
-          if (tag !== 65) {
+          if (tag !== 64) {
             break;
           }
 
-          message.azimuth = reader.double();
+          message.heightType = reader.int32() as any;
           continue;
         case 9:
           if (tag !== 73) {
             break;
           }
 
-          message.mechanicalDownTilt = reader.double();
+          message.azimuth = reader.double();
           continue;
         case 10:
           if (tag !== 81) {
             break;
           }
 
-          message.electricalDownTilt = reader.double();
+          message.mechanicalDownTilt = reader.double();
           continue;
         case 11:
-          if (tag !== 88) {
+          if (tag !== 89) {
+            break;
+          }
+
+          message.electricalDownTilt = reader.double();
+          continue;
+        case 12:
+          if (tag !== 96) {
             break;
           }
 
           message.timestamp = longToNumber(reader.uint64() as Long);
           continue;
-        case 12:
-          if (tag !== 98) {
+        case 13:
+          if (tag !== 106) {
             break;
           }
 
@@ -186,6 +237,7 @@ export const Message = {
       long: isSet(object.long) ? globalThis.Number(object.long) : 0,
       antenna: isSet(object.antenna) ? globalThis.Number(object.antenna) : 0,
       height: isSet(object.height) ? globalThis.Number(object.height) : 0,
+      heightType: isSet(object.heightType) ? heightTypeFromJSON(object.heightType) : 0,
       azimuth: isSet(object.azimuth) ? globalThis.Number(object.azimuth) : 0,
       mechanicalDownTilt: isSet(object.mechanicalDownTilt) ? globalThis.Number(object.mechanicalDownTilt) : 0,
       electricalDownTilt: isSet(object.electricalDownTilt) ? globalThis.Number(object.electricalDownTilt) : 0,
@@ -217,6 +269,9 @@ export const Message = {
     if (message.height !== 0) {
       obj.height = message.height;
     }
+    if (message.heightType !== 0) {
+      obj.heightType = heightTypeToJSON(message.heightType);
+    }
     if (message.azimuth !== 0) {
       obj.azimuth = message.azimuth;
     }
@@ -247,6 +302,7 @@ export const Message = {
     message.long = object.long ?? 0;
     message.antenna = object.antenna ?? 0;
     message.height = object.height ?? 0;
+    message.heightType = object.heightType ?? 0;
     message.azimuth = object.azimuth ?? 0;
     message.mechanicalDownTilt = object.mechanicalDownTilt ?? 0;
     message.electricalDownTilt = object.electricalDownTilt ?? 0;

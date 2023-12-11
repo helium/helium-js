@@ -2,7 +2,8 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import axiosRetry from 'axios-retry'
 import MockAdapter from 'axios-mock-adapter'
 import { Cluster, PublicKey } from '@solana/web3.js'
-import { Message } from './OutdoorConfig'
+import { Message, heightTypeFromJSON } from './OutdoorConfig'
+import { HeightType } from './types'
 
 export default class ConfigurationClient {
   private axios!: AxiosInstance
@@ -42,6 +43,7 @@ export default class ConfigurationClient {
     lng: number
     height: number
     azimuth: number
+    heightType: HeightType
   }) {
     const message = Message.create()
     message.cluster = this.cluster
@@ -52,6 +54,7 @@ export default class ConfigurationClient {
     message.azimuth = opts.azimuth
     message.timestamp = Math.floor(Date.now() / 1000)
     message.antenna = 18 // outdoor antenna
+    message.heightType = heightTypeFromJSON(opts.heightType)
 
     return Message.encode(message).finish()
   }

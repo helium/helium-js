@@ -21,6 +21,7 @@ type GPSLocation = {
   provider_type: string
   timestamp: number
   altitude: number
+  altitude_type: 'MSL' | 'AGL' | 'NONE' | 'UNRECOGNIZED'
 }
 type GPSLocationResponse = { success: boolean; error?: string; data?: GPSLocation; code: number }
 
@@ -80,6 +81,7 @@ export default class HmhHttpClient {
             longitude: -88.06224585415643,
             accuracy: 43.210987,
             provider_type: 'GPS',
+            altitude_type: 'MSL',
             timestamp: 1701189953,
             altitude: 567.8,
           })
