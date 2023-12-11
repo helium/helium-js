@@ -143,7 +143,6 @@ export default class OnboardingClient {
   ) {
     let location: string | undefined = undefined
     if (opts.location) {
-      console.log({ opts })
       location = new BN(opts.location, 'hex').toString()
     }
 
