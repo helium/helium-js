@@ -146,6 +146,10 @@ export default class HmhHttpClient {
     return { txn: response.data.signedAddGwTx, apiVersion: this.apiVersion }
   }
 
+  getApiVersion = () => {
+    return this.apiVersion
+  }
+
   getVersionDetails = async (): Promise<{
     status: number
     firmwareVersion?: string

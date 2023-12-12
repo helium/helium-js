@@ -169,6 +169,10 @@ export default class MobileWifiOnboarding {
     return this._wifiClient.getGpsLocation(deviceType)
   }
 
+  getApiVersion = () => {
+    return this._wifiClient.getApiVersion()
+  }
+
   getMobileAssertData = async ({
     gateway,
     decimalGain,
@@ -545,6 +549,9 @@ export default class MobileWifiOnboarding {
     signedMessage: Uint8Array
     token: string
   }) {
-    return this._configurationClient.sendConfigurationMessage(opts)
+    this._logCallback?.('Sending configuration message')
+    const response = await this._configurationClient.sendConfigurationMessage(opts)
+    this._logCallback?.('Configuration message sent')
+    return response
   }
 }
