@@ -54,6 +54,7 @@
     "axios-mock-adapter": "^1.21.5",
     "axios-retry": "^3.7.0",
     "bn.js": "^5.2.1",
+    "bs58": "^5.0.0",
     "compare-versions": "^6.1.0",
     "google-protobuf": "^3.21.2",
     "h3-js": "^4.1.0",

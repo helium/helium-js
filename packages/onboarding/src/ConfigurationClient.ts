@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { Cluster, PublicKey } from '@solana/web3.js'
 import { Message, heightTypeFromJSON } from './OutdoorConfig'
 import { HeightType } from './types'
+import bs58 from 'bs58'
 
 export default class ConfigurationClient {
   private axios!: AxiosInstance
@@ -44,8 +45,10 @@ export default class ConfigurationClient {
     height: number
     azimuth: number
     heightType: HeightType
+    hotspotAddress: string
   }) {
     const message = Message.create()
+    message.hmhPubKey = bs58.decode(opts.hotspotAddress)
     message.cluster = this.cluster
     message.walletPubKey = this.wallet.toBytes()
     message.lat = opts.lat
@@ -62,34 +65,34 @@ export default class ConfigurationClient {
   async sendConfigurationMessage({
     originalMessage,
     signedMessage,
-    hmhPubKey,
+    hotspotAddress,
     token,
   }: {
-    hmhPubKey: string
+    hotspotAddress: string
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string
   }) {
+    const url = `/api/v1/hmhpubkey/${hotspotAddress}/submitCoverageConfigurationMessage`
+
     const message = Message.decode(originalMessage)
     message.signature = signedMessage
     const encodedMessage = Message.encode(message).finish()
-
-    const url = `/api/v1/hmhpubkey/${hmhPubKey}/submitCoverageConfigurationMessage`
+    const body = { payloadB64: Buffer.from(encodedMessage).toString('base64') }
 
     if (this.mockAdapter) {
       this.mockAdapter.onPost(url).reply(204, { success: true })
     }
 
-    const response = await this.axios.post<
-      { ownerAddress: string; payerAddress: string },
-      AxiosResponse<any>
-    >(url, encodedMessage, {
-      headers: {
-        'X-API-KEY': token,
-        'Content-Type': 'application/octet-stream',
+    return this.axios.post<{ ownerAddress: string; payerAddress: string }, AxiosResponse<any>>(
+      url,
+      body,
+      {
+        headers: {
+          'X-API-KEY': token,
+          'Content-Type': 'application/json',
+        },
       },
-    })
-
-    return response.data
+    )
   }
 }

@@ -539,12 +539,13 @@ export default class MobileWifiOnboarding {
     height: number
     azimuth: number
     heightType: HeightType
+    hotspotAddress: string
   }) {
     return this._configurationClient.createConfigurationMessage(opts)
   }
 
   async sendConfigurationMessage(opts: {
-    hmhPubKey: string
+    hotspotAddress: string
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string

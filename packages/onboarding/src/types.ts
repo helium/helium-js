@@ -22,6 +22,7 @@ export type OnboardingRecord = {
   maker: Maker
   code: number
   errorMessage: string
+  deviceType: DeviceType | null
 }
 
 export type Maker = {

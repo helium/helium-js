@@ -17,6 +17,7 @@ type Response<T> = {
 
 export default class OnboardingClient {
   private axios!: AxiosInstance
+  private mockRequests!: boolean
 
   constructor(
     baseURL: string,
@@ -28,7 +29,7 @@ export default class OnboardingClient {
 
     const retryOn404 = opts?.retryOn404 ?? true
     const retries = opts?.retryCount ?? 5
-    const mockRequests = opts?.mockRequests ?? false
+    this.mockRequests = opts?.mockRequests || false
 
     if (retryOn404) {
       axiosRetry(this.axios, {
@@ -38,7 +39,7 @@ export default class OnboardingClient {
       })
     }
 
-    if (mockRequests) {
+    if (this.mockRequests) {
       const mock = new MockAdapter(this.axios, { delayResponse: 300 })
 
       mock.onPost('/transactions/create-hotspot').reply(200, {
