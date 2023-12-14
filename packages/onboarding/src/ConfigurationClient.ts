@@ -42,7 +42,7 @@ export default class ConfigurationClient {
   async createConfigurationMessage(opts: {
     lat: number
     lng: number
-    height: number
+    heightInMeters: number
     azimuth: number
     heightType: HeightType
     hotspotAddress: string
@@ -53,7 +53,7 @@ export default class ConfigurationClient {
     message.walletPubKey = this.wallet.toBytes()
     message.lat = opts.lat
     message.long = opts.lng
-    message.height = opts.height
+    message.height = opts.heightInMeters
     message.azimuth = opts.azimuth
     message.timestamp = Math.floor(Date.now() / 1000)
     message.antenna = 18 // outdoor antenna

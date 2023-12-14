@@ -53,7 +53,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     const originalMessage = await client.createConfigurationMessage({
       lat,
       lng,
-      height: 100,
+      heightInMeters: 100,
       azimuth: 240,
       heightType: 'MSL',
       hotspotAddress: txn.gateway.b58,

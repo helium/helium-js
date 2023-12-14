@@ -536,7 +536,7 @@ export default class MobileWifiOnboarding {
   async createConfigurationMessage(opts: {
     lat: number
     lng: number
-    height: number
+    heightInMeters: number
     azimuth: number
     heightType: HeightType
     hotspotAddress: string
