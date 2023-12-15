@@ -71,7 +71,7 @@ export default class HmhHttpClient {
         this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
         this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
       } else {
-        this.mockAdapter.onGet('/v2/fw/version').reply(200, { fw_ver: 'v2.0.0' })
+        this.mockAdapter.onGet('/v2/fw/version').reply(200, { fw_ver: 'v1.5.0' })
         this.mockAdapter
           .onGet('/v2/location/gps')
           .replyOnce(406) // the real api will return 406 if no location data available yet

@@ -145,10 +145,11 @@ export default class MobileWifiOnboarding {
     return { txn, apiVersion }
   }
 
-  checkFwValid = async () => {
+  checkFwValid = async (minVersion?: string) => {
     this.writeLog('Checking firmware version')
     const fwInfo = await this._wifiClient.getVersionDetails()
-    const minFirmwareVersion = '0.10.0'
+
+    const minFirmwareVersion = minVersion || '0.10.0'
 
     this.writeLog('Firmware version is', {
       data: { ...fwInfo, minFirmwareVersion },
@@ -162,7 +163,9 @@ export default class MobileWifiOnboarding {
 
     if (firmwareVersion.startsWith('dev')) return true
 
-    return compareVersions(firmwareVersion.replace('v', ''), minFirmwareVersion) >= 0
+    return (
+      compareVersions(firmwareVersion.replace('v', ''), minFirmwareVersion.replace('v', '')) >= 0
+    )
   }
 
   getGpsLocation = async (deviceType: OutdoorManufacturedDeviceType) => {

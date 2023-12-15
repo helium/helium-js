@@ -116,6 +116,20 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     expect(isValid).toBeTruthy()
   })
 
+  it('Checks for invalid firmware', async () => {
+    const client = new MobileWifiOnboarding({
+      shouldMock: true,
+      wifiBaseUrl: 'http://192.168.68.1:3333',
+      wallet: ALICE_PUBKEY,
+      onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
+      rpcEndpoint: 'https://api.devnet.solana.com',
+      cluster: 'devnet',
+    })
+
+    const isValid = await client.checkFwValid('2.5.0')
+    expect(isValid).toBeFalsy()
+  })
+
   it('Fetches the add gateway txn from the wifi access point', async () => {
     const client = new MobileWifiOnboarding({
       shouldMock: true,
