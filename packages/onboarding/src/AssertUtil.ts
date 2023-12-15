@@ -15,6 +15,7 @@ import {
   AccountLayout,
   createAssociatedTokenAccountIdempotentInstruction,
   getAccount,
+  getMinimumBalanceForRentExemptAccount,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token'
 import {
@@ -99,14 +100,18 @@ const burnHNTForDataCredits = async ({
   return txn
 }
 
-const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Connection) => {
+export const getAtaAccountCreationFee = async (
+  solanaAddress: PublicKey,
+  connection: Connection,
+) => {
   const ataAddress = getAssociatedTokenAddressSync(DC_MINT, solanaAddress, true)
 
   try {
     await getAccount(connection, ataAddress)
     return new BN(0)
   } catch {
-    return new BN(2039280)
+    const minRent = await getMinimumBalanceForRentExemptAccount(connection)
+    return new BN(minRent)
   }
 }
 
