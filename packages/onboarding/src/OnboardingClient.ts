@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import { OnboardingRecord, Maker, Metadata, HotspotType, DeviceType } from './types'
+import { OnboardingRecord, Maker, Metadata, NetworkType, DeviceType } from './types'
 import MockAdapter from 'axios-mock-adapter'
 import updateTxn from './updateTxn'
 import BN from 'bn.js'
@@ -138,7 +138,7 @@ export default class OnboardingClient {
   async onboard(
     opts: {
       hotspotAddress: string
-      type: HotspotType
+      type: NetworkType
       payer?: string
     } & Partial<Metadata>,
   ) {
@@ -169,7 +169,7 @@ export default class OnboardingClient {
 
   async updateMetadata(
     opts: Partial<Metadata> & {
-      type: HotspotType
+      type: NetworkType
       hotspotAddress: string
       solanaAddress: string
       payer?: string

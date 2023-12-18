@@ -9,17 +9,6 @@ import { usersFixture } from '../../../../integration_tests/fixtures/users'
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
 
-const TEST_MAKER = {
-  id: 1,
-  name: 'Test Maker',
-  address: '14PTUo6dRZoYheTrCLjGYUBVKKyvX7wDorwp6vkoeh1yQsDZkFm',
-  locationNonceLimit: 2,
-  createdAt: '2021-01-13T01:57:01.662Z',
-  updatedAt: '2021-01-13T01:57:01.662Z',
-}
-
-const TEST_MAKER_PUBKEY = heliumAddressToSolPublicKey(TEST_MAKER.address)
-
 describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   it('Creates, signs, and send config message', async () => {
     const { alice } = await usersFixture()
@@ -158,7 +147,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     const assertData = await client.getMobileAssertData({
       gateway: 'asdf',
       location: 'asdf123',
-      maker: TEST_MAKER_PUBKEY,
+      deviceType: 'WifiIndoor',
     })
 
     expect(assertData).toBeDefined()
@@ -260,7 +249,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
     const assertData = await client.getMobileAssertData({
       gateway: 'asdf',
       location: 'asdf123',
-      maker: TEST_MAKER_PUBKEY,
+      deviceType: 'WifiOutdoor',
     })
 
     expect(assertData).toBeDefined()

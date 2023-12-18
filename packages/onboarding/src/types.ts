@@ -1,6 +1,6 @@
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem } from '@helium/helium-entity-manager-sdk'
-import { getAssertData } from './AssertUtil'
+import { getAssertData } from './HotspotOnboardingUtil'
 import BN from 'bn.js'
 
 export const DEWI_ONBOARDING_API_BASE_URL = 'https://onboarding.dewi.org/api'
@@ -53,12 +53,11 @@ export const ManufacturedDeviceTypes = [
 export type ManufacturedDeviceType = (typeof ManufacturedDeviceTypes)[number]
 
 export type HeightType = 'MSL' | 'AGL' | 'NONE' | 'UNRECOGNIZED'
-export type HotspotType = 'IOT' | 'MOBILE'
-export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor'
+export type NetworkType = 'IOT' | 'MOBILE'
+export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor' | null // null is for IOT devices
 
 export const BONES_IN_HNT = new BN(100000000)
 export const TXN_FEE_IN_LAMPORTS = new BN(5000)
-export const FULL_LOCATION_STAKING_FEE = new BN(1000000) // $10 - does this need to be updated to $5? It's used as a fallback when something fails
 
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
 export type DcProgram = Awaited<ReturnType<typeof initDc>>

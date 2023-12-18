@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
-import { AssertData, TXN_FEE_IN_LAMPORTS } from '../types'
+import { AssertData } from '../types'
 
 export const getAssertData = async (): Promise<AssertData> => {
   return {
@@ -10,14 +10,6 @@ export const getAssertData = async (): Promise<AssertData> => {
       sol: new BN(1000000000000),
     },
     isFree: false,
-    makerFees: {
-      lamports: TXN_FEE_IN_LAMPORTS,
-      dc: new BN(1000000),
-    },
-    ownerFees: {
-      lamports: new BN(0),
-      dc: new BN(0),
-    },
     solanaTransactions: [],
     hasSufficientBalance: true,
     hasSufficientDc: true,

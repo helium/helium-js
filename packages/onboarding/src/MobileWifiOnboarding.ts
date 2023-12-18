@@ -182,21 +182,20 @@ export default class MobileWifiOnboarding {
     decimalGain,
     elevation,
     location,
-    maker,
+    deviceType,
   }: {
     gateway: string
     decimalGain?: number
     elevation?: number
     location: string
-    maker: PublicKey
+    deviceType: DeviceType
   }) => {
     return this._solanaOnboarding.getAssertData({
       gateway,
       decimalGain,
       elevation,
       location,
-      hotspotTypes: ['MOBILE'],
-      maker,
+      deviceType,
     })
   }
 
@@ -307,7 +306,7 @@ export default class MobileWifiOnboarding {
 
     if (this._shouldMock) {
       return this._solanaOnboarding.getHotspotDetails({
-        type: 'MOBILE',
+        networkType: 'MOBILE',
         address: hotspotAddress,
       })
     }
@@ -320,7 +319,7 @@ export default class MobileWifiOnboarding {
 
       try {
         const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
-          type: 'MOBILE',
+          networkType: 'MOBILE',
           address: hotspotAddress,
         })
 
@@ -391,7 +390,7 @@ export default class MobileWifiOnboarding {
     let needsOnboarding = true
     try {
       const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
-        type: 'MOBILE',
+        networkType: 'MOBILE',
         address: hotspotAddress,
       })
       if (hotspotInfo) {

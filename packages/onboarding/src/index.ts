@@ -15,7 +15,7 @@ export default OnboardingClient
 export {
   Maker,
   OnboardingRecord,
-  HotspotType,
+  NetworkType,
   DeviceType,
   ManufacturedDeviceType,
   HeightType,
