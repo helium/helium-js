@@ -5,6 +5,7 @@ import { Transaction } from '@solana/web3.js'
 import h3 from 'h3-js'
 import { Message } from '../OutdoorConfig'
 import { usersFixture } from '../../../../integration_tests/fixtures/users'
+import { v4 as uuidv4 } from 'uuid'
 
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
@@ -185,6 +186,11 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       addGatewayTxn: txn.toString(),
       deviceType: 'WifiIndoor',
       location,
+      batch: 'example-batch',
+      heliumSerial: uuidv4(),
+      macEth0: uuidv4(),
+      macWlan0: uuidv4(),
+      rpiSerial: uuidv4(),
     })
 
     expect(txns).toBeDefined()
@@ -288,6 +294,11 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
       addGatewayTxn: txn.toString(),
       deviceType: 'WifiIndoor',
       location,
+      batch: 'example-batch',
+      heliumSerial: uuidv4(),
+      macEth0: uuidv4(),
+      macWlan0: uuidv4(),
+      rpiSerial: uuidv4(),
     })
 
     expect(txns).toBeDefined()

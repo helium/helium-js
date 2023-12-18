@@ -336,12 +336,17 @@ export default class MobileWifiOnboarding {
     addGatewayTxn,
     authToken,
     location,
-    deviceType,
+    ...opts
   }: {
     addGatewayTxn: string
     authToken?: string
     location?: string
     deviceType: DeviceType
+    batch: string
+    heliumSerial: string
+    macEth0: string
+    macWlan0: string
+    rpiSerial: string
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -353,9 +358,9 @@ export default class MobileWifiOnboarding {
       // If onboarding to devnet, we create the hotspot on the onboarding server
       try {
         await this._onboardingClient.addToOnboardingServer({
-          deviceType,
-          onboardingKey: hotspotAddress,
+          ...opts,
           authToken,
+          onboardingKey: hotspotAddress,
         })
         await sleep(1000)
       } catch (e) {

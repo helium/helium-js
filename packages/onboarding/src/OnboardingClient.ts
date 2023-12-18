@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
-import { v4 as uuidv4 } from 'uuid'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
 import { OnboardingRecord, Maker, Metadata, NetworkType, DeviceType } from './types'
@@ -217,30 +216,22 @@ export default class OnboardingClient {
   }
 
   async addToOnboardingServer({
-    onboardingKey,
     authToken,
-    deviceType,
+    ...postBody
   }: {
     onboardingKey: string
     authToken: string
     deviceType: DeviceType
+    batch: string
+    heliumSerial: string
+    macEth0: string
+    macWlan0: string
+    rpiSerial: string
   }) {
-    return this.axios.post(
-      'hotspots',
-      {
-        batch: 'example-batch',
-        deviceType,
-        heliumSerial: uuidv4(),
-        macEth0: uuidv4(),
-        macWlan0: uuidv4(),
-        onboardingKey,
-        rpiSerial: uuidv4(),
+    return this.axios.post('hotspots', postBody, {
+      headers: {
+        authorization: authToken,
       },
-      {
-        headers: {
-          authorization: authToken,
-        },
-      },
-    )
+    })
   }
 }
