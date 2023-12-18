@@ -89,69 +89,63 @@ export const getHotspotNetworkDetails = async ({
 > => {
   const types = { networkType: undefined, deviceType: undefined, ...opts }
   let networkType = types.networkType
-  const deviceType = types.deviceType
-  if (!networkType && deviceType !== undefined) {
-    networkType = deviceTypeToNetworkType(deviceType)
+  if (!networkType && types.deviceType !== undefined) {
+    networkType = deviceTypeToNetworkType(types.deviceType)
   }
   if (!networkType) {
     throw new Error('Could not determine network type')
   }
 
-  try {
-    const mint = networkType === 'IOT' ? IOT_MINT : MOBILE_MINT
-    const subDao = subDaoKey(mint)[0]
+  const mint = networkType === 'IOT' ? IOT_MINT : MOBILE_MINT
+  const subDao = subDaoKey(mint)[0]
 
-    const configKey = rewardableEntityConfigKey(subDao, networkType)
+  const configKey = rewardableEntityConfigKey(subDao, networkType)
 
-    const entityConfig = await hemProgram.account.rewardableEntityConfigV0.fetchNullable(
-      configKey[0],
-    )
-    if (!entityConfig) return
+  const entityConfig = await hemProgram.account.rewardableEntityConfigV0.fetchNullable(configKey[0])
+  if (!entityConfig) return
 
-    if (networkType === 'IOT') {
-      const [info] = iotInfoKey(configKey[0], address)
-      const iotInfo = await hemProgram.account.iotHotspotInfoV0.fetch(info)
-
-      // @ts-ignore
-      const details = hotspotInfoToDetails(iotInfo)
-      const iotConfig = entityConfig.settings.iotConfig
-
-      const locationStakingFee = details.isFullHotspot
-        ? iotConfig?.fullLocationStakingFee
-        : iotConfig?.dataonlyLocationStakingFee
-
-      return { ...details, locationStakingFee }
-    }
-
-    const [info] = mobileInfoKey(configKey[0], address)
-
-    const mobileInfo = await hemProgram.account.mobileHotspotInfoV0.fetch(info)
-    const deviceTypeKeys = Object.keys(mobileInfo.deviceType)
-    let deviceType = ''
-    if (deviceTypeKeys.length) {
-      deviceType = deviceTypeKeys[0]
-    }
-    const mobileConfigV1 = entityConfig.settings.mobileConfigV1
-    const deviceFees = mobileConfigV1?.feesByDevice.find(
-      // @ts-ignore
-      (fee) => fee.deviceType[lowerFirst(deviceType)] !== undefined,
-    )
+  if (networkType === 'IOT') {
+    const [info] = iotInfoKey(configKey[0], address)
+    const iotInfo = await hemProgram.account.iotHotspotInfoV0.fetchNullable(info)
 
     // @ts-ignore
-    const details = hotspotInfoToDetails(mobileInfo)
-    if (!deviceFees) return details
-    return {
-      ...details,
-      locationStakingFee: deviceFees.locationStakingFee,
-    }
-  } catch (e) {
-    const error = String(e)
-    if (error.startsWith('Error: Account does not exist or has no data')) {
-      // This is an expected error. It has not been onboarded to this network
-      return
-    }
+    const details = hotspotInfoToDetails(iotInfo)
+    const iotConfig = entityConfig.settings.iotConfig
+    if (!iotConfig) throw new Error('Could not fetch iot config')
 
-    throw e
+    const locationStakingFee = details.isFullHotspot
+      ? iotConfig.fullLocationStakingFee
+      : iotConfig.dataonlyLocationStakingFee
+
+    return { ...details, ...iotConfig, locationStakingFee }
+  }
+
+  const [info] = mobileInfoKey(configKey[0], address)
+
+  const mobileInfo = await hemProgram.account.mobileHotspotInfoV0.fetchNullable(info)
+  if (!mobileInfo) throw new Error('Could not fetch mobile hotspot info')
+
+  const deviceTypeKeys = Object.keys(mobileInfo.deviceType)
+  let deviceType = ''
+  if (deviceTypeKeys.length) {
+    deviceType = deviceTypeKeys[0]
+  }
+
+  const mobileConfig =
+    entityConfig.settings.mobileConfigV1 ||
+    // @ts-ignore - mobileConfigV2 is not in the types yet
+    entityConfig.settings.mobileConfigV2
+  const deviceFees = mobileConfig?.feesByDevice.find(
+    // @ts-ignore
+    (fee) => fee.deviceType[lowerFirst(deviceType)] !== undefined,
+  )
+
+  // @ts-ignore
+  const details = hotspotInfoToDetails(mobileInfo)
+  if (!deviceFees) return details
+  return {
+    ...details,
+    locationStakingFee: deviceFees.locationStakingFee,
   }
 }
 

@@ -46,6 +46,7 @@ export default class ConfigurationClient {
     azimuth: number
     heightType: HeightType
     hotspotAddress: string
+    antenna?: number
   }) {
     const message = Message.create()
     message.hmhPubKey = bs58.decode(opts.hotspotAddress)
@@ -56,7 +57,7 @@ export default class ConfigurationClient {
     message.height = opts.heightInMeters
     message.azimuth = opts.azimuth
     message.timestamp = Math.floor(Date.now() / 1000)
-    message.antenna = 18 // outdoor antenna
+    message.antenna = opts.antenna || 18 // outdoor antenna
     message.heightType = heightTypeFromJSON(opts.heightType)
 
     return Message.encode(message).finish()
