@@ -62,3 +62,9 @@ export const TXN_FEE_IN_LAMPORTS = new BN(5000)
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
 export type DcProgram = Awaited<ReturnType<typeof initDc>>
 export type AssertData = Awaited<ReturnType<typeof getAssertData>>
+
+export type SubmitStatus = {
+  totalProgress: number
+  currentBatchProgress: number
+  currentBatchSize: number
+}

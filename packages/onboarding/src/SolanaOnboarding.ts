@@ -2,10 +2,15 @@ import { Cluster, Connection, PublicKey } from '@solana/web3.js'
 import * as HotspotOnboardingUtil from './HotspotOnboardingUtil'
 import OnboardingClient from './OnboardingClient'
 import { AnchorProvider } from '@coral-xyz/anchor'
-import { HNT_MINT, sendAndConfirmWithRetry, getAsset } from '@helium/spl-utils'
+import {
+  HNT_MINT,
+  sendAndConfirmWithRetry,
+  getAsset,
+  bulkSendRawTransactions,
+} from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
-import { AssertData, DcProgram, DeviceType, HemProgram } from './types'
+import { AssertData, DcProgram, DeviceType, HemProgram, SubmitStatus } from './types'
 import { daoKey } from '@helium/helium-sub-daos-sdk'
 import * as AssertMock from './__mocks__/AssertMock'
 import {
@@ -14,6 +19,7 @@ import {
 } from '@helium/hotspot-utils'
 
 const DEFAULT_TIMEOUT = 1 * 60 * 1000 // 1 minute
+
 export default class SolanaOnboarding {
   private shouldMock: boolean
   private connection!: Connection
@@ -144,18 +150,22 @@ export default class SolanaOnboarding {
 
   submitAll = async ({
     txns,
-    timeout,
     skipPreflight,
+    onProgress,
+    lastValidBlockHeight,
   }: {
     txns: Buffer[]
-    timeout?: number
+    onProgress?: ((status: SubmitStatus) => void) | undefined
+    lastValidBlockHeight?: number | undefined
     skipPreflight?: boolean
   }) => {
-    const results = [] as string[]
-    for (const txn of txns) {
-      results.push(await this.submit({ txn, timeout, skipPreflight }))
-    }
-    return results
+    return bulkSendRawTransactions(
+      this.connection,
+      txns,
+      onProgress,
+      lastValidBlockHeight,
+      skipPreflight,
+    )
   }
 
   getHotspotDetails = async ({
