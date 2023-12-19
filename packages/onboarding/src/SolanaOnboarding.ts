@@ -159,6 +159,10 @@ export default class SolanaOnboarding {
     lastValidBlockHeight?: number | undefined
     skipPreflight?: boolean
   }) => {
+    if (this.shouldMock) {
+      return [AssertMock.submit()]
+    }
+
     return bulkSendRawTransactions(
       this.connection,
       txns,
