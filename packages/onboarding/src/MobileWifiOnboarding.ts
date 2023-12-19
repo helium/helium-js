@@ -202,9 +202,13 @@ export default class MobileWifiOnboarding {
   getMobileOnboardTxns = async ({
     hotspotAddress,
     location,
+    elevation,
+    gain,
   }: {
     hotspotAddress: string
     location?: string
+    elevation?: number
+    gain?: number
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
@@ -213,6 +217,8 @@ export default class MobileWifiOnboarding {
       hotspotAddress,
       location,
       type: 'MOBILE',
+      elevation,
+      gain,
     })
 
     if (!onboardTxns.data?.solanaTransactions?.length) {
@@ -336,6 +342,8 @@ export default class MobileWifiOnboarding {
     addGatewayTxn,
     authToken,
     location,
+    elevation,
+    gain,
     ...opts
   }: {
     addGatewayTxn: string
@@ -347,6 +355,8 @@ export default class MobileWifiOnboarding {
     macEth0: string
     macWlan0: string
     rpiSerial: string
+    elevation?: number | undefined
+    gain?: number | undefined
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -413,6 +423,8 @@ export default class MobileWifiOnboarding {
     const txns = await this.getMobileOnboardTxns({
       location,
       hotspotAddress,
+      elevation,
+      gain,
     })
 
     return txns
