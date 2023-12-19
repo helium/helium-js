@@ -26,6 +26,7 @@ export default class OraclePricePrediction extends DataModel {
   get data(): OraclePriceData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

@@ -185,6 +185,7 @@ export default class Hotspot extends DataModel {
   get data(): HotspotData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import { OnboardingRecord, Maker, Metadata, HotspotType } from './types'
+import { OnboardingRecord, Maker, Metadata, NetworkType, DeviceType } from './types'
+import MockAdapter from 'axios-mock-adapter'
+import updateTxn from './updateTxn'
+import BN from 'bn.js'
 
 type Response<T> = {
   code: number
@@ -13,14 +16,19 @@ type Response<T> = {
 
 export default class OnboardingClient {
   private axios!: AxiosInstance
+  private mockRequests!: boolean
 
-  constructor(baseURL: string, opts?: { retryOn404?: boolean; retryCount?: number }) {
+  constructor(
+    baseURL: string,
+    opts?: { retryOn404?: boolean; retryCount?: number; mockRequests?: boolean },
+  ) {
     this.axios = axios.create({
       baseURL: baseURL.endsWith('/') ? baseURL : `${baseURL}/`,
     })
 
     const retryOn404 = opts?.retryOn404 ?? true
     const retries = opts?.retryCount ?? 5
+    this.mockRequests = opts?.mockRequests || false
 
     if (retryOn404) {
       axiosRetry(this.axios, {
@@ -28,6 +36,42 @@ export default class OnboardingClient {
         retryDelay: axiosRetry.exponentialDelay,
         retryCondition: (error) => error.response?.status === 404,
       })
+    }
+
+    if (this.mockRequests) {
+      const mock = new MockAdapter(this.axios, { delayResponse: 300 })
+
+      mock.onPost('/transactions/create-hotspot').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/mobile/onboard').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/mobile/update-metadata').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/iot/onboard').reply(200, {
+        data: {
+          solanaTransactions: [updateTxn],
+        },
+      })
+
+      mock.onPost('transactions/iot/update-metadata').reply(200, {
+        data: {
+          solanaTransactions: ['asdf1234'],
+        },
+      })
+
+      mock.onPost('hotspots').reply(200, {})
     }
   }
 
@@ -93,18 +137,23 @@ export default class OnboardingClient {
   async onboard(
     opts: {
       hotspotAddress: string
-      type: HotspotType
+      type: NetworkType
       payer?: string
     } & Partial<Metadata>,
   ) {
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
     return this.post<{ solanaTransactions: number[][] }>(
       `transactions/${opts.type.toLowerCase()}/onboard`,
       {
         entityKey: opts.hotspotAddress,
-        location: opts.location,
+        location,
         elevation: opts.elevation,
         gain: opts.gain,
-        payer: opts.payer
+        payer: opts.payer,
       },
     )
   }
@@ -117,20 +166,21 @@ export default class OnboardingClient {
     return this.onboard({ ...opts, type: 'MOBILE' })
   }
 
-  async updateMetadata({
-    solanaAddress,
-    location,
-    elevation,
-    gain,
-    hotspotAddress,
-    type,
-    payer,
-  }: Metadata & {
-    type: HotspotType
-    hotspotAddress: string
-    solanaAddress: string
-    payer?: string
-  }) {
+  async updateMetadata(
+    opts: Partial<Metadata> & {
+      type: NetworkType
+      hotspotAddress: string
+      solanaAddress: string
+      payer?: string
+    },
+  ) {
+    const { solanaAddress, elevation, gain, hotspotAddress, type, payer } = opts
+
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
     const body = {
       entityKey: hotspotAddress,
       location,
@@ -146,7 +196,7 @@ export default class OnboardingClient {
   }
 
   async updateIotMetadata(
-    opts: Metadata & {
+    opts: Partial<Metadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
@@ -156,12 +206,32 @@ export default class OnboardingClient {
   }
 
   async updateMobileMetadata(
-    opts: Metadata & {
+    opts: Partial<Metadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
     },
   ) {
     return this.updateMetadata({ ...opts, type: 'MOBILE' })
+  }
+
+  async addToOnboardingServer({
+    authToken,
+    ...postBody
+  }: {
+    onboardingKey: string
+    authToken: string
+    deviceType: DeviceType
+    batch: string
+    heliumSerial: string
+    macEth0: string
+    macWlan0: string
+    rpiSerial: string
+  }) {
+    return this.axios.post('hotspots', postBody, {
+      headers: {
+        authorization: authToken,
+      },
+    })
   }
 }

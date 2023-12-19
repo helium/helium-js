@@ -57,6 +57,7 @@ export default class Location extends DataModel {
   get data(): LocationData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

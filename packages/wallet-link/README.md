@@ -82,6 +82,7 @@ const updateParams = {
   addGatewayTxn: 'your_optional_unsigned_txn',
   assertLocationTxn: 'your_optional_unsigned_txn',
   transferHotspotTxn: 'your_optional_unsigned_txn',
+  configurationMessage: 'your_optional_configuration_msg',
 } as SignHotspotRequest
 
 const url = createUpdateHotspotUrl(updateParams)

@@ -1,11 +1,15 @@
 {
   "name": "@helium/onboarding",
-  "version": "4.10.3",
+  "version": "4.11.0",
   "description": "HTTP library for interacting with an onboarding server",
   "keywords": [
     "helium",
     "onboarding",
-    "api"
+    "api",
+    "mobile",
+    "wifi",
+    "access point",
+    "HMH"
   ],
   "author": "Matt Reetz <matthewcarlreetz@gmail.com>",
   "homepage": "https://github.com/helium/helium-js",
@@ -29,18 +33,42 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "clean": "rm -rf build",
-    "build": "yarn run clean && tsc"
+    "build": "yarn run clean && tsc",
+    "generate-protos": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=. ./src/OutdoorConfig.proto"
   },
   "bugs": {
     "url": "https://github.com/helium/helium-js/issues"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "axios-retry": "^3.4.0",
-    "qs": "^6.10.3"
+    "@coral-xyz/anchor": "^0.28.1-beta.2",
+    "@helium/address": "^4.11.0",
+    "@helium/currency-utils": "^0.6.6",
+    "@helium/data-credits-sdk": "^0.6.6",
+    "@helium/helium-entity-manager-sdk": "^0.6.6",
+    "@helium/hotspot-utils": "^0.6.6",
+    "@helium/spl-utils": "^0.6.6",
+    "@helium/transactions": "^4.11.0",
+    "@metaplex-foundation/mpl-bubblegum": "^0.7.0",
+    "@solana/web3.js": "^1.78.4",
+    "axios": "^1.5.0",
+    "axios-mock-adapter": "^1.21.5",
+    "axios-retry": "^3.7.0",
+    "bn.js": "^5.2.1",
+    "bs58": "^5.0.0",
+    "compare-versions": "^6.1.0",
+    "google-protobuf": "^3.21.2",
+    "h3-js": "^4.1.0",
+    "protobufjs": "^7.2.5",
+    "qs": "^6.10.3",
+    "ts-proto": "^1.165.1",
+    "ts-protoc-gen": "^0.15.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/qs": "^6.9.7"
+    "@types/bn.js": "^5.1.1",
+    "@types/google-protobuf": "^3.15.12",
+    "@types/qs": "^6.9.7",
+    "@types/uuid": "^9.0.3"
   },
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
 }

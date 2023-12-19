@@ -87,10 +87,7 @@ describe('list', () => {
     nock('https://api.helium.io')
       .get('/v1/accounts')
       .reply(200, {
-        data: [
-          accountFixture({ address: 'address-1' }),
-          accountFixture({ address: 'address-2' }),
-        ],
+        data: [accountFixture({ address: 'address-1' }), accountFixture({ address: 'address-2' })],
         cursor: 'cursor-1',
       })
 
@@ -98,10 +95,7 @@ describe('list', () => {
       .get('/v1/accounts')
       .query({ cursor: 'cursor-1' })
       .reply(200, {
-        data: [
-          accountFixture({ address: 'address-3' }),
-          accountFixture({ address: 'address-4' }),
-        ],
+        data: [accountFixture({ address: 'address-3' }), accountFixture({ address: 'address-4' })],
       })
 
     it('lists a page of accounts and exposes pagination functions', async () => {
@@ -120,10 +114,7 @@ describe('list', () => {
     nock('https://api.helium.io')
       .get('/v1/accounts')
       .reply(200, {
-        data: [
-          accountFixture({ address: 'address-1' }),
-          accountFixture({ address: 'address-2' }),
-        ],
+        data: [accountFixture({ address: 'address-1' }), accountFixture({ address: 'address-2' })],
         cursor: 'cursor-1',
       })
 
@@ -131,10 +122,7 @@ describe('list', () => {
       .get('/v1/accounts')
       .query({ cursor: 'cursor-1' })
       .reply(200, {
-        data: [
-          accountFixture({ address: 'address-3' }),
-          accountFixture({ address: 'address-4' }),
-        ],
+        data: [accountFixture({ address: 'address-3' }), accountFixture({ address: 'address-4' })],
       })
 
     it('lists accounts as an auto-paginating iterator', async () => {
@@ -147,12 +135,7 @@ describe('list', () => {
       for await (const account of accounts) {
         addresses.push(account.address)
       }
-      expect(addresses).toEqual([
-        'address-1',
-        'address-2',
-        'address-3',
-        'address-4',
-      ])
+      expect(addresses).toEqual(['address-1', 'address-2', 'address-3', 'address-4'])
     })
   })
 
@@ -202,15 +185,17 @@ export const rewardSumListFixture = () => ({
     min_time: '2020-12-17T00:00:00Z',
     max_time: '2020-12-18T00:00:00Z',
   },
-  data: [{
-    total: 13.17717245,
-    sum: 1317717245,
-    stddev: 1.10445133,
-    min: 0,
-    median: 1.98726309,
-    max: 2,
-    avg: 1.4641302722222223,
-  }],
+  data: [
+    {
+      total: 13.17717245,
+      sum: 1317717245,
+      stddev: 1.10445133,
+      min: 0,
+      median: 1.98726309,
+      max: 2,
+      avg: 1.4641302722222223,
+    },
+  ],
 })
 
 export const rewardsFixture = () => ({
@@ -244,15 +229,21 @@ export const rewardsFixture = () => ({
 
 describe('get rewards', () => {
   nock('https://api.helium.io')
-    .get('/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .get(
+      '/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z',
+    )
     .reply(200, rewardSumFixture())
 
   nock('https://api.helium.io')
-    .get('/v1/accounts/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z')
+    .get(
+      '/v1/accounts/fake-address/rewards?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z',
+    )
     .reply(200, rewardsFixture())
 
   nock('https://api.helium.io')
-    .get('/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day')
+    .get(
+      '/v1/accounts/fake-address/rewards/sum?min_time=2020-12-17T00%3A00%3A00.000Z&max_time=2020-12-18T00%3A00%3A00.000Z&bucket=day',
+    )
     .reply(200, rewardSumListFixture())
 
   nock('https://api.helium.io')
@@ -289,6 +280,7 @@ describe('get rewards', () => {
     try {
       await client.account('fake-address').rewards.sum.list({ minTime, maxTime })
     } catch (error) {
+      //@ts-ignore
       expect(error.message).toBe('missing bucket param')
     }
   })
@@ -297,7 +289,9 @@ describe('get rewards', () => {
     const minTime = new Date('2020-12-17T00:00:00Z')
     const maxTime = new Date('2020-12-18T00:00:00Z')
     const client = new Client()
-    const rewardsList = await client.account('fake-address').rewards.sum.list({ minTime, maxTime, bucket: 'day' })
+    const rewardsList = await client
+      .account('fake-address')
+      .rewards.sum.list({ minTime, maxTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)
@@ -306,7 +300,9 @@ describe('get rewards', () => {
   it('list account reward sums by bucket', async () => {
     const minTime = '-1 day'
     const client = new Client()
-    const rewardsList = await client.account('fake-address').rewards.sum.list({ minTime, bucket: 'day' })
+    const rewardsList = await client
+      .account('fake-address')
+      .rewards.sum.list({ minTime, bucket: 'day' })
     const rewards = await rewardsList.take(5)
     expect(rewards.length).toBe(1)
     expect(rewards[0].balanceTotal.floatBalance).toBe(13.17717245)

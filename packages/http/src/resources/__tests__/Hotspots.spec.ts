@@ -341,6 +341,7 @@ describe('get rewards', () => {
     try {
       await client.hotspot('fake-address').rewards.sum.list({ minTime, maxTime })
     } catch (error) {
+      // @ts-ignore
       expect(error.message).toBe('missing bucket param')
     }
   })

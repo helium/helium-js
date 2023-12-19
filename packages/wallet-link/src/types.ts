@@ -10,6 +10,7 @@ export type SignHotspotResponse = {
   transferTxn?: string
   gatewayAddress?: string
   solanaTransactions?: string
+  configurationMessage?: string
 }
 
 export type LinkWalletRequest = {
@@ -24,6 +25,7 @@ export type SignHotspotRequest = {
   assertLocationTxn?: string
   transferHotspotTxn?: string
   solanaTransactions?: string
+  configurationMessage?: string
 }
 
 export type Token = LinkWalletRequest & {

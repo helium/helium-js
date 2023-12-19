@@ -109,6 +109,7 @@ export default class Validator extends DataModel {
   get data(): ValidatorData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

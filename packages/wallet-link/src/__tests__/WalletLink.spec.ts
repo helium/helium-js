@@ -96,11 +96,11 @@ describe('wallet-link', () => {
         gatewayTxn: 'testGatewayTxn',
         transferTxn: 'testTransferTxn',
         gatewayAddress: 'testGatewayAddress',
+        configurationMessage: 'testConfigurationMessage',
       }
       const callbackUrl = createSignHotspotCallbackUrl('test://', params)
       expect(callbackUrl).toBe(
-        'test://sign_hotspot?assertTxn=testAssertTxn&gatewayAddress=testGatewayAddress' +
-          '&gatewayTxn=testGatewayTxn&status=success&transferTxn=testTransferTxn',
+        'test://sign_hotspot?assertTxn=testAssertTxn&configurationMessage=testConfigurationMessage&gatewayAddress=testGatewayAddress&gatewayTxn=testGatewayTxn&status=success&transferTxn=testTransferTxn',
       )
     })
 
@@ -111,11 +111,14 @@ describe('wallet-link', () => {
         addGatewayTxn: 'testAddGatewayTxn',
         assertLocationTxn: 'testAssertLocationTxn',
         transferHotspotTxn: 'testTransferHotspotTxn',
+        configurationMessage: 'testConfigurationMessage',
       }
       const callbackUrl = createUpdateHotspotUrl(params)
       expect(callbackUrl).toBe(
         'https://wallet.helium.com/sign_hotspot?addGatewayTxn=testAddGatewayTxn' +
-          `&assertLocationTxn=testAssertLocationTxn&token=${encodeURIComponent(tokenString)}` +
+          '&assertLocationTxn=testAssertLocationTxn' +
+          '&configurationMessage=testConfigurationMessage' +
+          `&token=${encodeURIComponent(tokenString)}` +
           '&transferHotspotTxn=testTransferHotspotTxn',
       )
     })

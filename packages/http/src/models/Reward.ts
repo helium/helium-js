@@ -46,6 +46,7 @@ export default class Reward extends DataModel {
   get data(): RewardData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

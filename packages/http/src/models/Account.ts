@@ -126,9 +126,8 @@ export default class Account extends DataModel {
     super()
     this.client = client
     this.netType = Address.fromB58(account.address).netType
-    const currencyType = this.netType === NetTypes.TESTNET
-      ? CurrencyType.testNetworkToken
-      : CurrencyType.default
+    const currencyType =
+      this.netType === NetTypes.TESTNET ? CurrencyType.testNetworkToken : CurrencyType.default
     this.speculativeNonce = account.speculative_nonce
     this.stakedBalance = toBalance(account.staked_balance, currencyType)
     this.secNonce = account.sec_nonce
@@ -176,6 +175,7 @@ export default class Account extends DataModel {
   get data(): AccountData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

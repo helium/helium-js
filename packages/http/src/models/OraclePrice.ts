@@ -30,6 +30,7 @@ export default class OraclePrice extends DataModel {
   get data(): OraclePriceData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...rest } = this
+    // @ts-ignore
     return { ...rest }
   }
 }

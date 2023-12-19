@@ -170,7 +170,7 @@ describe('Onboard', () => {
 
     const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
     const onboardingTxn = await client.onboardIot({
-      location: 'asdf',
+      location: '8a2a1072b59ffff',
       gain: 1,
       elevation: 1,
       hotspotAddress: 'asdf1234',
@@ -192,7 +192,7 @@ describe('Onboard', () => {
 
     const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
     const onboardingTxn = await client.onboardMobile({
-      location: 'asdf',
+      location: '8a2a1072b59ffff',
       gain: 1,
       elevation: 1,
       hotspotAddress: 'asdf1234',
@@ -216,7 +216,7 @@ describe('Onboard', () => {
       const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
       const onboardingTxn = await client.updateIotMetadata({
         solanaAddress: 'asfd',
-        location: 'asdf',
+        location: '8a2a1072b59ffff',
         elevation: 1,
         gain: 1,
         hotspotAddress: 'asdf',
@@ -239,7 +239,7 @@ describe('Onboard', () => {
       const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
       const onboardingTxn = await client.updateMobileMetadata({
         solanaAddress: 'asfd',
-        location: 'asdf',
+        location: '8a2a1072b59ffff',
         elevation: 1,
         gain: 1,
         hotspotAddress: 'asdf',
