@@ -8,10 +8,8 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, AccountInfo, Cluster, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import axios from 'axios'
+import { Connection, PublicKey, Cluster, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import {
-  AccountLayout,
   createAssociatedTokenAccountIdempotentInstruction,
   getAccount,
   getMinimumBalanceForRentExemptAccount,
@@ -33,11 +31,9 @@ import {
   TXN_FEE_IN_LAMPORTS,
 } from './types'
 
-type Account = AccountInfo<string[]>
-
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
-export const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
+const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
   if (deviceType === null) return 'IOT'
 
   return 'MOBILE'
@@ -92,6 +88,7 @@ export const getHotspotNetworkDetails = async ({
   if (!networkType && types.deviceType !== undefined) {
     networkType = deviceTypeToNetworkType(types.deviceType)
   }
+
   if (!networkType) {
     throw new Error('Could not determine network type')
   }
@@ -214,10 +211,7 @@ const burnHNTForDataCredits = async ({
   return txn
 }
 
-export const getAtaAccountCreationFee = async (
-  solanaAddress: PublicKey,
-  connection: Connection,
-) => {
+const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Connection) => {
   const ataAddress = getAssociatedTokenAddressSync(DC_MINT, solanaAddress, true)
 
   try {
@@ -227,84 +221,6 @@ export const getAtaAccountCreationFee = async (
     const minRent = await getMinimumBalanceForRentExemptAccount(connection)
     return new BN(minRent)
   }
-}
-
-export const fetchSimulatedTxn = async ({
-  apiUrl,
-  txnBuff,
-  accountAddresses,
-}: {
-  apiUrl: string
-  txnBuff: Buffer
-  accountAddresses: string[]
-}): Promise<Array<Account>> => {
-  const body = {
-    jsonrpc: '2.0',
-    id: 1,
-    method: 'simulateTransaction',
-    params: [
-      txnBuff.toString('base64'),
-      {
-        encoding: 'base64',
-        commitment: 'recent',
-        sigVerify: false,
-        accounts: {
-          encoding: 'jsonParsed',
-          addresses: accountAddresses,
-        },
-      },
-    ],
-  }
-  const response = await axios.post<{
-    result: { value: { accounts: Account[]; logs: string[]; err?: any } }
-  }>(apiUrl, body)
-
-  if (response.data.result.value.err) {
-    console.error(response.data.result.value.logs.join('\n') + 'Transaction would fail')
-    throw new Error('Transaction would fail')
-  }
-  return response.data.result.value.accounts
-}
-
-export const getAccountFees = async ({
-  dcAccount,
-  account,
-  connection,
-  key,
-  dcMint,
-}: {
-  key: PublicKey
-  dcAccount?: Account
-  account?: Account
-  connection: Connection
-  dcMint: PublicKey
-}) => {
-  const lamportsBefore = new BN(await connection.getBalance(key))
-  const dcBefore = await getBalance(key, connection, dcMint)
-
-  let lamportsAfter = new BN(0)
-  let dcAfter = new BN(0)
-
-  if (account) {
-    lamportsAfter = new BN(account.lamports.toString())
-  } else {
-    lamportsAfter = lamportsBefore
-  }
-
-  const lamportFee = lamportsBefore.sub(lamportsAfter)
-  let dcFee = new BN(0)
-
-  if (dcAccount && dcAccount.lamports > 0) {
-    const tokenAccount = AccountLayout.decode(
-      Buffer.from(dcAccount.data[0], dcAccount.data[1] as BufferEncoding),
-    )
-
-    const dcBalance = new BN(tokenAccount.amount.toString())
-    dcAfter = dcBalance
-    dcFee = dcBefore.sub(dcAfter)
-  }
-
-  return { lamports: lamportFee, dc: dcFee }
 }
 
 export const getAssertData = async ({
@@ -345,7 +261,11 @@ export const getAssertData = async ({
 
   const networkType = deviceTypeToNetworkType(deviceType)
   const solanaAddress = owner.toBase58()
-  const gain = Math.round((decimalGain || 0) * 10.0)
+  let gain: number | undefined = undefined
+  if (decimalGain) {
+    gain = Math.round((decimalGain || 0) * 10.0)
+  }
+
   const solResponse = await onboardingClient.updateMetadata({
     type: networkType,
     solanaAddress,
@@ -356,6 +276,7 @@ export const getAssertData = async ({
   })
 
   const errFound = !solResponse.success ? solResponse : undefined
+
   if (errFound) {
     throw errFound.errorMessage
   }
@@ -369,6 +290,7 @@ export const getAssertData = async ({
     address: gateway,
     hemProgram,
   })
+
   const requiredDc = networkDetails?.locationStakingFee || new BN(0)
 
   let makerDc = new BN(0)

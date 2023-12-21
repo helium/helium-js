@@ -136,10 +136,12 @@ export default class MobileWifiOnboarding {
 
   signGatewayAddTransaction = async (deviceType: ManufacturedDeviceType) => {
     this.setProgressToStep('get_add_gateway')
+    this.writeLog('Getting add gateway txn', { deviceType, cluster: this._cluster })
     const { txn: txnStr, apiVersion } = await this._wifiClient.signGatewayAddTransaction(
       this._cluster,
       deviceType,
     )
+    this.writeLog('Got add gateway str', { txnStr })
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
     return { txn, apiVersion }
