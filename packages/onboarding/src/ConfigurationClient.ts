@@ -5,6 +5,7 @@ import { Cluster, PublicKey } from '@solana/web3.js'
 import { Message, heightTypeFromJSON } from './OutdoorConfig'
 import { HeightType } from './types'
 import bs58 from 'bs58'
+import { utils } from '@helium/crypto'
 
 export default class ConfigurationClient {
   private axios!: AxiosInstance
@@ -74,9 +75,19 @@ export default class ConfigurationClient {
     signedMessage: Uint8Array
     token: string
   }) {
+    const message = Message.decode(originalMessage)
+
+    let verified = false
+    try {
+      verified = await utils.verify(signedMessage, originalMessage, message.walletPubKey)
+    } catch {}
+
+    if (!verified) {
+      throw new Error('Config Message verification failed')
+    }
+
     const url = `/api/v1/hmhpubkey/${hotspotAddress}/submitCoverageConfigurationMessage`
 
-    const message = Message.decode(originalMessage)
     message.signature = signedMessage
     const encodedMessage = Message.encode(message).finish()
     const body = { payloadB64: Buffer.from(encodedMessage).toString('base64') }

@@ -1,11 +1,10 @@
 import MobileWifiOnboarding from '../MobileWifiOnboarding'
-import Address from '@helium/address'
 import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
 import { Transaction } from '@solana/web3.js'
 import h3 from 'h3-js'
-import { Message } from '../OutdoorConfig'
 import { usersFixture } from '../../../../integration_tests/fixtures/users'
 import { v4 as uuidv4 } from 'uuid'
+import Address from '@helium/address'
 
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
@@ -17,7 +16,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       wifiApiVersion: 'v2',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
-      wallet: ALICE_PUBKEY,
+      wallet: heliumAddressToSolPublicKey(alice.address.b58),
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       cluster: 'devnet',
       rpcEndpoint: 'https://api.devnet.solana.com',
@@ -49,15 +48,12 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       hotspotAddress: txn.gateway.b58,
     })
 
-    const message = Message.decode(originalMessage)
     const signature = await alice.sign(originalMessage)
-    message.signature = signature
-    const encodedMessage = Message.encode(message).finish()
 
     const response = await client.sendConfigurationMessage({
       hotspotAddress: txn.gateway.b58,
       originalMessage,
-      signedMessage: encodedMessage,
+      signedMessage: signature,
       token: 'asdf',
     })
     expect(response.status).toBe(204)
