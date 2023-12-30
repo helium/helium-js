@@ -42,6 +42,7 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.28.1-beta.2",
     "@helium/address": "^4.11.0",
+    "@helium/crypto": "^4.10.2",
     "@helium/currency-utils": "^0.6.6",
     "@helium/data-credits-sdk": "^0.6.6",
     "@helium/helium-entity-manager-sdk": "^0.6.6",
