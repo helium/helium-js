@@ -161,7 +161,9 @@ export default class MobileWifiOnboarding {
 
     const isSuccessful = status >= 200 && status < 300
 
-    if (!isSuccessful || !firmwareVersion) return false
+    if (!isSuccessful || !firmwareVersion) {
+      throw new Error('Could not determine firmware version.')
+    }
 
     if (firmwareVersion.startsWith('dev')) return true
 
