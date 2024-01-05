@@ -82,10 +82,10 @@ export default class OnboardingClient {
         url: path,
         data: params,
       })
-      if (response.data.errorMessage) {
+      if (response.data?.errorMessage) {
         throw new Error(response.data.errorMessage)
       }
-      if (response.data.success === false) {
+      if (response.data?.success === false) {
         throw new Error(`Failed with code ${response.data.code}}`)
       }
       return response.data
