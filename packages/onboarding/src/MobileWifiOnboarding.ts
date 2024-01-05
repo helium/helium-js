@@ -302,10 +302,17 @@ export default class MobileWifiOnboarding {
 
       try {
         const hotspotPubKey = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
-        this.writeLog(`Hotspot asset found?: ${hotspotPubKey?.toBase58()} ${hotspotAddress}`)
-        if (hotspotPubKey) return hotspotPubKey
+        if (hotspotPubKey) {
+          this.writeLog(`Hotspot has been found: ${hotspotPubKey?.toBase58()} ${hotspotAddress}`)
+          return hotspotPubKey
+        } else {
+          this.writeLog(`Hotspot not yet found ${hotspotAddress}`)
+        }
       } catch (e) {
-        this.writeError(e)
+        if (i === 199) {
+          // if we've reached the end of the loop, write the error
+          this.writeError(e)
+        }
       }
     }
     return undefined
@@ -333,12 +340,22 @@ export default class MobileWifiOnboarding {
           address: hotspotAddress,
         })
 
-        this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
+        if (hotspotInfo) {
+          this.writeLog('Hotspot has been onboarded to MOBILE')
+        } else {
+          this.writeLog('Hotspot MOBILE details not yet found.')
+        }
+
         if (hotspotInfo) return hotspotInfo
       } catch (e) {
-        this.writeError(e)
+        this.writeLog('Hotspot MOBILE details not yet found.')
+        if (i === 199) {
+          // if we've reached the end of the loop, write the error
+          this.writeError(e)
+        }
       }
     }
+
     return undefined
   }
 
@@ -414,10 +431,12 @@ export default class MobileWifiOnboarding {
       })
       if (hotspotInfo) {
         needsOnboarding = false
+        this.writeLog('Hotspot has been onboarded to MOBILE')
+      } else {
+        this.writeLog('Hotspot MOBILE details not found.')
       }
-      this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
-    } catch (e) {
-      this.writeError(e)
+    } catch {
+      this.writeLog('Hotspot MOBILE details not found.')
     }
 
     if (!this._shouldMock && !needsOnboarding) {
