@@ -251,23 +251,26 @@ export default class MobileWifiOnboarding {
 
     let solanaTransactions: number[][] | undefined = undefined
 
+    let err: unknown = undefined
     try {
       const createTxns = await this._onboardingClient.createHotspot({
         transaction,
       })
-      solanaTransactions = createTxns.data?.solanaTransactions
+      solanaTransactions = createTxns?.data?.solanaTransactions
+      err = createTxns
       if (solanaTransactions?.length) {
         this.writeLog('Created hotspot onboard txns')
       } else {
         this.writeLog('Could not create hotspot onboard txns', createTxns)
       }
     } catch (e) {
+      err = e
       this.writeError(e)
     }
 
     try {
       if (!solanaTransactions?.length) {
-        throw new Error('No solana transactions returned from create hotspot')
+        throw new Error(`No solana transactions returned from create hotspot\n\n${err}`)
       }
 
       this.writeLog('Submitting hotspot to solana')
