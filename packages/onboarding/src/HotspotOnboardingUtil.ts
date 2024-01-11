@@ -34,7 +34,11 @@ import {
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
 const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
-  if (deviceType === null) return 'IOT'
+  // deviceType is null for IOT hotspots
+  // cbrs devices are both IOT and MOBILE hotspots, but the location, gain, and elevation are all stored on the IOT side
+  if (deviceType === null || deviceType === 'Cbrs') {
+    return 'IOT'
+  }
 
   return 'MOBILE'
 }
@@ -324,8 +328,8 @@ export const getAssertData = async ({
 
     const dcInDollars = dcNeeded.div(new BN(100000))
     const oraclePrice = await getOraclePriceFromSolana({ connection, cluster })
-    const hntNeeded = dcInDollars.div(oraclePrice)
-    hasSufficientHnt = balances.hnt.gte(hntNeeded)
+    const hntNeeded = dcInDollars.toNumber() / oraclePrice.toNumber()
+    hasSufficientHnt = balances.hnt.toNumber() > hntNeeded
 
     if (hasSufficientHnt) {
       const txn = await burnHNTForDataCredits({
