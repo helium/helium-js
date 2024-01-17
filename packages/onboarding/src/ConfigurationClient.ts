@@ -25,7 +25,10 @@ export default class ConfigurationClient {
     this.cluster = cluster
     this.wallet = wallet
     this.axios = axios.create({
-      baseURL: 'https://hmh-configuration-api.wifi.freedomfi.com',
+      baseURL:
+        cluster === 'devnet'
+          ? 'https://hmh-configuration-api.dev.wifi.freedomfi.com'
+          : 'https://hmh-configuration-api.wifi.freedomfi.com',
     })
 
     axiosRetry(this.axios, {
