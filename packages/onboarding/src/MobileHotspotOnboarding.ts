@@ -27,6 +27,16 @@ const ProgressKeys = [
 ] as const
 type ProgressStep = (typeof ProgressKeys)[number]
 
+type AddToOnboardingServerOpts = {
+  authToken?: string
+  batch?: string
+  deviceType?: DeviceType
+  heliumSerial?: string
+  macEth0?: string
+  macWlan0?: string
+  rpiSerial?: string
+}
+
 export default class MobileHotspotOnboarding {
   private _configurationClient!: ConfigurationClient
   private _wifiClient?: WifiHttpClient
@@ -144,7 +154,10 @@ export default class MobileHotspotOnboarding {
     return this._wifiClient
   }
 
-  signGatewayAddTransaction = async (deviceType: ManufacturedDeviceType) => {
+  signGatewayAddTransaction = async (
+    deviceType: ManufacturedDeviceType,
+    opts?: AddToOnboardingServerOpts,
+  ) => {
     this.setProgressToStep('get_add_gateway')
     this.writeLog('Getting add gateway txn', { deviceType, cluster: this._cluster })
     const { txn: txnStr, apiVersion } = await this.getWifiClient().signGatewayAddTransaction(
@@ -154,6 +167,12 @@ export default class MobileHotspotOnboarding {
     this.writeLog('Got add gateway str', { txnStr })
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
+
+    await this.addToOnboardingServer({
+      ...opts,
+      hotspotAddress: txn.gateway?.b58 || '',
+    })
+
     return { txn, apiVersion }
   }
 
@@ -394,6 +413,49 @@ export default class MobileHotspotOnboarding {
     return undefined
   }
 
+  addToOnboardingServer = async ({
+    authToken,
+    hotspotAddress,
+    batch,
+    deviceType,
+    heliumSerial,
+    macEth0,
+    macWlan0,
+    rpiSerial,
+  }: AddToOnboardingServerOpts & { hotspotAddress: string }) => {
+    if (
+      this._shouldMock ||
+      this._cluster !== 'devnet' ||
+      !authToken ||
+      !batch ||
+      !deviceType ||
+      !heliumSerial ||
+      !macEth0 ||
+      !macWlan0 ||
+      !rpiSerial
+    ) {
+      return
+    }
+
+    // If onboarding to devnet, we create the hotspot on the onboarding server
+    try {
+      await this._onboardingClient.addToOnboardingServer({
+        authToken,
+        onboardingKey: hotspotAddress,
+        batch,
+        deviceType,
+        heliumSerial,
+        macEth0,
+        macWlan0,
+        rpiSerial,
+      })
+      await sleep(1000)
+    } catch (e) {
+      // if it's already been added, we don't need to do anything
+      this.writeError(e)
+    }
+  }
+
   createHotspotGetOnboardTxns = async ({
     addGatewayTxn,
     authToken,
@@ -401,16 +463,9 @@ export default class MobileHotspotOnboarding {
     elevation,
     gain,
     ...opts
-  }: {
+  }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
-    authToken?: string
     location?: string
-    deviceType: DeviceType
-    batch: string
-    heliumSerial: string
-    macEth0: string
-    macWlan0: string
-    rpiSerial: string
     elevation?: number | undefined
     gain?: number | undefined
   }) => {
@@ -420,19 +475,11 @@ export default class MobileHotspotOnboarding {
     }
     const hotspotAddress = addGatewayV1.gateway.b58
 
-    if (!this._shouldMock && authToken && this._cluster === 'devnet') {
-      // If onboarding to devnet, we create the hotspot on the onboarding server
-      try {
-        await this._onboardingClient.addToOnboardingServer({
-          ...opts,
-          authToken,
-          onboardingKey: hotspotAddress,
-        })
-        await sleep(1000)
-      } catch (e) {
-        this.writeError(e)
-      }
-    }
+    await this.addToOnboardingServer({
+      ...opts,
+      authToken,
+      hotspotAddress,
+    })
 
     let hotspotPubKey: PublicKey | undefined
     try {
