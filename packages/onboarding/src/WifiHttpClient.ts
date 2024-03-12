@@ -11,8 +11,9 @@ import {
   OutdoorManufacturedDeviceType,
   OutdoorManufacturedDeviceTypes,
 } from './types'
-
-const MOCK_GATEWAY = Address.fromB58('13yTQcEaPEVuYeWRMz9F6XjAMgMJjDuCgueukjaiJzmdvCHncMz')
+import { MAINNET } from '@helium/address/build/NetTypes'
+import { ED25519_KEY_TYPE } from '@helium/address/build/KeyTypes'
+import { Keypair } from '@helium/crypto'
 
 type GPSLocation = {
   latitude: number
@@ -125,13 +126,15 @@ export default class HmhHttpClient {
     this.logCallback?.('signGatewayAddTransaction', { body, url })
 
     if (this.mockAdapter) {
+      const keypair = await Keypair.makeRandom()
+      const gateway = new Address(0, MAINNET, ED25519_KEY_TYPE, keypair.publicKey)
       const addGateway = new AddGatewayV1({
         owner: Address.fromB58(ownerHeliumAddress),
-        gateway: MOCK_GATEWAY,
+        gateway,
       })
 
       this.mockAdapter.onPost(url).reply(200, {
-        gatewayAddress: MOCK_GATEWAY.b58,
+        gatewayAddress: gateway.b58,
         signedAddGwTx: addGateway.toString(),
       })
     }

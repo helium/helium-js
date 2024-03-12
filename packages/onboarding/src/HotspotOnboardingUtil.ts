@@ -8,10 +8,8 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, AccountInfo, Cluster, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import axios from 'axios'
+import { Connection, PublicKey, Cluster } from '@solana/web3.js'
 import {
-  AccountLayout,
   createAssociatedTokenAccountIdempotentInstruction,
   getAccount,
   getMinimumBalanceForRentExemptAccount,
@@ -33,12 +31,14 @@ import {
   TXN_FEE_IN_LAMPORTS,
 } from './types'
 
-type Account = AccountInfo<string[]>
-
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
-export const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
-  if (deviceType === null) return 'IOT'
+const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
+  // deviceType is null for IOT hotspots
+  // cbrs devices are both IOT and MOBILE hotspots, but the location, gain, and elevation are all stored on the IOT side
+  if (deviceType === null || deviceType === 'Cbrs') {
+    return 'IOT'
+  }
 
   return 'MOBILE'
 }
@@ -92,6 +92,7 @@ export const getHotspotNetworkDetails = async ({
   if (!networkType && types.deviceType !== undefined) {
     networkType = deviceTypeToNetworkType(types.deviceType)
   }
+
   if (!networkType) {
     throw new Error('Could not determine network type')
   }
@@ -149,13 +150,16 @@ export const getHotspotNetworkDetails = async ({
   }
 }
 
-const getOraclePriceFromSolana = async (opts: { connection: Connection; cluster: Cluster }) => {
+const getOraclePriceInCentsFromSolana = async (opts: {
+  connection: Connection
+  cluster: Cluster
+}) => {
   const price = await Currency.getOraclePrice({ tokenType: 'HNT', ...opts })
   if (!price?.aggregate.price) {
     throw new Error('Failed to fetch oracle price')
   }
 
-  return new BN(price.aggregate.price)
+  return new BN(price.aggregate.price * 100)
 }
 
 const getBalance = async (wallet: PublicKey, connection: Connection, mint: PublicKey) => {
@@ -168,11 +172,11 @@ const getBalance = async (wallet: PublicKey, connection: Connection, mint: Publi
 }
 
 const getBalances = async (wallet: PublicKey, connection: Connection) => {
-  const sol = await connection.getBalance(wallet)
-  const hnt = (await getBalance(wallet, connection, HNT_MINT)).div(BONES_IN_HNT)
+  const lamports = await connection.getBalance(wallet)
+  const bones = await getBalance(wallet, connection, HNT_MINT)
   const dc = await getBalance(wallet, connection, DC_MINT)
 
-  return { hnt, dc, sol: new BN(sol) }
+  return { bones, dc, lamports: new BN(lamports) }
 }
 
 const burnHNTForDataCredits = async ({
@@ -214,10 +218,7 @@ const burnHNTForDataCredits = async ({
   return txn
 }
 
-export const getAtaAccountCreationFee = async (
-  solanaAddress: PublicKey,
-  connection: Connection,
-) => {
+const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Connection) => {
   const ataAddress = getAssociatedTokenAddressSync(DC_MINT, solanaAddress, true)
 
   try {
@@ -227,84 +228,6 @@ export const getAtaAccountCreationFee = async (
     const minRent = await getMinimumBalanceForRentExemptAccount(connection)
     return new BN(minRent)
   }
-}
-
-export const fetchSimulatedTxn = async ({
-  apiUrl,
-  txnBuff,
-  accountAddresses,
-}: {
-  apiUrl: string
-  txnBuff: Buffer
-  accountAddresses: string[]
-}): Promise<Array<Account>> => {
-  const body = {
-    jsonrpc: '2.0',
-    id: 1,
-    method: 'simulateTransaction',
-    params: [
-      txnBuff.toString('base64'),
-      {
-        encoding: 'base64',
-        commitment: 'recent',
-        sigVerify: false,
-        accounts: {
-          encoding: 'jsonParsed',
-          addresses: accountAddresses,
-        },
-      },
-    ],
-  }
-  const response = await axios.post<{
-    result: { value: { accounts: Account[]; logs: string[]; err?: any } }
-  }>(apiUrl, body)
-
-  if (response.data.result.value.err) {
-    console.error(response.data.result.value.logs.join('\n') + 'Transaction would fail')
-    throw new Error('Transaction would fail')
-  }
-  return response.data.result.value.accounts
-}
-
-export const getAccountFees = async ({
-  dcAccount,
-  account,
-  connection,
-  key,
-  dcMint,
-}: {
-  key: PublicKey
-  dcAccount?: Account
-  account?: Account
-  connection: Connection
-  dcMint: PublicKey
-}) => {
-  const lamportsBefore = new BN(await connection.getBalance(key))
-  const dcBefore = await getBalance(key, connection, dcMint)
-
-  let lamportsAfter = new BN(0)
-  let dcAfter = new BN(0)
-
-  if (account) {
-    lamportsAfter = new BN(account.lamports.toString())
-  } else {
-    lamportsAfter = lamportsBefore
-  }
-
-  const lamportFee = lamportsBefore.sub(lamportsAfter)
-  let dcFee = new BN(0)
-
-  if (dcAccount && dcAccount.lamports > 0) {
-    const tokenAccount = AccountLayout.decode(
-      Buffer.from(dcAccount.data[0], dcAccount.data[1] as BufferEncoding),
-    )
-
-    const dcBalance = new BN(tokenAccount.amount.toString())
-    dcAfter = dcBalance
-    dcFee = dcBefore.sub(dcAfter)
-  }
-
-  return { lamports: lamportFee, dc: dcFee }
 }
 
 export const getAssertData = async ({
@@ -345,7 +268,11 @@ export const getAssertData = async ({
 
   const networkType = deviceTypeToNetworkType(deviceType)
   const solanaAddress = owner.toBase58()
-  const gain = Math.round((decimalGain || 0) * 10.0)
+  let gain: number | undefined = undefined
+  if (decimalGain) {
+    gain = Math.round((decimalGain || 0) * 10.0)
+  }
+
   const solResponse = await onboardingClient.updateMetadata({
     type: networkType,
     solanaAddress,
@@ -356,6 +283,7 @@ export const getAssertData = async ({
   })
 
   const errFound = !solResponse.success ? solResponse : undefined
+
   if (errFound) {
     throw errFound.errorMessage
   }
@@ -369,6 +297,7 @@ export const getAssertData = async ({
     address: gateway,
     hemProgram,
   })
+
   const requiredDc = networkDetails?.locationStakingFee || new BN(0)
 
   let makerDc = new BN(0)
@@ -381,7 +310,6 @@ export const getAssertData = async ({
   const isPayer = insufficientMakerDcBal || !maker || numLocationChanges >= maker.locationNonceLimit
   const isFree = !isPayer
 
-  const lamportBalance = balances.sol.mul(new BN(LAMPORTS_PER_SOL))
   const dcFee = networkDetails?.locationStakingFee || new BN(0)
   let lamportFee = TXN_FEE_IN_LAMPORTS
 
@@ -390,7 +318,7 @@ export const getAssertData = async ({
   if (!isFree) {
     const ataFee = await getAtaAccountCreationFee(owner, connection)
     lamportFee = lamportFee.add(ataFee)
-    hasSufficientSol = lamportBalance.gte(lamportFee)
+    hasSufficientSol = balances.lamports.gte(lamportFee)
     hasSufficientDc = balances.dc.gte(dcFee)
   }
 
@@ -400,10 +328,10 @@ export const getAssertData = async ({
     const dcBalance = balances.dc || new BN(0)
     dcNeeded = dcFee.sub(dcBalance)
 
-    const dcInDollars = dcNeeded.div(new BN(100000))
-    const oraclePrice = await getOraclePriceFromSolana({ connection, cluster })
-    const hntNeeded = dcInDollars.div(oraclePrice)
-    hasSufficientHnt = balances.hnt.gte(hntNeeded)
+    const dcInCents = dcNeeded.div(new BN(100000)).mul(new BN(100))
+    const oraclePriceInCents = await getOraclePriceInCentsFromSolana({ connection, cluster })
+    const bonesNeeded = dcInCents.mul(BONES_IN_HNT).divRound(oraclePriceInCents)
+    hasSufficientHnt = balances.bones.gte(bonesNeeded)
 
     if (hasSufficientHnt) {
       const txn = await burnHNTForDataCredits({
@@ -415,7 +343,7 @@ export const getAssertData = async ({
       if (txn) {
         solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
         lamportFee = lamportFee.add(TXN_FEE_IN_LAMPORTS)
-        hasSufficientSol = lamportBalance.gte(lamportFee)
+        hasSufficientSol = balances.lamports.gte(lamportFee)
       }
     }
   }
