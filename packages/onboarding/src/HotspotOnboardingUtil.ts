@@ -8,7 +8,7 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, Cluster, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { Connection, PublicKey, Cluster } from '@solana/web3.js'
 import {
   createAssociatedTokenAccountIdempotentInstruction,
   getAccount,
@@ -150,13 +150,16 @@ export const getHotspotNetworkDetails = async ({
   }
 }
 
-const getOraclePriceFromSolana = async (opts: { connection: Connection; cluster: Cluster }) => {
+const getOraclePriceInCentsFromSolana = async (opts: {
+  connection: Connection
+  cluster: Cluster
+}) => {
   const price = await Currency.getOraclePrice({ tokenType: 'HNT', ...opts })
   if (!price?.aggregate.price) {
     throw new Error('Failed to fetch oracle price')
   }
 
-  return new BN(price.aggregate.price)
+  return new BN(price.aggregate.price * 100)
 }
 
 const getBalance = async (wallet: PublicKey, connection: Connection, mint: PublicKey) => {
@@ -169,11 +172,11 @@ const getBalance = async (wallet: PublicKey, connection: Connection, mint: Publi
 }
 
 const getBalances = async (wallet: PublicKey, connection: Connection) => {
-  const sol = await connection.getBalance(wallet)
-  const hnt = (await getBalance(wallet, connection, HNT_MINT)).div(BONES_IN_HNT)
+  const lamports = await connection.getBalance(wallet)
+  const bones = await getBalance(wallet, connection, HNT_MINT)
   const dc = await getBalance(wallet, connection, DC_MINT)
 
-  return { hnt, dc, sol: new BN(sol) }
+  return { bones, dc, lamports: new BN(lamports) }
 }
 
 const burnHNTForDataCredits = async ({
@@ -307,7 +310,6 @@ export const getAssertData = async ({
   const isPayer = insufficientMakerDcBal || !maker || numLocationChanges >= maker.locationNonceLimit
   const isFree = !isPayer
 
-  const lamportBalance = balances.sol.mul(new BN(LAMPORTS_PER_SOL))
   const dcFee = networkDetails?.locationStakingFee || new BN(0)
   let lamportFee = TXN_FEE_IN_LAMPORTS
 
@@ -316,7 +318,7 @@ export const getAssertData = async ({
   if (!isFree) {
     const ataFee = await getAtaAccountCreationFee(owner, connection)
     lamportFee = lamportFee.add(ataFee)
-    hasSufficientSol = lamportBalance.gte(lamportFee)
+    hasSufficientSol = balances.lamports.gte(lamportFee)
     hasSufficientDc = balances.dc.gte(dcFee)
   }
 
@@ -326,10 +328,10 @@ export const getAssertData = async ({
     const dcBalance = balances.dc || new BN(0)
     dcNeeded = dcFee.sub(dcBalance)
 
-    const dcInDollars = dcNeeded.div(new BN(100000))
-    const oraclePrice = await getOraclePriceFromSolana({ connection, cluster })
-    const hntNeeded = dcInDollars.toNumber() / oraclePrice.toNumber()
-    hasSufficientHnt = balances.hnt.toNumber() > hntNeeded
+    const dcInCents = dcNeeded.div(new BN(100000)).mul(new BN(100))
+    const oraclePriceInCents = await getOraclePriceInCentsFromSolana({ connection, cluster })
+    const bonesNeeded = dcInCents.mul(BONES_IN_HNT).divRound(oraclePriceInCents)
+    hasSufficientHnt = balances.bones.gte(bonesNeeded)
 
     if (hasSufficientHnt) {
       const txn = await burnHNTForDataCredits({
@@ -341,7 +343,7 @@ export const getAssertData = async ({
       if (txn) {
         solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
         lamportFee = lamportFee.add(TXN_FEE_IN_LAMPORTS)
-        hasSufficientSol = lamportBalance.gte(lamportFee)
+        hasSufficientSol = balances.lamports.gte(lamportFee)
       }
     }
   }

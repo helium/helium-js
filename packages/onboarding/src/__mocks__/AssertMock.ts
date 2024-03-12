@@ -5,9 +5,9 @@ import { AssertData } from '../types'
 export const getAssertData = async (): Promise<AssertData> => {
   return {
     balances: {
-      hnt: new BN(100000000000),
+      bones: new BN(100000000000),
       dc: new BN(1000000000),
-      sol: new BN(1000000000000),
+      lamports: new BN(1000000000000),
     },
     isFree: false,
     solanaTransactions: [],
