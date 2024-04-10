@@ -19,6 +19,7 @@ export {
   DeviceType,
   ManufacturedDeviceType,
   HeightType,
+  ProgressStep,
 } from './types'
 
 export { Message } from './OutdoorConfig'
