@@ -68,3 +68,17 @@ export type SubmitStatus = {
   currentBatchProgress: number
   currentBatchSize: number
 }
+
+export const ProgressKeys = [
+  'get_add_gateway',
+  'got_add_gateway',
+  'fetch_create',
+  'submit_create',
+  'verify_create',
+  'fetch_mobile',
+  'got_mobile',
+  'submit_signed_messages',
+  'verify_mobile',
+  'complete',
+] as const
+export type ProgressStep = (typeof ProgressKeys)[number]

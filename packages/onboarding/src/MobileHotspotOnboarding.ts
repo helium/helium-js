@@ -10,22 +10,10 @@ import {
   HeightType,
   ManufacturedDeviceType,
   OutdoorManufacturedDeviceType,
+  ProgressKeys,
+  ProgressStep,
 } from './types'
 import ConfigurationClient from './ConfigurationClient'
-
-const ProgressKeys = [
-  'get_add_gateway',
-  'got_add_gateway',
-  'fetch_create',
-  'submit_create',
-  'verify_create',
-  'fetch_mobile',
-  'got_mobile',
-  'submit_signed_messages',
-  'verify_mobile',
-  'complete',
-] as const
-type ProgressStep = (typeof ProgressKeys)[number]
 
 type AddToOnboardingServerOpts = {
   authToken?: string
@@ -300,41 +288,36 @@ export default class MobileHotspotOnboarding {
     this._logCallback?.('Creating hotspot on Solana', { transaction })
     this.setProgressToStep('fetch_create')
 
-    let solanaTransactions: number[][] | undefined = undefined
+    let txIds: string[] = []
 
-    let err: unknown = undefined
-    try {
-      const createTxns = await this._onboardingClient.createHotspot({
-        transaction,
-      })
-      solanaTransactions = createTxns?.data?.solanaTransactions
-      err = createTxns
-      if (solanaTransactions?.length) {
-        this.writeLog('Created hotspot onboard txns')
-      } else {
-        this.writeLog('Could not create hotspot onboard txns', createTxns)
+    while (!txIds.length) {
+      try {
+        const createTxns = await this._onboardingClient.createHotspot({
+          transaction,
+        })
+        const solanaTransactions = createTxns?.data?.solanaTransactions
+
+        if (solanaTransactions?.length) {
+          this.writeLog('Created hotspot onboard txns')
+        } else {
+          this.writeLog('Could not create hotspot onboard txns', createTxns)
+          throw new Error(
+            `No solana transactions returned from create hotspot\n\n${JSON.stringify(createTxns)}`,
+          )
+        }
+
+        this.writeLog('Submitting hotspot to solana')
+        this.setProgressToStep('submit_create')
+        txIds = await this._solanaOnboarding.submitAll({
+          txns: solanaTransactions.map((t) => Buffer.from(t)),
+        })
+        this.writeLog('Hotspot has successfully been submitted to solana', { data: txIds })
+      } catch (e) {
+        this.writeError(e)
       }
-    } catch (e) {
-      err = e
-      this.writeError(e)
     }
 
-    try {
-      if (!solanaTransactions?.length) {
-        throw new Error(`No solana transactions returned from create hotspot\n\n${err}`)
-      }
-
-      this.writeLog('Submitting hotspot to solana')
-      this.setProgressToStep('submit_create')
-      const txnids = await this._solanaOnboarding.submitAll({
-        txns: solanaTransactions.map((t) => Buffer.from(t)),
-      })
-      this.writeLog('Hotspot has successfully been submitted to solana', { data: txnids })
-      return txnids
-    } catch (e) {
-      this.writeError(e)
-      throw e
-    }
+    return txIds
   }
 
   verifyHotspotCreated = async (hotspotAddress: string) => {
@@ -505,24 +488,21 @@ export default class MobileHotspotOnboarding {
     }
 
     // Check if this hotspot has already been onboarded to MOBILE
-    let needsOnboarding = true
     try {
       const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
         networkType: 'MOBILE',
         address: hotspotAddress,
       })
       if (hotspotInfo) {
-        needsOnboarding = false
-        this.writeLog('Hotspot has been onboarded to MOBILE')
+        this.writeLog('Hotspot has already been onboarded')
+        if (!this._shouldMock) {
+          throw new Error('Hotspot has already been onboarded')
+        }
       } else {
         this.writeLog('Hotspot MOBILE details not found.')
       }
     } catch {
       this.writeLog('Hotspot MOBILE details not found.')
-    }
-
-    if (!this._shouldMock && !needsOnboarding) {
-      return []
     }
 
     const txns = await this.getMobileOnboardTxns({
