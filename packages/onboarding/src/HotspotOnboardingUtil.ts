@@ -22,7 +22,7 @@ import {
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
 import {
-  BONES_IN_HNT,
+  HNT_AS_BONES,
   DcProgram,
   DeviceType,
   HemProgram,
@@ -173,10 +173,10 @@ const getBalance = async (wallet: PublicKey, connection: Connection, mint: Publi
 
 const getBalances = async (wallet: PublicKey, connection: Connection) => {
   const lamports = await connection.getBalance(wallet)
-  const bones = await getBalance(wallet, connection, HNT_MINT)
+  const hnt = await getBalance(wallet, connection, HNT_MINT)
   const dc = await getBalance(wallet, connection, DC_MINT)
 
-  return { bones, dc, lamports: new BN(lamports) }
+  return { hnt, dc, lamports: new BN(lamports) }
 }
 
 const burnHNTForDataCredits = async ({
@@ -330,8 +330,8 @@ export const getAssertData = async ({
 
     const dcInCents = dcNeeded.div(new BN(100000)).mul(new BN(100))
     const oraclePriceInCents = await getOraclePriceInCentsFromSolana({ connection, cluster })
-    const bonesNeeded = dcInCents.mul(BONES_IN_HNT).divRound(oraclePriceInCents)
-    hasSufficientHnt = balances.bones.gte(bonesNeeded)
+    const hntNeeded = dcInCents.mul(HNT_AS_BONES).divRound(oraclePriceInCents)
+    hasSufficientHnt = balances.hnt.gte(hntNeeded)
 
     if (hasSufficientHnt) {
       const txn = await burnHNTForDataCredits({

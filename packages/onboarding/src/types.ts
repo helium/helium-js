@@ -56,7 +56,7 @@ export type HeightType = 'MSL' | 'AGL' | 'NONE' | 'UNRECOGNIZED'
 export type NetworkType = 'IOT' | 'MOBILE'
 export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor' | null // null is for IOT devices
 
-export const BONES_IN_HNT = new BN(100000000)
+export const HNT_AS_BONES = new BN(100000000)
 export const TXN_FEE_IN_LAMPORTS = new BN(5000)
 
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
