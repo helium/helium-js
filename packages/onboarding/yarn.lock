@@ -75,10 +75,10 @@
     js-sha256 "^0.9.0"
     multiformats "^9.6.4"
 
-"@helium/address@^4.11.0", "@helium/address@^4.11.1":
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.11.1.tgz#e6c6debaee2f50ed16383d5660ba81d29e604948"
-  integrity sha512-QMrdBx5l5XIy0K9fL3R64Whuk556BLz/pa6yhOQtog1hb3C904m1ykAU8eg2hgiA265Yp98XZkIK3GKTHbH+0A==
+"@helium/address@^4.12.0":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.12.0.tgz#14738298794fb26089dd60fafaec99fdff27efa9"
+  integrity sha512-gTgPHEn19vBzVwYYl6nVDjuWG9dXpgnXdEdWI65vcpseXIg1+E3iVn43FC3TK1wXzIUQkXz6RzRKASc/w85rWA==
   dependencies:
     bs58 "^5.0.0"
     js-sha256 "^0.9.0"
@@ -244,12 +244,12 @@
     borsh "^0.7.0"
     bs58 "^4.0.1"
 
-"@helium/transactions@^4.11.0":
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-4.11.1.tgz#38c48d0c2c395ce1e0a78fd57510c09d958c24e8"
-  integrity sha512-uL6OKo5o8AKn7oOuuW6/T7MSwPikbYU2HsSDu2O7ZhnGiyzKcKXQMkIHSBuFKz9KT+DKVpVSwjeLXr4a6/D/eQ==
+"@helium/transactions@^4.12.0":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-4.12.0.tgz#391d9cdbadaa4cb7716685e6a44199b300d6f7b3"
+  integrity sha512-LFassrm0FzcEX8uCqoPvRbXrONTmp2UuZP6Hc+CSCIGfHnXESf1Zpac9kZLBsaLm2vLj7d62FUtNwa4J3edILg==
   dependencies:
-    "@helium/address" "^4.11.1"
+    "@helium/address" "^4.12.0"
     "@helium/proto" "^1.6.0"
     "@types/libsodium-wrappers" "^0.7.8"
     long "^4.0.0"
