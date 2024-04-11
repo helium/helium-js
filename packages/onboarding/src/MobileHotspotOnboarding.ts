@@ -289,8 +289,10 @@ export default class MobileHotspotOnboarding {
     this.setProgressToStep('fetch_create')
 
     let txIds: string[] = []
+    let tries = 0
 
-    while (!txIds.length) {
+    while (!txIds.length && tries < 12) {
+      tries++
       try {
         const createTxns = await this._onboardingClient.createHotspot({
           transaction,
@@ -315,6 +317,14 @@ export default class MobileHotspotOnboarding {
       } catch (e) {
         this.writeError(e)
       }
+
+      if (!txIds.length) {
+        await sleep(5000) // wait 5 seconds before trying again
+      }
+    }
+
+    if (!txIds.length) {
+      throw new Error('Failed to create hotspot')
     }
 
     return txIds
