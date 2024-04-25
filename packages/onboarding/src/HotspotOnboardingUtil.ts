@@ -8,11 +8,9 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, Cluster } from '@solana/web3.js'
+import { Connection, PublicKey, Cluster, Transaction } from '@solana/web3.js'
 import {
   createAssociatedTokenAccountIdempotentInstruction,
-  getAccount,
-  getMinimumBalanceForRentExemptAccount,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token'
 import {
@@ -21,15 +19,7 @@ import {
   rewardableEntityConfigKey,
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
-import {
-  HNT_AS_BONES,
-  DcProgram,
-  DeviceType,
-  HemProgram,
-  Maker,
-  NetworkType,
-  TXN_FEE_IN_LAMPORTS,
-} from './types'
+import { HNT_AS_BONES, DcProgram, DeviceType, HemProgram, Maker, NetworkType } from './types'
 
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
@@ -218,18 +208,6 @@ const burnHNTForDataCredits = async ({
   return txn
 }
 
-const getAtaAccountCreationFee = async (solanaAddress: PublicKey, connection: Connection) => {
-  const ataAddress = getAssociatedTokenAddressSync(DC_MINT, solanaAddress, true)
-
-  try {
-    await getAccount(connection, ataAddress)
-    return new BN(0)
-  } catch {
-    const minRent = await getMinimumBalanceForRentExemptAccount(connection)
-    return new BN(minRent)
-  }
-}
-
 export const getAssertData = async ({
   deviceType,
   gateway,
@@ -298,27 +276,21 @@ export const getAssertData = async ({
     hemProgram,
   })
 
-  const requiredDc = networkDetails?.locationStakingFee || new BN(0)
-
   let makerDc = new BN(0)
   if (makerKey) {
     makerDc = await getBalance(makerKey, connection, DC_MINT)
   }
 
-  const insufficientMakerDcBal = makerDc.lt(requiredDc)
+  const dcFee = networkDetails?.locationStakingFee || new BN(0)
+  const insufficientMakerDcBal = makerDc.lt(dcFee)
   const numLocationChanges = networkDetails?.numLocationAsserts || 0
   const isPayer = insufficientMakerDcBal || !maker || numLocationChanges >= maker.locationNonceLimit
   const isFree = !isPayer
-
-  const dcFee = networkDetails?.locationStakingFee || new BN(0)
-  let lamportFee = TXN_FEE_IN_LAMPORTS
-
-  let hasSufficientSol = true
   let hasSufficientDc = true
+  let hasSufficientSol = true
+  let lamportFee = new BN(0)
+
   if (!isFree) {
-    const ataFee = await getAtaAccountCreationFee(owner, connection)
-    lamportFee = lamportFee.add(ataFee)
-    hasSufficientSol = balances.lamports.gte(lamportFee)
     hasSufficientDc = balances.dc.gte(dcFee)
   }
 
@@ -342,11 +314,23 @@ export const getAssertData = async ({
       })
       if (txn) {
         solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
-        lamportFee = lamportFee.add(TXN_FEE_IN_LAMPORTS)
-        hasSufficientSol = balances.lamports.gte(lamportFee)
       }
     }
   }
+
+  const estimatedFees = await Promise.all(
+    solanaTransactions.map(async (buff) => {
+      const tx = Transaction.from(buff)
+      const estimatedFee = await connection.getFeeForMessage(tx.compileMessage(), 'confirmed')
+      return estimatedFee.value
+    }),
+  )
+  lamportFee = estimatedFees.reduce((acc, fee) => acc.add(new BN(fee || 0)), new BN(0))
+
+  if (!isFree) {
+    hasSufficientSol = balances.lamports.gte(lamportFee)
+  }
+
   const hasSufficientBalance = (hasSufficientDc || hasSufficientHnt) && hasSufficientSol
 
   return {
@@ -355,8 +339,10 @@ export const getAssertData = async ({
     hasSufficientSol,
     hasSufficientDc,
     hasSufficientHnt,
+    dcFee,
     dcNeeded,
     isFree,
+    lamportFee,
     solanaTransactions: solanaTransactions.map((tx) => tx.toString('base64')),
   }
 }

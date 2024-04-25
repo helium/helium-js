@@ -15,7 +15,9 @@ export const getAssertData = async (): Promise<AssertData> => {
     hasSufficientDc: true,
     hasSufficientHnt: true,
     hasSufficientSol: true,
+    dcFee: new BN(0),
     dcNeeded: new BN(0),
+    lamportFee: new BN(0),
   }
 }
 
