@@ -211,6 +211,7 @@ const burnHNTForDataCredits = async ({
 export const getAssertData = async ({
   deviceType,
   gateway,
+  azimuth,
   hemProgram,
   onboardingClient,
   owner,
@@ -227,6 +228,7 @@ export const getAssertData = async ({
   owner: PublicKey
   decimalGain?: number
   elevation?: number
+  azimuth?: number
   nextLocation: string
   deviceType: DeviceType
   onboardingClient: OnboardingClient
@@ -258,6 +260,7 @@ export const getAssertData = async ({
     location: nextLocation,
     elevation,
     gain,
+    azimuth,
   })
 
   const errFound = !solResponse.success ? solResponse : undefined

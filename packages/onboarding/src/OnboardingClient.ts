@@ -154,6 +154,7 @@ export default class OnboardingClient {
         elevation: opts.elevation,
         gain: opts.gain,
         payer: opts.payer,
+        azimuth: opts.azimuth,
       },
     )
   }
@@ -174,7 +175,7 @@ export default class OnboardingClient {
       payer?: string
     },
   ) {
-    const { solanaAddress, elevation, gain, hotspotAddress, type, payer } = opts
+    const { solanaAddress, elevation, gain, hotspotAddress, type, payer, azimuth } = opts
 
     let location: string | undefined = undefined
     if (opts.location) {
@@ -182,6 +183,7 @@ export default class OnboardingClient {
     }
 
     const body = {
+      azimuth,
       entityKey: hotspotAddress,
       location,
       elevation,

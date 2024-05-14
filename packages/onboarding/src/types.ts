@@ -38,6 +38,7 @@ export type Metadata = {
   location: string
   elevation: number
   gain: number
+  azimuth: number
 }
 
 export const IndoorManufacturedDeviceTypes = ['HeliumMobileIndoor'] as const
