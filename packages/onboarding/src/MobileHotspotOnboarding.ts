@@ -200,7 +200,6 @@ export default class MobileHotspotOnboarding {
 
   getWifiAssertData = async ({
     gateway,
-    decimalGain,
     elevation,
     location,
     deviceType,
@@ -208,7 +207,6 @@ export default class MobileHotspotOnboarding {
   }: {
     azimuth?: number
     gateway: string
-    decimalGain?: number
     elevation?: number
     location: string
     deviceType: 'WifiIndoor' | 'WifiOutdoor'
@@ -216,7 +214,6 @@ export default class MobileHotspotOnboarding {
     return this._solanaOnboarding.getAssertData({
       azimuth,
       gateway,
-      decimalGain,
       elevation,
       location,
       deviceType,
@@ -250,12 +247,10 @@ export default class MobileHotspotOnboarding {
     azimuth,
     location,
     elevation,
-    gain,
   }: {
     hotspotAddress: string
     location?: string
     elevation?: number
-    gain?: number
     azimuth?: number
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
@@ -267,7 +262,6 @@ export default class MobileHotspotOnboarding {
       type: 'MOBILE',
       elevation,
       azimuth,
-      gain,
     })
 
     if (!onboardTxns.data?.solanaTransactions?.length) {
@@ -461,14 +455,12 @@ export default class MobileHotspotOnboarding {
     azimuth,
     location,
     elevation,
-    gain,
     ...opts
   }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
     location?: string
     azimuth?: number | undefined
     elevation?: number | undefined
-    gain?: number | undefined
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -528,7 +520,6 @@ export default class MobileHotspotOnboarding {
       hotspotAddress,
       azimuth,
       elevation,
-      gain,
     })
 
     return txns
@@ -655,6 +646,7 @@ export default class MobileHotspotOnboarding {
     azimuth: number
     heightType: HeightType
     hotspotAddress: string
+    antenna?: number
   }) {
     return this._configurationClient.createConfigurationMessage(opts)
   }
