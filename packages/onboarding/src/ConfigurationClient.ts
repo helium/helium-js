@@ -5,6 +5,7 @@ import { Cluster, PublicKey } from '@solana/web3.js'
 import { Message, heightTypeFromJSON } from './OutdoorConfig'
 import { HeightType } from './types'
 import bs58 from 'bs58'
+import { utils } from '@helium/crypto'
 
 export default class ConfigurationClient {
   private axios!: AxiosInstance
@@ -24,7 +25,10 @@ export default class ConfigurationClient {
     this.cluster = cluster
     this.wallet = wallet
     this.axios = axios.create({
-      baseURL: 'https://hmh-configuration-api.wifi.freedomfi.com',
+      baseURL:
+        cluster === 'devnet'
+          ? 'https://hmh-configuration-api.dev.wifi.freedomfi.com'
+          : 'https://hmh-configuration-api.wifi.freedomfi.com',
     })
 
     axiosRetry(this.axios, {
@@ -68,18 +72,33 @@ export default class ConfigurationClient {
     signedMessage,
     hotspotAddress,
     token,
+    vendorSlug,
   }: {
     hotspotAddress: string
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string
+    vendorSlug?: string // default is 'helium mobile' - current options are 'rakwireless' and 'helium mobile'
   }) {
+    const message = Message.decode(originalMessage)
+
+    let verified = false
+    try {
+      verified = await utils.verify(signedMessage, originalMessage, message.walletPubKey)
+    } catch {}
+
+    if (!verified) {
+      throw new Error('Config Message verification failed')
+    }
+
     const url = `/api/v1/hmhpubkey/${hotspotAddress}/submitCoverageConfigurationMessage`
 
-    const message = Message.decode(originalMessage)
     message.signature = signedMessage
     const encodedMessage = Message.encode(message).finish()
-    const body = { payloadB64: Buffer.from(encodedMessage).toString('base64') }
+    const body = {
+      payloadB64: Buffer.from(encodedMessage).toString('base64'),
+      vendor_slug: vendorSlug,
+    }
 
     if (this.mockAdapter) {
       this.mockAdapter.onPost(url).reply(204, { success: true })

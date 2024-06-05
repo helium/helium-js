@@ -81,11 +81,13 @@ export default class SolanaOnboarding {
   getAssertData = async ({
     gateway,
     decimalGain,
+    azimuth,
     elevation,
     location,
     deviceType,
   }: {
     gateway: string
+    azimuth?: number
     decimalGain?: number
     elevation?: number
     location: string
@@ -106,6 +108,7 @@ export default class SolanaOnboarding {
       hemProgram,
       decimalGain,
       gateway,
+      azimuth,
       elevation,
       nextLocation: location,
       deviceType,

@@ -1,11 +1,10 @@
-import MobileWifiOnboarding from '../MobileWifiOnboarding'
-import Address from '@helium/address'
+import MobileHotspotOnboarding from '../MobileHotspotOnboarding'
 import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
 import { Transaction } from '@solana/web3.js'
 import h3 from 'h3-js'
-import { Message } from '../OutdoorConfig'
 import { usersFixture } from '../../../../integration_tests/fixtures/users'
 import { v4 as uuidv4 } from 'uuid'
+import Address from '@helium/address'
 
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
@@ -13,11 +12,11 @@ const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
 describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   it('Creates, signs, and send config message', async () => {
     const { alice } = await usersFixture()
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v2',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
-      wallet: ALICE_PUBKEY,
+      wallet: heliumAddressToSolPublicKey(alice.address.b58),
       onboardingClientUrl: 'https://onboarding.web.test-helium.com/api/v3',
       cluster: 'devnet',
       rpcEndpoint: 'https://api.devnet.solana.com',
@@ -49,22 +48,20 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       hotspotAddress: txn.gateway.b58,
     })
 
-    const message = Message.decode(originalMessage)
     const signature = await alice.sign(originalMessage)
-    message.signature = signature
-    const encodedMessage = Message.encode(message).finish()
 
     const response = await client.sendConfigurationMessage({
       hotspotAddress: txn.gateway.b58,
       originalMessage,
-      signedMessage: encodedMessage,
+      signedMessage: signature,
       token: 'asdf',
+      vendorSlug: 'rakwireless',
     })
     expect(response.status).toBe(204)
   })
 
   it('Gets the gps data from an outdoor hotspot', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v2',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -93,7 +90,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   })
 
   it('Checks for valid firmware', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       wallet: ALICE_PUBKEY,
@@ -107,7 +104,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   })
 
   it('Checks for invalid firmware', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       wallet: ALICE_PUBKEY,
@@ -121,7 +118,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   })
 
   it('Fetches the add gateway txn from the wifi access point', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       wallet: ALICE_PUBKEY,
@@ -136,7 +133,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   })
 
   it('Fetches the gateway location information', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       wallet: ALICE_PUBKEY,
@@ -145,7 +142,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       cluster: 'devnet',
     })
 
-    const assertData = await client.getMobileAssertData({
+    const assertData = await client.getWifiAssertData({
       gateway: 'asdf',
       location: 'asdf123',
       deviceType: 'WifiIndoor',
@@ -156,7 +153,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
   })
 
   it('Creates and onboards a mobile wifi access point', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
       wallet: ALICE_PUBKEY,
@@ -203,6 +200,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     const { txnIds } = await client.submitAndCompleteOnboarding({
       hotspotAddress: txn.gateway?.b58!,
       signedTxns: signed,
+      deviceType: 'WifiIndoor',
     })
 
     expect(txnIds).toBeDefined()
@@ -211,7 +209,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
 
 describe('Wifi Onboarding with wifi api version 1 (default)', () => {
   it('Checks for valid firmware', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v1',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -226,7 +224,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
   })
 
   it('Fetches the add gateway txn from the wifi access point', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v1',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -242,7 +240,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
   })
 
   it('Fetches the gateway location information', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v1',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -252,7 +250,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
       cluster: 'devnet',
     })
 
-    const assertData = await client.getMobileAssertData({
+    const assertData = await client.getWifiAssertData({
       gateway: 'asdf',
       location: 'asdf123',
       deviceType: 'WifiOutdoor',
@@ -263,7 +261,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
   })
 
   it('Creates and onboards a mobile wifi access point', async () => {
-    const client = new MobileWifiOnboarding({
+    const client = new MobileHotspotOnboarding({
       wifiApiVersion: 'v1',
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -311,6 +309,7 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
     const { txnIds } = await client.submitAndCompleteOnboarding({
       hotspotAddress: txn.gateway?.b58!,
       signedTxns: signed,
+      deviceType: 'WifiIndoor',
     })
 
     expect(txnIds).toBeDefined()
