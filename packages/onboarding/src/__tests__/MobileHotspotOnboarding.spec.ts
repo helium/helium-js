@@ -55,6 +55,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       originalMessage,
       signedMessage: signature,
       token: 'asdf',
+      vendorSlug: 'rakwireless',
     })
     expect(response.status).toBe(204)
   })

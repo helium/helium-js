@@ -72,11 +72,13 @@ export default class ConfigurationClient {
     signedMessage,
     hotspotAddress,
     token,
+    vendorSlug,
   }: {
     hotspotAddress: string
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string
+    vendorSlug?: string // default is 'helium mobile' - current options are 'rakwireless' and 'helium mobile'
   }) {
     const message = Message.decode(originalMessage)
 
@@ -93,7 +95,10 @@ export default class ConfigurationClient {
 
     message.signature = signedMessage
     const encodedMessage = Message.encode(message).finish()
-    const body = { payloadB64: Buffer.from(encodedMessage).toString('base64') }
+    const body = {
+      payloadB64: Buffer.from(encodedMessage).toString('base64'),
+      vendor_slug: vendorSlug,
+    }
 
     if (this.mockAdapter) {
       this.mockAdapter.onPost(url).reply(204, { success: true })

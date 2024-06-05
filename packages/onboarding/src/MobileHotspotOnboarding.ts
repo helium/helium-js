@@ -656,6 +656,7 @@ export default class MobileHotspotOnboarding {
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string
+    vendorSlug?: string
   }) {
     this._logCallback?.('Sending configuration message')
     const response = await this._configurationClient.sendConfigurationMessage(opts)
