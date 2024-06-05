@@ -341,9 +341,9 @@ export default class MobileHotspotOnboarding {
     // confirm that it was successfully created. This is a hacky way
     // to verify the asset was created. Every 3 seconds, we check to see
     // if the asset exists. If it does, we stop checking.
-    // We check if the asset exists up to 200 times
-    // This equates to 600 seconds or 10 minutes
-    for (let i = 0; i < 200; i++) {
+    // We check if the asset exists up to 60 times
+    // This equates to 180 seconds or 3 minutes
+    for (let i = 0; i < 60; i++) {
       // waiting for the asset to be created on solana
       await sleep(3000)
 
@@ -356,7 +356,7 @@ export default class MobileHotspotOnboarding {
           this.writeLog(`Hotspot not yet found ${hotspotAddress}`)
         }
       } catch (e) {
-        if (i === 199) {
+        if (i === 59) {
           // if we've reached the end of the loop, write the error
           this.writeError(e)
         }
@@ -375,9 +375,9 @@ export default class MobileHotspotOnboarding {
       })
     }
 
-    // We check if the mobile info exists up to 200 times
-    // This equates to 600 seconds or 10 minutes
-    for (let i = 0; i < 200; i++) {
+    // We check if the mobile info exists up to 60 times
+    // This equates to 180 seconds or 3 minutes
+    for (let i = 0; i < 60; i++) {
       // waiting for the asset to be created on solana
       await sleep(3000)
 
@@ -396,7 +396,7 @@ export default class MobileHotspotOnboarding {
         if (hotspotInfo) return hotspotInfo
       } catch (e) {
         this.writeLog('Hotspot MOBILE details not yet found.')
-        if (i === 199) {
+        if (i === 59) {
           // if we've reached the end of the loop, write the error
           this.writeError(e)
         }
