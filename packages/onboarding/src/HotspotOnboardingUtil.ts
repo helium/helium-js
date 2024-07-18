@@ -1,4 +1,4 @@
-import OnboardingClient from './OnboardingClient'
+import OnboardingClient, { OnboardingResponse } from './OnboardingClient'
 import BN from 'bn.js'
 import {
   DC_MINT,
@@ -19,19 +19,9 @@ import {
   rewardableEntityConfigKey,
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
-import { HNT_AS_BONES, DcProgram, DeviceType, HemProgram, Maker, NetworkType } from './types'
+import { HNT_AS_BONES, DcProgram, HemProgram, Maker, NetworkType } from './types'
 
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
-
-const deviceTypeToNetworkType = (deviceType: DeviceType): NetworkType => {
-  // deviceType is null for IOT hotspots
-  // cbrs devices are both IOT and MOBILE hotspots, but the location, gain, and elevation are all stored on the IOT side
-  if (deviceType === null || deviceType === 'Cbrs') {
-    return 'IOT'
-  }
-
-  return 'MOBILE'
-}
 
 const hotspotInfoToDetails = (value: {
   asset: PublicKey
@@ -55,18 +45,12 @@ const hotspotInfoToDetails = (value: {
 export const getHotspotNetworkDetails = async ({
   address,
   hemProgram,
-  ...opts
-}:
-  | {
-      address: string
-      networkType: NetworkType
-      hemProgram: HemProgram
-    }
-  | {
-      address: string
-      deviceType: DeviceType
-      hemProgram: HemProgram
-    }): Promise<
+  networkType,
+}: {
+  address: string
+  networkType: NetworkType
+  hemProgram: HemProgram
+}): Promise<
   | {
       elevation?: number
       gain?: number
@@ -77,16 +61,6 @@ export const getHotspotNetworkDetails = async ({
     }
   | undefined
 > => {
-  const types = { networkType: undefined, deviceType: undefined, ...opts }
-  let networkType = types.networkType
-  if (!networkType && types.deviceType !== undefined) {
-    networkType = deviceTypeToNetworkType(types.deviceType)
-  }
-
-  if (!networkType) {
-    throw new Error('Could not determine network type')
-  }
-
   const mint = networkType === 'IOT' ? IOT_MINT : MOBILE_MINT
   const subDao = subDaoKey(mint)[0]
 
@@ -208,9 +182,10 @@ const burnHNTForDataCredits = async ({
   return txn
 }
 
-export const getAssertData = async ({
-  deviceType,
+export const getUpdateMetaData = async ({
+  networkType,
   gateway,
+  antenna,
   azimuth,
   hemProgram,
   onboardingClient,
@@ -228,9 +203,10 @@ export const getAssertData = async ({
   owner: PublicKey
   decimalGain?: number
   elevation?: number
+  antenna?: number
   azimuth?: number
   nextLocation: string
-  deviceType: DeviceType
+  networkType: NetworkType
   onboardingClient: OnboardingClient
   dcProgram: DcProgram
   cluster: Cluster
@@ -246,22 +222,41 @@ export const getAssertData = async ({
     makerKey = heliumAddressToSolPublicKey(onboardingRecord.data?.maker.address)
   }
 
-  const networkType = deviceTypeToNetworkType(deviceType)
   const solanaAddress = owner.toBase58()
-  let gain: number | undefined = undefined
-  if (decimalGain) {
-    gain = Math.round((decimalGain || 0) * 10.0)
-  }
 
-  const solResponse = await onboardingClient.updateMetadata({
-    type: networkType,
-    solanaAddress,
-    hotspotAddress: gateway,
-    location: nextLocation,
-    elevation,
-    gain,
-    azimuth,
-  })
+  let solResponse: OnboardingResponse<{
+    solanaTransactions: number[][]
+  }>
+
+  if (networkType === 'IOT') {
+    let gain: number | undefined = undefined
+    if (decimalGain) {
+      gain = Math.round((decimalGain || 0) * 10.0)
+    }
+
+    solResponse = await onboardingClient.updateIotMetadata({
+      solanaAddress,
+      hotspotAddress: gateway,
+      location: nextLocation,
+      elevation,
+      gain,
+    })
+  } else {
+    solResponse = await onboardingClient.updateMobileMetadata({
+      solanaAddress,
+      hotspotAddress: gateway,
+      location: nextLocation,
+      deploymentInfo: {
+        wifiInfoV0: {
+          elevation: elevation || 0,
+          azimuth: azimuth || 0,
+          antenna: antenna || 0,
+          mechanicalDownTilt: 0,
+          electricalDownTilt: 0,
+        },
+      },
+    })
+  }
 
   const errFound = !solResponse.success ? solResponse : undefined
 
@@ -274,7 +269,7 @@ export const getAssertData = async ({
   )
 
   const networkDetails = await getHotspotNetworkDetails({
-    deviceType,
+    networkType,
     address: gateway,
     hemProgram,
   })
