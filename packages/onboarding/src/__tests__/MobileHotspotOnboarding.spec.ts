@@ -132,7 +132,7 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     expect(txn.owner?.b58).toBe(ALICE.b58)
   })
 
-  it('Fetches the gateway location information', async () => {
+  it('Fetches the gateway update information', async () => {
     const client = new MobileHotspotOnboarding({
       shouldMock: true,
       wifiBaseUrl: 'http://192.168.68.1:3333',
@@ -142,10 +142,10 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
       cluster: 'devnet',
     })
 
-    const assertData = await client.getWifiAssertData({
+    const assertData = await client.getUpdateMetaData({
       gateway: 'asdf',
       location: 'asdf123',
-      deviceType: 'WifiIndoor',
+      networkType: 'MOBILE',
     })
 
     expect(assertData).toBeDefined()
@@ -250,10 +250,10 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
       cluster: 'devnet',
     })
 
-    const assertData = await client.getWifiAssertData({
+    const assertData = await client.getUpdateMetaData({
       gateway: 'asdf',
       location: 'asdf123',
-      deviceType: 'WifiOutdoor',
+      networkType: 'MOBILE',
     })
 
     expect(assertData).toBeDefined()

@@ -10,7 +10,7 @@ import {
 } from '@helium/spl-utils'
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem, keyToAssetKey } from '@helium/helium-entity-manager-sdk'
-import { AssertData, DcProgram, DeviceType, HemProgram, SubmitStatus } from './types'
+import { AssertData, DcProgram, HemProgram, NetworkType, SubmitStatus } from './types'
 import { daoKey } from '@helium/helium-sub-daos-sdk'
 import * as AssertMock from './__mocks__/AssertMock'
 import {
@@ -78,20 +78,22 @@ export default class SolanaOnboarding {
     return this.dcProgram!
   }
 
-  getAssertData = async ({
+  getUpdateMetaData = async ({
     gateway,
     decimalGain,
     azimuth,
+    antenna,
     elevation,
     location,
-    deviceType,
+    networkType,
   }: {
     gateway: string
     azimuth?: number
     decimalGain?: number
+    antenna?: number
     elevation?: number
     location: string
-    deviceType: DeviceType
+    networkType: NetworkType
   }): Promise<AssertData> => {
     if (this.shouldMock) {
       return AssertMock.getAssertData()
@@ -100,7 +102,7 @@ export default class SolanaOnboarding {
     const dcProgram = await this.getDcProgram()
     const hemProgram = await this.getHemProgram()
 
-    return HotspotOnboardingUtil.getAssertData({
+    return HotspotOnboardingUtil.getUpdateMetaData({
       onboardingClient: this.onboardingClient,
       connection: this.connection,
       owner: this.wallet,
@@ -108,10 +110,11 @@ export default class SolanaOnboarding {
       hemProgram,
       decimalGain,
       gateway,
+      antenna,
       azimuth,
       elevation,
       nextLocation: location,
-      deviceType,
+      networkType,
       cluster: this.cluster,
     })
   }
@@ -180,7 +183,7 @@ export default class SolanaOnboarding {
     address,
   }: {
     address: string
-    networkType: 'MOBILE' | 'IOT'
+    networkType: NetworkType
   }) => {
     if (this.shouldMock) {
       return {

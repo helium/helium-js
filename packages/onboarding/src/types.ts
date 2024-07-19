@@ -1,6 +1,6 @@
 import { init as initDc } from '@helium/data-credits-sdk'
 import { init as initHem } from '@helium/helium-entity-manager-sdk'
-import { getAssertData } from './HotspotOnboardingUtil'
+import { getUpdateMetaData } from './HotspotOnboardingUtil'
 import BN from 'bn.js'
 
 export const DEWI_ONBOARDING_API_BASE_URL = 'https://onboarding.dewi.org/api'
@@ -34,11 +34,36 @@ export type Maker = {
   updatedAt: string
 }
 
-export type Metadata = {
+export type MobileDeploymentInfoV0 = {
+  cbrsInfoV0?: { radioInfos: RadioInfoV0[] }
+  wifiInfoV0?: WifiInfoV0
+}
+
+export type WifiInfoV0 = {
+  antenna: number
+  elevation: number
+  azimuth: number
+  mechanicalDownTilt: number
+  electricalDownTilt: number
+}
+
+export type RadioInfoV0 = {
+  radioId: string
+  elevation: number
+}
+
+export type MobileMetadata = {
   location: string
+  deploymentInfo: MobileDeploymentInfoV0
+  hotspotAddress: string
+}
+
+export type IotMetadata = {
+  location: string
+  hotspotAddress: string
   elevation: number
   gain: number
-  azimuth: number
+  payer: string
 }
 
 export const IndoorManufacturedDeviceTypes = ['HeliumMobileIndoor'] as const
@@ -62,7 +87,7 @@ export const TXN_FEE_IN_LAMPORTS = new BN(5000)
 
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
 export type DcProgram = Awaited<ReturnType<typeof initDc>>
-export type AssertData = Awaited<ReturnType<typeof getAssertData>>
+export type AssertData = Awaited<ReturnType<typeof getUpdateMetaData>>
 
 export type SubmitStatus = {
   totalProgress: number

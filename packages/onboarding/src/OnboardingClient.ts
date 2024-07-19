@@ -1,12 +1,12 @@
 import axios, { AxiosInstance, AxiosResponse, Method } from 'axios'
 import axiosRetry from 'axios-retry'
 import qs from 'qs'
-import { OnboardingRecord, Maker, Metadata, NetworkType, DeviceType } from './types'
+import { OnboardingRecord, Maker, MobileMetadata, DeviceType, IotMetadata } from './types'
 import MockAdapter from 'axios-mock-adapter'
 import updateTxn from './updateTxn'
 import BN from 'bn.js'
 
-type Response<T> = {
+export type OnboardingResponse<T> = {
   code: number
   data: T | null
   success: boolean
@@ -77,7 +77,7 @@ export default class OnboardingClient {
 
   private async execute<T>(method: Method, path: string, params?: Object) {
     try {
-      const response: AxiosResponse<Response<T>> = await this.axios({
+      const response: AxiosResponse<OnboardingResponse<T>> = await this.axios({
         method,
         url: path,
         data: params,
@@ -91,7 +91,7 @@ export default class OnboardingClient {
       return response.data
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        return err.response?.data as Response<T>
+        return err.response?.data as OnboardingResponse<T>
       }
       throw err
     }
@@ -134,48 +134,43 @@ export default class OnboardingClient {
     return this.post<{ solanaTransactions: number[][] }>('transactions/create-hotspot', opts)
   }
 
-  async onboard(
-    opts: {
-      hotspotAddress: string
-      type: NetworkType
-      payer?: string
-    } & Partial<Metadata>,
-  ) {
+  async onboardIot(opts: { hotspotAddress: string; payer?: string } & Partial<IotMetadata>) {
     let location: string | undefined = undefined
     if (opts.location) {
       location = new BN(opts.location, 'hex').toString()
     }
 
-    return this.post<{ solanaTransactions: number[][] }>(
-      `transactions/${opts.type.toLowerCase()}/onboard`,
-      {
-        entityKey: opts.hotspotAddress,
-        location,
-        elevation: opts.elevation,
-        gain: opts.gain,
-        payer: opts.payer,
-        azimuth: opts.azimuth,
-      },
-    )
+    return this.post<{ solanaTransactions: number[][] }>('transactions/iot/onboard', {
+      entityKey: opts.hotspotAddress,
+      location,
+      payer: opts.payer,
+      gain: opts.gain,
+      elevation: opts.elevation,
+    })
   }
 
-  async onboardIot(opts: { hotspotAddress: string; payer?: string } & Partial<Metadata>) {
-    return this.onboard({ ...opts, type: 'IOT' })
+  async onboardMobile(opts: { hotspotAddress: string; payer?: string } & Partial<MobileMetadata>) {
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
+    return this.post<{ solanaTransactions: number[][] }>('transactions/mobile/onboard', {
+      entityKey: opts.hotspotAddress,
+      location,
+      deploymentInfo: opts.deploymentInfo,
+      payer: opts.payer,
+    })
   }
 
-  async onboardMobile(opts: { hotspotAddress: string; payer?: string } & Partial<Metadata>) {
-    return this.onboard({ ...opts, type: 'MOBILE' })
-  }
-
-  async updateMetadata(
-    opts: Partial<Metadata> & {
-      type: NetworkType
+  async updateIotMetadata(
+    opts: Partial<IotMetadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
     },
   ) {
-    const { solanaAddress, elevation, gain, hotspotAddress, type, payer, azimuth } = opts
+    const { solanaAddress, hotspotAddress, payer } = opts
 
     let location: string | undefined = undefined
     if (opts.location) {
@@ -183,38 +178,41 @@ export default class OnboardingClient {
     }
 
     const body = {
-      azimuth,
       entityKey: hotspotAddress,
       location,
-      elevation,
-      gain,
-      wallet: solanaAddress,
       payer,
+      wallet: solanaAddress,
+      gain: opts.gain,
+      elevation: opts.elevation,
     }
-    return this.post<{ solanaTransactions: number[][] }>(
-      `transactions/${type.toLowerCase()}/update-metadata`,
-      body,
-    )
-  }
-
-  async updateIotMetadata(
-    opts: Partial<Metadata> & {
-      hotspotAddress: string
-      solanaAddress: string
-      payer?: string
-    },
-  ) {
-    return this.updateMetadata({ ...opts, type: 'IOT' })
+    return this.post<{ solanaTransactions: number[][] }>('transactions/iot/update-metadata', body)
   }
 
   async updateMobileMetadata(
-    opts: Partial<Metadata> & {
+    opts: Partial<MobileMetadata> & {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
     },
   ) {
-    return this.updateMetadata({ ...opts, type: 'MOBILE' })
+    const { solanaAddress, deploymentInfo, hotspotAddress, payer } = opts
+
+    let location: string | undefined = undefined
+    if (opts.location) {
+      location = new BN(opts.location, 'hex').toString()
+    }
+
+    const body = {
+      deploymentInfo,
+      entityKey: hotspotAddress,
+      location,
+      payer,
+      wallet: solanaAddress,
+    }
+    return this.post<{ solanaTransactions: number[][] }>(
+      'transactions/mobile/update-metadata',
+      body,
+    )
   }
 
   async addToOnboardingServer({
