@@ -9,6 +9,7 @@ import {
   DeviceType,
   HeightType,
   ManufacturedDeviceType,
+  NetworkType,
   OutdoorManufacturedDeviceType,
   ProgressKeys,
   ProgressStep,
@@ -198,47 +199,29 @@ export default class MobileHotspotOnboarding {
     return this.getWifiClient().getApiVersion()
   }
 
-  getWifiAssertData = async ({
+  getUpdateMetaData = async ({
     gateway,
     elevation,
     location,
-    deviceType,
+    networkType,
     azimuth,
+    antenna,
   }: {
     azimuth?: number
     gateway: string
     elevation?: number
     location: string
-    deviceType: 'WifiIndoor' | 'WifiOutdoor'
+    antenna?: number
+    networkType: NetworkType
+    decimalGain?: number
   }) => {
-    return this._solanaOnboarding.getAssertData({
+    return this._solanaOnboarding.getUpdateMetaData({
+      antenna,
       azimuth,
       gateway,
       elevation,
       location,
-      deviceType,
-    })
-  }
-
-  getCbrsAssertData = async ({
-    gateway,
-    decimalGain,
-    elevation,
-    location,
-  }: {
-    gateway: string
-    decimalGain?: number
-    elevation?: number
-    location: string
-  }) => {
-    // We update assert data for the IOT network only
-    // For the MOBILE network we don't set location. They must update their radio location at https://hotspots.hellohelium.com
-    return this._solanaOnboarding.getAssertData({
-      gateway,
-      decimalGain,
-      elevation,
-      location,
-      deviceType: 'Cbrs',
+      networkType,
     })
   }
 
@@ -247,21 +230,29 @@ export default class MobileHotspotOnboarding {
     azimuth,
     location,
     elevation,
+    antenna,
   }: {
     hotspotAddress: string
     location?: string
     elevation?: number
+    antenna?: number
     azimuth?: number
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
 
-    const onboardTxns = await this._onboardingClient.onboard({
+    const onboardTxns = await this._onboardingClient.onboardMobile({
       hotspotAddress,
       location,
-      type: 'MOBILE',
-      elevation,
-      azimuth,
+      deploymentInfo: {
+        wifiInfoV0: {
+          elevation: elevation || 0,
+          azimuth: azimuth || 0,
+          antenna: antenna || 0,
+          mechanicalDownTilt: 0,
+          electricalDownTilt: 0,
+        },
+      },
     })
 
     if (!onboardTxns.data?.solanaTransactions?.length) {
@@ -455,9 +446,11 @@ export default class MobileHotspotOnboarding {
     azimuth,
     location,
     elevation,
+    antenna,
     ...opts
   }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
+    antenna?: number
     location?: string
     azimuth?: number | undefined
     elevation?: number | undefined
@@ -520,6 +513,7 @@ export default class MobileHotspotOnboarding {
       hotspotAddress,
       azimuth,
       elevation,
+      antenna,
     })
 
     return txns

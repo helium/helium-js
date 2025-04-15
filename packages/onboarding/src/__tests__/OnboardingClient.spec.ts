@@ -192,9 +192,16 @@ describe('Onboard', () => {
 
     const client = new OnboardingClient(DEWI_ONBOARDING_API_BASE_URL_V3)
     const onboardingTxn = await client.onboardMobile({
+      deploymentInfo: {
+        wifiInfoV0: {
+          elevation: 1,
+          antenna: 1,
+          azimuth: 1,
+          electricalDownTilt: 1,
+          mechanicalDownTilt: 1,
+        },
+      },
       location: '8a2a1072b59ffff',
-      gain: 1,
-      elevation: 1,
       hotspotAddress: 'asdf1234',
     })
     expect(onboardingTxn.data).toBeDefined()
@@ -240,9 +247,16 @@ describe('Onboard', () => {
       const onboardingTxn = await client.updateMobileMetadata({
         solanaAddress: 'asfd',
         location: '8a2a1072b59ffff',
-        elevation: 1,
-        gain: 1,
         hotspotAddress: 'asdf',
+        deploymentInfo: {
+          wifiInfoV0: {
+            elevation: 1,
+            antenna: 1,
+            azimuth: 1,
+            electricalDownTilt: 1,
+            mechanicalDownTilt: 1,
+          },
+        },
       })
       expect(onboardingTxn.data).toBeDefined()
       expect(onboardingTxn.data?.solanaTransactions[0][0]).toBe(0)
