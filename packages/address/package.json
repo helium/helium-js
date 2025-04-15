@@ -1,6 +1,6 @@
 {
   "name": "@helium/address",
-  "version": "4.13.0",
+  "version": "4.13.1",
   "description": "Helium public key utilities",
   "keywords": [
     "helium",
@@ -27,11 +27,12 @@
   },
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210",
   "dependencies": {
-    "bs58": "^5.0.0",
-    "js-sha256": "^0.9.0",
+    "bs58": "^6.0.0",
+    "js-sha256": "^0.11.0",
     "multiformats": "^9.6.4"
   },
   "devDependencies": {
-    "@types/bs58": "4.0.1"
+    "@types/bs58": "4.0.1",
+    "@types/node": "^22.14.1"
   }
 }

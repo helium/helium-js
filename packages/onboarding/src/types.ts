@@ -38,6 +38,7 @@ export type Metadata = {
   location: string
   elevation: number
   gain: number
+  azimuth: number
 }
 
 export const IndoorManufacturedDeviceTypes = ['HeliumMobileIndoor'] as const
@@ -56,7 +57,7 @@ export type HeightType = 'MSL' | 'AGL' | 'NONE' | 'UNRECOGNIZED'
 export type NetworkType = 'IOT' | 'MOBILE'
 export type DeviceType = 'Cbrs' | 'WifiIndoor' | 'WifiOutdoor' | null // null is for IOT devices
 
-export const BONES_IN_HNT = new BN(100000000)
+export const HNT_AS_BONES = new BN(100000000)
 export const TXN_FEE_IN_LAMPORTS = new BN(5000)
 
 export type HemProgram = Awaited<ReturnType<typeof initHem>>
@@ -68,3 +69,17 @@ export type SubmitStatus = {
   currentBatchProgress: number
   currentBatchSize: number
 }
+
+export const ProgressKeys = [
+  'get_add_gateway',
+  'got_add_gateway',
+  'fetch_create',
+  'submit_create',
+  'verify_create',
+  'fetch_mobile',
+  'got_mobile',
+  'submit_signed_messages',
+  'verify_mobile',
+  'complete',
+] as const
+export type ProgressStep = (typeof ProgressKeys)[number]

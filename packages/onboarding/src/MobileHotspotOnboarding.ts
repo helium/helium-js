@@ -10,27 +10,24 @@ import {
   HeightType,
   ManufacturedDeviceType,
   OutdoorManufacturedDeviceType,
+  ProgressKeys,
+  ProgressStep,
 } from './types'
 import ConfigurationClient from './ConfigurationClient'
 
-const ProgressKeys = [
-  'get_add_gateway',
-  'got_add_gateway',
-  'fetch_create',
-  'submit_create',
-  'verify_create',
-  'fetch_mobile',
-  'got_mobile',
-  'submit_signed_messages',
-  'verify_mobile',
-  'shutdown_wifi',
-  'complete',
-] as const
-type ProgressStep = (typeof ProgressKeys)[number]
+type AddToOnboardingServerOpts = {
+  authToken?: string
+  batch?: string
+  deviceType?: DeviceType
+  heliumSerial?: string
+  macEth0?: string
+  macWlan0?: string
+  rpiSerial?: string
+}
 
-export default class MobileWifiOnboarding {
+export default class MobileHotspotOnboarding {
   private _configurationClient!: ConfigurationClient
-  private _wifiClient!: WifiHttpClient
+  private _wifiClient?: WifiHttpClient
   private _onboardingClient!: OnboardingClient
   private _solanaOnboarding!: SolanaOnboarding
   private _progressCallback?: (progress: number, step?: ProgressStep) => void
@@ -45,8 +42,8 @@ export default class MobileWifiOnboarding {
     return this._cluster
   }
 
-  private _wifiBaseUrl!: string
-  public get wifiBaseUrl(): string {
+  private _wifiBaseUrl?: string
+  public get wifiBaseUrl(): string | undefined {
     return this._wifiBaseUrl
   }
 
@@ -66,7 +63,7 @@ export default class MobileWifiOnboarding {
   }
 
   constructor(opts: {
-    wifiBaseUrl: string
+    wifiBaseUrl?: string
     wifiApiVersion?: 'v2' | 'v1'
     onboardingClientUrl: string
     shouldMock?: boolean
@@ -91,14 +88,17 @@ export default class MobileWifiOnboarding {
       wallet: opts.wallet,
     })
 
-    this._wifiClient = new WifiHttpClient({
-      owner: opts.wallet,
-      baseURL: opts.wifiBaseUrl,
-      apiVersion: opts.wifiApiVersion,
-      mockRequests: opts.shouldMock,
-      errorCallback: opts.errorCallback,
-      logCallback: opts.logCallback,
-    })
+    if (opts.wifiBaseUrl) {
+      this._wifiClient = new WifiHttpClient({
+        owner: opts.wallet,
+        baseURL: opts.wifiBaseUrl,
+        apiVersion: opts.wifiApiVersion,
+        mockRequests: opts.shouldMock,
+        errorCallback: opts.errorCallback,
+        logCallback: opts.logCallback,
+      })
+    }
+
     this._onboardingClient = new OnboardingClient(opts.onboardingClientUrl, {
       mockRequests: opts.shouldMock,
     })
@@ -114,7 +114,7 @@ export default class MobileWifiOnboarding {
     this._logCallback = opts.logCallback
     this._errorCallback = opts.errorCallback
 
-    this._logCallback?.('Initialized MobileWifiOnboarding', opts)
+    this._logCallback?.('Initialized MobileHotspotOnboarding', opts)
   }
 
   writeError = (error: unknown) => {
@@ -134,20 +134,39 @@ export default class MobileWifiOnboarding {
     }
   }
 
-  signGatewayAddTransaction = async (deviceType: ManufacturedDeviceType) => {
+  private getWifiClient = () => {
+    if (!this._wifiClient) {
+      throw new Error('Wifi base url not set')
+    }
+
+    return this._wifiClient
+  }
+
+  signGatewayAddTransaction = async (
+    deviceType: ManufacturedDeviceType,
+    opts?: AddToOnboardingServerOpts,
+  ) => {
     this.setProgressToStep('get_add_gateway')
-    const { txn: txnStr, apiVersion } = await this._wifiClient.signGatewayAddTransaction(
+    this.writeLog('Getting add gateway txn', { deviceType, cluster: this._cluster })
+    const { txn: txnStr, apiVersion } = await this.getWifiClient().signGatewayAddTransaction(
       this._cluster,
       deviceType,
     )
+    this.writeLog('Got add gateway str', { txnStr })
     const txn = AddGatewayV1.fromString(txnStr)
     this.setProgressToStep('got_add_gateway')
+
+    await this.addToOnboardingServer({
+      ...opts,
+      hotspotAddress: txn.gateway?.b58 || '',
+    })
+
     return { txn, apiVersion }
   }
 
   checkFwValid = async (minVersion?: string) => {
     this.writeLog('Checking firmware version')
-    const fwInfo = await this._wifiClient.getVersionDetails()
+    const fwInfo = await this.getWifiClient().getVersionDetails()
 
     const minFirmwareVersion = minVersion || 'v0.10.0'
 
@@ -159,7 +178,9 @@ export default class MobileWifiOnboarding {
 
     const isSuccessful = status >= 200 && status < 300
 
-    if (!isSuccessful || !firmwareVersion) return false
+    if (!isSuccessful || !firmwareVersion) {
+      throw new Error('Could not determine firmware version.')
+    }
 
     if (firmwareVersion.startsWith('dev')) return true
 
@@ -170,45 +191,67 @@ export default class MobileWifiOnboarding {
   }
 
   getGpsLocation = async (deviceType: OutdoorManufacturedDeviceType) => {
-    return this._wifiClient.getGpsLocation(deviceType)
+    return this.getWifiClient().getGpsLocation(deviceType)
   }
 
   getApiVersion = () => {
-    return this._wifiClient.getApiVersion()
+    return this.getWifiClient().getApiVersion()
   }
 
-  getMobileAssertData = async ({
+  getWifiAssertData = async ({
     gateway,
-    decimalGain,
     elevation,
     location,
     deviceType,
+    azimuth,
   }: {
+    azimuth?: number
     gateway: string
-    decimalGain?: number
     elevation?: number
     location: string
-    deviceType: DeviceType
+    deviceType: 'WifiIndoor' | 'WifiOutdoor'
   }) => {
     return this._solanaOnboarding.getAssertData({
+      azimuth,
       gateway,
-      decimalGain,
       elevation,
       location,
       deviceType,
     })
   }
 
+  getCbrsAssertData = async ({
+    gateway,
+    decimalGain,
+    elevation,
+    location,
+  }: {
+    gateway: string
+    decimalGain?: number
+    elevation?: number
+    location: string
+  }) => {
+    // We update assert data for the IOT network only
+    // For the MOBILE network we don't set location. They must update their radio location at https://hotspots.hellohelium.com
+    return this._solanaOnboarding.getAssertData({
+      gateway,
+      decimalGain,
+      elevation,
+      location,
+      deviceType: 'Cbrs',
+    })
+  }
+
   getMobileOnboardTxns = async ({
     hotspotAddress,
+    azimuth,
     location,
     elevation,
-    gain,
   }: {
     hotspotAddress: string
     location?: string
     elevation?: number
-    gain?: number
+    azimuth?: number
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
@@ -218,7 +261,7 @@ export default class MobileWifiOnboarding {
       location,
       type: 'MOBILE',
       elevation,
-      gain,
+      azimuth,
     })
 
     if (!onboardTxns.data?.solanaTransactions?.length) {
@@ -245,38 +288,46 @@ export default class MobileWifiOnboarding {
     this._logCallback?.('Creating hotspot on Solana', { transaction })
     this.setProgressToStep('fetch_create')
 
-    let solanaTransactions: number[][] | undefined = undefined
+    let txIds: string[] = []
+    let tries = 0
 
-    try {
-      const createTxns = await this._onboardingClient.createHotspot({
-        transaction,
-      })
-      solanaTransactions = createTxns.data?.solanaTransactions
-      if (solanaTransactions?.length) {
-        this.writeLog('Created hotspot onboard txns')
-      } else {
-        this.writeLog('Could not create hotspot onboard txns', createTxns)
+    while (!txIds.length && tries < 12) {
+      tries++
+      try {
+        const createTxns = await this._onboardingClient.createHotspot({
+          transaction,
+        })
+        const solanaTransactions = createTxns?.data?.solanaTransactions
+
+        if (solanaTransactions?.length) {
+          this.writeLog('Created hotspot onboard txns')
+        } else {
+          this.writeLog('Could not create hotspot onboard txns', createTxns)
+          throw new Error(
+            `No solana transactions returned from create hotspot\n\n${JSON.stringify(createTxns)}`,
+          )
+        }
+
+        this.writeLog('Submitting hotspot to solana')
+        this.setProgressToStep('submit_create')
+        txIds = await this._solanaOnboarding.submitAll({
+          txns: solanaTransactions.map((t) => Buffer.from(t)),
+        })
+        this.writeLog('Hotspot has successfully been submitted to solana', { data: txIds })
+      } catch (e) {
+        this.writeError(e)
       }
-    } catch (e) {
-      this.writeError(e)
+
+      if (!txIds.length) {
+        await sleep(5000) // wait 5 seconds before trying again
+      }
     }
 
-    try {
-      if (!solanaTransactions?.length) {
-        throw new Error('No solana transactions returned from create hotspot')
-      }
-
-      this.writeLog('Submitting hotspot to solana')
-      this.setProgressToStep('submit_create')
-      const txnids = await this._solanaOnboarding.submitAll({
-        txns: solanaTransactions.map((t) => Buffer.from(t)),
-      })
-      this.writeLog('Hotspot has successfully been submitted to solana', { data: txnids })
-      return txnids
-    } catch (e) {
-      this.writeError(e)
-      throw e
+    if (!txIds.length) {
+      throw new Error('Failed to create hotspot')
     }
+
+    return txIds
   }
 
   verifyHotspotCreated = async (hotspotAddress: string) => {
@@ -290,18 +341,25 @@ export default class MobileWifiOnboarding {
     // confirm that it was successfully created. This is a hacky way
     // to verify the asset was created. Every 3 seconds, we check to see
     // if the asset exists. If it does, we stop checking.
-    // We check if the asset exists up to 200 times
-    // This equates to 600 seconds or 10 minutes
-    for (let i = 0; i < 200; i++) {
+    // We check if the asset exists up to 60 times
+    // This equates to 180 seconds or 3 minutes
+    for (let i = 0; i < 60; i++) {
       // waiting for the asset to be created on solana
       await sleep(3000)
 
       try {
         const hotspotPubKey = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
-        this.writeLog(`Hotspot asset found?: ${hotspotPubKey?.toBase58()} ${hotspotAddress}`)
-        if (hotspotPubKey) return hotspotPubKey
+        if (hotspotPubKey) {
+          this.writeLog(`Hotspot has been found: ${hotspotPubKey?.toBase58()} ${hotspotAddress}`)
+          return hotspotPubKey
+        } else {
+          this.writeLog(`Hotspot not yet found ${hotspotAddress}`)
+        }
       } catch (e) {
-        this.writeError(e)
+        if (i === 59) {
+          // if we've reached the end of the loop, write the error
+          this.writeError(e)
+        }
       }
     }
     return undefined
@@ -317,9 +375,9 @@ export default class MobileWifiOnboarding {
       })
     }
 
-    // We check if the mobile info exists up to 200 times
-    // This equates to 600 seconds or 10 minutes
-    for (let i = 0; i < 200; i++) {
+    // We check if the mobile info exists up to 60 times
+    // This equates to 180 seconds or 3 minutes
+    for (let i = 0; i < 60; i++) {
       // waiting for the asset to be created on solana
       await sleep(3000)
 
@@ -329,34 +387,80 @@ export default class MobileWifiOnboarding {
           address: hotspotAddress,
         })
 
-        this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
+        if (hotspotInfo) {
+          this.writeLog('Hotspot has been onboarded to MOBILE')
+        } else {
+          this.writeLog('Hotspot MOBILE details not yet found.')
+        }
+
         if (hotspotInfo) return hotspotInfo
       } catch (e) {
-        this.writeError(e)
+        this.writeLog('Hotspot MOBILE details not yet found.')
+        if (i === 59) {
+          // if we've reached the end of the loop, write the error
+          this.writeError(e)
+        }
       }
     }
+
     return undefined
+  }
+
+  addToOnboardingServer = async ({
+    authToken,
+    hotspotAddress,
+    batch,
+    deviceType,
+    heliumSerial,
+    macEth0,
+    macWlan0,
+    rpiSerial,
+  }: AddToOnboardingServerOpts & { hotspotAddress: string }) => {
+    if (
+      this._shouldMock ||
+      this._cluster !== 'devnet' ||
+      !authToken ||
+      !batch ||
+      !deviceType ||
+      !heliumSerial ||
+      !macEth0 ||
+      !macWlan0 ||
+      !rpiSerial
+    ) {
+      return
+    }
+
+    // If onboarding to devnet, we create the hotspot on the onboarding server
+    try {
+      await this._onboardingClient.addToOnboardingServer({
+        authToken,
+        onboardingKey: hotspotAddress,
+        batch,
+        deviceType,
+        heliumSerial,
+        macEth0,
+        macWlan0,
+        rpiSerial,
+      })
+      await sleep(1000)
+    } catch (e) {
+      // if it's already been added, we don't need to do anything
+      this.writeError(e)
+    }
   }
 
   createHotspotGetOnboardTxns = async ({
     addGatewayTxn,
     authToken,
+    azimuth,
     location,
     elevation,
-    gain,
     ...opts
-  }: {
+  }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
-    authToken?: string
     location?: string
-    deviceType: DeviceType
-    batch: string
-    heliumSerial: string
-    macEth0: string
-    macWlan0: string
-    rpiSerial: string
+    azimuth?: number | undefined
     elevation?: number | undefined
-    gain?: number | undefined
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -364,19 +468,11 @@ export default class MobileWifiOnboarding {
     }
     const hotspotAddress = addGatewayV1.gateway.b58
 
-    if (!this._shouldMock && authToken && this._cluster === 'devnet') {
-      // If onboarding to devnet, we create the hotspot on the onboarding server
-      try {
-        await this._onboardingClient.addToOnboardingServer({
-          ...opts,
-          authToken,
-          onboardingKey: hotspotAddress,
-        })
-        await sleep(1000)
-      } catch (e) {
-        this.writeError(e)
-      }
-    }
+    await this.addToOnboardingServer({
+      ...opts,
+      authToken,
+      hotspotAddress,
+    })
 
     let hotspotPubKey: PublicKey | undefined
     try {
@@ -402,29 +498,28 @@ export default class MobileWifiOnboarding {
     }
 
     // Check if this hotspot has already been onboarded to MOBILE
-    let needsOnboarding = true
     try {
       const hotspotInfo = await this._solanaOnboarding.getHotspotDetails({
         networkType: 'MOBILE',
         address: hotspotAddress,
       })
       if (hotspotInfo) {
-        needsOnboarding = false
+        this.writeLog('Hotspot has already been onboarded')
+        if (!this._shouldMock) {
+          throw new Error('Hotspot has already been onboarded')
+        }
+      } else {
+        this.writeLog('Hotspot MOBILE details not found.')
       }
-      this.writeLog(`Hotspot ${!!hotspotInfo ? 'has' : 'has not'} been onboarded to MOBILE`)
-    } catch (e) {
-      this.writeError(e)
-    }
-
-    if (!this._shouldMock && !needsOnboarding) {
-      return []
+    } catch {
+      this.writeLog('Hotspot MOBILE details not found.')
     }
 
     const txns = await this.getMobileOnboardTxns({
       location,
       hotspotAddress,
+      azimuth,
       elevation,
-      gain,
     })
 
     return txns
@@ -434,8 +529,7 @@ export default class MobileWifiOnboarding {
     return this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
   }
 
-  onHotspotCreated = async (hotspotAddress: string) => {
-    this.setProgressToStep('shutdown_wifi')
+  onWifiHotspotCreated = async (hotspotAddress: string) => {
     const asset = await this._solanaOnboarding.hotspotToAssetKey(hotspotAddress)
     if (!asset) {
       this.writeLog('Hotspot asset not found')
@@ -444,9 +538,8 @@ export default class MobileWifiOnboarding {
 
     this.writeLog('Calling onHotspotCreated', { data: { asset: asset.toBase58() } })
 
-    let shutdownSuccess = false
     try {
-      shutdownSuccess = await this._wifiClient.onHotspotCreated({
+      await this.getWifiClient().onHotspotCreated({
         assetId: asset.toBase58(),
         cluster: this._cluster,
       })
@@ -455,23 +548,17 @@ export default class MobileWifiOnboarding {
       throw e
     }
 
-    if (!shutdownSuccess) {
-      throw new Error('Failed to shutdown wifi')
-    }
-
-    this.writeLog(`Shutdown wifi success: ${shutdownSuccess}`)
-
     this.setProgressToStep('complete')
-
-    return shutdownSuccess
   }
 
   submitAndCompleteOnboarding = async ({
     hotspotAddress,
     signedTxns,
+    deviceType,
   }: {
     hotspotAddress: string
     signedTxns: Buffer[]
+    deviceType: DeviceType
   }) => {
     this.writeLog('Submitting MOBILE onboard txns to solana')
     this.setProgressToStep('submit_signed_messages')
@@ -507,21 +594,20 @@ export default class MobileWifiOnboarding {
       this.writeError(err)
       throw err
     }
-    this.setProgressToStep('shutdown_wifi')
 
-    this.writeLog('Calling onHotspotCreated', { data: { asset: asset.toBase58() } })
+    if (deviceType === 'WifiIndoor' || deviceType === 'WifiOutdoor') {
+      this.writeLog('Calling onHotspotCreated', { data: { asset: asset.toBase58() } })
 
-    let shutdownSuccess = false
-    try {
-      shutdownSuccess = await this._wifiClient.onHotspotCreated({
-        assetId: asset.toBase58(),
-        cluster: this._cluster,
-      })
-    } catch (e) {
-      this.writeError(e)
-      throw e
+      try {
+        await this.getWifiClient().onHotspotCreated({
+          assetId: asset.toBase58(),
+          cluster: this._cluster,
+        })
+      } catch (e) {
+        this.writeError(e)
+        throw e
+      }
     }
-    this.writeLog(`Shutdown wifi success: ${shutdownSuccess}`)
 
     this.setProgressToStep('complete')
     return { txnIds }
@@ -560,6 +646,7 @@ export default class MobileWifiOnboarding {
     azimuth: number
     heightType: HeightType
     hotspotAddress: string
+    antenna?: number
   }) {
     return this._configurationClient.createConfigurationMessage(opts)
   }
@@ -569,6 +656,7 @@ export default class MobileWifiOnboarding {
     originalMessage: Uint8Array
     signedMessage: Uint8Array
     token: string
+    vendorSlug?: string
   }) {
     this._logCallback?.('Sending configuration message')
     const response = await this._configurationClient.sendConfigurationMessage(opts)
