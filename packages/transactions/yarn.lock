@@ -2,28 +2,28 @@
 # yarn lockfile v1
 
 
-"@helium/address@^4.10.2":
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.10.2.tgz#56960b118fceb6b6ddabe3e4ecec467d9ae50e26"
-  integrity sha512-qCswC7Z3GXuJyHv36RcOSnffeghjqJQx0fdu2Lxpf9fgOnIi1JZO2tjjk1mBaqOwCyp+0YzrTPUoEukL/WCtsA==
+"@helium/address@^4.12.1-alpha.0", "@helium/address@^4.13.0":
+  version "4.12.1-alpha.0"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.12.1-alpha.0.tgz#e2124a62dceff48420fb9dd5ded088f909f235a6"
+  integrity sha512-Kx3/j6cSTBj/Y6MS56lg6AXYWL7PNlXc63Vg/w/CZEbTeG1P3qh/vt4eWsrSMmIRM+4eRd7mzFx13jE215th2A==
   dependencies:
     bs58 "^5.0.0"
     js-sha256 "^0.9.0"
     multiformats "^9.6.4"
 
-"@helium/crypto@^4.10.2":
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-4.10.2.tgz#4707756a4623035e5a6f30b6e4ae51158f1e269a"
-  integrity sha512-ltDWuQwEMNNvIq82QhqF1EPsHm1LrOceiGZgPvi0c9FPp5B6ft2TPjpDueGM27uKy0XbcHAjvBM7HhSCRhs+iQ==
+"@helium/crypto@^4.13.0":
+  version "4.12.1-alpha.0"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-4.12.1-alpha.0.tgz#ed9321e84b9fa62f4b1ae54b14cfc98948e6824c"
+  integrity sha512-8OOuhx5BAplNNSYoaPIEVr2s1z+DqnLCiP61zNjkxlEJzK2F1Hp/tCSN7vYhmKhWOqbv1kuu9lHdITvqbS0MIw==
   dependencies:
-    "@helium/address" "^4.10.2"
+    "@helium/address" "^4.12.1-alpha.0"
     create-hash "^1.2.0"
     libsodium-wrappers "^0.7.6"
 
-"@helium/proto@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-1.6.0.tgz#b97003bbc511afec1abac7cbffc5c088e348022d"
-  integrity sha512-aoVjhYDcic5g+n/iwKGXmGgMruPXTffpyr2ziGjuhAvU0phPSv6gnTbyHKY7FqBCUOYX4jHzEKJgX7M27UOGGg==
+"@helium/proto@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-2.2.0.tgz#56a528fdf92b28e6e3e39934ccf84adf0519ce01"
+  integrity sha512-DhDSYZWaMoHAQPVSp/CrrhEUgJtvgaCdKC1GLhXLYxMYDMbYEcT/wWKEjegeY2WeyTUwSsV+Q1U3eWMjEg/q6Q==
   dependencies:
     protobufjs "^6.11.3"
 
@@ -95,10 +95,12 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.0.tgz#67c7b724e1bcdd7a8821ce0d5ee184d3b4dd525a"
   integrity sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==
 
-"@types/node@^20.5.9":
-  version "20.5.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.9.tgz#a70ec9d8fa0180a314c3ede0e20ea56ff71aed9a"
-  integrity sha512-PcGNd//40kHAS3sTlzKB9C9XL4K0sTup8nbG5lC14kzEteTNuAFh9u5nA0o5TWnSG2r/JNPRXFVcHJIIeRlmqQ==
+"@types/node@^22.14.1":
+  version "22.14.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.14.1.tgz#53b54585cec81c21eee3697521e31312d6ca1e6f"
+  integrity sha512-u0HuPQwe/dHrItgHHpmw3N2fYCR6x4ivMNbPHRkBVP4CvN+kiRrKHWk3i8tXiO/joPwXLMYvF9TTF0eqgHIuOw==
+  dependencies:
+    undici-types "~6.21.0"
 
 base-x@^4.0.0:
   version "4.0.0"
@@ -254,6 +256,11 @@ string_decoder@^1.1.1:
   integrity sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==
   dependencies:
     safe-buffer "~5.2.0"
+
+undici-types@~6.21.0:
+  version "6.21.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.21.0.tgz#691d00af3909be93a7faa13be61b3a5b50ef12cb"
+  integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
 util-deprecate@^1.0.1:
   version "1.0.2"

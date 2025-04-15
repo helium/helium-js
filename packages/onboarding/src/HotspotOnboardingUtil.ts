@@ -119,11 +119,11 @@ const getOraclePriceInCentsFromSolana = async (opts: {
   cluster: Cluster
 }) => {
   const price = await Currency.getOraclePrice({ tokenType: 'HNT', ...opts })
-  if (!price?.aggregate.price) {
+  if (!price?.priceMessage.emaPrice) {
     throw new Error('Failed to fetch oracle price')
   }
 
-  return new BN(price.aggregate.price * 100)
+  return price.priceMessage.emaPrice
 }
 
 const getBalance = async (wallet: PublicKey, connection: Connection, mint: PublicKey) => {
@@ -167,7 +167,7 @@ const burnHNTForDataCredits = async ({
         DC_MINT,
       ),
     ])
-    .accounts({
+    .accountsPartial({
       dcMint: DC_MINT,
       recipient: wallet,
     })

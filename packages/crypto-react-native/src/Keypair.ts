@@ -62,7 +62,9 @@ export default class Keypair {
   }
 
   async sign(message: string | Uint8Array): Promise<Uint8Array> {
-    const messageBuffer = Buffer.from(message)
+    const messageBuffer = typeof message === 'string' 
+      ? Buffer.from(message)
+      : Buffer.from(message.buffer)
     const signature = await Sodium.crypto_sign_detached(
       messageBuffer.toString('base64'),
       this.privateKey.toString('base64'),

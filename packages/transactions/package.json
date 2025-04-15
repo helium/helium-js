@@ -1,6 +1,6 @@
 {
   "name": "@helium/transactions",
-  "version": "4.12.1-alpha.0",
+  "version": "4.14.1",
   "description": "Construct and serialize Helium blockchain transaction primatives",
   "keywords": [
     "helium",
@@ -27,15 +27,15 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^4.12.1-alpha.0",
-    "@helium/proto": "^1.6.0",
+    "@helium/address": "^4.14.1",
+    "@helium/proto": "^2.2.0",
     "@types/libsodium-wrappers": "^0.7.8",
     "long": "^4.0.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "@helium/crypto": "^4.12.1-alpha.0",
-    "@types/node": "^20.5.9"
+    "@helium/crypto": "^4.14.1",
+    "@types/node": "^22.14.1"
   },
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
 }
