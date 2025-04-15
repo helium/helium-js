@@ -10,6 +10,7 @@ import {
 import { Addressable, SignableKeypair } from './types'
 
 interface Options {
+  
   tokenType: string
   startEpoch: number
   endEpoch: number
@@ -90,7 +91,7 @@ export default class SubnetworkRewardsV1 extends Transaction {
 
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_subnetwork_rewards_v1 {
     const SubnetworkRewards = proto.helium.blockchain_txn_subnetwork_rewards_v1
-    const SubnetworkReward = proto.helium.blockchain_txn_subnetwork_reward_v1
+    const SubnetworkReward = proto.helium.subnetwork_reward
 
     const rewards = this.rewards.map(({ account, amount }) => SubnetworkReward.create({
       account: toUint8Array(account?.bin),
