@@ -9,7 +9,6 @@ interface NobleKeyPair {
   sk: Uint8Array
 }
 
-// extend NobleKeyPair?
 export default class Keypair {
   public keypair!: NobleKeyPair
 
@@ -24,7 +23,6 @@ export default class Keypair {
   constructor(keypair: NobleKeyPair, netType?: NetType) {
     this.keypair = keypair
     this.publicKey = Buffer.from(keypair.pk)
-    // Concatenate private key (32 bytes) + public key (32 bytes) to match libsodium format (64 bytes)
     const privateKeyBuffer = new Uint8Array(64)
     privateKeyBuffer.set(keypair.sk, 0)
     privateKeyBuffer.set(keypair.pk, 32)

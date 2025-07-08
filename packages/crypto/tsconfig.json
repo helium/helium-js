@@ -37,6 +37,6 @@
   "jsdoc": {
     "out": "support/jsdoc",
     "access": "public"
-  }
+  },
 }
 
