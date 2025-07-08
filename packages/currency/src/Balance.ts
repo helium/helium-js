@@ -93,7 +93,9 @@ export default class Balance<T extends BaseCurrencyType> {
       if (!keepTrailingZeroes) {
         decimalPlaces = Math.min(
           decimalPlacesToDisplay,
-          this.bigBalance.decimalPlaces(decimalPlacesToDisplay, roundingMode).decimalPlaces(),
+          this.bigBalance
+            .decimalPlaces(decimalPlacesToDisplay as number, roundingMode)
+            .decimalPlaces() || 0,
         )
       }
       numberString = this.bigBalance.toFormat(decimalPlaces, roundingMode, format)
