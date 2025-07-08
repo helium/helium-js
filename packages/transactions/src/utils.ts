@@ -2,9 +2,15 @@ import Address from '@helium/address'
 import Long from 'long'
 import { Addressable, TokenType } from './types'
 
-export const toUint8Array = (str: string | Uint8Array | undefined | null): Uint8Array => {
+export const toUint8Array = (
+  str: string | Uint8Array | Buffer | any | undefined | null,
+): Uint8Array => {
   if (!str) return new Uint8Array()
+  if (Buffer.isBuffer(str)) return new Uint8Array(str)
   if (str instanceof Uint8Array) return str
+  if (typeof str === 'object' && str.type === 'Buffer' && Array.isArray(str.data)) {
+    return new Uint8Array(str.data)
+  }
   return Uint8Array.from(Buffer.from(str))
 }
 
