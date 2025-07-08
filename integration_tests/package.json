@@ -2,7 +2,8 @@
   "name": "integration-tests",
   "private": true,
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'No build needed for integration tests'"
   },
   "dependencies": {
     "@helium/address": "^4.14.2",
