@@ -28,7 +28,7 @@
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210",
   "dependencies": {
     "bs58": "^6.0.0",
-    "js-sha256": "^0.11.0",
+    "@noble/hashes": "^1.8.0",
     "multiformats": "^9.6.4"
   },
   "devDependencies": {

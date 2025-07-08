@@ -6,14 +6,24 @@
 yarn add @helium/crypto-react-native
 ```
 
-`@helium/crypto-react-native` requires that the `react-native-sodium` dependency be added directly to your project so that the underlying native dependency can be autolinked.
+`@helium/crypto-react-native` now uses the [@noble/curves](https://github.com/paulmillr/noble-curves) and [@noble/hashes](https://github.com/paulmillr/noble-hashes) libraries for cryptographic operations, providing a pure JavaScript implementation without requiring native dependencies.
 
-```
-yarn add react-native-sodium
-```
+This package provides the same API as `@helium/crypto` but is optimized for React Native environments.
 
-On iOS, install pods:
+## API
 
-```
-cd ios && pod install
-```
+The package exports cryptographic utilities for:
+
+- ED25519 key pair generation and management
+- Digital signature creation and verification
+- Secure random number generation
+- SHA-256 hashing
+- Mnemonic seed phrase handling
+
+## Benefits
+
+- **Pure JavaScript**: No native dependencies required
+- **Audited**: Uses well-audited Noble cryptography libraries
+- **Lightweight**: Tree-shakeable and optimized for mobile
+- **Secure**: Implements industry-standard cryptographic algorithms
+- **Compatible**: Same API as `@helium/crypto`
