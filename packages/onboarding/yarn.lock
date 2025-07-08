@@ -93,22 +93,13 @@
     js-sha256 "^0.9.0"
     multiformats "^9.6.4"
 
-"@helium/address@^4.12.0":
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.12.0.tgz#14738298794fb26089dd60fafaec99fdff27efa9"
-  integrity sha512-gTgPHEn19vBzVwYYl6nVDjuWG9dXpgnXdEdWI65vcpseXIg1+E3iVn43FC3TK1wXzIUQkXz6RzRKASc/w85rWA==
+"@helium/address@^4.14.2":
+  version "4.14.2"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.14.2.tgz#9949d88e6f6af85dad535779e1250344a0a41b6c"
+  integrity sha512-OrO+6z6s/vvDVYK7rRYwiwPurnUXSk7hurtGBlhSzhIaVUMPsTfrwkmdJCJ01Iq9acIcFCd3qqDAgpZPYF8nQQ==
   dependencies:
-    bs58 "^5.0.0"
-    js-sha256 "^0.9.0"
-    multiformats "^9.6.4"
-
-"@helium/address@^4.12.1-alpha.0":
-  version "4.12.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-4.12.1-alpha.0.tgz#e2124a62dceff48420fb9dd5ded088f909f235a6"
-  integrity sha512-Kx3/j6cSTBj/Y6MS56lg6AXYWL7PNlXc63Vg/w/CZEbTeG1P3qh/vt4eWsrSMmIRM+4eRd7mzFx13jE215th2A==
-  dependencies:
-    bs58 "^5.0.0"
-    js-sha256 "^0.9.0"
+    bs58 "^6.0.0"
+    js-sha256 "^0.11.0"
     multiformats "^9.6.4"
 
 "@helium/anchor-resolvers@^0.10.0-alpha.6", "@helium/anchor-resolvers@^0.10.2":
@@ -131,14 +122,14 @@
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/crypto@^4.12.1-alpha.0":
-  version "4.12.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-4.12.1-alpha.0.tgz#ed9321e84b9fa62f4b1ae54b14cfc98948e6824c"
-  integrity sha512-8OOuhx5BAplNNSYoaPIEVr2s1z+DqnLCiP61zNjkxlEJzK2F1Hp/tCSN7vYhmKhWOqbv1kuu9lHdITvqbS0MIw==
+"@helium/crypto@^4.14.2":
+  version "4.14.2"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-4.14.2.tgz#e9e398236065c480b161cb51aac57ec759cbd5fe"
+  integrity sha512-ae7BALstX6VbTe+/YTOylHl6u7eQ2d6RPCsWYMZbEbnYXCijKiLh/CjTTI2J1Gg+3s2EEe2Y4m3OjsaDZHe8mg==
   dependencies:
-    "@helium/address" "^4.12.1-alpha.0"
+    "@helium/address" "^4.14.2"
     create-hash "^1.2.0"
-    libsodium-wrappers "^0.7.6"
+    libsodium-wrappers "^0.7.15"
 
 "@helium/currency-utils@^0.10.2":
   version "0.10.2"
@@ -249,10 +240,10 @@
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/proto@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-1.6.0.tgz#b97003bbc511afec1abac7cbffc5c088e348022d"
-  integrity sha512-aoVjhYDcic5g+n/iwKGXmGgMruPXTffpyr2ziGjuhAvU0phPSv6gnTbyHKY7FqBCUOYX4jHzEKJgX7M27UOGGg==
+"@helium/proto@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@helium/proto/-/proto-2.2.0.tgz#56a528fdf92b28e6e3e39934ccf84adf0519ce01"
+  integrity sha512-DhDSYZWaMoHAQPVSp/CrrhEUgJtvgaCdKC1GLhXLYxMYDMbYEcT/wWKEjegeY2WeyTUwSsV+Q1U3eWMjEg/q6Q==
   dependencies:
     protobufjs "^6.11.3"
 
@@ -274,13 +265,13 @@
     borsh "^0.7.0"
     bs58 "^4.0.1"
 
-"@helium/transactions@^4.12.0":
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-4.12.0.tgz#391d9cdbadaa4cb7716685e6a44199b300d6f7b3"
-  integrity sha512-LFassrm0FzcEX8uCqoPvRbXrONTmp2UuZP6Hc+CSCIGfHnXESf1Zpac9kZLBsaLm2vLj7d62FUtNwa4J3edILg==
+"@helium/transactions@^4.14.2":
+  version "4.14.2"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-4.14.2.tgz#256b92a77a48989d85a62d93f94489c437ba0a51"
+  integrity sha512-xzK9MaaA1lVJIJSL6bI8LxFeP6uk1OcrXcMAjEGHml0Ifd9jP1ExNPIApkRwBlYK6oe+KZZdOwGz5wfyTy6+9w==
   dependencies:
-    "@helium/address" "^4.12.0"
-    "@helium/proto" "^1.6.0"
+    "@helium/address" "^4.14.2"
+    "@helium/proto" "^2.2.0"
     "@types/libsodium-wrappers" "^0.7.8"
     long "^4.0.0"
     path "^0.12.7"
@@ -679,6 +670,11 @@ base-x@^4.0.0:
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-4.0.0.tgz#d0e3b7753450c73f8ad2389b5c018a4af7b2224a"
   integrity sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==
 
+base-x@^5.0.0:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/base-x/-/base-x-5.0.1.tgz#16bf35254be1df8aca15e36b7c1dda74b2aa6b03"
+  integrity sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg==
+
 base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -730,6 +726,13 @@ bs58@^5.0.0:
   integrity sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==
   dependencies:
     base-x "^4.0.0"
+
+bs58@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/bs58/-/bs58-6.0.0.tgz#a2cda0130558535dd281a2f8697df79caaf425d8"
+  integrity sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==
+  dependencies:
+    base-x "^5.0.0"
 
 buffer-layout@^1.2.0, buffer-layout@^1.2.2:
   version "1.2.2"
@@ -1068,6 +1071,11 @@ jayson@^4.1.1:
     uuid "^8.3.2"
     ws "^7.5.10"
 
+js-sha256@^0.11.0:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.11.1.tgz#712262e8fc9569d6f7f6eea72c0d8e5ccc7c976c"
+  integrity sha512-o6WSo/LUvY2uC4j7mO50a2ms7E/EAdbP0swigLV+nzHKTTaYnaLIWJ02VdXrsJX0vGedDESQnLsOekr94ryfjg==
+
 js-sha256@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.9.0.tgz#0b89ac166583e91ef9123644bd3c5334ce9d0966"
@@ -1088,17 +1096,17 @@ jsonparse@^1.2.0:
   resolved "https://registry.yarnpkg.com/jsonparse/-/jsonparse-1.3.1.tgz#3f4dae4a91fac315f71062f8521cc239f1366280"
   integrity sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==
 
-libsodium-wrappers@^0.7.6:
-  version "0.7.13"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.13.tgz#83299e06ee1466057ba0e64e532777d2929b90d3"
-  integrity sha512-kasvDsEi/r1fMzKouIDv7B8I6vNmknXwGiYodErGuESoFTohGSKZplFtVxZqHaoQ217AynyIFgnOVRitpHs0Qw==
+libsodium-wrappers@^0.7.15:
+  version "0.7.15"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.15.tgz#53f13e483820272a3d55b23be2e34402ac988055"
+  integrity sha512-E4anqJQwcfiC6+Yrl01C1m8p99wEhLmJSs0VQqST66SbQXXBoaJY0pF4BNjRYa/sOQAxx6lXAaAFIlx+15tXJQ==
   dependencies:
-    libsodium "^0.7.13"
+    libsodium "^0.7.15"
 
-libsodium@^0.7.13:
-  version "0.7.13"
-  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.13.tgz#230712ec0b7447c57b39489c48a4af01985fb393"
-  integrity sha512-mK8ju0fnrKXXfleL53vtp9xiPq5hKM0zbDQtcxQIsSmxNgSxqCj6R7Hl9PkrNe2j29T4yoDaF7DJLK9/i5iWUw==
+libsodium@^0.7.15:
+  version "0.7.15"
+  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.15.tgz#ac284e3dcb1c29ae9526c5581cdada6a072f6d20"
+  integrity sha512-sZwRknt/tUpE2AwzHq3jEyUU5uvIZHtSssktXq7owd++3CSgn8RGrv6UZJJBpP7+iBghBqe7Z06/2M31rI2NKw==
 
 long@^4.0.0:
   version "4.0.0"
