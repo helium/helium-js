@@ -3,31 +3,34 @@ import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
 
 type NetType = NetTypes.NetType
-interface NobleKeyPair {
-  keyType?: string
-  pk: Uint8Array
-  sk: Uint8Array
+
+export type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
+
+export interface CryptoKeyPair {
+  keyType: CryptoKeyType
+  privateKey: Uint8Array
+  publicKey: Uint8Array
 }
 
 export default class Keypair {
-  public keypair!: NobleKeyPair
+  public keypair!: CryptoKeyPair
 
   public publicKey!: Buffer
 
   public privateKey!: Buffer
 
-  public keyType!: string
+  public keyType!: CryptoKeyType
 
   public netType!: NetType
 
-  constructor(keypair: NobleKeyPair, netType?: NetType) {
+  constructor(keypair: CryptoKeyPair, netType?: NetType) {
     this.keypair = keypair
-    this.publicKey = Buffer.from(keypair.pk)
+    this.publicKey = Buffer.from(keypair.publicKey)
     const privateKeyBuffer = new Uint8Array(64)
-    privateKeyBuffer.set(keypair.sk, 0)
-    privateKeyBuffer.set(keypair.pk, 32)
+    privateKeyBuffer.set(keypair.privateKey, 0)
+    privateKeyBuffer.set(keypair.publicKey, 32)
     this.privateKey = Buffer.from(privateKeyBuffer)
-    this.keyType = keypair.keyType || 'ed25519'
+    this.keyType = keypair.keyType
     this.netType = netType || NetTypes.MAINNET
   }
 
@@ -38,10 +41,10 @@ export default class Keypair {
   static async makeRandom(netType?: NetType): Promise<Keypair> {
     const privateKey = ed25519.utils.randomPrivateKey()
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: NobleKeyPair = {
+    const keypair: CryptoKeyPair = {
       keyType: 'ed25519',
-      pk: publicKey,
-      sk: privateKey,
+      publicKey,
+      privateKey,
     }
     return new Keypair(keypair, netType)
   }
@@ -67,10 +70,10 @@ export default class Keypair {
 
     const privateKey = entropyBuffer
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: NobleKeyPair = {
+    const keypair: CryptoKeyPair = {
       keyType: 'ed25519',
-      pk: publicKey,
-      sk: privateKey,
+      publicKey,
+      privateKey,
     }
     return new Keypair(keypair, netType)
   }
