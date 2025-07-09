@@ -1,6 +1,6 @@
 {
   "name": "@helium/onboarding",
-  "version": "4.14.2",
+  "version": "5.0.0-alpha.0",
   "description": "HTTP library for interacting with an onboarding server",
   "keywords": [
     "helium",
@@ -41,14 +41,14 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
-    "@helium/address": "^4.14.2",
-    "@helium/crypto": "^4.14.2",
+    "@helium/address": "^5.0.0-alpha.0",
+    "@helium/crypto": "^5.0.0-alpha.0",
     "@helium/currency-utils": "^0.10.2",
     "@helium/data-credits-sdk": "^0.10.2",
     "@helium/helium-entity-manager-sdk": "^0.10.2",
     "@helium/hotspot-utils": "^0.10.2",
     "@helium/spl-utils": "^0.10.2",
-    "@helium/transactions": "^4.14.2",
+    "@helium/transactions": "^5.0.0-alpha.0",
     "@metaplex-foundation/mpl-bubblegum": "^0.7.0",
     "@solana/web3.js": "^1.91.1",
     "axios": "^1.5.0",

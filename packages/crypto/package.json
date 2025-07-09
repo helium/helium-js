@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto",
-  "version": "4.14.2",
+  "version": "5.0.0-alpha.0",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding",
   "keywords": [
     "helium",
@@ -26,7 +26,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^4.14.2",
+    "@helium/address": "^5.0.0-alpha.0",
     "@noble/curves": "^1.9.2",
     "@noble/hashes": "^1.8.0"
   },
