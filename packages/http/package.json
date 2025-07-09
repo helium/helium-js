@@ -1,6 +1,6 @@
 {
   "name": "@helium/http",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-alpha.1",
   "description": "HTTP library for interacting with the Helium blockchain API",
   "keywords": [
     "helium",
@@ -26,8 +26,8 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^5.0.0-alpha.0",
-    "@helium/currency": "^5.0.0-alpha.0",
+    "@helium/address": "^5.0.0-alpha.1",
+    "@helium/currency": "^5.0.0-alpha.1",
     "axios": "^0.21.1",
     "camelcase-keys": "^6.2.2",
     "qs": "^6.9.3",
