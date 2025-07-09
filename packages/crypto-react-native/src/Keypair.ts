@@ -3,15 +3,15 @@ import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
 
 type NetType = NetTypes.NetType
-type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
-interface CryptoKeyPair {
-  keyType?: CryptoKeyType
+type KeyType = 'curve25519' | 'ed25519' | 'x25519'
+interface KeyPair {
+  keyType?: KeyType
   sk: string
   pk: string
 }
 
 export default class Keypair {
-  public keypair!: CryptoKeyPair
+  public keypair!: KeyPair
 
   public publicKey!: Buffer
 
@@ -21,7 +21,7 @@ export default class Keypair {
 
   public netType!: NetType
 
-  constructor(keypair: CryptoKeyPair, netType?: NetType) {
+  constructor(keypair: KeyPair, netType?: NetType) {
     this.keypair = keypair
     this.publicKey = Buffer.from(keypair.pk, 'base64')
     // Create a 64-byte private key: first 32 bytes are the actual private key, last 32 bytes are the public key
@@ -40,8 +40,7 @@ export default class Keypair {
   static async makeRandom(netType?: NetType): Promise<Keypair> {
     const privateKey = ed25519.utils.randomPrivateKey()
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: CryptoKeyPair = {
-      keyType: 'ed25519',
+    const keypair: KeyPair = {
       pk: Buffer.from(publicKey).toString('base64'),
       sk: Buffer.from(privateKey).toString('base64'),
     }
@@ -69,8 +68,7 @@ export default class Keypair {
 
     const privateKey = entropyBuffer
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: CryptoKeyPair = {
-      keyType: 'ed25519',
+    const keypair: KeyPair = {
       pk: Buffer.from(publicKey).toString('base64'),
       sk: Buffer.from(privateKey).toString('base64'),
     }

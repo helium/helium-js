@@ -6,15 +6,15 @@ const { ED25519_KEY_TYPE } = KeyTypes
 const { MAINNET } = NetTypes
 
 type NetType = NetTypes.NetType
-type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
-interface CryptoKeyPair {
-  keyType: CryptoKeyType
+type KeyType = 'curve25519' | 'ed25519' | 'x25519'
+interface KeyPair {
+  keyType?: KeyType
   privateKey: Uint8Array
   publicKey: Uint8Array
 }
 
 export default class Keypair {
-  public keypair!: CryptoKeyPair
+  public keypair!: KeyPair
 
   public publicKey!: Uint8Array
 
@@ -24,13 +24,13 @@ export default class Keypair {
 
   public netType!: NetType
 
-  constructor(keypair: CryptoKeyPair, netType?: NetType) {
+  constructor(keypair: KeyPair, netType?: NetType) {
     this.keypair = keypair
     this.publicKey = keypair.publicKey
     this.privateKey = new Uint8Array(64)
     this.privateKey.set(keypair.privateKey, 0)
     this.privateKey.set(keypair.publicKey, 32)
-    this.keyType = keypair.keyType
+    this.keyType = keypair.keyType || 'ed25519'
     this.netType = netType || MAINNET
   }
 
@@ -41,8 +41,7 @@ export default class Keypair {
   static async makeRandom(netType?: NetType): Promise<Keypair> {
     const privateKey = ed25519.utils.randomPrivateKey()
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: CryptoKeyPair = {
-      keyType: 'ed25519',
+    const keypair: KeyPair = {
       publicKey,
       privateKey,
     }
@@ -69,8 +68,7 @@ export default class Keypair {
 
     const privateKey = entropyBuffer
     const publicKey = ed25519.getPublicKey(privateKey)
-    const keypair: CryptoKeyPair = {
-      keyType: 'ed25519',
+    const keypair: KeyPair = {
       publicKey,
       privateKey,
     }
