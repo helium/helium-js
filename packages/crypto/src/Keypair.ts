@@ -6,10 +6,8 @@ const { ED25519_KEY_TYPE } = KeyTypes
 const { MAINNET } = NetTypes
 
 type NetType = NetTypes.NetType
-
-export type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
-
-export interface CryptoKeyPair {
+type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
+interface CryptoKeyPair {
   keyType: CryptoKeyType
   privateKey: Uint8Array
   publicKey: Uint8Array
@@ -22,7 +20,7 @@ export default class Keypair {
 
   public privateKey!: Uint8Array
 
-  public keyType!: CryptoKeyType
+  public keyType!: string
 
   public netType!: NetType
 

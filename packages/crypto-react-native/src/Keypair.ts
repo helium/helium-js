@@ -3,13 +3,11 @@ import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
 
 type NetType = NetTypes.NetType
-
-export type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
-
-export interface CryptoKeyPair {
-  keyType: CryptoKeyType
-  privateKey: Uint8Array
-  publicKey: Uint8Array
+type CryptoKeyType = 'curve25519' | 'ed25519' | 'x25519'
+interface CryptoKeyPair {
+  keyType?: CryptoKeyType
+  sk: string
+  pk: string
 }
 
 export default class Keypair {
@@ -19,18 +17,19 @@ export default class Keypair {
 
   public privateKey!: Buffer
 
-  public keyType!: CryptoKeyType
+  public keyType!: string
 
   public netType!: NetType
 
   constructor(keypair: CryptoKeyPair, netType?: NetType) {
     this.keypair = keypair
-    this.publicKey = Buffer.from(keypair.publicKey)
-    const privateKeyBuffer = new Uint8Array(64)
-    privateKeyBuffer.set(keypair.privateKey, 0)
-    privateKeyBuffer.set(keypair.publicKey, 32)
-    this.privateKey = Buffer.from(privateKeyBuffer)
-    this.keyType = keypair.keyType
+    this.publicKey = Buffer.from(keypair.pk, 'base64')
+    // Create a 64-byte private key: first 32 bytes are the actual private key, last 32 bytes are the public key
+    this.privateKey = Buffer.alloc(64)
+    const actualPrivateKey = Buffer.from(keypair.sk, 'base64')
+    this.privateKey.set(actualPrivateKey, 0)
+    this.privateKey.set(this.publicKey, 32)
+    this.keyType = keypair.keyType || 'ed25519'
     this.netType = netType || NetTypes.MAINNET
   }
 
@@ -43,8 +42,8 @@ export default class Keypair {
     const publicKey = ed25519.getPublicKey(privateKey)
     const keypair: CryptoKeyPair = {
       keyType: 'ed25519',
-      publicKey,
-      privateKey,
+      pk: Buffer.from(publicKey).toString('base64'),
+      sk: Buffer.from(privateKey).toString('base64'),
     }
     return new Keypair(keypair, netType)
   }
@@ -72,8 +71,8 @@ export default class Keypair {
     const publicKey = ed25519.getPublicKey(privateKey)
     const keypair: CryptoKeyPair = {
       keyType: 'ed25519',
-      publicKey,
-      privateKey,
+      pk: Buffer.from(publicKey).toString('base64'),
+      sk: Buffer.from(privateKey).toString('base64'),
     }
     return new Keypair(keypair, netType)
   }
