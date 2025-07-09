@@ -29,7 +29,7 @@
     "@helium/address": "^5.0.0-alpha.0",
     "@helium/transactions": "^5.0.0-alpha.0",
     "date-fns": "^2.28.0",
-    "query-string": "^9.1.1"
+    "query-string": "^7.1.1"
   },
   "peerDependencies": {
     "@helium/crypto": "^4.3.1"
