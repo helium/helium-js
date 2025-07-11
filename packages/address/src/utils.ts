@@ -1,23 +1,17 @@
 /* eslint-disable no-bitwise */
-import { sha256 } from 'js-sha256'
+import { sha256 } from '@noble/hashes/sha2'
 import bs58 from 'bs58'
 import { KeyType } from './KeyTypes'
 import { NetType } from './NetTypes'
 import Address from './Address'
 
 export const bs58CheckEncode = (version: number, binary: Buffer | Uint8Array): string => {
-  const vPayload = Buffer.concat([
-    Buffer.from([version]),
-    binary,
-  ])
+  const vPayload = Buffer.concat([Buffer.from([version]), binary])
 
-  const checksum = sha256(Buffer.from(sha256(vPayload), 'hex'))
-  const checksumBytes = Buffer.alloc(4, checksum, 'hex')
+  const checksum = sha256(sha256(vPayload))
+  const checksumBytes = Buffer.alloc(4, Buffer.from(checksum).toString('hex'), 'hex')
 
-  const result = Buffer.concat([
-    vPayload,
-    checksumBytes,
-  ])
+  const result = Buffer.concat([vPayload, checksumBytes])
 
   return bs58.encode(result)
 }
@@ -28,8 +22,8 @@ export const bs58ToBin = (bs58Address: string): Buffer => {
   const payload = bin.slice(1, -4)
   const checksum = bin.slice(-4)
 
-  const checksumVerify = sha256(Buffer.from(sha256(vPayload), 'hex'))
-  const checksumVerifyBytes = Buffer.alloc(4, checksumVerify, 'hex')
+  const checksumVerify = sha256(sha256(vPayload))
+  const checksumVerifyBytes = Buffer.alloc(4, Buffer.from(checksumVerify).toString('hex'), 'hex')
 
   if (!checksumVerifyBytes.equals(Buffer.from(checksum))) {
     throw new Error('invalid checksum')
@@ -85,7 +79,9 @@ export const bs58MultisigPublicKey = (bs58Address: string): Buffer => {
 
 export const sortAddresses = (addresses: Address[]): Address[] => {
   const addressMap = addresses.map((address) => {
-    const charCodeArray = Array.from(address.b58).map((character):number => character.charCodeAt(0))
+    const charCodeArray = Array.from(address.b58).map((character): number =>
+      character.charCodeAt(0),
+    )
     return { address, buffer: new Uint8Array(charCodeArray) }
   })
 

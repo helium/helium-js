@@ -1,5 +1,5 @@
 import proto from '@helium/proto'
-import * as JSLong from 'long'
+import Long from 'long'
 import Transaction from './Transaction'
 import {
   EMPTY_SIGNATURE,
@@ -101,14 +101,16 @@ export default class PaymentV2 extends Transaction {
   private toProto(forSigning: boolean = false): proto.helium.blockchain_txn_payment_v2 {
     const PaymentTxn = proto.helium.blockchain_txn_payment_v2
     const Payment = proto.helium.payment
-    const payments = this.payments.map(({
-      payee, amount, memo, tokenType, max,
-    }) => {
+    const payments = this.payments.map(({ payee, amount, memo, tokenType, max }) => {
       const memoBuffer = memo ? Buffer.from(memo, 'base64') : undefined
+      let memoValue: any
+      if (memoBuffer) {
+        memoValue = Long.fromBytes(Array.from(memoBuffer), true, true) as any
+      }
 
       const payment: proto.helium.Ipayment = {
         payee: toUint8Array(payee.bin),
-        memo: memoBuffer ? JSLong.fromBytes(Array.from(memoBuffer), true, true) : undefined,
+        memo: memoValue,
         tokenType: toTokenType({ ticker: tokenType, defaultToUndefined: true }),
       }
 

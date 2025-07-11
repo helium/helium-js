@@ -1,5 +1,4 @@
-import sodium from 'libsodium-wrappers'
-import type { KeyPair as SodiumKeyPair } from 'libsodium-wrappers'
+import { ed25519 } from '@noble/curves/ed25519'
 import Address, { KeyTypes, NetTypes } from '@helium/address'
 import Mnemonic from './Mnemonic'
 
@@ -7,10 +6,15 @@ const { ED25519_KEY_TYPE } = KeyTypes
 const { MAINNET } = NetTypes
 
 type NetType = NetTypes.NetType
+type KeyType = 'curve25519' | 'ed25519' | 'x25519'
+interface KeyPair {
+  keyType?: KeyType
+  privateKey: Uint8Array
+  publicKey: Uint8Array
+}
 
-// extend SodiumKeyPair?
 export default class Keypair {
-  public keypair!: SodiumKeyPair
+  public keypair!: KeyPair
 
   public publicKey!: Uint8Array
 
@@ -20,11 +24,13 @@ export default class Keypair {
 
   public netType!: NetType
 
-  constructor(keypair: SodiumKeyPair, netType?: NetType) {
+  constructor(keypair: KeyPair, netType?: NetType) {
     this.keypair = keypair
     this.publicKey = keypair.publicKey
-    this.privateKey = keypair.privateKey
-    this.keyType = keypair.keyType
+    this.privateKey = new Uint8Array(64)
+    this.privateKey.set(keypair.privateKey, 0)
+    this.privateKey.set(keypair.publicKey, 32)
+    this.keyType = keypair.keyType || 'ed25519'
     this.netType = netType || MAINNET
   }
 
@@ -33,8 +39,12 @@ export default class Keypair {
   }
 
   static async makeRandom(netType?: NetType): Promise<Keypair> {
-    await sodium.ready
-    const keypair = sodium.crypto_sign_keypair()
+    const privateKey = ed25519.utils.randomPrivateKey()
+    const publicKey = ed25519.getPublicKey(privateKey)
+    const keypair: KeyPair = {
+      publicKey,
+      privateKey,
+    }
     return new Keypair(keypair, netType)
   }
 
@@ -45,7 +55,6 @@ export default class Keypair {
   }
 
   static async fromMnemonic(mnenomic: Mnemonic, netType?: NetType): Promise<Keypair> {
-    await sodium.ready
     const entropy = mnenomic.toEntropy()
     const seed = entropy.length === 16 ? Buffer.concat([entropy, entropy]) : entropy
 
@@ -53,16 +62,23 @@ export default class Keypair {
   }
 
   static async fromEntropy(entropy: Uint8Array | Buffer, netType?: NetType): Promise<Keypair> {
-    await sodium.ready
     const entropyBuffer = Buffer.from(entropy)
-    if (Buffer.byteLength(entropyBuffer) !== 32) throw new Error('Invalid entropy, must be 32 bytes')
-    const keypair = sodium.crypto_sign_seed_keypair(entropy)
+    if (Buffer.byteLength(entropyBuffer) !== 32)
+      throw new Error('Invalid entropy, must be 32 bytes')
+
+    const privateKey = entropyBuffer
+    const publicKey = ed25519.getPublicKey(privateKey)
+    const keypair: KeyPair = {
+      publicKey,
+      privateKey,
+    }
     return new Keypair(keypair, netType)
   }
 
   async sign(message: string | Uint8Array): Promise<Uint8Array> {
-    await sodium.ready
-    const signature = sodium.crypto_sign_detached(message, this.privateKey)
+    const messageBytes = typeof message === 'string' ? Buffer.from(message) : message
+    const actualPrivateKey = this.privateKey.slice(0, 32)
+    const signature = ed25519.sign(messageBytes, actualPrivateKey)
     return signature
   }
 }
