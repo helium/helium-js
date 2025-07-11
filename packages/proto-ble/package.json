@@ -1,6 +1,6 @@
 {
   "name": "@helium/proto-ble",
-  "version": "5.0.0-alpha.1",
+  "version": "5.0.0",
   "description": "Proto definitions for hotspot bluetooth interactions",
   "keywords": [
     "helium"
