@@ -44,10 +44,7 @@ export const verify = async (
     const result = ed25519.verify(signature, messageBytes, publicKey)
     return result
   } catch (error) {
-    // For backwards compatibility with libsodium, throw errors for invalid inputs
-    // rather than silently returning false for all errors
     if (error instanceof Error) {
-      // Check if this is a validation error that should be thrown
       if (error.message.includes('invalid') || error.message.includes('Invalid')) {
         throw error
       }
