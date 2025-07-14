@@ -34,7 +34,7 @@ export const deriveChecksumBits = (entropyBuffer: Buffer | string) => {
   return bytesToBinary([].slice.call(hash)).slice(0, CS)
 }
 
-export const verify = (
+export const verify = async (
   signature: Uint8Array,
   message: string | Uint8Array,
   publicKey: Uint8Array,
@@ -42,8 +42,16 @@ export const verify = (
   try {
     const messageBytes = typeof message === 'string' ? Buffer.from(message) : message
     const result = ed25519.verify(signature, messageBytes, publicKey)
-    return Promise.resolve(result)
+    return result
   } catch (error) {
-    return Promise.resolve(false)
+    // For backwards compatibility with libsodium, throw errors for invalid inputs
+    // rather than silently returning false for all errors
+    if (error instanceof Error) {
+      // Check if this is a validation error that should be thrown
+      if (error.message.includes('invalid') || error.message.includes('Invalid')) {
+        throw error
+      }
+    }
+    return false
   }
 }

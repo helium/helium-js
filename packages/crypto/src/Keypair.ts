@@ -76,7 +76,7 @@ export default class Keypair {
   }
 
   async sign(message: string | Uint8Array): Promise<Uint8Array> {
-    const messageBytes = typeof message === 'string' ? Buffer.from(message) : message
+    const messageBytes = typeof message === 'string' ? Buffer.from(message) : Buffer.from(message)
     const actualPrivateKey = this.privateKey.slice(0, 32)
     const signature = ed25519.sign(messageBytes, actualPrivateKey)
     return signature
