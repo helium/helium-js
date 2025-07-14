@@ -1,6 +1,6 @@
 {
   "name": "@helium/wallet-link",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Utilities for linking a 3rd party app to the helium wallet.",
   "keywords": [
     "helium",
@@ -26,8 +26,8 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^5.0.0",
-    "@helium/transactions": "^5.0.0",
+    "@helium/address": "^5.0.1",
+    "@helium/transactions": "^5.0.1",
     "date-fns": "^2.28.0",
     "query-string": "^7.1.1"
   },
@@ -35,7 +35,7 @@
     "@helium/crypto": "^4.3.1"
   },
   "devDependencies": {
-    "@helium/crypto": "^5.0.0",
+    "@helium/crypto": "^5.0.1",
     "@types/node": "^22.14.1"
   },
   "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
