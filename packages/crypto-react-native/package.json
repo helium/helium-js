@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto-react-native",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding for React Native",
   "keywords": [
     "helium",
@@ -27,7 +27,7 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^5.0.0",
+    "@helium/address": "^5.0.1",
     "@noble/curves": "^1.9.2",
     "@noble/hashes": "^1.8.0",
     "safe-buffer": "^5.2.1"
