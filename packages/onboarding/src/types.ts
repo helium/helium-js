@@ -45,6 +45,7 @@ export type WifiInfoV0 = {
   azimuth: number
   mechanicalDownTilt: number
   electricalDownTilt: number
+  serial: string | null
 }
 
 export type RadioInfoV0 = {
