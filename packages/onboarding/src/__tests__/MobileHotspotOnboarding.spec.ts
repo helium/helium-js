@@ -1,10 +1,10 @@
-import MobileHotspotOnboarding from '../MobileHotspotOnboarding'
-import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
-import { Transaction } from '@solana/web3.js'
-import h3 from 'h3-js'
-import { usersFixture } from '../../../../integration_tests/fixtures/users'
-import { v4 as uuidv4 } from 'uuid'
 import Address from '@helium/address'
+import { heliumAddressToSolPublicKey } from '@helium/spl-utils'
+import { VersionedTransaction } from '@solana/web3.js'
+import h3 from 'h3-js'
+import { v4 as uuidv4 } from 'uuid'
+import { usersFixture } from '../../../../integration_tests/fixtures/users'
+import MobileHotspotOnboarding from '../MobileHotspotOnboarding'
 
 const ALICE = Address.fromB58('148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3')
 const ALICE_PUBKEY = heliumAddressToSolPublicKey(ALICE.b58)
@@ -193,8 +193,8 @@ describe('Wifi Onboarding with wifi api version 2 (default)', () => {
     expect(txns).toBeDefined()
 
     const signed = txns.map((txn) => {
-      const t = Transaction.from(Buffer.from(txn, 'base64'))
-      return t.serialize({ verifySignatures: false })
+      const t = VersionedTransaction.deserialize(Buffer.from(txn, 'base64'))
+      return Buffer.from(t.serialize())
     })
 
     const { txnIds } = await client.submitAndCompleteOnboarding({
@@ -302,8 +302,8 @@ describe('Wifi Onboarding with wifi api version 1 (default)', () => {
     expect(txns).toBeDefined()
 
     const signed = txns.map((txn) => {
-      const t = Transaction.from(Buffer.from(txn, 'base64'))
-      return t.serialize({ verifySignatures: false })
+      const t = VersionedTransaction.deserialize(Buffer.from(txn, 'base64'))
+      return Buffer.from(t.serialize())
     })
 
     const { txnIds } = await client.submitAndCompleteOnboarding({

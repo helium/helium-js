@@ -24,6 +24,7 @@ type AddToOnboardingServerOpts = {
   macEth0?: string
   macWlan0?: string
   rpiSerial?: string
+  format?: 'legacy' | 'v0'
 }
 
 export default class MobileHotspotOnboarding {
@@ -231,12 +232,14 @@ export default class MobileHotspotOnboarding {
     location,
     elevation,
     antenna,
+    format,
   }: {
     hotspotAddress: string
     location?: string
     elevation?: number
     antenna?: number
     azimuth?: number
+    format?: 'legacy' | 'v0'
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
@@ -244,6 +247,7 @@ export default class MobileHotspotOnboarding {
     const onboardTxns = await this._onboardingClient.onboardMobile({
       hotspotAddress,
       location,
+      format,
       deploymentInfo: {
         wifiInfoV0: {
           elevation: elevation || 0,
@@ -275,7 +279,7 @@ export default class MobileHotspotOnboarding {
     }
   }
 
-  createHotspot = async ({ transaction }: { transaction: string }) => {
+  createHotspot = async ({ transaction, format }: { transaction: string; format?: 'legacy' | 'v0' }) => {
     this._logCallback?.('Creating hotspot on Solana', { transaction })
     this.setProgressToStep('fetch_create')
 
@@ -287,6 +291,7 @@ export default class MobileHotspotOnboarding {
       try {
         const createTxns = await this._onboardingClient.createHotspot({
           transaction,
+          format,
         })
         const solanaTransactions = createTxns?.data?.solanaTransactions
 
@@ -406,6 +411,7 @@ export default class MobileHotspotOnboarding {
     macEth0,
     macWlan0,
     rpiSerial,
+    format = 'legacy',
   }: AddToOnboardingServerOpts & { hotspotAddress: string }) => {
     if (
       this._shouldMock ||
@@ -432,6 +438,7 @@ export default class MobileHotspotOnboarding {
         macEth0,
         macWlan0,
         rpiSerial,
+        format,
       })
       await sleep(1000)
     } catch (e) {

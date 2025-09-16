@@ -20,6 +20,7 @@ import {
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
 import { HNT_AS_BONES, DcProgram, HemProgram, Maker, NetworkType } from './types'
+import { VersionedTransaction } from '@solana/web3.js'
 
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
@@ -318,8 +319,8 @@ export const getUpdateMetaData = async ({
 
   const estimatedFees = await Promise.all(
     solanaTransactions.map(async (buff) => {
-      const tx = Transaction.from(buff)
-      const estimatedFee = await connection.getFeeForMessage(tx.compileMessage(), 'confirmed')
+      const tx = VersionedTransaction.deserialize(buff)
+      const estimatedFee = await connection.getFeeForMessage(tx.message, 'confirmed')
       return estimatedFee.value
     }),
   )
