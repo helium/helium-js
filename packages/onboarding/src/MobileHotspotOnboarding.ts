@@ -207,6 +207,7 @@ export default class MobileHotspotOnboarding {
     networkType,
     azimuth,
     antenna,
+    serial,
   }: {
     azimuth?: number
     gateway: string
@@ -215,6 +216,7 @@ export default class MobileHotspotOnboarding {
     antenna?: number
     networkType: NetworkType
     decimalGain?: number
+    serial?: string
   }) => {
     return this._solanaOnboarding.getUpdateMetaData({
       antenna,
@@ -223,6 +225,7 @@ export default class MobileHotspotOnboarding {
       elevation,
       location,
       networkType,
+      serial,
     })
   }
 

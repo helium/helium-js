@@ -8,7 +8,7 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, Cluster, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Cluster } from '@solana/web3.js'
 import {
   createAssociatedTokenAccountIdempotentInstruction,
   getAssociatedTokenAddressSync,
@@ -188,6 +188,7 @@ export const getUpdateMetaData = async ({
   gateway,
   antenna,
   azimuth,
+  serial,
   hemProgram,
   onboardingClient,
   owner,
@@ -206,6 +207,7 @@ export const getUpdateMetaData = async ({
   elevation?: number
   antenna?: number
   azimuth?: number
+  serial?: string
   nextLocation: string
   networkType: NetworkType
   onboardingClient: OnboardingClient
@@ -254,6 +256,7 @@ export const getUpdateMetaData = async ({
           antenna: antenna || 0,
           mechanicalDownTilt: 0,
           electricalDownTilt: 0,
+          serial: serial || null,
         },
       },
     })
@@ -312,7 +315,8 @@ export const getUpdateMetaData = async ({
         connection,
       })
       if (txn) {
-        solanaTransactions = [txn.serialize({ verifySignatures: false }), ...solanaTransactions]
+        const serialized = txn.serialize({ verifySignatures: false })
+        solanaTransactions = [Buffer.from(serialized), ...solanaTransactions]
       }
     }
   }
