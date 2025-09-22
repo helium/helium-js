@@ -2,42 +2,42 @@
 # yarn lockfile v1
 
 
-"@helium/address@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.0-alpha.0.tgz#ce2975452eea96433503bba417c414aef8c85c9e"
-  integrity sha512-TJfgXYupxWvCqCm6LmhSfdsdvceyuMlV8JtlAJuaXhcQXuzSnoDW7PeEZ+ckTV7V6o3c8w9edTMtHrav1KF9tw==
+"@helium/address@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.2.tgz#0af3ed5d4bf96a5332d44c1c7f13f61746c18dfb"
+  integrity sha512-0nDYcPvkdCfb4v5yjL4sh/nG0RTtCoJzYiOzb9CplnyDqVui8xYeiSe1dPY/JNUKrD3/BLDbyJZDcBkkbRRxIA==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bs58 "^6.0.0"
     multiformats "^9.6.4"
 
-"@helium/crypto@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.0-alpha.0.tgz#d7ff127b00e60cd93918098825bfa9e4bf0228bc"
-  integrity sha512-e9QB15cFdcYMIkdX4rAnwiWNz2vJm6O8GbQwD+S72kZBvdPPVdpmncfJ9k7kpDPaFihZypySyN+AEJqhdF36ng==
+"@helium/crypto@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.2.tgz#167d68f7edcfb80898a9b85e268b2f9b013551db"
+  integrity sha512-te+0tTskzMOo+/4LUUD45WejS1H8cEY2dLa/4T2mS+GQlEulHzLmZEVLXHCt5bYONv39u2/oSn592wxJEKPw+w==
   dependencies:
-    "@helium/address" "^5.0.0-alpha.0"
+    "@helium/address" "^5.0.2"
     "@noble/curves" "^1.9.2"
     "@noble/hashes" "^1.8.0"
 
-"@helium/currency@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-5.0.0-alpha.0.tgz#e48aa9ed07c54e0313f2c72e300158007a515a8f"
-  integrity sha512-A32hB+vC6n8ypam4f4Wqb1qwfIxOeNBgMEiU27361ePqhTWryOJgpXGGTFnwVWII7JYlVJwPNV56xUVMUxStGA==
+"@helium/currency@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-5.0.2.tgz#7161196a90821678035075c86f859187b83b9cad"
+  integrity sha512-4L3Cg4tOFSYmRwv5pEvmsSbGBnWO6plXkvE64167hVw9FeI7fuSMylOPOKj/LEMZcbTPZTtgZ/kS1310b5cHyA==
   dependencies:
     bignumber.js "^9.0.0"
 
-"@helium/http@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/http/-/http-5.0.0-alpha.0.tgz#e028948e21464a10c1f699687f62d2e210c660a7"
-  integrity sha512-BRwkWP4wKRKLi7li+bMkZ8Zmf+SgY/cHgdeUGWr6CI8RSob1P/fd0Obnc7FPb/6enVp9ohaEtsRxbsHHkwu0tQ==
+"@helium/http@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/http/-/http-5.0.2.tgz#2bd7f397be9a0c4b0f94f4016f8b54cc5e0c8343"
+  integrity sha512-LiuyQ+ph7Vh0HZLGp3dENVfY+KJdLpc7Abt3+xtPI6mrWn7pAVkWf7qSPRhP0olUSZmXf1kLtGqmJg4UEL6ATQ==
   dependencies:
-    "@helium/address" "^5.0.0-alpha.0"
-    "@helium/currency" "^5.0.0-alpha.0"
+    "@helium/address" "^5.0.2"
+    "@helium/currency" "^5.0.2"
     axios "^0.21.1"
     camelcase-keys "^6.2.2"
     qs "^6.9.3"
-    retry-axios "^3.1.3"
+    retry-axios "^2.1.2"
     snakecase-keys "^5.4.6"
 
 "@helium/proto@^2.2.0":
@@ -47,12 +47,12 @@
   dependencies:
     protobufjs "^6.11.3"
 
-"@helium/transactions@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.0-alpha.0.tgz#d0e1dfe23453fd4355f655fbf3280db83dd5cd54"
-  integrity sha512-JbtQcopap9C5VsCxgHuPMf8H5otRznB9PZlhIMYpTz5H/TMN4uZIwRs8AB+Ko4sS5T6Ic773i7O7reqDFmad9g==
+"@helium/transactions@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.2.tgz#7114e06fa480779e2ca28a0e569c83f027ca60f9"
+  integrity sha512-R26pKRz4vXeVhtY62BAVuuUOs4VAFp715uhUYj4z7U6tbE7baWEXbinE0O2oa5cxELvdVOzFCr6+ojzm92uy8w==
   dependencies:
-    "@helium/address" "^5.0.0-alpha.0"
+    "@helium/address" "^5.0.2"
     "@helium/proto" "^2.2.0"
     long "^4.0.0"
     path "^0.12.7"
@@ -393,10 +393,10 @@ quick-lru@^4.0.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
   integrity sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
 
-retry-axios@^3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-3.1.3.tgz#c263313e5148e8747b13d4861e3f8316f49088ed"
-  integrity sha512-uwnlAjqg6twTcQB7RvH3OSgAqjqBDS9GFUOT+BhgADDYjoxsB7KfvS6SqYHOPjxM/Z/jVwSwGYdJnPE8at1PoA==
+retry-axios@^2.1.2:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-2.6.0.tgz#d4dc5c8a8e73982e26a705e46a33df99a28723e0"
+  integrity sha512-pOLi+Gdll3JekwuFjXO3fTq+L9lzMQGcSq7M5gIjExcl3Gu1hd4XXuf5o3+LuSBsaULQH7DiNbsqPd1chVpQGQ==
 
 side-channel-list@^1.0.0:
   version "1.0.0"

@@ -70,7 +70,7 @@ export default class HmhHttpClient {
 
       if (apiVersion === 'v1') {
         this.mockAdapter.onPost('/on_hotspot_nft_created').reply(200, {})
-        this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.10.2' })
+        this.mockAdapter.onGet('/fw/version').reply(200, { fw_ver: 'v0.11.4' })
       } else {
         this.mockAdapter.onGet('/v2/fw/version').reply(200, { fw_ver: 'v1.5.0' })
         this.mockAdapter
