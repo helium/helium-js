@@ -130,11 +130,19 @@ export default class OnboardingClient {
     )
   }
 
-  async createHotspot(opts: { transaction: string; payer?: string }) {
+  async createHotspot(opts: {
+    transaction: string
+    payer?: string
+    format?: 'legacy' | 'v0'
+  }) {
     return this.post<{ solanaTransactions: number[][] }>('transactions/create-hotspot', opts)
   }
 
-  async onboardIot(opts: { hotspotAddress: string; payer?: string } & Partial<IotMetadata>) {
+  async onboardIot(opts: {
+    hotspotAddress: string
+    payer?: string
+    format?: 'legacy' | 'v0'
+  } & Partial<IotMetadata>) {
     let location: string | undefined = undefined
     if (opts.location) {
       location = new BN(opts.location, 'hex').toString()
@@ -146,10 +154,15 @@ export default class OnboardingClient {
       payer: opts.payer,
       gain: opts.gain,
       elevation: opts.elevation,
+      format: opts.format,
     })
   }
 
-  async onboardMobile(opts: { hotspotAddress: string; payer?: string } & Partial<MobileMetadata>) {
+  async onboardMobile(opts: {
+    hotspotAddress: string
+    payer?: string
+    format?: 'legacy' | 'v0'
+  } & Partial<MobileMetadata>) {
     let location: string | undefined = undefined
     if (opts.location) {
       location = new BN(opts.location, 'hex').toString()
@@ -160,6 +173,7 @@ export default class OnboardingClient {
       location,
       deploymentInfo: opts.deploymentInfo,
       payer: opts.payer,
+      format: opts.format,
     })
   }
 
@@ -168,9 +182,10 @@ export default class OnboardingClient {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
+      format?: 'legacy' | 'v0'
     },
   ) {
-    const { solanaAddress, hotspotAddress, payer } = opts
+    const { solanaAddress, hotspotAddress, payer, format } = opts
 
     let location: string | undefined = undefined
     if (opts.location) {
@@ -184,6 +199,7 @@ export default class OnboardingClient {
       wallet: solanaAddress,
       gain: opts.gain,
       elevation: opts.elevation,
+      format,
     }
     return this.post<{ solanaTransactions: number[][] }>('transactions/iot/update-metadata', body)
   }
@@ -193,9 +209,10 @@ export default class OnboardingClient {
       hotspotAddress: string
       solanaAddress: string
       payer?: string
+      format?: 'legacy' | 'v0'
     },
   ) {
-    const { solanaAddress, deploymentInfo, hotspotAddress, payer } = opts
+    const { solanaAddress, deploymentInfo, hotspotAddress, payer, format } = opts
 
     let location: string | undefined = undefined
     if (opts.location) {
@@ -208,6 +225,7 @@ export default class OnboardingClient {
       location,
       payer,
       wallet: solanaAddress,
+      format,
     }
     return this.post<{ solanaTransactions: number[][] }>(
       'transactions/mobile/update-metadata',
@@ -227,6 +245,7 @@ export default class OnboardingClient {
     macEth0: string
     macWlan0: string
     rpiSerial: string
+    format?: 'legacy' | 'v0'
   }) {
     return this.axios.post('hotspots', postBody, {
       headers: {
