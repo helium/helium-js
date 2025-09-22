@@ -259,7 +259,7 @@ export const getUpdateMetaData = async ({
           antenna: antenna || 0,
           mechanicalDownTilt: mechanicalDownTilt || 0,
           electricalDownTilt: electricalDownTilt || 0,
-          serial: serial || undefined,
+          serial,
         },
       },
     })
