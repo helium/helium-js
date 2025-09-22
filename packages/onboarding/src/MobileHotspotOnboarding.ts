@@ -454,6 +454,8 @@ export default class MobileHotspotOnboarding {
     location,
     elevation,
     antenna,
+    mechanicalDownTilt,
+    electricalDownTilt,
     serial,
     ...opts
   }: AddToOnboardingServerOpts & {
@@ -462,6 +464,8 @@ export default class MobileHotspotOnboarding {
     location?: string
     azimuth?: number | undefined
     elevation?: number | undefined
+    mechanicalDownTilt?: number
+    electricalDownTilt?: number
     serial?: string
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
@@ -523,6 +527,8 @@ export default class MobileHotspotOnboarding {
       azimuth,
       elevation,
       antenna,
+      mechanicalDownTilt,
+      electricalDownTilt,
       serial,
     })
 
