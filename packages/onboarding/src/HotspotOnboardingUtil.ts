@@ -196,6 +196,9 @@ export const getUpdateMetaData = async ({
   cluster,
   nextLocation,
   elevation,
+  mechanicalDownTilt,
+  electricalDownTilt,
+  serial,
   decimalGain,
   dcProgram,
 }: {
@@ -207,6 +210,8 @@ export const getUpdateMetaData = async ({
   elevation?: number
   antenna?: number
   azimuth?: number
+  mechanicalDownTilt?: number
+  electricalDownTilt?: number
   serial?: string
   nextLocation: string
   networkType: NetworkType
@@ -254,9 +259,9 @@ export const getUpdateMetaData = async ({
           elevation: elevation || 0,
           azimuth: azimuth || 0,
           antenna: antenna || 0,
-          mechanicalDownTilt: 0,
-          electricalDownTilt: 0,
-          serial: serial || null,
+          mechanicalDownTilt: mechanicalDownTilt || 0,
+          electricalDownTilt: electricalDownTilt || 0,
+          serial,
         },
       },
     })
