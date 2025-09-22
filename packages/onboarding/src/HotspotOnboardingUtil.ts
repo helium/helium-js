@@ -8,7 +8,7 @@ import {
   heliumAddressToSolPublicKey,
 } from '@helium/spl-utils'
 import { subDaoKey } from '@helium/helium-sub-daos-sdk'
-import { Connection, PublicKey, Cluster, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Cluster } from '@solana/web3.js'
 import {
   createAssociatedTokenAccountIdempotentInstruction,
   getAssociatedTokenAddressSync,
@@ -20,6 +20,7 @@ import {
 } from '@helium/helium-entity-manager-sdk'
 import * as Currency from '@helium/currency-utils'
 import { HNT_AS_BONES, DcProgram, HemProgram, Maker, NetworkType } from './types'
+import { VersionedTransaction } from '@solana/web3.js'
 
 const lowerFirst = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
@@ -187,6 +188,7 @@ export const getUpdateMetaData = async ({
   gateway,
   antenna,
   azimuth,
+  serial,
   hemProgram,
   onboardingClient,
   owner,
@@ -318,18 +320,16 @@ export const getUpdateMetaData = async ({
         connection,
       })
       if (txn) {
-        solanaTransactions = [
-          Buffer.from(txn.serialize({ verifySignatures: false })),
-          ...solanaTransactions,
-        ]
+        const serialized = txn.serialize({ verifySignatures: false })
+        solanaTransactions = [Buffer.from(serialized), ...solanaTransactions]
       }
     }
   }
 
   const estimatedFees = await Promise.all(
     solanaTransactions.map(async (buff) => {
-      const tx = Transaction.from(buff)
-      const estimatedFee = await connection.getFeeForMessage(tx.compileMessage(), 'confirmed')
+      const tx = VersionedTransaction.deserialize(buff)
+      const estimatedFee = await connection.getFeeForMessage(tx.message, 'confirmed')
       return estimatedFee.value
     }),
   )
