@@ -231,6 +231,8 @@ export default class MobileHotspotOnboarding {
     location,
     elevation,
     antenna,
+    mechanicalDownTilt,
+    electricalDownTilt,
     serial,
   }: {
     hotspotAddress: string
@@ -238,6 +240,8 @@ export default class MobileHotspotOnboarding {
     elevation?: number
     antenna?: number
     azimuth?: number
+    mechanicalDownTilt?: number
+    electricalDownTilt?: number
     serial?: string
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
@@ -251,9 +255,9 @@ export default class MobileHotspotOnboarding {
           elevation: elevation || 0,
           azimuth: azimuth || 0,
           antenna: antenna || 0,
-          mechanicalDownTilt: 0,
-          electricalDownTilt: 0,
-          serial: serial || undefined,
+          mechanicalDownTilt: mechanicalDownTilt || 0,
+          electricalDownTilt: electricalDownTilt || 0,
+          serial,
         },
       },
     })
