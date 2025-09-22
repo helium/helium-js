@@ -1,6 +1,6 @@
 {
   "name": "@helium/crypto",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Cryptography utilities including mnemonics, keypairs and base58-check encoding",
   "keywords": [
     "helium",
@@ -26,12 +26,12 @@
     "build": "yarn run clean && tsc"
   },
   "dependencies": {
-    "@helium/address": "^5.0.1",
+    "@helium/address": "^5.0.2",
     "@noble/curves": "^1.9.2",
     "@noble/hashes": "^1.8.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.1"
   },
-  "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
+  "gitHead": "fe7fb81159c03b34b147b3effb06eb586fd37352"
 }

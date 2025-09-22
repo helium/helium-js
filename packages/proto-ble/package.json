@@ -1,6 +1,6 @@
 {
   "name": "@helium/proto-ble",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Proto definitions for hotspot bluetooth interactions",
   "keywords": [
     "helium"
@@ -28,5 +28,5 @@
   "dependencies": {
     "protobufjs": "^6.8.9"
   },
-  "gitHead": "07d361645c7851908721d7fbd70c6f9a39c3b210"
+  "gitHead": "fe7fb81159c03b34b147b3effb06eb586fd37352"
 }
