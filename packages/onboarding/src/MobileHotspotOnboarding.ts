@@ -231,12 +231,14 @@ export default class MobileHotspotOnboarding {
     location,
     elevation,
     antenna,
+    serial,
   }: {
     hotspotAddress: string
     location?: string
     elevation?: number
     antenna?: number
     azimuth?: number
+    serial?: string
   }) => {
     this.writeLog('Getting MOBILE onboard txns')
     this.setProgressToStep('fetch_mobile')
@@ -251,6 +253,7 @@ export default class MobileHotspotOnboarding {
           antenna: antenna || 0,
           mechanicalDownTilt: 0,
           electricalDownTilt: 0,
+          serial: serial || undefined,
         },
       },
     })
@@ -447,6 +450,7 @@ export default class MobileHotspotOnboarding {
     location,
     elevation,
     antenna,
+    serial,
     ...opts
   }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
@@ -454,6 +458,7 @@ export default class MobileHotspotOnboarding {
     location?: string
     azimuth?: number | undefined
     elevation?: number | undefined
+    serial?: string
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -514,6 +519,7 @@ export default class MobileHotspotOnboarding {
       azimuth,
       elevation,
       antenna,
+      serial,
     })
 
     return txns
