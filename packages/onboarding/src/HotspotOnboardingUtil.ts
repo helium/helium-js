@@ -188,7 +188,6 @@ export const getUpdateMetaData = async ({
   gateway,
   antenna,
   azimuth,
-  serial,
   hemProgram,
   onboardingClient,
   owner,
