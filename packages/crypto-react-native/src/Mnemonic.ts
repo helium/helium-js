@@ -1,10 +1,4 @@
-import {
-  lpad,
-  deriveChecksumBits,
-  binaryToByte,
-  bytesToBinary,
-  randomBytes,
-} from './utils'
+import { lpad, deriveChecksumBits, binaryToByte, bytesToBinary, randomBytes } from './utils'
 import wordlist from './wordlists/english.json'
 
 export type MnemonicLength = 12 | 24
@@ -29,7 +23,9 @@ export default class Mnemonic {
   static fromEntropy(entropy: Buffer): Mnemonic {
     if (entropy.length < 16) throw new Error('invalid entropy, less than 16')
     if (entropy.length > 32) throw new Error('invalid entropy, greater than 32')
-    if (entropy.length % 4 !== 0) { throw new Error('invalid entropy, not divisble by 4') }
+    if (entropy.length % 4 !== 0) {
+      throw new Error('invalid entropy, not divisble by 4')
+    }
 
     const entropyBits = bytesToBinary([].slice.call(entropy))
     const checksumBits = deriveChecksumBits(entropy)
@@ -56,9 +52,7 @@ export default class Mnemonic {
     const checksumBits = bits.slice(dividerIndex)
 
     // calculate the checksum and compare
-    const entropyBytes = (entropyBits.match(/(.{1,8})/g) || []).map(
-      binaryToByte,
-    )
+    const entropyBytes = (entropyBits.match(/(.{1,8})/g) || []).map(binaryToByte)
     if (entropyBytes.length < 16) throw new Error('invalid checksum')
     if (entropyBytes.length > 32) throw new Error('invalid checksum')
     if (entropyBytes.length % 4 !== 0) throw new Error('invalid checksum')
