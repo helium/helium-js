@@ -7,21 +7,21 @@
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.6.tgz#ec4070a04d76bae8ddbb10770ba55714a417b7c6"
   integrity sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==
 
-"@helium/address@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.0-alpha.0.tgz#ce2975452eea96433503bba417c414aef8c85c9e"
-  integrity sha512-TJfgXYupxWvCqCm6LmhSfdsdvceyuMlV8JtlAJuaXhcQXuzSnoDW7PeEZ+ckTV7V6o3c8w9edTMtHrav1KF9tw==
+"@helium/address@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.2.tgz#0af3ed5d4bf96a5332d44c1c7f13f61746c18dfb"
+  integrity sha512-0nDYcPvkdCfb4v5yjL4sh/nG0RTtCoJzYiOzb9CplnyDqVui8xYeiSe1dPY/JNUKrD3/BLDbyJZDcBkkbRRxIA==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bs58 "^6.0.0"
     multiformats "^9.6.4"
 
-"@helium/crypto@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.0-alpha.0.tgz#d7ff127b00e60cd93918098825bfa9e4bf0228bc"
-  integrity sha512-e9QB15cFdcYMIkdX4rAnwiWNz2vJm6O8GbQwD+S72kZBvdPPVdpmncfJ9k7kpDPaFihZypySyN+AEJqhdF36ng==
+"@helium/crypto@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.2.tgz#167d68f7edcfb80898a9b85e268b2f9b013551db"
+  integrity sha512-te+0tTskzMOo+/4LUUD45WejS1H8cEY2dLa/4T2mS+GQlEulHzLmZEVLXHCt5bYONv39u2/oSn592wxJEKPw+w==
   dependencies:
-    "@helium/address" "^5.0.0-alpha.0"
+    "@helium/address" "^5.0.2"
     "@noble/curves" "^1.9.2"
     "@noble/hashes" "^1.8.0"
 
@@ -32,12 +32,12 @@
   dependencies:
     protobufjs "^6.11.3"
 
-"@helium/transactions@^5.0.0-alpha.0":
-  version "5.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.0-alpha.0.tgz#d0e1dfe23453fd4355f655fbf3280db83dd5cd54"
-  integrity sha512-JbtQcopap9C5VsCxgHuPMf8H5otRznB9PZlhIMYpTz5H/TMN4uZIwRs8AB+Ko4sS5T6Ic773i7O7reqDFmad9g==
+"@helium/transactions@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.2.tgz#7114e06fa480779e2ca28a0e569c83f027ca60f9"
+  integrity sha512-R26pKRz4vXeVhtY62BAVuuUOs4VAFp715uhUYj4z7U6tbE7baWEXbinE0O2oa5cxELvdVOzFCr6+ojzm92uy8w==
   dependencies:
-    "@helium/address" "^5.0.0-alpha.0"
+    "@helium/address" "^5.0.2"
     "@helium/proto" "^2.2.0"
     long "^4.0.0"
     path "^0.12.7"

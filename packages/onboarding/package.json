@@ -1,6 +1,6 @@
 {
   "name": "@helium/onboarding",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "HTTP library for interacting with an onboarding server",
   "keywords": [
     "helium",
@@ -41,14 +41,14 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
-    "@helium/address": "^5.0.2",
-    "@helium/crypto": "^5.0.2",
-    "@helium/currency-utils": "^0.10.2",
-    "@helium/data-credits-sdk": "^0.10.2",
-    "@helium/helium-entity-manager-sdk": "^0.10.2",
-    "@helium/hotspot-utils": "^0.10.2",
-    "@helium/spl-utils": "^0.10.2",
-    "@helium/transactions": "^5.0.2",
+    "@helium/address": "^5.0.3",
+    "@helium/crypto": "^5.0.3",
+    "@helium/currency-utils": "^0.11.4",
+    "@helium/data-credits-sdk": "^0.11.4",
+    "@helium/helium-entity-manager-sdk": "^0.11.4",
+    "@helium/hotspot-utils": "^0.11.4",
+    "@helium/spl-utils": "^0.11.4",
+    "@helium/transactions": "^5.0.3",
     "@metaplex-foundation/mpl-bubblegum": "^0.7.0",
     "@solana/web3.js": "^1.91.1",
     "axios": "^1.5.0",
@@ -68,6 +68,7 @@
   "devDependencies": {
     "@types/bn.js": "^5.1.1",
     "@types/google-protobuf": "^3.15.12",
+    "@types/node-fetch": "^2.6.13",
     "@types/qs": "^6.9.7",
     "@types/uuid": "^9.0.3"
   },
