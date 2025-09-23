@@ -208,6 +208,7 @@ export default class MobileHotspotOnboarding {
     azimuth,
     antenna,
     serial,
+    format,
   }: {
     azimuth?: number
     gateway: string
@@ -217,6 +218,8 @@ export default class MobileHotspotOnboarding {
     networkType: NetworkType
     decimalGain?: number
     serial?: string
+    format?: 'legacy' | 'v0'
+
   }) => {
     return this._solanaOnboarding.getUpdateMetaData({
       antenna,
@@ -226,6 +229,7 @@ export default class MobileHotspotOnboarding {
       location,
       networkType,
       serial,
+      format,
     })
   }
 
@@ -467,6 +471,7 @@ export default class MobileHotspotOnboarding {
     mechanicalDownTilt,
     electricalDownTilt,
     serial,
+    format,
     ...opts
   }: AddToOnboardingServerOpts & {
     addGatewayTxn: string
@@ -477,6 +482,7 @@ export default class MobileHotspotOnboarding {
     mechanicalDownTilt?: number
     electricalDownTilt?: number
     serial?: string
+    format?: 'legacy' | 'v0'
   }) => {
     const addGatewayV1 = AddGatewayV1.fromString(addGatewayTxn)
     if (!addGatewayV1.gateway) {
@@ -540,7 +546,7 @@ export default class MobileHotspotOnboarding {
       mechanicalDownTilt,
       electricalDownTilt,
       serial,
-      format: 'v0' as const,
+      format,
     })
 
     return txns
