@@ -540,6 +540,7 @@ export default class MobileHotspotOnboarding {
       mechanicalDownTilt,
       electricalDownTilt,
       serial,
+      format: 'v0' as const,
     })
 
     return txns
