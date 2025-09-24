@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-"@helium/address@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.2.tgz#0af3ed5d4bf96a5332d44c1c7f13f61746c18dfb"
-  integrity sha512-0nDYcPvkdCfb4v5yjL4sh/nG0RTtCoJzYiOzb9CplnyDqVui8xYeiSe1dPY/JNUKrD3/BLDbyJZDcBkkbRRxIA==
+"@helium/address@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.3.tgz#6c7414558810d8349c40770ce2b24696e4c82ccc"
+  integrity sha512-+1rOfB6267k6uF7nYr32rclEQJy9AlOKhZLQOJoce1B5Lv+kVeojxo20JiLy/TV7IRzA+1tCBN8HSEFTjjjDaA==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bs58 "^6.0.0"
     multiformats "^9.6.4"
 
-"@helium/currency@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-5.0.2.tgz#7161196a90821678035075c86f859187b83b9cad"
-  integrity sha512-4L3Cg4tOFSYmRwv5pEvmsSbGBnWO6plXkvE64167hVw9FeI7fuSMylOPOKj/LEMZcbTPZTtgZ/kS1310b5cHyA==
+"@helium/currency@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@helium/currency/-/currency-5.0.3.tgz#aeb94b4d7a00a262452e8b035e1844d434fc29cd"
+  integrity sha512-rV5egl9yaY4JZBreg6r2txSqHnhYx38cy4KMXWi69fyzyGWv1SvNTHWZ/BGdWCnUUw9TrT0IYwcRgh+oHqdhfw==
   dependencies:
     bignumber.js "^9.0.0"
 
