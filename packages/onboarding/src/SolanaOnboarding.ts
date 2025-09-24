@@ -86,7 +86,10 @@ export default class SolanaOnboarding {
     elevation,
     location,
     networkType,
+    mechanicalDownTilt,
+    electricalDownTilt,
     serial,
+    format,
   }: {
     gateway: string
     azimuth?: number
@@ -95,7 +98,10 @@ export default class SolanaOnboarding {
     elevation?: number
     location: string
     networkType: NetworkType
+    mechanicalDownTilt?: number
+    electricalDownTilt?: number
     serial?: string
+    format?: 'legacy' | 'v0'
   }): Promise<AssertData> => {
     if (this.shouldMock) {
       return AssertMock.getAssertData()
@@ -118,7 +124,10 @@ export default class SolanaOnboarding {
       nextLocation: location,
       networkType,
       cluster: this.cluster,
+      mechanicalDownTilt,
+      electricalDownTilt,
       serial,
+      format,
     })
   }
 

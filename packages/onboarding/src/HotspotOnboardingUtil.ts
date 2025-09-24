@@ -200,6 +200,7 @@ export const getUpdateMetaData = async ({
   serial,
   decimalGain,
   dcProgram,
+  format,
 }: {
   hemProgram: HemProgram
   connection: Connection
@@ -217,6 +218,7 @@ export const getUpdateMetaData = async ({
   onboardingClient: OnboardingClient
   dcProgram: DcProgram
   cluster: Cluster
+  format?: 'legacy' | 'v0'
 }) => {
   const balances = await getBalances(owner, connection)
 
@@ -253,6 +255,7 @@ export const getUpdateMetaData = async ({
       solanaAddress,
       hotspotAddress: gateway,
       location: nextLocation,
+      format,
       deploymentInfo: {
         wifiInfoV0: {
           elevation: elevation || 0,
