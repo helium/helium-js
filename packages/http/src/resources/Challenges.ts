@@ -5,8 +5,13 @@ import Account from '../models/Account'
 import Hotspot from '../models/Hotspot'
 import Sums, { SumsType } from './Sums'
 
+export type NaturalDate = string // in the format "-${number} ${Bucket}" eg "-1 day"
+
 interface ListParams {
   cursor?: string
+  minTime?: Date | NaturalDate
+  maxTime?: Date | NaturalDate
+  limit?: number
 }
 
 type Context = Account | Hotspot
@@ -30,7 +35,12 @@ export default class Challenges {
       const hotspot = this.context as Hotspot
       url = `/hotspots/${hotspot.address}/challenges`
     }
-    const response = await this.client.get(url, { cursor: params.cursor })
+    const response = await this.client.get(url, { 
+      cursor: params.cursor,
+      min_time: params.minTime instanceof Date ? params.minTime?.toISOString() : params.minTime,
+      max_time: params.maxTime instanceof Date ? params.maxTime?.toISOString() : params.maxTime,
+      limit: params.limit,
+    })
     const { data: { data: challenges, cursor } } = response
     const data = challenges.map((d: HTTPChallengeObject) => new Challenge(d))
     return new ResourceList(data, this.list.bind(this), cursor)
