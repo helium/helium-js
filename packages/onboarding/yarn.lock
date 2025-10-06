@@ -106,10 +106,10 @@
     js-sha256 "^0.11.0"
     multiformats "^9.6.4"
 
-"@helium/address@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.2.tgz#0af3ed5d4bf96a5332d44c1c7f13f61746c18dfb"
-  integrity sha512-0nDYcPvkdCfb4v5yjL4sh/nG0RTtCoJzYiOzb9CplnyDqVui8xYeiSe1dPY/JNUKrD3/BLDbyJZDcBkkbRRxIA==
+"@helium/address@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.3.tgz#6c7414558810d8349c40770ce2b24696e4c82ccc"
+  integrity sha512-+1rOfB6267k6uF7nYr32rclEQJy9AlOKhZLQOJoce1B5Lv+kVeojxo20JiLy/TV7IRzA+1tCBN8HSEFTjjjDaA==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bs58 "^6.0.0"
@@ -143,12 +143,12 @@
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/crypto@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.2.tgz#167d68f7edcfb80898a9b85e268b2f9b013551db"
-  integrity sha512-te+0tTskzMOo+/4LUUD45WejS1H8cEY2dLa/4T2mS+GQlEulHzLmZEVLXHCt5bYONv39u2/oSn592wxJEKPw+w==
+"@helium/crypto@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.3.tgz#dc5655ca20554a014ccfd8c1eb6e36e945ee6f2e"
+  integrity sha512-39TtMwz3gYvlYe7LYcZTSdvN3709IwnJwp40Y4ZTQW/4v2OpU5NMf2OKoxWCnesgTt+GH9waUDg5WjJEqvkUuA==
   dependencies:
-    "@helium/address" "^5.0.2"
+    "@helium/address" "^5.0.3"
     "@noble/curves" "^1.9.2"
     "@noble/hashes" "^1.8.0"
 
@@ -288,12 +288,12 @@
     borsh "^0.7.0"
     bs58 "^4.0.1"
 
-"@helium/transactions@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.2.tgz#7114e06fa480779e2ca28a0e569c83f027ca60f9"
-  integrity sha512-R26pKRz4vXeVhtY62BAVuuUOs4VAFp715uhUYj4z7U6tbE7baWEXbinE0O2oa5cxELvdVOzFCr6+ojzm92uy8w==
+"@helium/transactions@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.3.tgz#fcc427d579ee2934f962107981b264b6717c259f"
+  integrity sha512-7qcCPhCQ1v66LteIDI/8mYspZ9xTRMcvzbWttB3BiGzNb5rvqFxbFL3TGWRDJKyIRNgqmxEe/1P9JaOxt4DCZw==
   dependencies:
-    "@helium/address" "^5.0.2"
+    "@helium/address" "^5.0.3"
     "@helium/proto" "^2.2.0"
     long "^4.0.0"
     path "^0.12.7"
