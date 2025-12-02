@@ -5,6 +5,7 @@ import Client from '../Client'
 export type RewardData = Omit<Reward, 'client'>
 
 export interface HTTPReward {
+  type: string
   account: string
   amount: number
   block: number
@@ -19,6 +20,8 @@ function integerToBalance(integerValue: number): Balance<NetworkTokens> {
 
 export default class Reward extends DataModel {
   private client: Client
+
+  public type: string
 
   public account: string
 
@@ -35,6 +38,7 @@ export default class Reward extends DataModel {
   constructor(client: Client, rewards: HTTPReward) {
     super()
     this.client = client
+    this.type = rewards.type
     this.account = rewards.account
     this.amount = integerToBalance(rewards.amount)
     this.block = rewards.block
