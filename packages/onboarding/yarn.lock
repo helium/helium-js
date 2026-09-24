@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@babel/runtime@^7.10.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.25.0":
+"@babel/runtime@^7.10.5", "@babel/runtime@^7.15.4":
   version "7.27.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.6.tgz#ec4070a04d76bae8ddbb10770ba55714a417b7c6"
   integrity sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==
@@ -11,6 +11,11 @@
   version "7.28.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
   integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
+
+"@babel/runtime@^7.29.7":
+  version "7.29.7"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.29.7.tgz#12022450c45a4da6d8d8287b18a4ff2ddb23f768"
+  integrity sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==
 
 "@coral-xyz/anchor-errors@^0.31.1":
   version "0.31.1"
@@ -90,10 +95,10 @@
     protobufjs "^7.5.3"
     yargs "^17.7.2"
 
-"@helium/account-fetch-cache@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/account-fetch-cache/-/account-fetch-cache-0.11.4.tgz#5581288f626233f9b3a28471bbd60d2734012410"
-  integrity sha512-SCRZRLyDB7OvYw5uvDU4UWeuTiM8aeUnmzuuIoIR4jO+ubVyIzkUJ2HElRXKbBbLdU5EJBtZGXI/WNI2HQc0jw==
+"@helium/account-fetch-cache@^0.11.16":
+  version "0.11.16"
+  resolved "https://registry.yarnpkg.com/@helium/account-fetch-cache/-/account-fetch-cache-0.11.16.tgz#ffbfab0be4e12c6ba5a7f3ba1020f986a026b3fa"
+  integrity sha512-jU80w9a0jdazTOCRmfsc8kLJGWczK79sK5hmTFh+X9k4e0dUxn7T/4/RMpnZ0628XwqFgEMUD2rxbx5eI64hsA==
   dependencies:
     "@solana/web3.js" "^1.91.1"
 
@@ -106,10 +111,10 @@
     js-sha256 "^0.11.0"
     multiformats "^9.6.4"
 
-"@helium/address@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.3.tgz#6c7414558810d8349c40770ce2b24696e4c82ccc"
-  integrity sha512-+1rOfB6267k6uF7nYr32rclEQJy9AlOKhZLQOJoce1B5Lv+kVeojxo20JiLy/TV7IRzA+1tCBN8HSEFTjjjDaA==
+"@helium/address@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@helium/address/-/address-5.0.4.tgz#7eaa7fb17dfcbdc463e35e93b8f3acc0ec9def75"
+  integrity sha512-5Jv2EQ9R8dX9jpdCGITukI7rlRT98YEkLvlz2V4qqRxLo4s1NRzXXfuh8PzbXUbBLB/xuw1W4r4MgdSBGOb6SQ==
   dependencies:
     "@noble/hashes" "^1.8.0"
     bs58 "^6.0.0"
@@ -123,109 +128,109 @@
     "@solana/spl-token" "^0.3.8"
     "@solana/web3.js" "^1.91.1"
 
-"@helium/anchor-resolvers@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/anchor-resolvers/-/anchor-resolvers-0.11.4.tgz#6800488d5497787cfce225235018915090ade332"
-  integrity sha512-xPc1lhOo+7iRd43hEXeUzn9ydCyqDH/rd5TGk8vTdZpRDX4lX+qDBK2R8Hi2RBBpq3vF08AkLbjbRR9FIcbcGg==
+"@helium/anchor-resolvers@^0.11.16":
+  version "0.11.16"
+  resolved "https://registry.yarnpkg.com/@helium/anchor-resolvers/-/anchor-resolvers-0.11.16.tgz#c1a05c313eaff555e106ada2ee02c13dc4845dd6"
+  integrity sha512-cE3a6du1eaEQYw2+fa66yN4ZvK4LugqOlz9KUuePdiyfMIJmUSF6MOZtlLsIDIuzyUgvXEQFygqc+7cVFUj96g==
   dependencies:
     "@solana/spl-token" "^0.3.8"
     "@solana/web3.js" "^1.91.1"
 
-"@helium/circuit-breaker-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/circuit-breaker-sdk/-/circuit-breaker-sdk-0.11.4.tgz#4155206696230866d2a60f3778e31633de4d1eb1"
-  integrity sha512-Vmt1WIQOEe/bwKAEUv13szskqH7cn841YRWrqLFvVdYHn3BsK8UY8KmWhfRoX6RUavmofVKOMKfqZiyIBB4QWw==
+"@helium/circuit-breaker-sdk@^0.11.18":
+  version "0.11.18"
+  resolved "https://registry.yarnpkg.com/@helium/circuit-breaker-sdk/-/circuit-breaker-sdk-0.11.18.tgz#e37806f2a40f934f801a8ee962fd0f8333744a12"
+  integrity sha512-mgVpvd3Xv/+FdZ8HPFBq0cLaCow4K6bEREiYs6DhmQ1HVjqu7anI64K6zZCgThnEAJxa0PzMVcwmTbCFtmgS5w==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/idls" "^0.11.22"
+    "@helium/spl-utils" "^0.13.0"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/crypto@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.3.tgz#dc5655ca20554a014ccfd8c1eb6e36e945ee6f2e"
-  integrity sha512-39TtMwz3gYvlYe7LYcZTSdvN3709IwnJwp40Y4ZTQW/4v2OpU5NMf2OKoxWCnesgTt+GH9waUDg5WjJEqvkUuA==
+"@helium/crypto@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@helium/crypto/-/crypto-5.0.4.tgz#7f5bcf7b63b0b6d7718b6067c854f0c8df0c7545"
+  integrity sha512-M53q6BdiR8QI7XRUruRE7YfMzaZmq6Lx9NyWzLuqjrFz8U+o5WJCKzl+u+v7+aN3cutys3vrqQa5YKveZLB7xQ==
   dependencies:
-    "@helium/address" "^5.0.3"
+    "@helium/address" "^5.0.4"
     "@noble/curves" "^1.9.2"
     "@noble/hashes" "^1.8.0"
 
-"@helium/currency-utils@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/currency-utils/-/currency-utils-0.11.4.tgz#c4290d3ae4f46474030f22351120cbf0a3187f3a"
-  integrity sha512-ByoMKG/X/mBXjry5IddMKZmha5vf7rnQn869GRD8Qk3qLcgLghCvVQ9n4tmMTApn9L9THjO6+Qx/mZ2sWrtLOg==
+"@helium/currency-utils@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@helium/currency-utils/-/currency-utils-0.12.0.tgz#235f542eaa2b1aa6bb7b1515028f4eafbe4d6d71"
+  integrity sha512-mNRetG+2Jn9JjnN7v4O49S95AlTBxKN0cu+XJqo1FPRJmXmWy+uu8ybpisg3IeF1JD3G+QyANZTwmFmfS62dCQ==
   dependencies:
-    "@helium/spl-utils" "^0.11.4"
-    "@pythnetwork/hermes-client" "^2.0.0"
+    "@helium/spl-utils" "^0.13.0"
+    "@pythnetwork/pyth-solana-receiver" "^0.10.2"
     "@solana/spl-token" "^0.3.8"
     "@solana/web3.js" "^1.91.1"
 
-"@helium/data-credits-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/data-credits-sdk/-/data-credits-sdk-0.11.4.tgz#a8eda73fd40d68a327b50f0c5c33943033c934d4"
-  integrity sha512-yBg793gpnAHQmCCzUnnej9hCIvSFp+RWEAkeZFIs5RhKxkh8drkryfY1cgbfwz6/y3o7njtNkPej8KPlg0wjBA==
+"@helium/data-credits-sdk@^0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@helium/data-credits-sdk/-/data-credits-sdk-0.12.1.tgz#eb0b87a517455ea75d5182853d25c0b1448ace6f"
+  integrity sha512-BDvS37CH2O9yJuEORFuj0y5cG/ZWcCDtiGtPFt/Xw8YRxoZj4DigK+UDojS/uzKIj2moVFmn+k2xU33VuWNSaQ==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/circuit-breaker-sdk" "^0.11.4"
-    "@helium/helium-sub-daos-sdk" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
-    "@pythnetwork/hermes-client" "^2.0.0"
-    "@pythnetwork/pyth-solana-receiver" "^0.10.2"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/circuit-breaker-sdk" "^0.11.18"
+    "@helium/helium-sub-daos-sdk" "^0.12.0"
+    "@helium/idls" "^0.11.27"
+    "@helium/spl-utils" "^0.13.3"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/helium-entity-manager-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/helium-entity-manager-sdk/-/helium-entity-manager-sdk-0.11.4.tgz#21f6f5e51cee520dc82718d661b9d31f60d12ab1"
-  integrity sha512-Kh5c9d3dS665h9gWp3c8QC0SWw+W1jWRVLi3Pi1I74+FrRlryHaoo5sdBTeRfBrhxohXqW+NlBF4iCJ9B/UOKQ==
+"@helium/helium-entity-manager-sdk@^0.11.19":
+  version "0.11.19"
+  resolved "https://registry.yarnpkg.com/@helium/helium-entity-manager-sdk/-/helium-entity-manager-sdk-0.11.19.tgz#26ecaa14603da86925ba19407183521fbaaf05d0"
+  integrity sha512-T2KEJem6P3z89IQpJGQV8SkSiedvg1i3lvHGo9EQ8W4Q2PkW86MpG/kSH569rbFZyaWkMwXw5oryoq20qjO/sA==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
     "@helium/address" "^4.12.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/helium-sub-daos-sdk" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/no-emit-sdk" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/helium-sub-daos-sdk" "^0.12.0"
+    "@helium/idls" "^0.11.27"
+    "@helium/no-emit-sdk" "^0.11.18"
+    "@helium/spl-utils" "^0.13.3"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
     js-sha256 "^0.9.0"
 
-"@helium/helium-sub-daos-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/helium-sub-daos-sdk/-/helium-sub-daos-sdk-0.11.4.tgz#ca3f253714f65f07d08178c3543ea0aa6dd8f13e"
-  integrity sha512-x9jZ2kgwlUiTPFDMoPRXrs2tbpsKBUBO0FtTG+K5yEzSt+8Ji2570sGjfWFOIYGgWj25DdnvQFJho0plKq4/Ng==
+"@helium/helium-sub-daos-sdk@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@helium/helium-sub-daos-sdk/-/helium-sub-daos-sdk-0.12.0.tgz#ed76802664c54e3cef486e9b566d8ae62d590d42"
+  integrity sha512-2aVIKPlBeV/fihp8qK2wlQapii3YMrI8hxaj6nekb+XfIVQqrS+Bls9pDt2MyoMh1ToNS8YtzDpJPZaMMdGAZw==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/circuit-breaker-sdk" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/circuit-breaker-sdk" "^0.11.18"
+    "@helium/idls" "^0.11.27"
     "@helium/nft-proxy-sdk" "^0.1.5-alpha.0"
-    "@helium/spl-utils" "^0.11.4"
-    "@helium/treasury-management-sdk" "^0.11.4"
-    "@helium/voter-stake-registry-sdk" "^0.11.4"
+    "@helium/no-emit-sdk" "^0.11.18"
+    "@helium/spl-utils" "^0.13.3"
+    "@helium/treasury-management-sdk" "^0.11.18"
+    "@helium/voter-stake-registry-sdk" "^0.12.2"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/hotspot-utils@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/hotspot-utils/-/hotspot-utils-0.11.4.tgz#fe72fb77d4fd7b93c2b5cd9504e1409756d8974f"
-  integrity sha512-ofkEhDRt9S9RXj3b+YAPVS+G4us3YhldJsia+xkPpk7ti5y8ZOS0rCNBkf+633R7MZx1Kfu4ZrBScSXu9aTJhw==
+"@helium/hotspot-utils@^0.11.19":
+  version "0.11.19"
+  resolved "https://registry.yarnpkg.com/@helium/hotspot-utils/-/hotspot-utils-0.11.19.tgz#ed27c935ebaa0928122ebd6574024988c0609319"
+  integrity sha512-tHORAh5n5msWNeDhJmFKnKEYen0urCs8j5xo1fzH0hP3DTvRHVKPuhQ8Vj/Z0GqEyLimUIsNpQ0EyN+q/dLZ2g==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/helium-entity-manager-sdk" "^0.11.4"
-    "@helium/helium-sub-daos-sdk" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/helium-entity-manager-sdk" "^0.11.19"
+    "@helium/helium-sub-daos-sdk" "^0.12.0"
+    "@helium/idls" "^0.11.27"
+    "@helium/spl-utils" "^0.13.3"
     "@solana/web3.js" "^1.91.1"
     bs58 "^4.0.1"
 
-"@helium/idls@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/idls/-/idls-0.11.4.tgz#ba91e0bbd02a4930c535a0823ff1f5a133fa721f"
-  integrity sha512-5IzvgWCk+Q7BtY4y0fqde/TFIRG5JVIvixwWGWM/D2t4/zhhcqWkoDOMsZbyi9xZBkb9L6VW6jlDXeKxPBtVDQ==
+"@helium/idls@^0.11.22", "@helium/idls@^0.11.27":
+  version "0.11.32"
+  resolved "https://registry.yarnpkg.com/@helium/idls/-/idls-0.11.32.tgz#2bcfac9ad677b802aca947605e27f00240b17fc3"
+  integrity sha512-8SqRoF8hpMtUx6WGkWMm2UPXG70ivkp06n99Q+AqYEJkmlVoEKzy0oTWHLbqndAd3nCuHIimU+NTBPGwu4oqKw==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
     "@solana/web3.js" "^1.91.1"
@@ -251,15 +256,15 @@
     "@helium/modular-governance-idls" "^0.1.6"
     "@solana/spl-token" "^0.3.8"
 
-"@helium/no-emit-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/no-emit-sdk/-/no-emit-sdk-0.11.4.tgz#464a7db13ba5efe695104d91ff4393771888e681"
-  integrity sha512-6MJ+UPBjgi/38gWoROpW6I0I4GvrhNnlbhmKaAHKD8nkg6FzNFzCDwce6pj2Pm2vRaaDuB3ELUmx4b3+Br0GNw==
+"@helium/no-emit-sdk@^0.11.18":
+  version "0.11.18"
+  resolved "https://registry.yarnpkg.com/@helium/no-emit-sdk/-/no-emit-sdk-0.11.18.tgz#c58ae63e03a39e3805cf29a3df720b849d2377a4"
+  integrity sha512-sC9mWXZe/CcKJ+2K5UzplIZRkruk7B/huwlbOfYPLd/piIwHosWP8+avek/QYB3+1ms/4kD7DKVUw9yGFR8nLw==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/idls" "^0.11.22"
+    "@helium/spl-utils" "^0.13.0"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
@@ -270,57 +275,57 @@
   dependencies:
     protobufjs "^6.11.3"
 
-"@helium/spl-utils@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/spl-utils/-/spl-utils-0.11.4.tgz#4bb2d5f713f485daf55bfe49ffaa37d965fb1ab7"
-  integrity sha512-TKJd58vcLjWSfndckJjHn9RQ3mtKjL3wotEgTIUOHCtmvX0Yf3HmCcau+H7Ikco730XoebEwKPVKr5RjadJMlg==
+"@helium/spl-utils@^0.13.0", "@helium/spl-utils@^0.13.3":
+  version "0.13.4"
+  resolved "https://registry.yarnpkg.com/@helium/spl-utils/-/spl-utils-0.13.4.tgz#6f44282b7a0c970c251bb9a152e30447a7ef794b"
+  integrity sha512-3sfQp4bbTGYjb6mCieDEWmimIT14EFFY208g16Qr5D0Ir89XjAHr5Hd8E8RgWJk63YKAytwyhQCIBSImb11/Eg==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/account-fetch-cache" "^0.11.4"
+    "@helium/account-fetch-cache" "^0.11.16"
     "@helium/address" "^4.12.0"
-    "@helium/anchor-resolvers" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
     "@metaplex-foundation/mpl-token-metadata" "^2.10.0"
     "@solana/spl-account-compression" "^0.1.7"
     "@solana/spl-token" "^0.3.8"
-    "@solana/web3.js" "^1.91.1"
+    "@solana/web3.js" "^1.99.0"
     axios "^1.9.0"
     bn.js "^5.2.0"
     borsh "^0.7.0"
     bs58 "^4.0.1"
 
-"@helium/transactions@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.3.tgz#fcc427d579ee2934f962107981b264b6717c259f"
-  integrity sha512-7qcCPhCQ1v66LteIDI/8mYspZ9xTRMcvzbWttB3BiGzNb5rvqFxbFL3TGWRDJKyIRNgqmxEe/1P9JaOxt4DCZw==
+"@helium/transactions@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@helium/transactions/-/transactions-5.0.4.tgz#4711954f17dcdbe19304a9f5cc11d96f21f291df"
+  integrity sha512-G2YRXI1ApQ0VP8E2+rT7ixs3Bo/uauZwFCIdbeci1+pIGnO02UtyOWPmEKf98TU3ydjj9lLeK/GApLsZvMTY5g==
   dependencies:
-    "@helium/address" "^5.0.3"
+    "@helium/address" "^5.0.4"
     "@helium/proto" "^2.2.0"
     long "^4.0.0"
     path "^0.12.7"
 
-"@helium/treasury-management-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/treasury-management-sdk/-/treasury-management-sdk-0.11.4.tgz#908b216baf70f5ebe7bb8b92733b208f3db33021"
-  integrity sha512-mMe1jUVgZJmx5LlsVzxoaXcis1Gaz0B/OsfvwYcsPlxt71g5Mdigbfyl05XX2jsDAXA5VWRPViNBPsoMimHhWA==
+"@helium/treasury-management-sdk@^0.11.18":
+  version "0.11.18"
+  resolved "https://registry.yarnpkg.com/@helium/treasury-management-sdk/-/treasury-management-sdk-0.11.18.tgz#1fc812dc8caab5ae026d280ccd17a9b2801b9553"
+  integrity sha512-Zdn8pJqaV1jBJlra0cqEb2bsmBMn5Od7Orn8kVkuCZF9NLVKifDb/HaxSHrjXaEDjnEXZmQda0W3kYwcQ3C6vg==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/circuit-breaker-sdk" "^0.11.4"
-    "@helium/idls" "^0.11.4"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/circuit-breaker-sdk" "^0.11.18"
+    "@helium/idls" "^0.11.22"
+    "@helium/spl-utils" "^0.13.0"
     bn.js "^5.2.0"
     bs58 "^4.0.1"
 
-"@helium/voter-stake-registry-sdk@^0.11.4":
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/@helium/voter-stake-registry-sdk/-/voter-stake-registry-sdk-0.11.4.tgz#c3168388d812bd23ddaefd4b59f6fb7faa05557f"
-  integrity sha512-WPhleCIKMHhUW3zP4DB+3kEAzGJvrZ+V2mco3TEi1U/Y4mR1jtWly8KI95qWZPVpcAqV2k/M9nBvrrS4Q6RhRQ==
+"@helium/voter-stake-registry-sdk@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@helium/voter-stake-registry-sdk/-/voter-stake-registry-sdk-0.12.2.tgz#e8340ec4ee6fd61997424b89d22f130a781f6fe2"
+  integrity sha512-TI+X1igNvPHRpFvT7xhszeP68QRmeBh1vBY1oCtSSqOnFwMCtgH6ud410pBe8JbhgeCscFaak5qOuOrXlb8LzQ==
   dependencies:
     "@coral-xyz/anchor" "^0.31.0"
-    "@helium/anchor-resolvers" "^0.11.4"
-    "@helium/idls" "^0.11.4"
+    "@helium/anchor-resolvers" "^0.11.16"
+    "@helium/idls" "^0.11.22"
     "@helium/nft-proxy-sdk" "^0.1.5-alpha.0"
-    "@helium/spl-utils" "^0.11.4"
+    "@helium/spl-utils" "^0.13.0"
     "@metaplex-foundation/mpl-token-metadata" "^2.10.0"
     "@solana/spl-token" "^0.3.8"
     bn.js "^5.2.0"
@@ -402,14 +407,14 @@
     bn.js "^5.2.0"
     debug "^4.3.4"
 
-"@noble/curves@^1.0.0":
+"@noble/curves@^1.0.0", "@noble/curves@^1.9.7":
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.9.7.tgz#79d04b4758a43e4bca2cbdc62e7771352fa6b951"
   integrity sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==
   dependencies:
     "@noble/hashes" "1.8.0"
 
-"@noble/curves@^1.4.2", "@noble/curves@^1.9.2":
+"@noble/curves@^1.9.2":
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.9.2.tgz#73388356ce733922396214a933ff7c95afcef911"
   integrity sha512-HxngEd2XUcg9xi20JkwlLCtYwfoFw4JGkuZpT+WlsPD4gB/cxkvTD8fSsoAnphGZhFdZYKeQIPCuFlWPm1uE0g==
@@ -479,15 +484,6 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pythnetwork/hermes-client@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@pythnetwork/hermes-client/-/hermes-client-2.0.0.tgz#c8ea4b2a790d617cc24c4c573125a33da9d1e65f"
-  integrity sha512-8ZbCrO5NSlsu1zauIJjZv0sPR3qF9uzgCpBpAPSBGBjwKP0T3TdIRfuSzf9mpzrqf+b7QUqNVNLWZqgN7nlREw==
-  dependencies:
-    "@zodios/core" "^10.9.6"
-    eventsource "^3.0.5"
-    zod "^3.23.8"
-
 "@pythnetwork/price-service-sdk@1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@pythnetwork/price-service-sdk/-/price-service-sdk-1.8.0.tgz#f5f01f654963eb9a0cf12127b4f1a89b60ef008a"
@@ -541,12 +537,12 @@
   dependencies:
     "@solana/errors" "2.0.0-rc.1"
 
-"@solana/codecs-core@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@solana/codecs-core/-/codecs-core-2.2.1.tgz#aaa5f3bdf18a8bace4fce0c600027a05cfd97d2d"
-  integrity sha512-ZW1kTmvqhQhk/jMDo7wZgApn1Lf+d3AecHF6bcWPVSr+KlGLtWZL0wcP+0tnsncPhvG28pZxRR57f4TUylSA7Q==
+"@solana/codecs-core@5.5.1":
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/@solana/codecs-core/-/codecs-core-5.5.1.tgz#1b2619c697ad04c99f98cc468135d584b7e2b16d"
+  integrity sha512-TgBt//bbKBct0t6/MpA8ElaOA3sa8eYVvR7LGslCZ84WiAwwjCY0lW/lOYsFHJQzwREMdUyuEyy5YWBKtdh8Rw==
   dependencies:
-    "@solana/errors" "2.2.1"
+    "@solana/errors" "5.5.1"
 
 "@solana/codecs-data-structures@2.0.0-rc.1":
   version "2.0.0-rc.1"
@@ -565,13 +561,13 @@
     "@solana/codecs-core" "2.0.0-rc.1"
     "@solana/errors" "2.0.0-rc.1"
 
-"@solana/codecs-numbers@^2.1.0":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@solana/codecs-numbers/-/codecs-numbers-2.2.1.tgz#91f2221e5d0cd0e09fc5dc9e0c6156a75ae58816"
-  integrity sha512-qlJHWZFGzhMa7R6EZXNM/ycINGrR4lzBQjwFMs2pXnCxqKTI3Vru0f4kSh0qqf6U1bjNLaYXTMniqETX6ANpzg==
+"@solana/codecs-numbers@^5.5.1":
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/@solana/codecs-numbers/-/codecs-numbers-5.5.1.tgz#6ebc43250133ceb7836f1ac5780a7767e383efde"
+  integrity sha512-rllMIZAHqmtvC0HO/dc/21wDuWaD0B8Ryv8o+YtsICQBuiL/0U4AGwH7Pi5GNFySYk0/crSuwfIqQFtmxNSPFw==
   dependencies:
-    "@solana/codecs-core" "2.2.1"
-    "@solana/errors" "2.2.1"
+    "@solana/codecs-core" "5.5.1"
+    "@solana/errors" "5.5.1"
 
 "@solana/codecs-strings@2.0.0-rc.1":
   version "2.0.0-rc.1"
@@ -601,13 +597,13 @@
     chalk "^5.3.0"
     commander "^12.1.0"
 
-"@solana/errors@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@solana/errors/-/errors-2.2.1.tgz#006b0b10f4b4f1415b7903a368a965d70bcd2ed4"
-  integrity sha512-BiCivvqhNsg5BiWTshsRwGC/866ycfAxj/KMV+uH9pKohXyEENXedgj6U3fAIJiJLdSFya61CLl2EnDygnUPBg==
+"@solana/errors@5.5.1":
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/@solana/errors/-/errors-5.5.1.tgz#1c17bc822264fd5a6305d8bfb9d597858e4ce17b"
+  integrity sha512-vFO3p+S7HoyyrcAectnXbdsMfwUzY2zYFUc2DEe5BwpiE9J1IAxPBGjOWO6hL1bbYdBrlmjNx8DXCslqS+Kcmg==
   dependencies:
-    chalk "^5.4.1"
-    commander "^13.1.0"
+    chalk "5.6.2"
+    commander "14.0.2"
 
 "@solana/options@2.0.0-rc.1":
   version "2.0.0-rc.1"
@@ -661,44 +657,23 @@
     "@solana/spl-token-metadata" "^0.1.2"
     buffer "^6.0.3"
 
-"@solana/web3.js@^1.21.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.50.1", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.66.2", "@solana/web3.js@^1.69.0", "@solana/web3.js@^1.78.4", "@solana/web3.js@^1.91.1":
-  version "1.98.2"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.98.2.tgz#45167a5cfb64436944bf4dc1e8be8482bd6d4c14"
-  integrity sha512-BqVwEG+TaG2yCkBMbD3C4hdpustR4FpuUFRPUmqRZYYlPI9Hg4XMWxHWOWRzHE9Lkc9NDjzXFX7lDXSgzC7R1A==
+"@solana/web3.js@^1.21.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.50.1", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.66.2", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.69.0", "@solana/web3.js@^1.78.4", "@solana/web3.js@^1.90.0", "@solana/web3.js@^1.91.1", "@solana/web3.js@^1.99.0":
+  version "1.99.0"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.99.0.tgz#864ce3fefe03b258c430e31e6672b422426821f7"
+  integrity sha512-QZYQ2T1z6xWisoyALPq25i/QZTsRlM02BABtAsfaQ1p8wX4SdTfxrKTRue/ZZqrhNVh5oL7T/DUFiTS9DRgxow==
   dependencies:
-    "@babel/runtime" "^7.25.0"
-    "@noble/curves" "^1.4.2"
-    "@noble/hashes" "^1.4.0"
+    "@babel/runtime" "^7.29.7"
+    "@noble/curves" "^1.9.7"
+    "@noble/hashes" "^1.8.0"
     "@solana/buffer-layout" "^4.0.1"
-    "@solana/codecs-numbers" "^2.1.0"
-    agentkeepalive "^4.5.0"
-    bn.js "^5.2.1"
+    "@solana/codecs-numbers" "^5.5.1"
+    agentkeepalive "^4.6.0"
+    bn.js "^5.2.5"
     borsh "^0.7.0"
     bs58 "^4.0.1"
     buffer "6.0.3"
     fast-stable-stringify "^1.0.0"
-    jayson "^4.1.1"
-    node-fetch "^2.7.0"
-    rpc-websockets "^9.0.2"
-    superstruct "^2.0.2"
-
-"@solana/web3.js@^1.68.0", "@solana/web3.js@^1.90.0":
-  version "1.98.4"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.98.4.tgz#df51d78be9d865181ec5138b4e699d48e6895bbe"
-  integrity sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==
-  dependencies:
-    "@babel/runtime" "^7.25.0"
-    "@noble/curves" "^1.4.2"
-    "@noble/hashes" "^1.4.0"
-    "@solana/buffer-layout" "^4.0.1"
-    "@solana/codecs-numbers" "^2.1.0"
-    agentkeepalive "^4.5.0"
-    bn.js "^5.2.1"
-    borsh "^0.7.0"
-    bs58 "^4.0.1"
-    buffer "6.0.3"
-    fast-stable-stringify "^1.0.0"
-    jayson "^4.1.1"
+    jayson "^4.3.0"
     node-fetch "^2.7.0"
     rpc-websockets "^9.0.2"
     superstruct "^2.0.2"
@@ -804,12 +779,7 @@
   dependencies:
     "@types/node" "*"
 
-"@zodios/core@^10.9.6":
-  version "10.9.6"
-  resolved "https://registry.yarnpkg.com/@zodios/core/-/core-10.9.6.tgz#64ad831216e6ffa71679ea6be8d1ed882bb04d83"
-  integrity sha512-aH4rOdb3AcezN7ws8vDgBfGboZMk2JGGzEq/DtW65MhnRxyTGRuLJRWVQ/2KxDgWvV2F5oTkAS+5pnjKbl0n+A==
-
-agentkeepalive@^4.2.1, agentkeepalive@^4.3.0, agentkeepalive@^4.5.0:
+agentkeepalive@^4.2.1, agentkeepalive@^4.3.0, agentkeepalive@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/agentkeepalive/-/agentkeepalive-4.6.0.tgz#35f73e94b3f40bf65f105219c623ad19c136ea6a"
   integrity sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==
@@ -927,6 +897,11 @@ bn.js@^5.0.0, bn.js@^5.1.0, bn.js@^5.1.2, bn.js@^5.2.0, bn.js@^5.2.1:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.2.tgz#82c09f9ebbb17107cd72cb7fd39bd1f9d0aaa566"
   integrity sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==
 
+bn.js@^5.2.5:
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.5.tgz#e81ce41cf25e6f0cd1e05f20a9db8c18405e375f"
+  integrity sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==
+
 borsh@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/borsh/-/borsh-0.7.0.tgz#6e9560d719d86d90dc589bca60ffc8a6c51fec2a"
@@ -1013,7 +988,12 @@ case-anything@^2.1.13:
   resolved "https://registry.yarnpkg.com/case-anything/-/case-anything-2.1.13.tgz#0cdc16278cb29a7fcdeb072400da3f342ba329e9"
   integrity sha512-zlOQ80VrQ2Ue+ymH5OuM/DlDq64mEm+B9UTdHULv5osUMD6HalNTblf2b1u/m6QecjsnOkBpqVZ+XPwIVsy7Ng==
 
-chalk@^5.3.0, chalk@^5.4.1:
+chalk@5.6.2:
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.6.2.tgz#b1238b6e23ea337af71c7f8a295db5af0c158aea"
+  integrity sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==
+
+chalk@^5.3.0:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.4.1.tgz#1b48bf0963ec158dce2aacf69c093ae2dd2092d8"
   integrity sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==
@@ -1046,15 +1026,15 @@ combined-stream@^1.0.8:
   dependencies:
     delayed-stream "~1.0.0"
 
+commander@14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-14.0.2.tgz#b71fd37fe4069e4c3c7c13925252ada4eba14e8e"
+  integrity sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==
+
 commander@^12.1.0:
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-12.1.0.tgz#01423b36f501259fdaac4d0e4d60c96c991585d3"
   integrity sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==
-
-commander@^13.1.0:
-  version "13.1.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-13.1.0.tgz#776167db68c78f38dcce1f9b8d7b8b9a488abf46"
-  integrity sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==
 
 commander@^2.20.3:
   version "2.20.3"
@@ -1210,18 +1190,6 @@ eventemitter3@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-5.0.1.tgz#53f5ffd0a492ac800721bb42c66b841de96423c4"
   integrity sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==
-
-eventsource-parser@^3.0.1:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/eventsource-parser/-/eventsource-parser-3.0.6.tgz#292e165e34cacbc936c3c92719ef326d4aeb4e90"
-  integrity sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==
-
-eventsource@^3.0.5:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/eventsource/-/eventsource-3.0.7.tgz#1157622e2f5377bb6aef2114372728ba0c156989"
-  integrity sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==
-  dependencies:
-    eventsource-parser "^3.0.1"
 
 eyes@^0.1.8:
   version "0.1.8"
@@ -1442,10 +1410,28 @@ isomorphic-ws@^4.0.1:
   resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
-jayson@^4.0.0, jayson@^4.1.0, jayson@^4.1.1:
+jayson@^4.0.0, jayson@^4.1.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/jayson/-/jayson-4.2.0.tgz#b71762393fa40bc9637eaf734ca6f40d3b8c0c93"
   integrity sha512-VfJ9t1YLwacIubLhONk0KFeosUBwstRWQ0IRT1KDjEjnVnSOVHC3uwugyV7L0c7R9lpVyrUGT2XWiBA1UTtpyg==
+  dependencies:
+    "@types/connect" "^3.4.33"
+    "@types/node" "^12.12.54"
+    "@types/ws" "^7.4.4"
+    commander "^2.20.3"
+    delay "^5.0.0"
+    es6-promisify "^5.0.0"
+    eyes "^0.1.8"
+    isomorphic-ws "^4.0.1"
+    json-stringify-safe "^5.0.1"
+    stream-json "^1.9.1"
+    uuid "^8.3.2"
+    ws "^7.5.10"
+
+jayson@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/jayson/-/jayson-4.3.0.tgz#22eb8f3dcf37a5e893830e5451f32bde6d1bde4d"
+  integrity sha512-AauzHcUcqs8OBnCHOkJY280VaTiCm57AbuO7lqzcw7JapGj50BisE3xhksye4zlTSR1+1tAz67wLTl8tEH1obQ==
   dependencies:
     "@types/connect" "^3.4.33"
     "@types/node" "^12.12.54"
@@ -2007,8 +1993,3 @@ yargs@^17.7.2:
     string-width "^4.2.3"
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
-
-zod@^3.23.8:
-  version "3.25.76"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.76.tgz#26841c3f6fd22a6a2760e7ccb719179768471e34"
-  integrity sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==

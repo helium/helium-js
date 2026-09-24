@@ -6,12 +6,12 @@
     "build": "echo 'No build needed for integration tests'"
   },
   "dependencies": {
-    "@helium/address": "^5.0.4",
-    "@helium/crypto": "^5.0.4",
-    "@helium/http": "^5.0.4",
-    "@helium/transactions": "^5.0.4"
+    "@helium/address": "^5.0.5",
+    "@helium/crypto": "^5.0.5",
+    "@helium/http": "^5.0.5",
+    "@helium/transactions": "^5.0.5"
   },
-  "version": "5.0.4",
+  "version": "5.0.5",
   "devDependencies": {
     "nock": "^13.2.4"
   }

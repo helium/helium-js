@@ -115,10 +115,7 @@ export const getHotspotNetworkDetails = async ({
   }
 }
 
-const getOraclePriceInCentsFromSolana = async (opts: {
-  connection: Connection
-  cluster: Cluster
-}) => {
+const getOraclePriceInCentsFromSolana = async (opts: { connection: Connection }) => {
   const price = await Currency.getOraclePrice({ tokenType: 'HNT', ...opts })
   if (!price?.priceMessage.emaPrice) {
     throw new Error('Failed to fetch oracle price')
@@ -192,7 +189,6 @@ export const getUpdateMetaData = async ({
   onboardingClient,
   owner,
   connection,
-  cluster,
   nextLocation,
   elevation,
   mechanicalDownTilt,
@@ -310,7 +306,7 @@ export const getUpdateMetaData = async ({
     dcNeeded = dcFee.sub(dcBalance)
 
     const dcInCents = dcNeeded.div(new BN(100000)).mul(new BN(100))
-    const oraclePriceInCents = await getOraclePriceInCentsFromSolana({ connection, cluster })
+    const oraclePriceInCents = await getOraclePriceInCentsFromSolana({ connection })
     const hntNeeded = dcInCents.mul(HNT_AS_BONES).divRound(oraclePriceInCents)
     hasSufficientHnt = balances.hnt.gte(hntNeeded)
 
